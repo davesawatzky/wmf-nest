@@ -1,0 +1,306 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model tbl_category {
+  id               Int             @id @default(autoincrement())
+  name             String          @db.VarChar(255)
+  description      String?         @db.Text
+  requiredComposer String?         @db.VarChar(255)
+  tbl_classlist    tbl_classlist[]
+}
+
+model tbl_class_trophy {
+  classID       Int
+  trophyID      Int
+  tbl_classlist tbl_classlist @relation(fields: [classID], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "class_trophy_class")
+  tbl_trophy    tbl_trophy    @relation(fields: [trophyID], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "class_trophy_trophy")
+
+  @@id([classID, trophyID])
+  @@index([trophyID], map: "class_trophy_trophy")
+}
+
+model tbl_classlist {
+  id                Int                @id @default(autoincrement())
+  classNumber       String             @unique(map: "classNumber") @db.VarChar(12)
+  subdisciplineID   Int
+  categoryID        Int
+  levelID           Int
+  minSelection      Int
+  maxSelection      Int
+  requiredSelection String?            @db.VarChar(255)
+  SGSlabel          tbl_SGS            @default(SOLO)
+  price             Decimal?           @db.Decimal(7, 2)
+  tbl_category      tbl_category       @relation(fields: [categoryID], references: [id], onUpdate: Restrict, map: "classlist_category")
+  tbl_level         tbl_level          @relation(fields: [levelID], references: [id], onUpdate: Restrict, map: "classlist_level")
+  tbl_subdiscipline tbl_subdiscipline  @relation(fields: [subdisciplineID], references: [id], onUpdate: Restrict, map: "classlist_subdiscipline")
+  tbl_class_trophy  tbl_class_trophy[]
+
+  @@index([categoryID], map: "categoryID")
+  @@index([levelID], map: "levelID")
+  @@index([subdisciplineID], map: "subdisciplineID")
+}
+
+model tbl_discipline {
+  id                Int                 @id @default(autoincrement())
+  name              String              @db.VarChar(50)
+  tbl_subdiscipline tbl_subdiscipline[]
+}
+
+model tbl_level {
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(50)
+  description   String?         @db.Text
+  order         Int?
+  tbl_classlist tbl_classlist[]
+}
+
+model tbl_reg_classes {
+  id                 Int                 @id @default(autoincrement())
+  regID              Int
+  classNumber        String?             @db.VarChar(9)
+  discipline         String?             @db.VarChar(30)
+  subdiscipline      String?             @db.VarChar(30)
+  level              String?             @db.VarChar(30)
+  category           String?             @db.VarChar(30)
+  numberOfSelections Int?                @db.TinyInt
+  schoolCommunityId  Int?
+  price              Decimal?            @db.Decimal(7, 2)
+  createdAt          DateTime            @default(now()) @db.DateTime(0)
+  updatedAt          DateTime            @default(now()) @updatedAt @db.DateTime(0)
+  tbl_registration   tbl_registration    @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "class_registration")
+  tbl_reg_selection  tbl_reg_selection[]
+
+  @@index([regID], map: "class_registration")
+}
+
+model tbl_reg_group {
+  id                  Int                   @id @default(autoincrement())
+  regID               Int
+  name                String?               @db.VarChar(50)
+  groupType           String?               @db.VarChar(15)
+  numberOfPerformers  Int?                  @db.TinyInt
+  age                 Int?                  @db.TinyInt
+  instruments         String?               @db.VarChar(200)
+  createdAt           DateTime              @default(now()) @db.DateTime(0)
+  updatedAt           DateTime              @default(now()) @updatedAt @db.DateTime(0)
+  tbl_registration    tbl_registration      @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "group_registration")
+  tbl_reg_unavailable tbl_reg_unavailable[]
+
+  @@index([regID], map: "group_registration")
+}
+
+model tbl_reg_performer {
+  id               Int              @id @default(autoincrement())
+  regID            Int
+  lastName         String?          @db.VarChar(30)
+  firstName        String?          @db.VarChar(30)
+  apartment        String?          @db.VarChar(5)
+  streetNumber     String?          @db.VarChar(6)
+  streetName       String?          @db.VarChar(50)
+  city             String           @default("Winnipeg") @db.VarChar(30)
+  province         String           @default("MB") @db.VarChar(2)
+  postalCode       String?          @db.VarChar(7)
+  phone            String?          @db.VarChar(14)
+  email            String?          @db.VarChar(50)
+  age              Int?             @db.TinyInt
+  instrument       String?          @db.VarChar(50)
+  level            String?          @db.VarChar(20)
+  otherClasses     String?          @db.VarChar(255)
+  createdAt        DateTime         @default(now()) @db.DateTime(0)
+  updatedAt        DateTime         @default(now()) @updatedAt @db.DateTime(0)
+  tbl_registration tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "performer_registration")
+
+  @@index([regID], map: "performer_registration")
+}
+
+model tbl_reg_school {
+  id               Int              @id @default(autoincrement())
+  regID            Int              @unique(map: "school_constraint")
+  name             String?          @default("") @db.VarChar(50)
+  division         String?          @db.VarChar(50)
+  streetNumber     String?          @db.VarChar(6)
+  streetName       String?          @db.VarChar(100)
+  city             String           @default("Winnipeg") @db.VarChar(30)
+  province         String           @default("MB") @db.VarChar(30)
+  postalCode       String?          @db.VarChar(7)
+  phone            String?          @db.VarChar(14)
+  createdAt        DateTime         @default(now()) @db.DateTime(0)
+  updatedAt        DateTime         @default(now()) @updatedAt @db.DateTime(0)
+  tbl_registration tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "school_registration")
+
+  @@index([regID], map: "school_registration")
+}
+
+model tbl_reg_selection {
+  id              Int             @id @default(autoincrement())
+  classpickID     Int
+  title           String?         @db.VarChar(100)
+  largerWork      String?         @db.VarChar(100)
+  movement        String?         @db.VarChar(30)
+  composer        String?         @db.VarChar(30)
+  duration        String          @default("0:00") @db.VarChar(10)
+  createdAt       DateTime        @default(now()) @db.DateTime(0)
+  updatedAt       DateTime        @default(now()) @updatedAt @db.DateTime(0)
+  tbl_reg_classes tbl_reg_classes @relation(fields: [classpickID], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "selection_class")
+
+  @@index([classpickID], map: "selection_class")
+}
+
+model tbl_reg_teacher {
+  id               Int              @id @default(autoincrement())
+  regID            Int              @unique(map: "teacher_constraint")
+  prefix           String?          @db.VarChar(5)
+  lastName         String?          @db.VarChar(30)
+  firstName        String?          @db.VarChar(30)
+  apartment        String?          @db.VarChar(5)
+  streetNumber     String?          @db.VarChar(6)
+  streetName       String?          @db.VarChar(100)
+  city             String           @default("Winnipeg") @db.VarChar(30)
+  province         String           @default("MB") @db.VarChar(30)
+  postalCode       String?          @db.VarChar(7)
+  phone            String?          @db.VarChar(14)
+  email            String?          @db.VarChar(50)
+  createdAt        DateTime         @default(now()) @db.DateTime(0)
+  updatedAt        DateTime         @default(now()) @updatedAt @db.DateTime(0)
+  tbl_registration tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "teacher_registration")
+
+  @@index([regID], map: "teacher_registration")
+}
+
+model tbl_reg_unavailable {
+  id            Int           @id @default(autoincrement())
+  groupID       Int
+  date          DateTime      @db.Date
+  time          DateTime      @db.Time(0)
+  createdAt     DateTime      @default(now()) @db.DateTime(0)
+  updatedAt     DateTime      @default(now()) @updatedAt @db.DateTime(0)
+  tbl_reg_group tbl_reg_group @relation(fields: [groupID], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "unavail_group")
+
+  @@index([groupID], map: "groupID")
+}
+
+model tbl_registration {
+  id                Int                            @id @default(autoincrement())
+  userID            Int?                           @default(0)
+  label             String                         @default("Registration Form") @db.VarChar(100)
+  performerType     tbl_registration_performerType @default(SOLO)
+  submittedAt       DateTime?                      @db.DateTime(0)
+  totalAmt          Decimal?                       @db.Decimal(10, 0)
+  payedAmt          Decimal?                       @db.Decimal(10, 0)
+  transactionInfo   String?                        @db.VarChar(200)
+  confirmation      String?                        @db.VarChar(20)
+  createdAt         DateTime                       @default(now()) @db.DateTime(0)
+  updatedAt         DateTime                       @default(now()) @updatedAt @db.DateTime(0)
+  tbl_user          tbl_user?                      @relation(fields: [userID], references: [id], onUpdate: Restrict, map: "FK_tbl_registration_tbl_user")
+  tbl_reg_classes   tbl_reg_classes[]
+  tbl_reg_community tbl_reg_community[]
+  tbl_reg_group     tbl_reg_group[]
+  tbl_reg_performer tbl_reg_performer[]
+  tbl_reg_school    tbl_reg_school?
+  tbl_reg_teacher   tbl_reg_teacher?
+
+  @@index([userID], map: "FK_tbl_registration_tbl_user")
+}
+
+model tbl_sacred {
+  id        Int    @id
+  composer  String @db.VarChar(255)
+  largeWork String @db.VarChar(255)
+  title     String @db.VarChar(255)
+}
+
+model tbl_subdiscipline {
+  id             Int                        @id @default(autoincrement())
+  disciplineID   Int
+  name           String                     @db.VarChar(50)
+  description    String?                    @db.Text
+  maxPerformers  Int?
+  minPerformers  Int?
+  SGSlabel       tbl_subdiscipline_SGSlabel
+  price          Decimal?                   @db.Decimal(7, 2)
+  tbl_discipline tbl_discipline             @relation(fields: [disciplineID], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "discipline_subdiscipline")
+  tbl_classlist  tbl_classlist[]
+
+  @@index([disciplineID], map: "discipline_subdiscipline")
+}
+
+model tbl_trophy {
+  id               Int                @id @default(autoincrement())
+  name             String             @db.VarChar(255)
+  description      String             @db.Text
+  tbl_class_trophy tbl_class_trophy[]
+}
+
+model tbl_user {
+  id               Int                @id @default(autoincrement())
+  email            String             @unique(map: "uniqueEmail") @db.VarChar(255)
+  password         String             @db.VarChar(255)
+  staff            Boolean            @default(false)
+  admin            Boolean            @default(false)
+  firstName        String?            @db.VarChar(30)
+  lastName         String?            @db.VarChar(30)
+  apartment        String?            @db.VarChar(5)
+  streetNumber     String?            @db.VarChar(6)
+  streetName       String?            @db.VarChar(50)
+  city             String?            @db.VarChar(30)
+  province         String?            @db.VarChar(2)
+  postalCode       String?            @db.VarChar(7)
+  phone            String?            @db.VarChar(14)
+  updatedAt        DateTime           @default(now()) @updatedAt @db.DateTime(0)
+  createdAt        DateTime           @default(now()) @db.DateTime(0)
+  tbl_registration tbl_registration[]
+}
+
+model tbl_reg_community {
+  id                 Int              @id @default(autoincrement())
+  regID              Int
+  name               String?          @db.VarChar(50)
+  groupSize          Int?
+  chaperones         Int?
+  wheelchairs        Int?
+  earliestTime       String?          @db.VarChar(20)
+  latestTime         String?          @db.VarChar(20)
+  unavailable        String?          @db.Text
+  conflictPerformers String?          @db.Text
+  createdAt          DateTime         @default(now()) @db.DateTime(0)
+  updatedAt          DateTime         @default(now()) @db.DateTime(0)
+  tbl_registration   tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "tbl_reg_community_ibfk_1")
+
+  @@index([regID], map: "community_registration")
+}
+
+model tbl_instruments {
+  id   Int    @id @default(autoincrement())
+  name String @default("0") @db.VarChar(50)
+}
+
+enum tbl_SGS {
+  SOLO
+  GROUP
+  SCHOOL
+  COMMUNITY
+}
+
+enum tbl_registration_performerType {
+  SOLO
+  GROUP
+  SCHOOL
+  COMMUNITY
+}
+
+enum tbl_subdiscipline_SGSlabel {
+  SOLO
+  GROUP
+  SCHOOL
+  COMMUNITY
+}
