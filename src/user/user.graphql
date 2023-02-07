@@ -1,6 +1,6 @@
 type Query {
   users: [User]!
-	user(id: ID, firstName: String, lastName: String, phone: String): User
+	user(id: Int, firstName: String, lastName: String, phone: String): User
 }
 
 type Mutation {
@@ -10,7 +10,7 @@ type Mutation {
 }
 
 type User {
-	id: ID!
+	id: Int!
 	email: String
 	staff: Boolean
 	admin: Boolean
@@ -23,7 +23,7 @@ type User {
 	province: String
 	postalCode: String
 	phone: String
-	# registrations: [Registration!]!
+	registrations: [Registration!]!
 }
 
 input CreateUserInput {
@@ -58,9 +58,4 @@ input UpdateUserInput {
 type UserPayload {
 	userErrors: [UserError!]!
 	user: User
-}
-
-type UserError {
-	message: String!
-	field: [String!]!
 }

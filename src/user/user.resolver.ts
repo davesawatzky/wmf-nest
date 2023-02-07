@@ -24,8 +24,8 @@ export class UserResolver {
   }
 
   @Query('user')
-  findOne(@Args('id') { id }: User) {
-    return this.userService.findOne(parseInt(id))
+  findOne(@Args('id') id: User['id']) {
+    return this.userService.findOne(id)
   }
 
   @Mutation('updateUser')

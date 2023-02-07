@@ -1,0 +1,50 @@
+type Registration {
+	id: Int!
+	label: String
+	# performers: [Performer]
+	# registeredClasses: [RegisteredClass]
+	# groups: [Group]
+	# communities: [Community]
+	# teacher: Teacher
+	# school: School
+	performerType: SGSlabel!
+	submittedAt: DateTime
+	totalAmt: Float
+	payedAmt: Float
+	transactionInfo: String
+	confirmation: String
+	createdAt: DateTime
+}
+
+input RegistrationInput {
+	label: String
+	performerType: SGSlabel
+	dateSubmitted: String
+	submittedAt: String
+	totalAmt: Float
+	payedAmt: Float
+	transactionInfo: String
+	confirmation: String
+}
+
+type Query {
+  registrations: [Registration]!
+  registration(id: Int!): Registration
+}
+
+type Mutation {
+  registrationCreate(
+		performerType: SGSlabel!
+		label: String
+	): RegistrationPayload!
+	registrationUpdate(
+		registrationID: Int!
+		registration: RegistrationInput!
+	): RegistrationPayload!
+	registrationDelete(id: Int!): RegistrationPayload!
+}
+
+type RegistrationPayload {
+	userErrors: [UserError!]!
+	registration: Registration
+}
