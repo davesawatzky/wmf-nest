@@ -5,7 +5,6 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { PrismaService } from './prisma/prisma.service'
 import { PrismaModule } from './prisma/prisma.module'
 import { UserModule } from './user/user.module'
 
@@ -25,6 +24,6 @@ import { UserModule } from './user/user.module'
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService],
+  providers: [AppService],
 })
 export class AppModule {}

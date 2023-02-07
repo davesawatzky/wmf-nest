@@ -1,6 +1,6 @@
 type Query {
   users: [User]!
-	user(id: ID!, firstName: String, lastName: String, phone: String): User
+	user(id: ID, firstName: String, lastName: String, phone: String): User
 }
 
 type Mutation {
@@ -23,7 +23,7 @@ type User {
 	province: String
 	postalCode: String
 	phone: String
-	registrations: [Registration!]!
+	# registrations: [Registration!]!
 }
 
 input CreateUserInput {
