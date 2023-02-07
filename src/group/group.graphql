@@ -1,0 +1,32 @@
+type Group {
+	id: ID!
+	name: String
+	groupType: String
+	numberOfPerformers: Int
+	age: Int
+	instruments: String
+}
+
+input GroupInput {
+	name: String
+	groupType: String
+	numberOfPerformers: Int
+	age: Int
+	instruments: String
+}
+
+type Query {
+  groups: [Group]!
+  group(id: Int!): Group
+}
+
+type Mutation {
+  groupCreate(registrationID: Int!, group: GroupInput!): GroupPayload!
+	groupUpdate(groupID: Int!, group: GroupInput!): GroupPayload!
+	groupDelete(groupID: Int!): GroupPayload!
+}
+
+type GroupPayload {
+  userErrors: [UserError!]!
+  group: Group
+}

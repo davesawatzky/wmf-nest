@@ -1,0 +1,44 @@
+type Teacher {
+	id: ID!
+	prefix: String
+	firstName: String
+	lastName: String
+	apartment: String
+	streetNumber: String
+	streetName: String
+	city: String
+	province: String
+	postalCode: String
+	phone: String
+	email: EmailAddress
+}
+
+input TeacherInput {
+	prefix: String
+	firstName: String
+	lastName: String
+	apartment: String
+	streetNumber: String
+	streetName: String
+	city: String!
+	province: String!
+	postalCode: String
+	phone: String
+	email: EmailAddress
+}
+
+type Query {
+  teachers: [Teacher]!
+  teacher(id: Int!): Teacher
+}
+
+type Mutation {
+  createTeacher(registrationID: Int!, teacher: TeacherInput!): TeacherPayload!
+  updateTeacher(teacherID: Int!, teacher: TeacherInput!): TeacherPayload!
+  removeTeacher(teacherID: Int!): TeacherPayload
+}
+
+type TeacherPayload {
+  userErrors: [UserError!]!
+  teacher: Teacher
+}

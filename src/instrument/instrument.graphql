@@ -1,0 +1,24 @@
+type Instrument {
+	id: Int!
+	name: String!
+}
+
+input InstrumentInput {
+  name: String
+}
+
+type Query {
+  instruments: [Instrument]!
+  instrument(id: Int!): Instrument
+}
+
+type Mutation {
+  createInstrument(instrument: InstrumentInput!): InstrumentPayload!
+  updateInstrument(instrumentID: Int!, instrument: InstrumentInput!): InstrumentPayload!
+  removeInstrument(id: Int!): InstrumentPayload
+}
+
+type InstrumentPayload {
+  userErrors:[UserError!]!
+  instrument: Instrument
+}

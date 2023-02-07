@@ -1,0 +1,54 @@
+type FestivalClass {
+	id: Int!
+	festivalClassNumber: String!
+	subdiscipline: Subdiscipline
+	level: Level
+	category: Category
+	maxSelection: Int
+	minSelection: Int
+	requiredSelection: String
+	SGSlabel: SGSlabel
+	price: Float
+	trophies: [Trophy]
+}
+
+input FestivalClassInput {
+	classNumber: String!
+	subdiscipline: Subdiscipline
+	level: Level
+	category: Category
+	maxSelection: Int
+	minSelection: Int
+	requiredSelection: String
+	SGSlabel: SGSlabel
+	price: Float
+}
+
+input FestivalClassSearchArgs {
+	subdisciplineID: Int
+	levelID: Int
+	categoryID: Int
+}
+
+type Query {
+  festivalClasses(SGSlabel: SGSlabel): [FestivalClass!]!
+	festivalClassSearch(festivalClassSearchArgs: FestivalClassSearchArgs!): [FestivalClass!]!
+	festivalClassById(id: Int!): FestivalClass!
+	festivalClassByNumber(festivalClassNumber: String!): FestivalClass
+}
+
+type Mutation {
+  createFestivalClass(SGSlabel: SGSlabel!, festivalClass: FestivalClassInput!): FestivalClassPayload!
+  updateFestivalClass(festivalClassID: Int!, festivalClass:FestivalClassInput!): FestivalClassPayload!
+  removeFestivalClass(festivalClassID: Int!): FestivalClassPayload
+}
+
+type ClassTrophy {
+	festivalClassID: Int!
+	trophyID: Int!
+}
+
+type FestivalClassPayload {
+  userErrors:[UserError!]!
+  festivalClass: FestivalClass
+}

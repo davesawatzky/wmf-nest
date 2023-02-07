@@ -1,0 +1,40 @@
+type Category {
+	id: Int!
+	name: String!
+	description: String
+	requiredComposer: String
+	classes: [FestivalClass!]!
+}
+
+input CreateCategoryInput {
+	id: ID!
+	name: String!
+	description: String
+	requiredComposer: String
+	classes: [FestivalClass!]!
+}
+
+input UpdateCategoryInput {
+	id: ID!
+	name: String
+	description: String
+	requiredComposer: String
+	classes: [FestivalClass!]!
+}
+
+type Query {
+  categories(levelID: Int, subdisciplineID: Int): [Category!]!
+  categoriesByName(name: String!): [Category!]!
+	category(id: Int!): Category!
+}
+
+type Mutation {
+  createCategory(createCategoryInput: CreateCategoryInput!): CategoryPayload!
+  updateCategory(updateCategoryInput: UpdateCategoryInput!): CategoryPayload!
+  removeCategory(id: Int!): CategoryPayload
+}
+
+type CategoryPayload {
+	userErrors: [UserError!]!
+	category: Category
+}

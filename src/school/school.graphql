@@ -1,0 +1,39 @@
+type School {
+	id: ID!
+	name: String!
+	division: String
+	streetNumber: String
+	streetName: String
+	city: String
+	province: String
+	postalCode: String
+	phone: String
+	schoolGroups: [Community]
+}
+
+input SchoolInput {
+	name: String
+	division: String
+	streetNumber: String
+	streetName: String
+	city: String
+	province: String
+	postalCode: String
+	phone: String
+}
+
+type Query {
+  schools: [School]!
+  school(id: Int!, name: String): School
+}
+
+type Mutation {
+  createSchool(registrationID: Int!, school: SchoolInput!): SchoolPayload!
+  updateSchool(schoolID: Int!, school: SchoolInput!): SchoolPayload!
+  removeSchool(schoolID: Int!): SchoolPayload
+}
+
+type SchoolPayload {
+	userErrors: [UserError!]!
+	school: School
+}

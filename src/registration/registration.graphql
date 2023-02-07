@@ -1,12 +1,12 @@
 type Registration {
 	id: Int!
 	label: String
-	# performers: [Performer]
-	# registeredClasses: [RegisteredClass]
-	# groups: [Group]
-	# communities: [Community]
-	# teacher: Teacher
-	# school: School
+	performers: [Performer]
+	registeredClasses: [RegisteredClass]
+	groups: [Group]
+	communities: [Community]
+	teacher: Teacher
+	school: School
 	performerType: SGSlabel!
 	submittedAt: DateTime
 	totalAmt: Float
@@ -41,7 +41,7 @@ type Mutation {
 		registrationID: Int!
 		registration: RegistrationInput!
 	): RegistrationPayload!
-	registrationDelete(id: Int!): RegistrationPayload!
+	registrationDelete(registrationID: Int!): RegistrationPayload!
 }
 
 type RegistrationPayload {

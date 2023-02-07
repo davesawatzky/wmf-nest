@@ -1,0 +1,50 @@
+type Performer {
+	id: ID!
+	firstName: String
+	lastName: String
+	apartment: String
+	streetNumber: String
+	streetName: String
+	city: String
+	province: String
+	postalCode: String
+	phone: String
+	email: EmailAddress
+	age: Int
+	otherClasses: String
+	instrument: String
+	level: String
+}
+
+input PerformerInput {
+	firstName: String
+	lastName: String
+	apartment: String
+	streetNumber: String
+	streetName: String
+	city: String!
+	province: String!
+	postalCode: String
+	phone: String
+	email: EmailAddress
+	age: Int
+	otherClasses: String
+	instrument: String
+	level: String
+}
+
+type Query {
+  performers: [Performer]!
+  performer(id: Int!): Performer
+}
+
+type Mutation {
+  createPerformer(registrationID: Int!, performerInput: PerformerInput!): PerformerPayload!
+  updatePerformer(performerID: Int!, performerInput: PerformerInput!): PerformerPayload!
+  removePerformer(performerID: Int!): PerformerPayload
+}
+
+type PerformerPayload {
+  userErrors: [UserError!]!
+  performer: Performer
+}

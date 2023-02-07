@@ -1,0 +1,29 @@
+type Level {
+	id: ID!
+	name: String!
+	description: String
+	categories(categoryID: Int): [Category]
+	classes: [FestivalClass!]!
+}
+
+input LevelInput {
+	name: String!
+	description: String
+}
+
+type Query {
+  levels(subdisciplineID: Int!): [Level!]!
+	level(id: Int!): Level
+	levelsByName(name: String!): [Level!]
+}
+
+type Mutation {
+  createLevel(level: LevelInput!): LevelPayload!
+  updateLevel(levelID: Int!, level: LevelInput!): LevelPayload!
+  removeLevel(levelID: Int!): LevelPayload
+}
+
+type LevelPayload {
+  userErrors: [UserError!]!
+  level: Level
+}

@@ -1,0 +1,32 @@
+type Selection {
+	id: ID!
+	title: String
+	largerWork: String
+	movement: String
+	composer: String
+	duration: String
+}
+
+input SelectionInput {
+	title: String
+	largerWork: String
+	movement: String
+	composer: String
+	duration: String
+}
+
+type Query {
+  selections: [Selection]!
+  selection(id: Int!): Selection
+}
+
+type Mutation {
+  createSelection(registeredClassID: Int!, selection: SelectionInput!): SelectionPayload!
+  updateSelection(selectionID: Int!, selection: SelectionInput!): SelectionPayload!
+  removeSelection(selectionID: Int!): SelectionPayload
+}
+
+type SelectionPayload {
+  userErrors:[UserError!]!
+  selection: Selection
+}
