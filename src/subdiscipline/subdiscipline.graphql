@@ -25,7 +25,7 @@ type Query {
   subdisciplines(disciplineID: Int!): [Subdiscipline!]!
   subdiscipline(id: Int!): Subdiscipline
   subdisciplinesByName(name: String!): [Subdiscipline!]!
-  subdisciplinesByType(disciplineID: Int, SGSlabel: SGSlabel!): [Subdiscipline!]!
+  subdisciplinesByType(SGSlabel: SGSlabel!, disciplineID: Int ): [Subdiscipline!]!
 }
 
 type Mutation {

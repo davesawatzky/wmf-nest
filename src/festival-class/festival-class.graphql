@@ -13,7 +13,7 @@ type FestivalClass {
 }
 
 input FestivalClassInput {
-	classNumber: String!
+	festivalClassNumber: String!
 	subdiscipline: Subdiscipline
 	level: Level
 	category: Category

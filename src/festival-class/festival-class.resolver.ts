@@ -1,7 +1,14 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { FestivalClassService } from './festival-class.service'
-import { CreateFestivalClassInput } from './dto/create-festival-class.input'
-import { UpdateFestivalClassInput } from './dto/update-festival-class.input'
+import {
+  FestivalClass,
+  FestivalClassInput,
+  FestivalClassSearchArgs,
+} from 'src/graphql'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { SGSlabel } from 'src/graphql'
+// import { CreateFestivalClassInput } from './dto/create-festival-class.input'
+// import { UpdateFestivalClassInput } from './dto/update-festival-class.input'
 
 @Resolver('FestivalClass')
 export class FestivalClassResolver {
@@ -9,31 +16,37 @@ export class FestivalClassResolver {
 
   @Mutation('createFestivalClass')
   create(
-    @Args('createFestivalClassInput')
-    createFestivalClassInput: CreateFestivalClassInput,
+    @Args('SGSlabel') SGSlabel: SGSlabel,
+    @Args('festivalClassInput')
+    festivalClassInput: Partial<FestivalClassInput>,
   ) {
-    return this.festivalClassService.create(createFestivalClassInput)
+    return this.festivalClassService.create(SGSlabel, festivalClassInput)
   }
 
-  @Query('festivalClass')
-  findAll() {
-    return this.festivalClassService.findAll()
+  @Query('festivalClasses')
+  findAllFestivalCLasses(@Args('SGSlabel') SGSlabel: SGSlabel) {
+    return this.festivalClassService.findAll(SGSlabel)
   }
 
-  @Query('festivalClass')
-  findOne(@Args('id') id: number) {
+  @Query('festivalClassSearch')
+  searchFestivalClass(
+    @Args('festivalClassSearch')
+    festivalClassSearch: FestivalClassSearchArgs,
+  ) {
+    return this.festivalClassService.searchFestivalClass(festivalClassSearch)
+  }
+
+  @Query('festivalClassById')
+  findOneFestivalClass(@Args('id') id: number) {
     return this.festivalClassService.findOne(id)
   }
 
   @Mutation('updateFestivalClass')
   update(
-    @Args('updateFestivalClassInput')
-    updateFestivalClassInput: UpdateFestivalClassInput,
+    @Args('festivalClassID') festivalClassID: FestivalClass['id'],
+    @Args('festivalClass') festivalClass: FestivalClassInput,
   ) {
-    return this.festivalClassService.update(
-      updateFestivalClassInput.id,
-      updateFestivalClassInput,
-    )
+    return this.festivalClassService.update(festivalClassID, festivalClass)
   }
 
   @Mutation('removeFestivalClass')

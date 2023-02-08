@@ -1,5 +1,12 @@
 import { Module } from '@nestjs/common'
-import { GraphQLModule } from '@nestjs/graphql/dist/graphql.module'
+import { GraphQLModule } from '@nestjs/graphql'
+import {
+  DateResolver,
+  DateTimeResolver,
+  DurationResolver,
+  TimeResolver,
+  EmailAddressResolver,
+} from 'graphql-scalars'
 import { join } from 'path'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core'
@@ -31,6 +38,13 @@ import { SelectionModule } from './selection/selection.module'
       definitions: {
         path: join(process.cwd(), 'src/graphql.ts'),
         outputAs: 'class',
+      },
+      resolvers: {
+        Date: DateResolver,
+        DateTime: DateTimeResolver,
+        Duration: DurationResolver,
+        EmailAddress: EmailAddressResolver,
+        Time: TimeResolver,
       },
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
