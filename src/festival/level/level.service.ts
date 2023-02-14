@@ -11,9 +11,7 @@ export class LevelService {
 
   async create(levelInput: LevelInput) {
     return await this.prisma.tbl_level.create({
-      data: {
-        ...levelInput,
-      },
+      data: { ...levelInput },
     })
   }
 
@@ -41,28 +39,20 @@ export class LevelService {
 
   async findClasses(levelID: tbl_level['id']) {
     return this.prisma.tbl_classlist.findMany({
-      where: {
-        levelID,
-      },
+      where: { levelID },
     })
   }
 
   async update(id: tbl_level['id'], levelInput: LevelInput) {
     return await this.prisma.tbl_level.update({
-      where: {
-        id,
-      },
-      data: {
-        ...levelInput,
-      },
+      where: { id },
+      data: { ...levelInput },
     })
   }
 
   async remove(id: tbl_level['id']) {
     return await this.prisma.tbl_level.delete({
-      where: {
-        id,
-      },
+      where: { id },
     })
   }
 }

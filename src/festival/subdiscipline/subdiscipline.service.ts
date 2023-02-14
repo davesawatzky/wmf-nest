@@ -52,39 +52,29 @@ export class SubdisciplineService {
 
   async findSubByName(name: tbl_subdiscipline['name']) {
     return this.prisma.tbl_subdiscipline.findMany({
-      where: {
-        name,
-      },
+      where: { name },
     })
   }
 
-  async findClasses(subdisciplineID: tbl_subdiscipline['id']) {
-    return this.prisma.tbl_classlist.findMany({
-      where: {
-        subdisciplineID,
-      },
-    })
-  }
+  // async findClasses(subdisciplineID: tbl_subdiscipline['id']) {
+  //   return this.prisma.tbl_classlist.findMany({
+  //     where: { subdisciplineID },
+  //   })
+  // }
 
   async update(
     id: tbl_subdiscipline['id'],
     subdisciplineInput: SubdisciplineInput,
   ) {
     return this.prisma.tbl_subdiscipline.update({
-      where: {
-        id,
-      },
-      data: {
-        ...subdisciplineInput,
-      },
+      where: { id },
+      data: { ...subdisciplineInput },
     })
   }
 
   async remove(id: tbl_subdiscipline['id']) {
     return this.prisma.tbl_subdiscipline.delete({
-      where: {
-        id,
-      },
+      where: { id },
     })
   }
 }

@@ -6,7 +6,8 @@ import {
   FestivalClassSearchArgs,
   SGSlabel,
 } from 'src/graphql'
-import { tbl_category, tbl_subdiscipline } from '@prisma/client'
+import { tbl_subdiscipline, tbl_category, tbl_level } from '@prisma/client'
+
 // import { CreateFestivalClassInput } from './dto/create-festival-class.input'
 // import { UpdateFestivalClassInput } from './dto/update-festival-class.input'
 
@@ -25,11 +26,14 @@ export class FestivalClassService {
     }
   }
 
-  async findAll(SGSlabel: SGSlabel) {
+  async findAll(
+    SGSlabel?: SGSlabel,
+    subdisciplineID?: tbl_subdiscipline['id'],
+    levelID?: tbl_level['id'],
+    categoryID?: tbl_category['id'],
+  ) {
     return this.prisma.tbl_classlist.findMany({
-      where: {
-        SGSlabel,
-      },
+      where: { SGSlabel, subdisciplineID, levelID, categoryID },
     })
   }
 
@@ -58,17 +62,13 @@ export class FestivalClassService {
 
   async findById(id: FestivalClass['id']) {
     return this.prisma.tbl_classlist.findUnique({
-      where: {
-        id,
-      },
+      where: { id },
     })
   }
 
   async findByNumber(classNumber: FestivalClass['classNumber']) {
     return this.prisma.tbl_classlist.findUnique({
-      where: {
-        classNumber,
-      },
+      where: { classNumber },
     })
   }
 
@@ -84,9 +84,7 @@ export class FestivalClassService {
 
   async remove(id: FestivalClass['id']) {
     return this.prisma.tbl_classlist.delete({
-      where: {
-        id,
-      },
+      where: { id },
     })
   }
 }

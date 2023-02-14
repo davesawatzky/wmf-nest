@@ -1,41 +1,43 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { DisciplineService } from './discipline.service'
-import { CreateDisciplineInput } from './dto/create-discipline.input'
-import { UpdateDisciplineInput } from './dto/update-discipline.input'
+import { DisciplineInput } from 'src/graphql'
+import { tbl_discipline } from '@prisma/client'
+// import { CreateDisciplineInput } from './dto/create-discipline.input'
+// import { UpdateDisciplineInput } from './dto/update-discipline.input'
 
 @Resolver('Discipline')
 export class DisciplineResolver {
   constructor(private readonly disciplineService: DisciplineService) {}
 
-  @Mutation('createDiscipline')
-  create(
-    @Args('createDisciplineInput') createDisciplineInput: CreateDisciplineInput,
-  ) {
-    return this.disciplineService.create(createDisciplineInput)
-  }
+  /** Queries */
 
-  @Query('discipline')
+  @Query('disciplines')
   findAll() {
     return this.disciplineService.findAll()
   }
 
   @Query('discipline')
-  findOne(@Args('id') id: number) {
+  findOne(@Args('id') id: tbl_discipline['id']) {
     return this.disciplineService.findOne(id)
+  }
+
+  /** Mutations */
+
+  @Mutation('createDiscipline')
+  create(@Args('disciplineInput') disciplineInput: DisciplineInput) {
+    return this.disciplineService.create(disciplineInput)
   }
 
   @Mutation('updateDiscipline')
   update(
-    @Args('updateDisciplineInput') updateDisciplineInput: UpdateDisciplineInput,
+    @Args('id') id: tbl_discipline['id'],
+    @Args('disciplineInput') disciplineInput: DisciplineInput,
   ) {
-    return this.disciplineService.update(
-      updateDisciplineInput.id,
-      updateDisciplineInput,
-    )
+    return this.disciplineService.update(id, disciplineInput)
   }
 
   @Mutation('removeDiscipline')
-  remove(@Args('id') id: number) {
+  remove(@Args('id') id: tbl_discipline['id']) {
     return this.disciplineService.remove(id)
   }
 }

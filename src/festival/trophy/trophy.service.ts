@@ -10,9 +10,7 @@ export class TrophyService {
 
   async create(trophyInput: TrophyInput) {
     return this.prisma.tbl_trophy.create({
-      data: {
-        ...trophyInput,
-      },
+      data: { ...trophyInput },
     })
   }
 
@@ -34,28 +32,20 @@ export class TrophyService {
 
   async findOne(id: Trophy['id']) {
     return this.prisma.tbl_trophy.findUnique({
-      where: {
-        id,
-      },
+      where: { id },
     })
   }
 
   async update(id: Trophy['id'], trophyInput: TrophyInput) {
     return this.prisma.tbl_trophy.update({
-      where: {
-        id,
-      },
-      data: {
-        ...trophyInput,
-      },
+      where: { id },
+      data: { ...trophyInput },
     })
   }
 
   async remove(id: Trophy['id']) {
     return this.prisma.tbl_trophy.delete({
-      where: {
-        id,
-      },
+      where: { id },
     })
   }
 }

@@ -21,23 +21,7 @@ export class CategoryInput {
     requiredComposer?: Nullable<string>;
 }
 
-export class CommunityInput {
-    name: string;
-    conflictPerformers?: Nullable<string>;
-    groupSize?: Nullable<number>;
-    chaperones?: Nullable<number>;
-    wheelchairs?: Nullable<number>;
-    earliestTime?: Nullable<string>;
-    latestTime?: Nullable<string>;
-    unavailable?: Nullable<string>;
-}
-
-export class CreateDisciplineInput {
-    name: string;
-}
-
-export class UpdateDisciplineInput {
-    id: number;
+export class DisciplineInput {
     name: string;
 }
 
@@ -56,14 +40,6 @@ export class FestivalClassSearchArgs {
     categoryID?: Nullable<number>;
 }
 
-export class GroupInput {
-    name: string;
-    groupType?: Nullable<string>;
-    numberOfPerformers?: Nullable<number>;
-    age?: Nullable<number>;
-    instruments?: Nullable<string>;
-}
-
 export class InstrumentInput {
     name?: Nullable<string>;
 }
@@ -71,6 +47,39 @@ export class InstrumentInput {
 export class LevelInput {
     name: string;
     description?: Nullable<string>;
+}
+
+export class SubdisciplineInput {
+    name: string;
+    description?: Nullable<string>;
+    maxPerformers?: Nullable<number>;
+    minPerformers?: Nullable<number>;
+    SGSlabel?: Nullable<SGSlabel>;
+    price?: Nullable<number>;
+}
+
+export class TrophyInput {
+    name: string;
+    description?: Nullable<string>;
+}
+
+export class CommunityInput {
+    name: string;
+    conflictPerformers?: Nullable<string>;
+    groupSize?: Nullable<number>;
+    chaperones?: Nullable<number>;
+    wheelchairs?: Nullable<number>;
+    earliestTime?: Nullable<string>;
+    latestTime?: Nullable<string>;
+    unavailable?: Nullable<string>;
+}
+
+export class GroupInput {
+    name: string;
+    groupType?: Nullable<string>;
+    numberOfPerformers?: Nullable<number>;
+    age?: Nullable<number>;
+    instruments?: Nullable<string>;
 }
 
 export class PerformerInput {
@@ -131,15 +140,6 @@ export class SelectionInput {
     duration?: Nullable<string>;
 }
 
-export class SubdisciplineInput {
-    name: string;
-    description?: Nullable<string>;
-    maxPerformers?: Nullable<number>;
-    minPerformers?: Nullable<number>;
-    SGSlabel?: Nullable<SGSlabel>;
-    price?: Nullable<number>;
-}
-
 export class TeacherInput {
     prefix?: Nullable<string>;
     firstName?: Nullable<string>;
@@ -152,11 +152,6 @@ export class TeacherInput {
     postalCode?: Nullable<string>;
     phone?: Nullable<string>;
     email?: Nullable<EmailAddress>;
-}
-
-export class TrophyInput {
-    name: string;
-    description?: Nullable<string>;
 }
 
 export class UserInput {
@@ -173,12 +168,17 @@ export class UserInput {
     phone?: Nullable<string>;
 }
 
+export class UserError {
+    message: string;
+    field: string[];
+}
+
 export class Category {
     id: number;
     name: string;
     description?: Nullable<string>;
     requiredComposer?: Nullable<string>;
-    classes: Nullable<FestivalClass>[];
+    classes: FestivalClass[];
 }
 
 export abstract class IQuery {
@@ -186,29 +186,21 @@ export abstract class IQuery {
 
     abstract category(id: number): Nullable<Category> | Promise<Nullable<Category>>;
 
-    abstract communities(): Community[] | Promise<Community[]>;
+    abstract disciplines(): Nullable<Nullable<Discipline>[]> | Promise<Nullable<Nullable<Discipline>[]>>;
 
-    abstract community(id: number): Community | Promise<Community>;
+    abstract discipline(id: number): Nullable<Discipline> | Promise<Nullable<Discipline>>;
 
-    abstract disciplines(): Discipline[] | Promise<Discipline[]>;
+    abstract disciplinesByName(name: string): Nullable<Nullable<Discipline>[]> | Promise<Nullable<Nullable<Discipline>[]>>;
 
-    abstract discipline(id: number): Discipline | Promise<Discipline>;
+    abstract disciplinesByType(SGSlabel: SGSlabel): Nullable<Nullable<Discipline>[]> | Promise<Nullable<Nullable<Discipline>[]>>;
 
-    abstract disciplinesByName(name: string): Discipline[] | Promise<Discipline[]>;
-
-    abstract disciplinesByType(SGSlabel: SGSlabel): Discipline[] | Promise<Discipline[]>;
-
-    abstract festivalClasses(SGSlabel?: Nullable<SGSlabel>): FestivalClass[] | Promise<FestivalClass[]>;
+    abstract festivalClasses(SGSlabel?: Nullable<SGSlabel>, subdisciplineID?: Nullable<number>, levelID?: Nullable<number>, categoryID?: Nullable<number>): FestivalClass[] | Promise<FestivalClass[]>;
 
     abstract festivalClassSearch(festivalClassSearchArgs: FestivalClassSearchArgs): FestivalClass[] | Promise<FestivalClass[]>;
 
     abstract festivalClass(id: number): FestivalClass | Promise<FestivalClass>;
 
     abstract festivalClassByNumber(festivalClassNumber: string): Nullable<FestivalClass> | Promise<Nullable<FestivalClass>>;
-
-    abstract groups(): Nullable<Group>[] | Promise<Nullable<Group>[]>;
-
-    abstract group(id: number): Nullable<Group> | Promise<Nullable<Group>>;
 
     abstract instruments(): Nullable<Instrument>[] | Promise<Nullable<Instrument>[]>;
 
@@ -217,6 +209,26 @@ export abstract class IQuery {
     abstract levels(subdisciplineID?: Nullable<number>, categoryID?: Nullable<number>): Nullable<Nullable<Level>[]> | Promise<Nullable<Nullable<Level>[]>>;
 
     abstract level(id: number): Nullable<Level> | Promise<Nullable<Level>>;
+
+    abstract subdisciplines(disciplineID?: Nullable<number>, levelID?: Nullable<number>, categoryID?: Nullable<number>): Nullable<Nullable<Subdiscipline>[]> | Promise<Nullable<Nullable<Subdiscipline>[]>>;
+
+    abstract subdiscipline(id: number): Nullable<Subdiscipline> | Promise<Nullable<Subdiscipline>>;
+
+    abstract subdisciplinesByName(name: string): Subdiscipline[] | Promise<Subdiscipline[]>;
+
+    abstract subdisciplinesByType(SGSlabel: SGSlabel, disciplineID?: Nullable<number>): Subdiscipline[] | Promise<Subdiscipline[]>;
+
+    abstract trophies(): Nullable<Trophy>[] | Promise<Nullable<Trophy>[]>;
+
+    abstract trophy(id: number): Nullable<Trophy> | Promise<Nullable<Trophy>>;
+
+    abstract communities(): Community[] | Promise<Community[]>;
+
+    abstract community(id: number): Community | Promise<Community>;
+
+    abstract groups(): Nullable<Group>[] | Promise<Nullable<Group>[]>;
+
+    abstract group(id: number): Nullable<Group> | Promise<Nullable<Group>>;
 
     abstract performers(): Nullable<Performer>[] | Promise<Nullable<Performer>[]>;
 
@@ -238,21 +250,9 @@ export abstract class IQuery {
 
     abstract selection(id: number): Nullable<Selection> | Promise<Nullable<Selection>>;
 
-    abstract subdisciplines(disciplineID?: Nullable<number>, levelID?: Nullable<number>, categoryID?: Nullable<number>): Nullable<Nullable<Subdiscipline>[]> | Promise<Nullable<Nullable<Subdiscipline>[]>>;
-
-    abstract subdiscipline(id: number): Nullable<Subdiscipline> | Promise<Nullable<Subdiscipline>>;
-
-    abstract subdisciplinesByName(name: string): Subdiscipline[] | Promise<Subdiscipline[]>;
-
-    abstract subdisciplinesByType(SGSlabel: SGSlabel, disciplineID?: Nullable<number>): Subdiscipline[] | Promise<Subdiscipline[]>;
-
     abstract teachers(): Nullable<Teacher>[] | Promise<Nullable<Teacher>[]>;
 
     abstract teacher(id: number): Nullable<Teacher> | Promise<Nullable<Teacher>>;
-
-    abstract trophies(): Nullable<Trophy>[] | Promise<Nullable<Trophy>[]>;
-
-    abstract trophy(id: number): Nullable<Trophy> | Promise<Nullable<Trophy>>;
 
     abstract users(): Nullable<User>[] | Promise<Nullable<User>[]>;
 
@@ -266,29 +266,17 @@ export abstract class IMutation {
 
     abstract removeCategory(categoryID: number): Nullable<CategoryPayload> | Promise<Nullable<CategoryPayload>>;
 
-    abstract createCommunity(registrationID: number, communityInput: CommunityInput): CommunityPayload | Promise<CommunityPayload>;
+    abstract createDiscipline(disciplineInput: DisciplineInput): Nullable<DisciplinePayload> | Promise<Nullable<DisciplinePayload>>;
 
-    abstract updateCommunity(communityID: number, communityInput: CommunityInput): CommunityPayload | Promise<CommunityPayload>;
+    abstract updateDiscipline(id: number, disciplineInput: DisciplineInput): Nullable<DisciplinePayload> | Promise<Nullable<DisciplinePayload>>;
 
-    abstract removeCommunity(communityID: number): CommunityPayload | Promise<CommunityPayload>;
-
-    abstract createDiscipline(createDisciplineInput: CreateDisciplineInput): Discipline | Promise<Discipline>;
-
-    abstract updateDiscipline(updateDisciplineInput: UpdateDisciplineInput): Discipline | Promise<Discipline>;
-
-    abstract removeDiscipline(id: number): Nullable<Discipline> | Promise<Nullable<Discipline>>;
+    abstract removeDiscipline(id: number): Nullable<DisciplinePayload> | Promise<Nullable<DisciplinePayload>>;
 
     abstract createFestivalClass(SGSlabel: SGSlabel, festivalClass: FestivalClassInput): FestivalClassPayload | Promise<FestivalClassPayload>;
 
     abstract updateFestivalClass(festivalClassID: number, festivalClass: FestivalClassInput): FestivalClassPayload | Promise<FestivalClassPayload>;
 
     abstract removeFestivalClass(festivalClassID: number): Nullable<FestivalClassPayload> | Promise<Nullable<FestivalClassPayload>>;
-
-    abstract createGroup(registrationID: number, groupInput: GroupInput): GroupPayload | Promise<GroupPayload>;
-
-    abstract updateGroup(id: number, groupInput: GroupInput): GroupPayload | Promise<GroupPayload>;
-
-    abstract removeGroup(id: number): GroupPayload | Promise<GroupPayload>;
 
     abstract createInstrument(instrument: InstrumentInput): InstrumentPayload | Promise<InstrumentPayload>;
 
@@ -301,6 +289,30 @@ export abstract class IMutation {
     abstract updateLevel(levelID: number, level: LevelInput): LevelPayload | Promise<LevelPayload>;
 
     abstract removeLevel(levelID: number): Nullable<LevelPayload> | Promise<Nullable<LevelPayload>>;
+
+    abstract createSubdiscipline(disciplineID: number, subdiscipline: SubdisciplineInput): SubdisciplinePayload | Promise<SubdisciplinePayload>;
+
+    abstract updateSubdiscipline(subdisciplineID: number, subdiscipline: SubdisciplineInput): SubdisciplinePayload | Promise<SubdisciplinePayload>;
+
+    abstract removeSubdiscipline(subdisciplineID: number): Nullable<SubdisciplinePayload> | Promise<Nullable<SubdisciplinePayload>>;
+
+    abstract createTrophy(trophyInput: TrophyInput): TrophyPayload | Promise<TrophyPayload>;
+
+    abstract updateTrophy(id: number, trophyInput: TrophyInput): TrophyPayload | Promise<TrophyPayload>;
+
+    abstract removeTrophy(id: number): Nullable<TrophyPayload> | Promise<Nullable<TrophyPayload>>;
+
+    abstract createCommunity(registrationID: number, communityInput: CommunityInput): CommunityPayload | Promise<CommunityPayload>;
+
+    abstract updateCommunity(communityID: number, communityInput: CommunityInput): CommunityPayload | Promise<CommunityPayload>;
+
+    abstract removeCommunity(communityID: number): CommunityPayload | Promise<CommunityPayload>;
+
+    abstract createGroup(registrationID: number, groupInput: GroupInput): GroupPayload | Promise<GroupPayload>;
+
+    abstract updateGroup(id: number, groupInput: GroupInput): GroupPayload | Promise<GroupPayload>;
+
+    abstract removeGroup(id: number): GroupPayload | Promise<GroupPayload>;
 
     abstract createPerformer(registrationID: number, performerInput: PerformerInput): PerformerPayload | Promise<PerformerPayload>;
 
@@ -332,23 +344,11 @@ export abstract class IMutation {
 
     abstract removeSelection(selectionID: number): Nullable<SelectionPayload> | Promise<Nullable<SelectionPayload>>;
 
-    abstract createSubdiscipline(disciplineID: number, subdiscipline: SubdisciplineInput): SubdisciplinePayload | Promise<SubdisciplinePayload>;
-
-    abstract updateSubdiscipline(subdisciplineID: number, subdiscipline: SubdisciplineInput): SubdisciplinePayload | Promise<SubdisciplinePayload>;
-
-    abstract removeSubdiscipline(subdisciplineID: number): Nullable<SubdisciplinePayload> | Promise<Nullable<SubdisciplinePayload>>;
-
     abstract createTeacher(registrationID: number, teacher: TeacherInput): TeacherPayload | Promise<TeacherPayload>;
 
     abstract updateTeacher(teacherID: number, teacher: TeacherInput): TeacherPayload | Promise<TeacherPayload>;
 
     abstract removeTeacher(teacherID: number): Nullable<TeacherPayload> | Promise<Nullable<TeacherPayload>>;
-
-    abstract createTrophy(trophyInput: TrophyInput): TrophyPayload | Promise<TrophyPayload>;
-
-    abstract updateTrophy(id: number, trophyInput: TrophyInput): TrophyPayload | Promise<TrophyPayload>;
-
-    abstract removeTrophy(id: number): Nullable<TrophyPayload> | Promise<Nullable<TrophyPayload>>;
 
     abstract createUser(userInput: UserInput): UserPayload | Promise<UserPayload>;
 
@@ -362,32 +362,10 @@ export class CategoryPayload {
     category?: Nullable<Category>;
 }
 
-export class UserError {
-    message: string;
-    field: string[];
-}
-
-export class Community {
-    id: number;
-    name: string;
-    conflictPerformers?: Nullable<string>;
-    groupSize?: Nullable<number>;
-    chaperones?: Nullable<number>;
-    wheelchairs?: Nullable<number>;
-    earliestTime?: Nullable<string>;
-    latestTime?: Nullable<string>;
-    unavailable?: Nullable<string>;
-}
-
-export class CommunityPayload {
-    userErrors: UserError[];
-    community?: Nullable<Community>;
-}
-
 export class Discipline {
     id: number;
-    name: string;
-    subdisciplines: Subdiscipline[];
+    name?: Nullable<string>;
+    subdisciplines?: Nullable<Nullable<Subdiscipline>[]>;
 }
 
 export class DisciplinePayload {
@@ -414,20 +392,6 @@ export class FestivalClassPayload {
     festivalClass?: Nullable<FestivalClass>;
 }
 
-export class Group {
-    id: string;
-    name?: Nullable<string>;
-    groupType?: Nullable<string>;
-    numberOfPerformers?: Nullable<number>;
-    age?: Nullable<number>;
-    instruments?: Nullable<string>;
-}
-
-export class GroupPayload {
-    userErrors: UserError[];
-    group?: Nullable<Group>;
-}
-
 export class Instrument {
     id: number;
     name: string;
@@ -448,6 +412,66 @@ export class Level {
 export class LevelPayload {
     userErrors: UserError[];
     level?: Nullable<Level>;
+}
+
+export class Subdiscipline {
+    id: number;
+    name: string;
+    discipline: Discipline;
+    description?: Nullable<string>;
+    maxPerformers?: Nullable<number>;
+    minPerformers?: Nullable<number>;
+    SGSlabel: SGSlabel;
+    price?: Nullable<number>;
+    classes: FestivalClass[];
+}
+
+export class SubdisciplinePayload {
+    userErrors: UserError[];
+    subdiscpline?: Nullable<Subdiscipline>;
+}
+
+export class Trophy {
+    id: number;
+    name: string;
+    description?: Nullable<string>;
+    classes?: Nullable<Nullable<FestivalClass>[]>;
+}
+
+export class TrophyPayload {
+    userErrors: UserError[];
+    trophy?: Nullable<Trophy>;
+}
+
+export class Community {
+    id: number;
+    name: string;
+    conflictPerformers?: Nullable<string>;
+    groupSize?: Nullable<number>;
+    chaperones?: Nullable<number>;
+    wheelchairs?: Nullable<number>;
+    earliestTime?: Nullable<string>;
+    latestTime?: Nullable<string>;
+    unavailable?: Nullable<string>;
+}
+
+export class CommunityPayload {
+    userErrors: UserError[];
+    community?: Nullable<Community>;
+}
+
+export class Group {
+    id: string;
+    name?: Nullable<string>;
+    groupType?: Nullable<string>;
+    numberOfPerformers?: Nullable<number>;
+    age?: Nullable<number>;
+    instruments?: Nullable<string>;
+}
+
+export class GroupPayload {
+    userErrors: UserError[];
+    group?: Nullable<Group>;
 }
 
 export class Performer {
@@ -546,23 +570,6 @@ export class SelectionPayload {
     selection?: Nullable<Selection>;
 }
 
-export class Subdiscipline {
-    id: number;
-    name: string;
-    discipline: Discipline;
-    description?: Nullable<string>;
-    maxPerformers?: Nullable<number>;
-    minPerformers?: Nullable<number>;
-    SGSlabel: SGSlabel;
-    price?: Nullable<number>;
-    classes: FestivalClass[];
-}
-
-export class SubdisciplinePayload {
-    userErrors: UserError[];
-    subdiscpline?: Nullable<Subdiscipline>;
-}
-
 export class Teacher {
     id: string;
     prefix?: Nullable<string>;
@@ -581,18 +588,6 @@ export class Teacher {
 export class TeacherPayload {
     userErrors: UserError[];
     teacher?: Nullable<Teacher>;
-}
-
-export class Trophy {
-    id: number;
-    name: string;
-    description?: Nullable<string>;
-    classes?: Nullable<Nullable<FestivalClass>[]>;
-}
-
-export class TrophyPayload {
-    userErrors: UserError[];
-    trophy?: Nullable<Trophy>;
 }
 
 export class User {

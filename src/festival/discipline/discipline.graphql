@@ -1,29 +1,24 @@
 type Discipline {
 	id: Int!
-	name: String!
-	subdisciplines: [Subdiscipline!]!
+	name: String
+	subdisciplines: [Subdiscipline]
 }
 
-input CreateDisciplineInput {
+input DisciplineInput {
 	name: String!
-}
-
-input UpdateDisciplineInput {
-  id: Int!
-  name: String!
 }
 
 type Query {
-	disciplines: [Discipline!]!
-	discipline(id: Int!): Discipline!
-	disciplinesByName(name: String!): [Discipline!]!
-	disciplinesByType(SGSlabel: SGSlabel!): [Discipline!]!
+	disciplines: [Discipline]
+	discipline(id: Int!): Discipline
+	disciplinesByName(name: String!): [Discipline]
+	disciplinesByType(SGSlabel: SGSlabel!): [Discipline]
 }
 
 type Mutation {
-  createDiscipline(createDisciplineInput: CreateDisciplineInput!): Discipline!
-  updateDiscipline(updateDisciplineInput: UpdateDisciplineInput!): Discipline!
-  removeDiscipline(id: Int!): Discipline
+  createDiscipline(disciplineInput: DisciplineInput!): DisciplinePayload
+  updateDiscipline(id: Int!, disciplineInput: DisciplineInput!): DisciplinePayload
+  removeDiscipline(id: Int!): DisciplinePayload
 }
 
 type DisciplinePayload {

@@ -8,7 +8,7 @@ type Subdiscipline {
 	SGSlabel: SGSlabel!
 	price: Float
 	# levels(levelID: Int): [Level]
-	classes: [FestivalClass!]!
+	classes(SGSlabel: SGSlabel, levelID: Int, categoryID: Int): [FestivalClass!]!
 }
 
 input SubdisciplineInput {

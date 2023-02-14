@@ -13,9 +13,9 @@ import {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   SGSlabel,
 } from 'src/graphql'
-import { SubdisciplineService } from 'src/subdiscipline/subdiscipline.service'
-import { LevelService } from 'src/level/level.service'
-import { CategoryService } from 'src/category/category.service'
+import { SubdisciplineService } from '../subdiscipline/subdiscipline.service'
+import { LevelService } from '../level/level.service'
+import { CategoryService } from '../category/category.service'
 import { tbl_classlist } from '@prisma/client'
 // import { CreateFestivalClassInput } from './dto/create-festival-class.input'
 // import { UpdateFestivalClassInput } from './dto/update-festival-class.input'
@@ -29,14 +29,7 @@ export class FestivalClassResolver {
     private categoryService: CategoryService,
   ) {}
 
-  @Mutation('createFestivalClass')
-  create(
-    @Args('SGSlabel') SGSlabel: SGSlabel,
-    @Args('festivalClass')
-    festivalClass: FestivalClassInput,
-  ) {
-    return this.festivalClassService.create(SGSlabel, festivalClass)
-  }
+  /** Queries */
 
   @Query('festivalClasses')
   findAll(@Args('SGSlabel') SGSlabel: SGSlabel) {
@@ -64,6 +57,17 @@ export class FestivalClassResolver {
     return this.festivalClassService.findByNumber(festivalClassNumber)
   }
 
+  /** Mutations */
+
+  @Mutation('createFestivalClass')
+  create(
+    @Args('SGSlabel') SGSlabel: SGSlabel,
+    @Args('festivalClass')
+    festivalClass: FestivalClassInput,
+  ) {
+    return this.festivalClassService.create(SGSlabel, festivalClass)
+  }
+
   @Mutation('updateFestivalClass')
   update(
     @Args('festivalClassID') festivalClassID: tbl_classlist['id'],
@@ -76,6 +80,8 @@ export class FestivalClassResolver {
   remove(@Args('id') id: tbl_classlist['id']) {
     return this.festivalClassService.remove(id)
   }
+
+  /** Field Resolvers */
 
   @ResolveField('trophies')
   trophies(@Parent() festivalClass: tbl_classlist) {

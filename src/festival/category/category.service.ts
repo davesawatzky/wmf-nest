@@ -11,9 +11,7 @@ export class CategoryService {
 
   async create(categoryInput: CategoryInput) {
     return await this.prisma.tbl_category.create({
-      data: {
-        ...categoryInput,
-      },
+      data: { ...categoryInput },
     })
   }
 
@@ -41,28 +39,20 @@ export class CategoryService {
 
   async findClasses(categoryID: tbl_category['id']) {
     return this.prisma.tbl_classlist.findMany({
-      where: {
-        categoryID,
-      },
+      where: { categoryID },
     })
   }
 
   async update(id: tbl_category['id'], categoryInput: CategoryInput) {
     return await this.prisma.tbl_category.update({
-      where: {
-        id,
-      },
-      data: {
-        ...categoryInput,
-      },
+      where: { id },
+      data: { ...categoryInput },
     })
   }
 
   async remove(id: Category['id']) {
     return await this.prisma.tbl_category.delete({
-      where: {
-        id,
-      },
+      where: { id },
     })
   }
 }

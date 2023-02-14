@@ -1,11 +1,12 @@
-import { Module } from '@nestjs/common'
+import { Module, forwardRef } from '@nestjs/common'
 import { SubdisciplineService } from './subdiscipline.service'
 import { SubdisciplineResolver } from './subdiscipline.resolver'
-import { DisciplineModule } from 'src/discipline/discipline.module'
+import { DisciplineModule } from '../discipline/discipline.module'
+import { FestivalClassModule } from '../festival-class/festival-class.module'
 
 @Module({
   providers: [SubdisciplineResolver, SubdisciplineService],
-  imports: [DisciplineModule],
+  imports: [DisciplineModule, forwardRef(() => FestivalClassModule)],
   exports: [SubdisciplineService],
 })
 export class SubdisciplineModule {}

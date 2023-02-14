@@ -32,7 +32,7 @@ input FestivalClassSearchArgs {
 }
 
 type Query {
-  festivalClasses(SGSlabel: SGSlabel): [FestivalClass!]!
+  festivalClasses(SGSlabel: SGSlabel, subdisciplineID: Int, levelID: Int, categoryID: Int): [FestivalClass!]!
 	festivalClassSearch(festivalClassSearchArgs: FestivalClassSearchArgs!): [FestivalClass!]!
 	festivalClass(id: Int!): FestivalClass!
 	festivalClassByNumber(festivalClassNumber: String!): FestivalClass
