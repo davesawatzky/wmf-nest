@@ -237,7 +237,7 @@ model tbl_subdiscipline {
 model tbl_trophy {
   id               Int                @id @default(autoincrement())
   name             String             @db.VarChar(255)
-  description      String             @db.Text
+  description      String?            @db.Text
   tbl_class_trophy tbl_class_trophy[]
 }
 

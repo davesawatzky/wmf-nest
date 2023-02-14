@@ -1,0 +1,28 @@
+type Trophy {
+	id: Int!
+	name: String!
+	description: String
+	classes: [FestivalClass]
+}
+
+input TrophyInput {
+	name: String!
+	description: String
+	# classes: [FestivalClass]
+}
+
+type Query {
+  trophies: [Trophy]!
+  trophy(id: Int!): Trophy
+}
+
+type Mutation {
+  createTrophy(trophyInput: TrophyInput!): TrophyPayload!
+  updateTrophy(id: Int!, trophyInput: TrophyInput!): TrophyPayload!
+  removeTrophy(id: Int!): TrophyPayload
+}
+
+type TrophyPayload {
+  userErrors:[UserError!]!
+  trophy: Trophy
+}

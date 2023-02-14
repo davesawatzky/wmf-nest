@@ -1,16 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
-import { CreateUserInput, UpdateUserInput, User } from 'src/graphql'
+import { UserInput, User } from 'src/graphql'
 // import { CreateUserInput } from './dto/create-user.input'
 // import { UpdateUserInput } from './dto/update-user.input'
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
-
-  create(createUserInput: CreateUserInput) {
-    return 'This action adds a new user'
-  }
 
   async findAll() {
     return this.prisma.tbl_user.findMany()
@@ -22,8 +18,15 @@ export class UserService {
     })
   }
 
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`
+  async update(id: User['id'], userInput: UserInput) {
+    return this.prisma.tbl_user.update({
+      where: {
+        id,
+      },
+      data: {
+        ...userInput,
+      },
+    })
   }
 
   async remove(id: number) {

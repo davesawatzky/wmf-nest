@@ -10,8 +10,6 @@ import {
 import { join } from 'path'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core'
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
 import { PrismaModule } from './prisma/prisma.module'
 import { UserModule } from './user/user.module'
 import { RegistrationModule } from './registration/registration.module'
@@ -67,7 +65,5 @@ import { SelectionModule } from './selection/selection.module'
     TeacherModule,
     SelectionModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

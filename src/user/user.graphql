@@ -4,8 +4,8 @@ type Query {
 }
 
 type Mutation {
-  createUser(createUserInput: CreateUserInput!): UserPayload!
-  updateUser(updateUserInput: UpdateUserInput!): UserPayload!
+  createUser(userInput: UserInput!): UserPayload!
+  updateUser(id: Int!, userInput: UserInput!): UserPayload!
   removeUser(id: Int!): UserPayload!
 }
 
@@ -26,23 +26,8 @@ type User {
 	registrations: [Registration!]!
 }
 
-input CreateUserInput {
+input UserInput {
 	staff: Boolean
-	admin: Boolean
-	firstName: String
-	lastName: String
-	apartment: String
-	streetNumber: String
-	streetName: String
-	city: String
-	province: String
-	postalCode: String
-	phone: String
-}
-
-input UpdateUserInput {
-  id: Int!
-  staff: Boolean
 	admin: Boolean
 	firstName: String
 	lastName: String

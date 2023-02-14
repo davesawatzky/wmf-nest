@@ -1,0 +1,40 @@
+type Subdiscipline {
+	id: Int!
+	name: String!
+	discipline: Discipline!
+	description: String
+	maxPerformers: Int
+	minPerformers: Int
+	SGSlabel: SGSlabel!
+	price: Float
+	# levels(levelID: Int): [Level]
+	classes: [FestivalClass!]!
+}
+
+input SubdisciplineInput {
+	name: String!
+	# discipline: Discipline!
+	description: String
+	maxPerformers: Int
+	minPerformers: Int
+	SGSlabel: SGSlabel
+	price: Float
+}
+
+type Query {
+  subdisciplines(disciplineID: Int, levelID: Int, categoryID: Int): [Subdiscipline]
+  subdiscipline(id: Int!): Subdiscipline
+  subdisciplinesByName(name: String!): [Subdiscipline!]!
+  subdisciplinesByType(SGSlabel: SGSlabel!, disciplineID: Int ): [Subdiscipline!]!
+}
+
+type Mutation {
+  createSubdiscipline(disciplineID: Int!, subdiscipline: SubdisciplineInput!): SubdisciplinePayload!
+  updateSubdiscipline(subdisciplineID: Int!, subdiscipline: SubdisciplineInput!): SubdisciplinePayload!
+  removeSubdiscipline(subdisciplineID: Int!): SubdisciplinePayload
+}
+
+type SubdisciplinePayload {
+  userErrors:[UserError!]!
+  subdiscpline: Subdiscipline
+}

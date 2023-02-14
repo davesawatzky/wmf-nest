@@ -1,0 +1,44 @@
+type Community {
+	id: Int!
+	name: String!
+	conflictPerformers: String
+	groupSize: Int
+	chaperones: Int
+	wheelchairs: Int
+	earliestTime: String
+	latestTime: String
+	unavailable: String
+}
+
+input CommunityInput {
+	name: String!
+	conflictPerformers: String
+	groupSize: Int
+	chaperones: Int
+	wheelchairs: Int
+	earliestTime: String
+	latestTime: String
+	unavailable: String
+}
+
+type Query {
+  communities: [Community!]!
+	community(id: Int!): Community!
+}
+
+type Mutation {
+  createCommunity(
+		registrationID: Int!
+		communityInput: CommunityInput!
+	): CommunityPayload!
+	updateCommunity(
+		communityID: Int!
+		communityInput: CommunityInput!
+	): CommunityPayload!
+	removeCommunity(communityID: Int!): CommunityPayload!
+}
+
+type CommunityPayload {
+  userErrors: [UserError!]!
+  community: Community
+}

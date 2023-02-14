@@ -9,6 +9,8 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "dev":"concurrently \"npm:start:dev\" \"npm:types\" \"npm:prisma:generate\"",
+    "prisma:generate":"prisma generate --watch",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -19,7 +21,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "types": "ts-node src/generate-typings"
+    "types": "ts-node ./src/generate-typings"
   },
   "dependencies": {
     "@nestjs/apollo": "^10.1.7",
@@ -29,6 +31,7 @@
     "@nestjs/platform-express": "^9.0.0",
     "@prisma/client": "^4.9.0",
     "apollo-server-express": "^3.11.1",
+    "concurrently": "^7.6.0",
     "graphql": "^16.6.0",
     "graphql-scalars": "^1.20.1",
     "reflect-metadata": "^0.1.13",
