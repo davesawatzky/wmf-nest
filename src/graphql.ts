@@ -113,7 +113,6 @@ export class RegisteredClassInput {
 export class RegistrationInput {
     label?: Nullable<string>;
     performerType?: Nullable<SGSlabel>;
-    dateSubmitted?: Nullable<string>;
     submittedAt?: Nullable<string>;
     totalAmt?: Nullable<number>;
     payedAmt?: Nullable<number>;
@@ -230,7 +229,7 @@ export abstract class IQuery {
 
     abstract group(id: number): Nullable<Group> | Promise<Nullable<Group>>;
 
-    abstract performers(): Nullable<Performer>[] | Promise<Nullable<Performer>[]>;
+    abstract performers(registrationID?: Nullable<number>): Nullable<Performer>[] | Promise<Nullable<Performer>[]>;
 
     abstract performer(id: number): Nullable<Performer> | Promise<Nullable<Performer>>;
 
@@ -238,7 +237,7 @@ export abstract class IQuery {
 
     abstract registeredClass(id: number): Nullable<RegisteredClass> | Promise<Nullable<RegisteredClass>>;
 
-    abstract registrations(): Nullable<Registration>[] | Promise<Nullable<Registration>[]>;
+    abstract registrations(userID?: Nullable<number>, performerType?: Nullable<SGSlabel>): Nullable<Registration>[] | Promise<Nullable<Registration>[]>;
 
     abstract registration(id: number): Nullable<Registration> | Promise<Nullable<Registration>>;
 
@@ -260,71 +259,71 @@ export abstract class IQuery {
 }
 
 export abstract class IMutation {
-    abstract createCategory(categoryInput: CategoryInput): CategoryPayload | Promise<CategoryPayload>;
+    abstract categoryCreate(categoryInput: CategoryInput): CategoryPayload | Promise<CategoryPayload>;
 
-    abstract updateCategory(categoryID: number, categoryInput: CategoryInput): CategoryPayload | Promise<CategoryPayload>;
+    abstract categoryUpdate(categoryID: number, categoryInput: CategoryInput): CategoryPayload | Promise<CategoryPayload>;
 
-    abstract removeCategory(categoryID: number): Nullable<CategoryPayload> | Promise<Nullable<CategoryPayload>>;
+    abstract categoryDelete(categoryID: number): Nullable<CategoryPayload> | Promise<Nullable<CategoryPayload>>;
 
-    abstract createDiscipline(disciplineInput: DisciplineInput): Nullable<DisciplinePayload> | Promise<Nullable<DisciplinePayload>>;
+    abstract disciplineCreate(disciplineInput: DisciplineInput): Nullable<DisciplinePayload> | Promise<Nullable<DisciplinePayload>>;
 
-    abstract updateDiscipline(id: number, disciplineInput: DisciplineInput): Nullable<DisciplinePayload> | Promise<Nullable<DisciplinePayload>>;
+    abstract disciplineUpdate(id: number, disciplineInput: DisciplineInput): Nullable<DisciplinePayload> | Promise<Nullable<DisciplinePayload>>;
 
-    abstract removeDiscipline(id: number): Nullable<DisciplinePayload> | Promise<Nullable<DisciplinePayload>>;
+    abstract disciplineDelete(id: number): Nullable<DisciplinePayload> | Promise<Nullable<DisciplinePayload>>;
 
-    abstract createFestivalClass(SGSlabel: SGSlabel, festivalClass: FestivalClassInput): FestivalClassPayload | Promise<FestivalClassPayload>;
+    abstract festivalClassCreate(SGSlabel: SGSlabel, festivalClass: FestivalClassInput): FestivalClassPayload | Promise<FestivalClassPayload>;
 
-    abstract updateFestivalClass(festivalClassID: number, festivalClass: FestivalClassInput): FestivalClassPayload | Promise<FestivalClassPayload>;
+    abstract festivalClassUpdate(festivalClassID: number, festivalClass: FestivalClassInput): FestivalClassPayload | Promise<FestivalClassPayload>;
 
-    abstract removeFestivalClass(festivalClassID: number): Nullable<FestivalClassPayload> | Promise<Nullable<FestivalClassPayload>>;
+    abstract festivalClassDelete(festivalClassID: number): Nullable<FestivalClassPayload> | Promise<Nullable<FestivalClassPayload>>;
 
-    abstract createInstrument(instrument: InstrumentInput): InstrumentPayload | Promise<InstrumentPayload>;
+    abstract instrumentCreate(instrument: InstrumentInput): InstrumentPayload | Promise<InstrumentPayload>;
 
-    abstract updateInstrument(instrumentID: number, instrument: InstrumentInput): InstrumentPayload | Promise<InstrumentPayload>;
+    abstract instrumentUpdate(instrumentID: number, instrument: InstrumentInput): InstrumentPayload | Promise<InstrumentPayload>;
 
-    abstract removeInstrument(id: number): Nullable<InstrumentPayload> | Promise<Nullable<InstrumentPayload>>;
+    abstract instrumentDelete(id: number): Nullable<InstrumentPayload> | Promise<Nullable<InstrumentPayload>>;
 
-    abstract createLevel(level: LevelInput): LevelPayload | Promise<LevelPayload>;
+    abstract levelCreate(level: LevelInput): LevelPayload | Promise<LevelPayload>;
 
-    abstract updateLevel(levelID: number, level: LevelInput): LevelPayload | Promise<LevelPayload>;
+    abstract levelUpdate(levelID: number, level: LevelInput): LevelPayload | Promise<LevelPayload>;
 
-    abstract removeLevel(levelID: number): Nullable<LevelPayload> | Promise<Nullable<LevelPayload>>;
+    abstract levelDelete(levelID: number): Nullable<LevelPayload> | Promise<Nullable<LevelPayload>>;
 
-    abstract createSubdiscipline(disciplineID: number, subdiscipline: SubdisciplineInput): SubdisciplinePayload | Promise<SubdisciplinePayload>;
+    abstract subdisciplineCreate(disciplineID: number, subdiscipline: SubdisciplineInput): SubdisciplinePayload | Promise<SubdisciplinePayload>;
 
-    abstract updateSubdiscipline(subdisciplineID: number, subdiscipline: SubdisciplineInput): SubdisciplinePayload | Promise<SubdisciplinePayload>;
+    abstract subdisciplineUpdate(subdisciplineID: number, subdiscipline: SubdisciplineInput): SubdisciplinePayload | Promise<SubdisciplinePayload>;
 
-    abstract removeSubdiscipline(subdisciplineID: number): Nullable<SubdisciplinePayload> | Promise<Nullable<SubdisciplinePayload>>;
+    abstract subdisciplineDelete(subdisciplineID: number): Nullable<SubdisciplinePayload> | Promise<Nullable<SubdisciplinePayload>>;
 
-    abstract createTrophy(trophyInput: TrophyInput): TrophyPayload | Promise<TrophyPayload>;
+    abstract trophyCreate(trophyInput: TrophyInput): TrophyPayload | Promise<TrophyPayload>;
 
-    abstract updateTrophy(id: number, trophyInput: TrophyInput): TrophyPayload | Promise<TrophyPayload>;
+    abstract trophyUpdate(id: number, trophyInput: TrophyInput): TrophyPayload | Promise<TrophyPayload>;
 
-    abstract removeTrophy(id: number): Nullable<TrophyPayload> | Promise<Nullable<TrophyPayload>>;
+    abstract trophyDelete(id: number): Nullable<TrophyPayload> | Promise<Nullable<TrophyPayload>>;
 
-    abstract createCommunity(registrationID: number, communityInput: CommunityInput): CommunityPayload | Promise<CommunityPayload>;
+    abstract communityCreate(registrationID: number, communityInput: CommunityInput): CommunityPayload | Promise<CommunityPayload>;
 
-    abstract updateCommunity(communityID: number, communityInput: CommunityInput): CommunityPayload | Promise<CommunityPayload>;
+    abstract communityUpdate(communityID: number, communityInput: CommunityInput): CommunityPayload | Promise<CommunityPayload>;
 
-    abstract removeCommunity(communityID: number): CommunityPayload | Promise<CommunityPayload>;
+    abstract communityDelete(communityID: number): CommunityPayload | Promise<CommunityPayload>;
 
-    abstract createGroup(registrationID: number, groupInput: GroupInput): GroupPayload | Promise<GroupPayload>;
+    abstract groupCreate(registrationID: number, groupInput: GroupInput): GroupPayload | Promise<GroupPayload>;
 
-    abstract updateGroup(id: number, groupInput: GroupInput): GroupPayload | Promise<GroupPayload>;
+    abstract groupUpdate(id: number, groupInput: GroupInput): GroupPayload | Promise<GroupPayload>;
 
-    abstract removeGroup(id: number): GroupPayload | Promise<GroupPayload>;
+    abstract groupDelete(id: number): GroupPayload | Promise<GroupPayload>;
 
-    abstract createPerformer(registrationID: number, performerInput: PerformerInput): PerformerPayload | Promise<PerformerPayload>;
+    abstract performerCreate(registrationID: number, performerInput: PerformerInput): PerformerPayload | Promise<PerformerPayload>;
 
-    abstract updatePerformer(performerID: number, performerInput: PerformerInput): PerformerPayload | Promise<PerformerPayload>;
+    abstract performerUpdate(performerID: number, performerInput: PerformerInput): PerformerPayload | Promise<PerformerPayload>;
 
-    abstract removePerformer(performerID: number): Nullable<PerformerPayload> | Promise<Nullable<PerformerPayload>>;
+    abstract performerDelete(performerID: number): Nullable<PerformerPayload> | Promise<Nullable<PerformerPayload>>;
 
-    abstract createRegisteredClass(registrationID: number, registeredClass: RegisteredClassInput): RegisteredClassPayload | Promise<RegisteredClassPayload>;
+    abstract registeredClassCreate(registrationID: number, registeredClassInput: RegisteredClassInput): RegisteredClassPayload | Promise<RegisteredClassPayload>;
 
-    abstract updateRegisteredClass(registeredClassID: number, registeredClass: RegisteredClassInput): RegisteredClassPayload | Promise<RegisteredClassPayload>;
+    abstract registeredClassUpdate(registeredClassID: number, registeredClassInput: RegisteredClassInput): RegisteredClassPayload | Promise<RegisteredClassPayload>;
 
-    abstract removeRegisteredClass(registeredClassID: number): Nullable<RegisteredClassPayload> | Promise<Nullable<RegisteredClassPayload>>;
+    abstract registeredClassDelete(registeredClassID: number): Nullable<RegisteredClassPayload> | Promise<Nullable<RegisteredClassPayload>>;
 
     abstract registrationCreate(performerType: SGSlabel, label?: Nullable<string>): RegistrationPayload | Promise<RegistrationPayload>;
 
@@ -332,29 +331,29 @@ export abstract class IMutation {
 
     abstract registrationDelete(registrationID: number): RegistrationPayload | Promise<RegistrationPayload>;
 
-    abstract createSchool(registrationID: number, school: SchoolInput): SchoolPayload | Promise<SchoolPayload>;
+    abstract schoolCreate(registrationID: number, school: SchoolInput): SchoolPayload | Promise<SchoolPayload>;
 
-    abstract updateSchool(schoolID: number, school: SchoolInput): SchoolPayload | Promise<SchoolPayload>;
+    abstract schoolUpdate(schoolID: number, school: SchoolInput): SchoolPayload | Promise<SchoolPayload>;
 
-    abstract removeSchool(schoolID: number): Nullable<SchoolPayload> | Promise<Nullable<SchoolPayload>>;
+    abstract schoolDelete(schoolID: number): Nullable<SchoolPayload> | Promise<Nullable<SchoolPayload>>;
 
-    abstract createSelection(registeredClassID: number, selection: SelectionInput): SelectionPayload | Promise<SelectionPayload>;
+    abstract selectionCreate(registeredClassID: number, selection: SelectionInput): SelectionPayload | Promise<SelectionPayload>;
 
-    abstract updateSelection(selectionID: number, selection: SelectionInput): SelectionPayload | Promise<SelectionPayload>;
+    abstract selectionUpdate(selectionID: number, selection: SelectionInput): SelectionPayload | Promise<SelectionPayload>;
 
-    abstract removeSelection(selectionID: number): Nullable<SelectionPayload> | Promise<Nullable<SelectionPayload>>;
+    abstract selectionDelete(selectionID: number): Nullable<SelectionPayload> | Promise<Nullable<SelectionPayload>>;
 
-    abstract createTeacher(registrationID: number, teacher: TeacherInput): TeacherPayload | Promise<TeacherPayload>;
+    abstract teacherCreate(registrationID: number, teacher: TeacherInput): TeacherPayload | Promise<TeacherPayload>;
 
-    abstract updateTeacher(teacherID: number, teacher: TeacherInput): TeacherPayload | Promise<TeacherPayload>;
+    abstract teacherUpdate(teacherID: number, teacher: TeacherInput): TeacherPayload | Promise<TeacherPayload>;
 
-    abstract removeTeacher(teacherID: number): Nullable<TeacherPayload> | Promise<Nullable<TeacherPayload>>;
+    abstract teacherDelete(teacherID: number): Nullable<TeacherPayload> | Promise<Nullable<TeacherPayload>>;
 
-    abstract createUser(userInput: UserInput): UserPayload | Promise<UserPayload>;
+    abstract userCreate(userInput: UserInput): UserPayload | Promise<UserPayload>;
 
-    abstract updateUser(id: number, userInput: UserInput): UserPayload | Promise<UserPayload>;
+    abstract userUpdate(id: number, userInput: UserInput): UserPayload | Promise<UserPayload>;
 
-    abstract removeUser(id: number): UserPayload | Promise<UserPayload>;
+    abstract userDelete(id: number): UserPayload | Promise<UserPayload>;
 }
 
 export class CategoryPayload {
@@ -518,19 +517,21 @@ export class RegisteredClassPayload {
 export class Registration {
     id: number;
     label?: Nullable<string>;
+    user: User;
     performers?: Nullable<Nullable<Performer>[]>;
     registeredClasses?: Nullable<Nullable<RegisteredClass>[]>;
     groups?: Nullable<Nullable<Group>[]>;
     communities?: Nullable<Nullable<Community>[]>;
     teacher?: Nullable<Teacher>;
     school?: Nullable<School>;
-    performerType: SGSlabel;
-    submittedAt?: Nullable<DateTime>;
+    performerType?: Nullable<SGSlabel>;
     totalAmt?: Nullable<number>;
     payedAmt?: Nullable<number>;
     transactionInfo?: Nullable<string>;
     confirmation?: Nullable<string>;
+    submittedAt?: Nullable<DateTime>;
     createdAt?: Nullable<DateTime>;
+    updatedAt?: Nullable<DateTime>;
 }
 
 export class RegistrationPayload {

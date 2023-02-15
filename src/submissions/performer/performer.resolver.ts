@@ -1,40 +1,45 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { PerformerService } from './performer.service'
-import { CreatePerformerInput } from './dto/create-performer.input'
-import { UpdatePerformerInput } from './dto/update-performer.input'
+import { PerformerInput } from 'src/graphql'
+import { tbl_registration, tbl_reg_performer } from '@prisma/client'
+// import { CreatePerformerInput } from './dto/create-performer.input'
+// import { UpdatePerformerInput } from './dto/update-performer.input'
 
 @Resolver('Performer')
 export class PerformerResolver {
   constructor(private readonly performerService: PerformerService) {}
 
-  @Mutation('createPerformer')
-  create(
-    @Args('createPerformerInput') createPerformerInput: CreatePerformerInput,
-  ) {
-    return this.performerService.create(createPerformerInput)
-  }
+  /** Queries */
 
-  @Query('performer')
+  @Query('performers')
   findAll() {
     return this.performerService.findAll()
   }
 
   @Query('performer')
-  findOne(@Args('id') id: number) {
-    return this.performerService.findOne(id)
+  findOne(@Args('performerID') performerID: tbl_reg_performer['id']) {
+    return this.performerService.findOne(performerID)
   }
 
-  @Mutation('updatePerformer')
-  update(
-    @Args('updatePerformerInput') updatePerformerInput: UpdatePerformerInput,
+  /** Mutations */
+
+  @Mutation('performerCreate')
+  create(
+    @Args('registrationID') registrationID: tbl_registration['id'],
+    @Args('performerInput') performerInput: Partial<PerformerInput>,
   ) {
-    return this.performerService.update(
-      updatePerformerInput.id,
-      updatePerformerInput,
-    )
+    return this.performerService.create(registrationID, performerInput)
   }
 
-  @Mutation('removePerformer')
+  @Mutation('performerUpdate')
+  update(
+    @Args('performerID') performerID: tbl_reg_performer['id'],
+    @Args('performerInput') performerInput: Partial<PerformerInput>,
+  ) {
+    return this.performerService.update(performerID, performerInput)
+  }
+
+  @Mutation('performerDelete')
   remove(@Args('id') id: number) {
     return this.performerService.remove(id)
   }

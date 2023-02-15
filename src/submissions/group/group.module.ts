@@ -4,5 +4,6 @@ import { GroupResolver } from './group.resolver'
 
 @Module({
   providers: [GroupResolver, GroupService],
+  exports: [GroupService],
 })
 export class GroupModule {}

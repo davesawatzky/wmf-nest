@@ -7,12 +7,7 @@ import { UpdateInstrumentInput } from './dto/update-instrument.input'
 export class InstrumentResolver {
   constructor(private readonly instrumentService: InstrumentService) {}
 
-  @Mutation('createInstrument')
-  create(
-    @Args('createInstrumentInput') createInstrumentInput: CreateInstrumentInput,
-  ) {
-    return this.instrumentService.create(createInstrumentInput)
-  }
+  /** Queries */
 
   @Query('instrument')
   findAll() {
@@ -24,7 +19,16 @@ export class InstrumentResolver {
     return this.instrumentService.findOne(id)
   }
 
-  @Mutation('updateInstrument')
+  /** Mutations */
+
+  @Mutation('instrumentCreate')
+  create(
+    @Args('createInstrumentInput') createInstrumentInput: CreateInstrumentInput,
+  ) {
+    return this.instrumentService.create(createInstrumentInput)
+  }
+
+  @Mutation('instrumentUpdate')
   update(
     @Args('updateInstrumentInput') updateInstrumentInput: UpdateInstrumentInput,
   ) {
@@ -34,7 +38,7 @@ export class InstrumentResolver {
     )
   }
 
-  @Mutation('removeInstrument')
+  @Mutation('instrumentDelete')
   remove(@Args('id') id: number) {
     return this.instrumentService.remove(id)
   }

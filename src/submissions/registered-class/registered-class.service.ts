@@ -1,26 +1,51 @@
 import { Injectable } from '@nestjs/common'
-import { CreateRegisteredClassInput } from './dto/create-registered-class.input'
-import { UpdateRegisteredClassInput } from './dto/update-registered-class.input'
+import { tbl_registration, tbl_reg_classes } from '@prisma/client'
+import { RegisteredClassInput } from 'src/graphql'
+import { PrismaService } from 'src/prisma/prisma.service'
+// import { CreateRegisteredClassInput } from './dto/create-registered-class.input'
+// import { UpdateRegisteredClassInput } from './dto/update-registered-class.input'
 
 @Injectable()
 export class RegisteredClassService {
-  create(createRegisteredClassInput: CreateRegisteredClassInput) {
-    return 'This action adds a new registeredClass'
+  constructor(private prisma: PrismaService) {}
+
+  create(
+    registrationID: tbl_registration['id'],
+    registeredClassInput: Partial<RegisteredClassInput>,
+  ) {
+    return this.prisma.tbl_reg_classes.create({
+      data: {
+        regID: registrationID,
+        ...registeredClassInput,
+      },
+    })
   }
 
-  findAll() {
-    return `This action returns all registeredClass`
+  findAll(registrationID?: tbl_registration['id']) {
+    return this.prisma.tbl_reg_classes.findMany({
+      where: { regID: registrationID },
+    })
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} registeredClass`
+  findOne(registeredClassID: tbl_reg_classes['id']) {
+    return this.prisma.tbl_reg_classes.findUnique({
+      where: { id: registeredClassID },
+    })
   }
 
-  update(id: number, updateRegisteredClassInput: UpdateRegisteredClassInput) {
-    return `This action updates a #${id} registeredClass`
+  update(
+    registeredClassID: tbl_reg_classes['id'],
+    registeredClassInput: Partial<RegisteredClassInput>,
+  ) {
+    return this.prisma.tbl_reg_classes.update({
+      where: { id: registeredClassID },
+      data: { ...registeredClassInput },
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} registeredClass`
+  remove(registeredClassID: tbl_reg_classes['id']) {
+    return this.prisma.tbl_reg_classes.delete({
+      where: { id: registeredClassID },
+    })
   }
 }

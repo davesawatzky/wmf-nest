@@ -1,26 +1,58 @@
 import { Injectable } from '@nestjs/common'
-import { CreateTeacherInput } from './dto/create-teacher.input'
-import { UpdateTeacherInput } from './dto/update-teacher.input'
+import { tbl_registration, tbl_reg_teacher } from '@prisma/client'
+import { TeacherInput } from 'src/graphql'
+import { PrismaService } from 'src/prisma/prisma.service'
+// import { CreateTeacherInput } from './dto/create-teacher.input'
+// import { UpdateTeacherInput } from './dto/update-teacher.input'
 
 @Injectable()
 export class TeacherService {
-  create(createTeacherInput: CreateTeacherInput) {
-    return 'This action adds a new teacher'
+  constructor(private prisma: PrismaService) {}
+
+  create(
+    registrationID: tbl_registration['id'],
+    teacherInput: Partial<TeacherInput>,
+  ) {
+    return this.prisma.tbl_reg_teacher.create({
+      data: {
+        regID: registrationID,
+        ...teacherInput,
+      },
+    })
   }
 
   findAll() {
-    return `This action returns all teacher`
+    return this.prisma.tbl_reg_teacher.findMany()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} teacher`
+  findOne(
+    teacherID?: tbl_reg_teacher['id'],
+    registrationID?: tbl_registration['id'],
+  ) {
+    if (teacherID) {
+      return this.prisma.tbl_reg_teacher.findUnique({
+        where: { id: teacherID },
+      })
+    } else if (registrationID) {
+      return this.prisma.tbl_reg_teacher.findUnique({
+        where: { regID: registrationID },
+      })
+    }
   }
 
-  update(id: number, updateTeacherInput: UpdateTeacherInput) {
-    return `This action updates a #${id} teacher`
+  update(
+    teacherID: tbl_reg_teacher['id'],
+    teacherInput: Partial<TeacherInput>,
+  ) {
+    return this.prisma.tbl_reg_teacher.update({
+      where: { id: teacherID },
+      data: { ...teacherInput },
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} teacher`
+  remove(teacherID: tbl_reg_teacher['id']) {
+    return this.prisma.tbl_reg_teacher.delete({
+      where: { id: teacherID },
+    })
   }
 }

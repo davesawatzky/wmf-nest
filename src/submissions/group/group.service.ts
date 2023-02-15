@@ -1,26 +1,48 @@
 import { Injectable } from '@nestjs/common'
-import { CreateGroupInput } from './dto/create-group.input'
-import { UpdateGroupInput } from './dto/update-group.input'
+import { tbl_registration, tbl_reg_group } from '@prisma/client'
+import { GroupInput } from 'src/graphql'
+import { PrismaService } from 'src/prisma/prisma.service'
+// import { CreateGroupInput } from './dto/create-group.input'
+// import { UpdateGroupInput } from './dto/update-group.input'
 
 @Injectable()
 export class GroupService {
-  create(createGroupInput: CreateGroupInput) {
-    return 'This action adds a new group'
+  constructor(private prisma: PrismaService) {}
+
+  create(
+    registrationID: tbl_registration['id'],
+    groupInput: Partial<GroupInput>,
+  ) {
+    return this.prisma.tbl_reg_group.create({
+      data: {
+        regID: registrationID,
+        ...groupInput,
+      },
+    })
   }
 
-  findAll() {
-    return `This action returns all group`
+  findAll(registrationID?: tbl_registration['id']) {
+    return this.prisma.tbl_reg_group.findMany({
+      where: { regID: registrationID },
+    })
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} group`
+  findOne(groupID: tbl_reg_group['id']) {
+    return this.prisma.tbl_reg_group.findUnique({
+      where: { id: groupID },
+    })
   }
 
-  update(id: number, updateGroupInput: UpdateGroupInput) {
-    return `This action updates a #${id} group`
+  update(groupID: tbl_reg_group['id'], groupInput: Partial<GroupInput>) {
+    return this.prisma.tbl_reg_group.update({
+      where: { id: groupID },
+      data: { ...groupInput },
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} group`
+  remove(groupID: tbl_reg_group['id']) {
+    return this.prisma.tbl_reg_group.delete({
+      where: { id: groupID },
+    })
   }
 }

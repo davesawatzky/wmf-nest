@@ -1,26 +1,51 @@
 import { Injectable } from '@nestjs/common'
-import { CreateSelectionInput } from './dto/create-selection.input'
-import { UpdateSelectionInput } from './dto/update-selection.input'
+import { tbl_reg_classes, tbl_reg_selection } from '@prisma/client'
+import { SelectionInput } from 'src/graphql'
+import { PrismaService } from 'src/prisma/prisma.service'
+// import { CreateSelectionInput } from './dto/create-selection.input'
+// import { UpdateSelectionInput } from './dto/update-selection.input'
 
 @Injectable()
 export class SelectionService {
-  create(createSelectionInput: CreateSelectionInput) {
-    return 'This action adds a new selection'
+  constructor(private prisma: PrismaService) {}
+
+  create(
+    registeredClassID: tbl_reg_classes['id'],
+    selectionInput: Partial<SelectionInput>,
+  ) {
+    return this.prisma.tbl_reg_selection.create({
+      data: {
+        classpickID: registeredClassID,
+        ...selectionInput,
+      },
+    })
   }
 
-  findAll() {
-    return `This action returns all selection`
+  findAll(registeredClassID?: tbl_reg_classes['id']) {
+    return this.prisma.tbl_reg_selection.findMany({
+      where: { classpickID: registeredClassID },
+    })
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} selection`
+  findOne(selectionID: tbl_reg_selection['id']) {
+    return this.prisma.tbl_reg_selection.findUnique({
+      where: { id: selectionID },
+    })
   }
 
-  update(id: number, updateSelectionInput: UpdateSelectionInput) {
-    return `This action updates a #${id} selection`
+  update(
+    selectionID: tbl_reg_selection['id'],
+    selectionInput: Partial<SelectionInput>,
+  ) {
+    return this.prisma.tbl_reg_selection.update({
+      where: { id: selectionID },
+      data: { ...selectionInput },
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} selection`
+  remove(selectionID: tbl_reg_selection['id']) {
+    return this.prisma.tbl_reg_selection.delete({
+      where: { id: selectionID },
+    })
   }
 }

@@ -4,9 +4,9 @@ type Query {
 }
 
 type Mutation {
-  createUser(userInput: UserInput!): UserPayload!
-  updateUser(id: Int!, userInput: UserInput!): UserPayload!
-  removeUser(id: Int!): UserPayload!
+  userCreate(userInput: UserInput!): UserPayload!
+  userUpdate(id: Int!, userInput: UserInput!): UserPayload!
+  userDelete(id: Int!): UserPayload!
 }
 
 type User {

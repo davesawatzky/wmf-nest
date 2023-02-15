@@ -27,15 +27,15 @@ type Query {
 }
 
 type Mutation {
-  createCommunity(
+  communityCreate(
 		registrationID: Int!
 		communityInput: CommunityInput!
 	): CommunityPayload!
-	updateCommunity(
+	communityUpdate(
 		communityID: Int!
 		communityInput: CommunityInput!
 	): CommunityPayload!
-	removeCommunity(communityID: Int!): CommunityPayload!
+	communityDelete(communityID: Int!): CommunityPayload!
 }
 
 type CommunityPayload {

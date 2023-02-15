@@ -18,9 +18,9 @@ type Query {
 }
 
 type Mutation {
-  createLevel(level: LevelInput!): LevelPayload!
-  updateLevel(levelID: Int!, level: LevelInput!): LevelPayload!
-  removeLevel(levelID: Int!): LevelPayload
+  levelCreate(level: LevelInput!): LevelPayload!
+  levelUpdate(levelID: Int!, level: LevelInput!): LevelPayload!
+  levelDelete(levelID: Int!): LevelPayload
 }
 
 type LevelPayload {

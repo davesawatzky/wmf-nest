@@ -4,5 +4,6 @@ import { CommunityResolver } from './community.resolver'
 
 @Module({
   providers: [CommunityResolver, CommunityService],
+  exports: [CommunityService],
 })
 export class CommunityModule {}

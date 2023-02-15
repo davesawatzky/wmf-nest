@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { tbl_category, tbl_reg_community } from '@prisma/client'
-import { Community, CommunityInput, Registration } from 'src/graphql'
+import { tbl_registration, tbl_reg_community } from '@prisma/client'
+import { CommunityInput } from 'src/graphql'
 import { PrismaService } from 'src/prisma/prisma.service'
 // import { CreateCommunityInput } from './dto/create-community.input'
 // import { UpdateCommunityInput } from './dto/update-community.input'
@@ -10,8 +10,8 @@ export class CommunityService {
   constructor(private prisma: PrismaService) {}
 
   async create(
-    registrationID: Registration['id'],
-    communityInput: CommunityInput,
+    registrationID: tbl_registration['id'],
+    communityInput: Partial<CommunityInput>,
   ) {
     return await this.prisma.tbl_reg_community.create({
       data: {
@@ -21,19 +21,31 @@ export class CommunityService {
     })
   }
 
-  findAll() {
-    return `This action returns all community`
+  findAll(registrationOrSchoolID?: tbl_registration['id']) {
+    return this.prisma.tbl_reg_community.findMany({
+      where: { regID: registrationOrSchoolID },
+    })
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} community`
+  findOne(communityID: tbl_reg_community['id']) {
+    return this.prisma.tbl_reg_community.findUnique({
+      where: { id: communityID },
+    })
   }
 
-  update(id: number, community: CommunityInput) {
-    return `This action updates a #${id} community`
+  update(
+    communityID: tbl_reg_community['id'],
+    communityInput: Partial<CommunityInput>,
+  ) {
+    return this.prisma.tbl_reg_community.update({
+      where: { id: communityID },
+      data: { ...communityInput },
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} community`
+  remove(communityID: tbl_reg_community['id']) {
+    return this.prisma.tbl_reg_community.delete({
+      where: { id: communityID },
+    })
   }
 }

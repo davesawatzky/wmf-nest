@@ -29,9 +29,9 @@ type Query {
 }
 
 type Mutation {
-  createSubdiscipline(disciplineID: Int!, subdiscipline: SubdisciplineInput!): SubdisciplinePayload!
-  updateSubdiscipline(subdisciplineID: Int!, subdiscipline: SubdisciplineInput!): SubdisciplinePayload!
-  removeSubdiscipline(subdisciplineID: Int!): SubdisciplinePayload
+  subdisciplineCreate(disciplineID: Int!, subdiscipline: SubdisciplineInput!): SubdisciplinePayload!
+  subdisciplineUpdate(subdisciplineID: Int!, subdiscipline: SubdisciplineInput!): SubdisciplinePayload!
+  subdisciplineDelete(subdisciplineID: Int!): SubdisciplinePayload
 }
 
 type SubdisciplinePayload {

@@ -16,9 +16,9 @@ type Query {
 }
 
 type Mutation {
-  createDiscipline(disciplineInput: DisciplineInput!): DisciplinePayload
-  updateDiscipline(id: Int!, disciplineInput: DisciplineInput!): DisciplinePayload
-  removeDiscipline(id: Int!): DisciplinePayload
+  disciplineCreate(disciplineInput: DisciplineInput!): DisciplinePayload
+  disciplineUpdate(id: Int!, disciplineInput: DisciplineInput!): DisciplinePayload
+  disciplineDelete(id: Int!): DisciplinePayload
 }
 
 type DisciplinePayload {

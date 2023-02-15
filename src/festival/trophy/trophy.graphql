@@ -17,9 +17,9 @@ type Query {
 }
 
 type Mutation {
-  createTrophy(trophyInput: TrophyInput!): TrophyPayload!
-  updateTrophy(id: Int!, trophyInput: TrophyInput!): TrophyPayload!
-  removeTrophy(id: Int!): TrophyPayload
+  trophyCreate(trophyInput: TrophyInput!): TrophyPayload!
+  trophyUpdate(id: Int!, trophyInput: TrophyInput!): TrophyPayload!
+  trophyDelete(id: Int!): TrophyPayload
 }
 
 type TrophyPayload {

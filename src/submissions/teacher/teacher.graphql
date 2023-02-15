@@ -33,9 +33,9 @@ type Query {
 }
 
 type Mutation {
-  createTeacher(registrationID: Int!, teacher: TeacherInput!): TeacherPayload!
-  updateTeacher(teacherID: Int!, teacher: TeacherInput!): TeacherPayload!
-  removeTeacher(teacherID: Int!): TeacherPayload
+  teacherCreate(registrationID: Int!, teacher: TeacherInput!): TeacherPayload!
+  teacherUpdate(teacherID: Int!, teacher: TeacherInput!): TeacherPayload!
+  teacherDelete(teacherID: Int!): TeacherPayload
 }
 
 type TeacherPayload {

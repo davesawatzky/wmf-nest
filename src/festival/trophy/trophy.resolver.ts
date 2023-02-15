@@ -19,10 +19,7 @@ export class TrophyResolver {
     private readonly festivalClassService: FestivalClassService,
   ) {}
 
-  @Mutation('createTrophy')
-  create(@Args('trophyInput') trophyInput: TrophyInput) {
-    return this.trophyService.create(trophyInput)
-  }
+  /** Queries */
 
   @Query('trophies')
   findAll() {
@@ -34,7 +31,14 @@ export class TrophyResolver {
     return this.trophyService.findOne(id)
   }
 
-  @Mutation('updateTrophy')
+  /** Mutations */
+
+  @Mutation('trophyCreate')
+  create(@Args('trophyInput') trophyInput: TrophyInput) {
+    return this.trophyService.create(trophyInput)
+  }
+
+  @Mutation('trophyUpdate')
   update(
     @Args('trophyID') trophyID: Trophy['id'],
     @Args('trophyInput') trophyInput: TrophyInput,
@@ -42,10 +46,12 @@ export class TrophyResolver {
     return this.trophyService.update(trophyID, trophyInput)
   }
 
-  @Mutation('removeTrophy')
+  @Mutation('trophyDelete')
   remove(@Args('id') id: Trophy['id']) {
     return this.trophyService.remove(id)
   }
+
+  /** Field Resolvers */
 
   @ResolveField('classes')
   async getClasses(@Parent() trophy) {

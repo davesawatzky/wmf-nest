@@ -1,34 +1,62 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
+import {
+  Resolver,
+  Parent,
+  Query,
+  Mutation,
+  Args,
+  ResolveField,
+} from '@nestjs/graphql'
 import { SchoolService } from './school.service'
-import { CreateSchoolInput } from './dto/create-school.input'
-import { UpdateSchoolInput } from './dto/update-school.input'
+import { SchoolInput } from 'src/graphql'
+// import { CreateSchoolInput } from './dto/create-school.input'
+// import { UpdateSchoolInput } from './dto/update-school.input'
+import { tbl_registration, tbl_reg_school } from '@prisma/client'
+import { CommunityService } from '../community/community.service'
 
 @Resolver('School')
 export class SchoolResolver {
-  constructor(private readonly schoolService: SchoolService) {}
+  constructor(
+    private readonly schoolService: SchoolService,
+    private readonly communityService: CommunityService,
+  ) {}
 
-  @Mutation('createSchool')
-  create(@Args('createSchoolInput') createSchoolInput: CreateSchoolInput) {
-    return this.schoolService.create(createSchoolInput)
+  @Mutation('schoolCreate')
+  async create(
+    @Args('registrationID') registrationID: tbl_registration['id'],
+    @Args('schoolInput') schoolInput: Partial<SchoolInput>,
+  ) {
+    return this.schoolService.create(registrationID, schoolInput)
   }
 
-  @Query('school')
-  findAll() {
+  @Query('schools')
+  async findAll() {
     return this.schoolService.findAll()
   }
 
   @Query('school')
-  findOne(@Args('id') id: number) {
-    return this.schoolService.findOne(id)
+  async findOne(@Args('schoolID') schoolID: tbl_reg_school['id']) {
+    return this.schoolService.findOne(null, schoolID)
   }
 
-  @Mutation('updateSchool')
-  update(@Args('updateSchoolInput') updateSchoolInput: UpdateSchoolInput) {
-    return this.schoolService.update(updateSchoolInput.id, updateSchoolInput)
+  @Mutation('schoolUpdate')
+  async update(
+    @Args('schoolID') schoolID: tbl_reg_school['id'],
+    @Args('schoolInput') schoolInput: Partial<SchoolInput>,
+  ) {
+    return this.schoolService.update(schoolID, schoolInput)
   }
 
-  @Mutation('removeSchool')
-  remove(@Args('id') id: number) {
-    return this.schoolService.remove(id)
+  @Mutation('schoolDelete')
+  async remove(@Args('schoolID') schoolID: tbl_reg_school['id']) {
+    return this.schoolService.remove(schoolID)
+  }
+
+  /** Field Resolver */
+
+  @ResolveField('schoolGroups')
+  async schoolGroups(@Parent() school: tbl_reg_school) {
+    const { id }: { id: tbl_reg_school['id'] } = school
+    const schoolAsRegID = id
+    return this.communityService.findAll(schoolAsRegID)
   }
 }

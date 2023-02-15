@@ -19,9 +19,9 @@ type Query {
 }
 
 type Mutation {
-  createCategory(categoryInput: CategoryInput!): CategoryPayload!
-  updateCategory(categoryID: Int!, categoryInput: CategoryInput!): CategoryPayload!
-  removeCategory(categoryID: Int!): CategoryPayload
+  categoryCreate(categoryInput: CategoryInput!): CategoryPayload!
+  categoryUpdate(categoryID: Int!, categoryInput: CategoryInput!): CategoryPayload!
+  categoryDelete(categoryID: Int!): CategoryPayload
 }
 
 type CategoryPayload {

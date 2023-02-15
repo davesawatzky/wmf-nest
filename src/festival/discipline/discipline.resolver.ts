@@ -23,12 +23,12 @@ export class DisciplineResolver {
 
   /** Mutations */
 
-  @Mutation('createDiscipline')
+  @Mutation('disciplineCreate')
   create(@Args('disciplineInput') disciplineInput: DisciplineInput) {
     return this.disciplineService.create(disciplineInput)
   }
 
-  @Mutation('updateDiscipline')
+  @Mutation('disciplineUpdate')
   update(
     @Args('id') id: tbl_discipline['id'],
     @Args('disciplineInput') disciplineInput: DisciplineInput,
@@ -36,7 +36,7 @@ export class DisciplineResolver {
     return this.disciplineService.update(id, disciplineInput)
   }
 
-  @Mutation('removeDiscipline')
+  @Mutation('disciplineDelete')
   remove(@Args('id') id: tbl_discipline['id']) {
     return this.disciplineService.remove(id)
   }

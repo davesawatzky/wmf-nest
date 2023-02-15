@@ -1,26 +1,51 @@
 import { Injectable } from '@nestjs/common'
-import { CreatePerformerInput } from './dto/create-performer.input'
-import { UpdatePerformerInput } from './dto/update-performer.input'
+import { tbl_registration, tbl_reg_performer } from '@prisma/client'
+import { PrismaService } from 'src/prisma/prisma.service'
+import { Performer, PerformerInput } from 'src/graphql'
+// import { CreatePerformerInput } from './dto/create-performer.input'
+// import { UpdatePerformerInput } from './dto/update-performer.input'
 
 @Injectable()
 export class PerformerService {
-  create(createPerformerInput: CreatePerformerInput) {
-    return 'This action adds a new performer'
+  constructor(private prisma: PrismaService) {}
+
+  create(
+    registrationID: tbl_registration['id'],
+    performerInput: Partial<PerformerInput>,
+  ) {
+    return this.prisma.tbl_reg_performer.create({
+      data: {
+        regID: registrationID,
+        ...performerInput,
+      },
+    })
   }
 
-  findAll() {
-    return `This action returns all performer`
+  findAll(registrationID?: tbl_registration['id']) {
+    return this.prisma.tbl_reg_performer.findMany({
+      where: { regID: registrationID },
+    })
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} performer`
+  findOne(performerID: tbl_reg_performer['id']) {
+    return this.prisma.tbl_reg_performer.findUnique({
+      where: { id: performerID },
+    })
   }
 
-  update(id: number, updatePerformerInput: UpdatePerformerInput) {
-    return `This action updates a #${id} performer`
+  update(
+    performerID: tbl_reg_performer['id'],
+    performerInput: Partial<PerformerInput>,
+  ) {
+    return this.prisma.tbl_reg_performer.update({
+      where: { id: performerID },
+      data: { ...performerInput },
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} performer`
+  remove(performerID: tbl_reg_performer['id']) {
+    return this.prisma.tbl_reg_performer.delete({
+      where: { id: performerID },
+    })
   }
 }

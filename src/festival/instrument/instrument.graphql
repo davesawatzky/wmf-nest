@@ -13,9 +13,9 @@ type Query {
 }
 
 type Mutation {
-  createInstrument(instrument: InstrumentInput!): InstrumentPayload!
-  updateInstrument(instrumentID: Int!, instrument: InstrumentInput!): InstrumentPayload!
-  removeInstrument(id: Int!): InstrumentPayload
+  instrumentCreate(instrument: InstrumentInput!): InstrumentPayload!
+  instrumentUpdate(instrumentID: Int!, instrument: InstrumentInput!): InstrumentPayload!
+  instrumentDelete(id: Int!): InstrumentPayload
 }
 
 type InstrumentPayload {

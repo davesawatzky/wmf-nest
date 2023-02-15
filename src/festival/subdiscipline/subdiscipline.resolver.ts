@@ -48,7 +48,7 @@ export class SubdisciplineResolver {
 
   /** Mutations */
 
-  @Mutation('createSubdiscipline')
+  @Mutation('subdisciplineCreate')
   async create(
     @Args('disciplineID') disciplineID: tbl_discipline['id'],
     @Args('subdisciplineInput')
@@ -57,7 +57,7 @@ export class SubdisciplineResolver {
     return this.subdisciplineService.create(disciplineID, subdisciplineInput)
   }
 
-  @Mutation('updateSubdiscipline')
+  @Mutation('subdisciplineUpdate')
   update(
     @Args('subdisciplineID') subdisciplineID: tbl_subdiscipline['id'],
     @Args('subdisciplineInput')
@@ -66,7 +66,7 @@ export class SubdisciplineResolver {
     return this.subdisciplineService.update(subdisciplineID, subdisciplineInput)
   }
 
-  @Mutation('removeSubdiscipline')
+  @Mutation('subdisciplineDelete')
   remove(@Args('id') id: tbl_subdiscipline['id']) {
     return this.subdisciplineService.remove(id)
   }

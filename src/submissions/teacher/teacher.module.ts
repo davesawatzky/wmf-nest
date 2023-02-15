@@ -4,5 +4,6 @@ import { TeacherResolver } from './teacher.resolver'
 
 @Module({
   providers: [TeacherResolver, TeacherService],
+  exports: [TeacherService],
 })
 export class TeacherModule {}

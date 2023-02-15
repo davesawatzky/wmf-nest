@@ -28,9 +28,9 @@ type Query {
 }
 
 type Mutation {
-  createRegisteredClass(registrationID: Int!, registeredClass:RegisteredClassInput!): RegisteredClassPayload!
-  updateRegisteredClass(registeredClassID: Int!, registeredClass:RegisteredClassInput!): RegisteredClassPayload!
-  removeRegisteredClass(registeredClassID: Int!): RegisteredClassPayload
+  registeredClassCreate(registrationID: Int!, registeredClassInput:RegisteredClassInput!): RegisteredClassPayload!
+  registeredClassUpdate(registeredClassID: Int!, registeredClassInput:RegisteredClassInput!): RegisteredClassPayload!
+  registeredClassDelete(registeredClassID: Int!): RegisteredClassPayload
 }
 
 type RegisteredClassPayload {

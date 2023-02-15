@@ -1,6 +1,7 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { CommunityService } from './community.service'
 import { CommunityInput, Community, Registration } from 'src/graphql'
+import { tbl_registration, tbl_reg_community } from '@prisma/client'
 // import { CommunityInput } from './dto/create-community.input'
 // import { UpdateCommunityInput } from './dto/update-community.input'
 
@@ -8,13 +9,7 @@ import { CommunityInput, Community, Registration } from 'src/graphql'
 export class CommunityResolver {
   constructor(private readonly communityService: CommunityService) {}
 
-  @Mutation('createCommunity')
-  create(
-    @Args('communityInput') communityInput: CommunityInput,
-    @Args('registrationID') registrationID: Registration['id'],
-  ) {
-    return this.communityService.create(registrationID, communityInput)
-  }
+  /** Queries */
 
   @Query('communities')
   findAll() {
@@ -22,20 +17,30 @@ export class CommunityResolver {
   }
 
   @Query('community')
-  findOne(@Args('id') id: number) {
-    return this.communityService.findOne(id)
+  findOne(@Args('communityID') communityID: tbl_reg_community['id']) {
+    return this.communityService.findOne(communityID)
   }
 
-  @Mutation('updateCommunity')
-  update(
-    @Args('communityID') communityID: Community['id'],
-    @Args('community') community: CommunityInput,
+  /** Mutations */
+
+  @Mutation('communityCreate')
+  create(
+    @Args('registrationID') registrationID: tbl_registration['id'],
+    @Args('communityInput') communityInput: Partial<CommunityInput>,
   ) {
-    return this.communityService.update(communityID, community)
+    return this.communityService.create(registrationID, communityInput)
   }
 
-  @Mutation('removeCommunity')
-  remove(@Args('id') id: number) {
-    return this.communityService.remove(id)
+  @Mutation('communityUpdate')
+  update(
+    @Args('communityID') communityID: tbl_reg_community['id'],
+    @Args('communityInput') communityInput: Partial<CommunityInput>,
+  ) {
+    return this.communityService.update(communityID, communityInput)
+  }
+
+  @Mutation('communityDelete')
+  remove(@Args('communityID') communityID: tbl_reg_community['id']) {
+    return this.communityService.remove(communityID)
   }
 }

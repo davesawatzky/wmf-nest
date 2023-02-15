@@ -1,25 +1,26 @@
 type Registration {
 	id: Int!
 	label: String
+	user: User!
 	performers: [Performer]
 	registeredClasses: [RegisteredClass]
 	groups: [Group]
 	communities: [Community]
 	teacher: Teacher
 	school: School
-	performerType: SGSlabel!
-	submittedAt: DateTime
+	performerType: SGSlabel
 	totalAmt: Float
 	payedAmt: Float
 	transactionInfo: String
 	confirmation: String
+	submittedAt: DateTime
 	createdAt: DateTime
+	updatedAt: DateTime
 }
 
 input RegistrationInput {
 	label: String
 	performerType: SGSlabel
-	dateSubmitted: String
 	submittedAt: String
 	totalAmt: Float
 	payedAmt: Float
@@ -28,7 +29,7 @@ input RegistrationInput {
 }
 
 type Query {
-  registrations: [Registration]!
+  registrations(userID: Int, performerType: SGSlabel): [Registration]!
   registration(id: Int!): Registration
 }
 

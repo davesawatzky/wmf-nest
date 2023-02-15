@@ -1,41 +1,46 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { SelectionService } from './selection.service'
-import { CreateSelectionInput } from './dto/create-selection.input'
-import { UpdateSelectionInput } from './dto/update-selection.input'
+import { SelectionInput } from 'src/graphql'
+import { tbl_reg_classes, tbl_reg_selection } from '@prisma/client'
+// import { CreateSelectionInput } from './dto/create-selection.input'
+// import { UpdateSelectionInput } from './dto/update-selection.input'
 
 @Resolver('Selection')
 export class SelectionResolver {
   constructor(private readonly selectionService: SelectionService) {}
 
-  @Mutation('createSelection')
-  create(
-    @Args('createSelectionInput') createSelectionInput: CreateSelectionInput,
-  ) {
-    return this.selectionService.create(createSelectionInput)
-  }
+  /** Queries */
 
-  @Query('selection')
+  @Query('selections')
   findAll() {
     return this.selectionService.findAll()
   }
 
   @Query('selection')
-  findOne(@Args('id') id: number) {
-    return this.selectionService.findOne(id)
+  findOne(@Args('selectionID') selectionID: tbl_reg_selection['id']) {
+    return this.selectionService.findOne(selectionID)
   }
 
-  @Mutation('updateSelection')
-  update(
-    @Args('updateSelectionInput') updateSelectionInput: UpdateSelectionInput,
+  /** Mutations */
+
+  @Mutation('selectionCreate')
+  create(
+    @Args('registeredClassID') registeredClassID: tbl_reg_classes['id'],
+    @Args('selectionInput') selectionInput: Partial<SelectionInput>,
   ) {
-    return this.selectionService.update(
-      updateSelectionInput.id,
-      updateSelectionInput,
-    )
+    return this.selectionService.create(registeredClassID, selectionInput)
   }
 
-  @Mutation('removeSelection')
-  remove(@Args('id') id: number) {
-    return this.selectionService.remove(id)
+  @Mutation('selectionUpdate')
+  update(
+    @Args('selectionID') selectionID: tbl_reg_selection['id'],
+    @Args('selectionInput') selectionInput: Partial<SelectionInput>,
+  ) {
+    return this.selectionService.update(selectionID, selectionInput)
+  }
+
+  @Mutation('selectionDelete')
+  remove(@Args('selectionID') selectionID: tbl_reg_selection['id']) {
+    return this.selectionService.remove(selectionID)
   }
 }

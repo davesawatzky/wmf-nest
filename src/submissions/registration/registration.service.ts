@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { RegistrationInput, Registration } from 'src/graphql'
+import { RegistrationInput, Registration, SGSlabel } from 'src/graphql'
 import { PrismaService } from 'src/prisma/prisma.service'
+import { tbl_user, tbl_registration } from '@prisma/client'
 // import { CreateRegistrationInput } from './dto/create-registration.input';
 // import { UpdateRegistrationInput } from './dto/update-registration.input';
 
@@ -18,18 +19,20 @@ export class RegistrationService {
     })
   }
 
-  findAll() {
-    return this.prisma.tbl_registration.findMany()
+  findAll(userID?: tbl_user['id'], performerType?: SGSlabel) {
+    return this.prisma.tbl_registration.findMany({
+      where: { userID, performerType },
+    })
   }
 
-  findOne(id: Registration['id']) {
+  findOne(id: tbl_registration['id']) {
     return this.prisma.tbl_registration.findUnique({
       where: { id },
     })
   }
 
   update(
-    registrationID: Registration['id'],
+    registrationID: tbl_registration['id'],
     registration: Partial<RegistrationInput>,
   ) {
     return this.prisma.tbl_registration.update({
@@ -38,7 +41,9 @@ export class RegistrationService {
     })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} registration`
+  remove(id: tbl_registration['id']) {
+    return this.prisma.tbl_registration.delete({
+      where: { id },
+    })
   }
 }

@@ -1,26 +1,49 @@
 import { Injectable } from '@nestjs/common'
+import { tbl_registration, tbl_reg_school } from '@prisma/client'
+import { SchoolInput } from 'src/graphql'
+import { PrismaService } from 'src/prisma/prisma.service'
 import { CreateSchoolInput } from './dto/create-school.input'
 import { UpdateSchoolInput } from './dto/update-school.input'
 
 @Injectable()
 export class SchoolService {
-  create(createSchoolInput: CreateSchoolInput) {
-    return 'This action adds a new school'
+  constructor(private prisma: PrismaService) {}
+
+  create(
+    registrationID: tbl_registration['id'],
+    schoolInput: Partial<SchoolInput>,
+  ) {
+    return this.prisma.tbl_reg_school.create({
+      data: {
+        regID: registrationID,
+        ...schoolInput,
+      },
+    })
   }
 
   findAll() {
-    return `This action returns all school`
+    return this.prisma.tbl_reg_school.findMany()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} school`
+  findOne(
+    registrationID?: tbl_registration['id'],
+    schoolID?: tbl_reg_school['id'],
+  ) {
+    return this.prisma.tbl_reg_school.findUnique({
+      where: { regID: registrationID, id: schoolID },
+    })
   }
 
-  update(id: number, updateSchoolInput: UpdateSchoolInput) {
-    return `This action updates a #${id} school`
+  update(schoolID: tbl_reg_school['id'], schoolInput: Partial<SchoolInput>) {
+    return this.prisma.tbl_reg_school.update({
+      where: { id: schoolID },
+      data: { ...schoolInput },
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} school`
+  remove(schoolID: tbl_reg_school['id']) {
+    return this.prisma.tbl_reg_school.delete({
+      where: { id: schoolID },
+    })
   }
 }

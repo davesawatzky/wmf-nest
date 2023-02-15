@@ -37,12 +37,12 @@ export class LevelResolver {
 
   /** Mutations */
 
-  @Mutation('createLevel')
+  @Mutation('levelCreate')
   async create(@Args('levelInput') levelInput: LevelInput) {
     return this.levelService.create(levelInput)
   }
 
-  @Mutation('updateLevel')
+  @Mutation('levelUpdate')
   update(
     @Args('levelID') levelID: tbl_level['id'],
     @Args('levelInput') levelInput: LevelInput,
@@ -50,7 +50,7 @@ export class LevelResolver {
     return this.levelService.update(levelID, levelInput)
   }
 
-  @Mutation('removeLevel')
+  @Mutation('levelDelete')
   remove(@Args('id') id: tbl_level['id']) {
     return this.levelService.remove(id)
   }

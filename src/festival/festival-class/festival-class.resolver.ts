@@ -59,7 +59,7 @@ export class FestivalClassResolver {
 
   /** Mutations */
 
-  @Mutation('createFestivalClass')
+  @Mutation('festivalClassCreate')
   create(
     @Args('SGSlabel') SGSlabel: SGSlabel,
     @Args('festivalClass')
@@ -68,7 +68,7 @@ export class FestivalClassResolver {
     return this.festivalClassService.create(SGSlabel, festivalClass)
   }
 
-  @Mutation('updateFestivalClass')
+  @Mutation('festivalClassUpdate')
   update(
     @Args('festivalClassID') festivalClassID: tbl_classlist['id'],
     @Args('festivalClass') festivalClass: FestivalClassInput,
@@ -76,7 +76,7 @@ export class FestivalClassResolver {
     return this.festivalClassService.update(festivalClassID, festivalClass)
   }
 
-  @Mutation('removeFestivalClass')
+  @Mutation('festivalClassDelete')
   remove(@Args('id') id: tbl_classlist['id']) {
     return this.festivalClassService.remove(id)
   }

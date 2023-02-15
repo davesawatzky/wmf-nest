@@ -37,12 +37,12 @@ export class CategoryResolver {
 
   /** Mutations */
 
-  @Mutation('createCategory')
+  @Mutation('categoryCreate')
   create(@Args('categoryInput') categoryInput: CategoryInput) {
     return this.categoryService.create(categoryInput)
   }
 
-  @Mutation('updateCategory')
+  @Mutation('categoryUpdate')
   update(
     @Args('categoryID') categoryID: tbl_category['id'],
     @Args('categoryInput') categoryInput: CategoryInput,
@@ -50,7 +50,7 @@ export class CategoryResolver {
     return this.categoryService.update(categoryID, categoryInput)
   }
 
-  @Mutation('removeCategory')
+  @Mutation('categoryDelete')
   remove(@Args('id') id: tbl_category['id']) {
     return this.categoryService.remove(id)
   }

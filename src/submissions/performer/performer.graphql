@@ -34,14 +34,14 @@ input PerformerInput {
 }
 
 type Query {
-  performers: [Performer]!
+  performers(registrationID: Int): [Performer]!
   performer(id: Int!): Performer
 }
 
 type Mutation {
-  createPerformer(registrationID: Int!, performerInput: PerformerInput!): PerformerPayload!
-  updatePerformer(performerID: Int!, performerInput: PerformerInput!): PerformerPayload!
-  removePerformer(performerID: Int!): PerformerPayload
+  performerCreate(registrationID: Int!, performerInput: PerformerInput!): PerformerPayload!
+  performerUpdate(performerID: Int!, performerInput: PerformerInput!): PerformerPayload!
+  performerDelete(performerID: Int!): PerformerPayload
 }
 
 type PerformerPayload {

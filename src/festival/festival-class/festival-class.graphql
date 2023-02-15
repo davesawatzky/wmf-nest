@@ -39,9 +39,9 @@ type Query {
 }
 
 type Mutation {
-  createFestivalClass(SGSlabel: SGSlabel!, festivalClass: FestivalClassInput!): FestivalClassPayload!
-  updateFestivalClass(festivalClassID: Int!, festivalClass:FestivalClassInput!): FestivalClassPayload!
-  removeFestivalClass(festivalClassID: Int!): FestivalClassPayload
+  festivalClassCreate(SGSlabel: SGSlabel!, festivalClass: FestivalClassInput!): FestivalClassPayload!
+  festivalClassUpdate(festivalClassID: Int!, festivalClass:FestivalClassInput!): FestivalClassPayload!
+  festivalClassDelete(festivalClassID: Int!): FestivalClassPayload
 }
 
 # type ClassTrophy {

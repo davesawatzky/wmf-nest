@@ -28,9 +28,9 @@ type Query {
 }
 
 type Mutation {
-  createSchool(registrationID: Int!, school: SchoolInput!): SchoolPayload!
-  updateSchool(schoolID: Int!, school: SchoolInput!): SchoolPayload!
-  removeSchool(schoolID: Int!): SchoolPayload
+  schoolCreate(registrationID: Int!, school: SchoolInput!): SchoolPayload!
+  schoolUpdate(schoolID: Int!, school: SchoolInput!): SchoolPayload!
+  schoolDelete(schoolID: Int!): SchoolPayload
 }
 
 type SchoolPayload {

@@ -21,9 +21,9 @@ type Query {
 }
 
 type Mutation {
-  createSelection(registeredClassID: Int!, selection: SelectionInput!): SelectionPayload!
-  updateSelection(selectionID: Int!, selection: SelectionInput!): SelectionPayload!
-  removeSelection(selectionID: Int!): SelectionPayload
+  selectionCreate(registeredClassID: Int!, selection: SelectionInput!): SelectionPayload!
+  selectionUpdate(selectionID: Int!, selection: SelectionInput!): SelectionPayload!
+  selectionDelete(selectionID: Int!): SelectionPayload
 }
 
 type SelectionPayload {
