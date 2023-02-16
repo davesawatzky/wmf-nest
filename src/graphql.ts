@@ -1,4 +1,3 @@
-
 /*
  * -------------------------------------------------------
  * THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
@@ -9,612 +8,797 @@
 /* eslint-disable */
 
 export enum SGSlabel {
-    SOLO = "SOLO",
-    GROUP = "GROUP",
-    SCHOOL = "SCHOOL",
-    COMMUNITY = "COMMUNITY"
+  SOLO = 'SOLO',
+  GROUP = 'GROUP',
+  SCHOOL = 'SCHOOL',
+  COMMUNITY = 'COMMUNITY',
 }
 
 export class CategoryInput {
-    name: string;
-    description?: Nullable<string>;
-    requiredComposer?: Nullable<string>;
+  name: string
+  description?: Nullable<string>
+  requiredComposer?: Nullable<string>
 }
 
 export class DisciplineInput {
-    name: string;
+  name: string
 }
 
 export class FestivalClassInput {
-    classNumber: string;
-    maxSelection: number;
-    minSelection: number;
-    requiredSelection?: Nullable<string>;
-    SGSlabel: SGSlabel;
-    price?: Nullable<number>;
+  classNumber: string
+  maxSelection: number
+  minSelection: number
+  requiredSelection?: Nullable<string>
+  SGSlabel: SGSlabel
+  price?: Nullable<number>
 }
 
 export class FestivalClassSearchArgs {
-    subdisciplineID?: Nullable<number>;
-    levelID?: Nullable<number>;
-    categoryID?: Nullable<number>;
+  subdisciplineID?: Nullable<number>
+  levelID?: Nullable<number>
+  categoryID?: Nullable<number>
 }
 
 export class InstrumentInput {
-    name?: Nullable<string>;
+  name?: Nullable<string>
 }
 
 export class LevelInput {
-    name: string;
-    description?: Nullable<string>;
+  name: string
+  description?: Nullable<string>
 }
 
 export class SubdisciplineInput {
-    name: string;
-    description?: Nullable<string>;
-    maxPerformers?: Nullable<number>;
-    minPerformers?: Nullable<number>;
-    SGSlabel?: Nullable<SGSlabel>;
-    price?: Nullable<number>;
+  name: string
+  description?: Nullable<string>
+  maxPerformers?: Nullable<number>
+  minPerformers?: Nullable<number>
+  SGSlabel?: Nullable<SGSlabel>
+  price?: Nullable<number>
 }
 
 export class TrophyInput {
-    name: string;
-    description?: Nullable<string>;
+  name: string
+  description?: Nullable<string>
 }
 
 export class CommunityInput {
-    name: string;
-    conflictPerformers?: Nullable<string>;
-    groupSize?: Nullable<number>;
-    chaperones?: Nullable<number>;
-    wheelchairs?: Nullable<number>;
-    earliestTime?: Nullable<string>;
-    latestTime?: Nullable<string>;
-    unavailable?: Nullable<string>;
+  name: string
+  conflictPerformers?: Nullable<string>
+  groupSize?: Nullable<number>
+  chaperones?: Nullable<number>
+  wheelchairs?: Nullable<number>
+  earliestTime?: Nullable<string>
+  latestTime?: Nullable<string>
+  unavailable?: Nullable<string>
 }
 
 export class GroupInput {
-    name: string;
-    groupType?: Nullable<string>;
-    numberOfPerformers?: Nullable<number>;
-    age?: Nullable<number>;
-    instruments?: Nullable<string>;
+  name: string
+  groupType?: Nullable<string>
+  numberOfPerformers?: Nullable<number>
+  age?: Nullable<number>
+  instruments?: Nullable<string>
 }
 
 export class PerformerInput {
-    firstName?: Nullable<string>;
-    lastName?: Nullable<string>;
-    apartment?: Nullable<string>;
-    streetNumber?: Nullable<string>;
-    streetName?: Nullable<string>;
-    city: string;
-    province: string;
-    postalCode?: Nullable<string>;
-    phone?: Nullable<string>;
-    email?: Nullable<EmailAddress>;
-    age?: Nullable<number>;
-    otherClasses?: Nullable<string>;
-    instrument?: Nullable<string>;
-    level?: Nullable<string>;
+  firstName?: Nullable<string>
+  lastName?: Nullable<string>
+  apartment?: Nullable<string>
+  streetNumber?: Nullable<string>
+  streetName?: Nullable<string>
+  city: string
+  province: string
+  postalCode?: Nullable<string>
+  phone?: Nullable<string>
+  email?: Nullable<EmailAddress>
+  age?: Nullable<number>
+  otherClasses?: Nullable<string>
+  instrument?: Nullable<string>
+  level?: Nullable<string>
 }
 
 export class RegisteredClassInput {
-    classNumber?: Nullable<string>;
-    discipline?: Nullable<string>;
-    subdiscipline?: Nullable<string>;
-    level?: Nullable<string>;
-    category?: Nullable<string>;
-    numberOfSelections?: Nullable<number>;
-    price?: Nullable<number>;
-    schoolCommunityId?: Nullable<number>;
+  classNumber?: Nullable<string>
+  discipline?: Nullable<string>
+  subdiscipline?: Nullable<string>
+  level?: Nullable<string>
+  category?: Nullable<string>
+  numberOfSelections?: Nullable<number>
+  price?: Nullable<number>
+  schoolCommunityId?: Nullable<number>
 }
 
 export class RegistrationInput {
-    label?: Nullable<string>;
-    performerType?: Nullable<SGSlabel>;
-    submittedAt?: Nullable<string>;
-    totalAmt?: Nullable<number>;
-    payedAmt?: Nullable<number>;
-    transactionInfo?: Nullable<string>;
-    confirmation?: Nullable<string>;
+  label?: Nullable<string>
+  performerType?: Nullable<SGSlabel>
+  submittedAt?: Nullable<string>
+  totalAmt?: Nullable<number>
+  payedAmt?: Nullable<number>
+  transactionInfo?: Nullable<string>
+  confirmation?: Nullable<string>
 }
 
 export class SchoolInput {
-    name?: Nullable<string>;
-    division?: Nullable<string>;
-    streetNumber?: Nullable<string>;
-    streetName?: Nullable<string>;
-    city?: Nullable<string>;
-    province?: Nullable<string>;
-    postalCode?: Nullable<string>;
-    phone?: Nullable<string>;
+  name?: Nullable<string>
+  division?: Nullable<string>
+  streetNumber?: Nullable<string>
+  streetName?: Nullable<string>
+  city?: Nullable<string>
+  province?: Nullable<string>
+  postalCode?: Nullable<string>
+  phone?: Nullable<string>
 }
 
 export class SelectionInput {
-    title?: Nullable<string>;
-    largerWork?: Nullable<string>;
-    movement?: Nullable<string>;
-    composer?: Nullable<string>;
-    duration?: Nullable<string>;
+  title?: Nullable<string>
+  largerWork?: Nullable<string>
+  movement?: Nullable<string>
+  composer?: Nullable<string>
+  duration?: Nullable<string>
 }
 
 export class TeacherInput {
-    prefix?: Nullable<string>;
-    firstName?: Nullable<string>;
-    lastName?: Nullable<string>;
-    apartment?: Nullable<string>;
-    streetNumber?: Nullable<string>;
-    streetName?: Nullable<string>;
-    city: string;
-    province: string;
-    postalCode?: Nullable<string>;
-    phone?: Nullable<string>;
-    email?: Nullable<EmailAddress>;
+  prefix?: Nullable<string>
+  firstName?: Nullable<string>
+  lastName?: Nullable<string>
+  apartment?: Nullable<string>
+  streetNumber?: Nullable<string>
+  streetName?: Nullable<string>
+  city: string
+  province: string
+  postalCode?: Nullable<string>
+  phone?: Nullable<string>
+  email?: Nullable<EmailAddress>
 }
 
 export class UserInput {
-    staff?: Nullable<boolean>;
-    admin?: Nullable<boolean>;
-    firstName?: Nullable<string>;
-    lastName?: Nullable<string>;
-    apartment?: Nullable<string>;
-    streetNumber?: Nullable<string>;
-    streetName?: Nullable<string>;
-    city?: Nullable<string>;
-    province?: Nullable<string>;
-    postalCode?: Nullable<string>;
-    phone?: Nullable<string>;
+  staff?: Nullable<boolean>
+  admin?: Nullable<boolean>
+  firstName?: Nullable<string>
+  lastName?: Nullable<string>
+  apartment?: Nullable<string>
+  streetNumber?: Nullable<string>
+  streetName?: Nullable<string>
+  city?: Nullable<string>
+  province?: Nullable<string>
+  postalCode?: Nullable<string>
+  phone?: Nullable<string>
 }
 
 export class UserError {
-    message: string;
-    field: string[];
+  message: string
+  field: string[]
 }
 
 export class Category {
-    id: number;
-    name: string;
-    description?: Nullable<string>;
-    requiredComposer?: Nullable<string>;
-    classes: FestivalClass[];
+  id: number
+  name: string
+  description?: Nullable<string>
+  requiredComposer?: Nullable<string>
+  classes: FestivalClass[]
 }
 
 export abstract class IQuery {
-    abstract categories(levelID?: Nullable<number>, subdisciplineID?: Nullable<number>): Nullable<Nullable<Category>[]> | Promise<Nullable<Nullable<Category>[]>>;
+  abstract categories(
+    levelID?: Nullable<number>,
+    subdisciplineID?: Nullable<number>,
+  ): Nullable<Nullable<Category>[]> | Promise<Nullable<Nullable<Category>[]>>
 
-    abstract category(id: number): Nullable<Category> | Promise<Nullable<Category>>;
+  abstract category(
+    id: number,
+  ): Nullable<Category> | Promise<Nullable<Category>>
 
-    abstract disciplines(): Nullable<Nullable<Discipline>[]> | Promise<Nullable<Nullable<Discipline>[]>>;
+  abstract disciplines():
+    | Nullable<Nullable<Discipline>[]>
+    | Promise<Nullable<Nullable<Discipline>[]>>
 
-    abstract discipline(id: number): Nullable<Discipline> | Promise<Nullable<Discipline>>;
+  abstract discipline(
+    id: number,
+  ): Nullable<Discipline> | Promise<Nullable<Discipline>>
 
-    abstract disciplinesByName(name: string): Nullable<Nullable<Discipline>[]> | Promise<Nullable<Nullable<Discipline>[]>>;
+  abstract disciplinesByName(
+    name: string,
+  ):
+    | Nullable<Nullable<Discipline>[]>
+    | Promise<Nullable<Nullable<Discipline>[]>>
 
-    abstract disciplinesByType(SGSlabel: SGSlabel): Nullable<Nullable<Discipline>[]> | Promise<Nullable<Nullable<Discipline>[]>>;
+  abstract disciplinesByType(
+    SGSlabel: SGSlabel,
+  ):
+    | Nullable<Nullable<Discipline>[]>
+    | Promise<Nullable<Nullable<Discipline>[]>>
 
-    abstract festivalClasses(SGSlabel?: Nullable<SGSlabel>, subdisciplineID?: Nullable<number>, levelID?: Nullable<number>, categoryID?: Nullable<number>): FestivalClass[] | Promise<FestivalClass[]>;
+  abstract festivalClasses(
+    SGSlabel?: Nullable<SGSlabel>,
+    subdisciplineID?: Nullable<number>,
+    levelID?: Nullable<number>,
+    categoryID?: Nullable<number>,
+  ): FestivalClass[] | Promise<FestivalClass[]>
 
-    abstract festivalClassSearch(festivalClassSearchArgs: FestivalClassSearchArgs): FestivalClass[] | Promise<FestivalClass[]>;
+  abstract festivalClassSearch(
+    festivalClassSearchArgs: FestivalClassSearchArgs,
+  ): FestivalClass[] | Promise<FestivalClass[]>
 
-    abstract festivalClass(id: number): FestivalClass | Promise<FestivalClass>;
+  abstract festivalClass(id: number): FestivalClass | Promise<FestivalClass>
 
-    abstract festivalClassByNumber(festivalClassNumber: string): Nullable<FestivalClass> | Promise<Nullable<FestivalClass>>;
+  abstract festivalClassByNumber(
+    festivalClassNumber: string,
+  ): Nullable<FestivalClass> | Promise<Nullable<FestivalClass>>
 
-    abstract instruments(): Nullable<Instrument>[] | Promise<Nullable<Instrument>[]>;
+  abstract instruments():
+    | Nullable<Instrument>[]
+    | Promise<Nullable<Instrument>[]>
 
-    abstract instrument(id: number): Nullable<Instrument> | Promise<Nullable<Instrument>>;
+  abstract instrument(
+    id: number,
+  ): Nullable<Instrument> | Promise<Nullable<Instrument>>
 
-    abstract levels(subdisciplineID?: Nullable<number>, categoryID?: Nullable<number>): Nullable<Nullable<Level>[]> | Promise<Nullable<Nullable<Level>[]>>;
+  abstract levels(
+    subdisciplineID?: Nullable<number>,
+    categoryID?: Nullable<number>,
+  ): Nullable<Nullable<Level>[]> | Promise<Nullable<Nullable<Level>[]>>
 
-    abstract level(id: number): Nullable<Level> | Promise<Nullable<Level>>;
+  abstract level(id: number): Nullable<Level> | Promise<Nullable<Level>>
 
-    abstract subdisciplines(disciplineID?: Nullable<number>, levelID?: Nullable<number>, categoryID?: Nullable<number>): Nullable<Nullable<Subdiscipline>[]> | Promise<Nullable<Nullable<Subdiscipline>[]>>;
+  abstract subdisciplines(
+    disciplineID?: Nullable<number>,
+    levelID?: Nullable<number>,
+    categoryID?: Nullable<number>,
+  ):
+    | Nullable<Nullable<Subdiscipline>[]>
+    | Promise<Nullable<Nullable<Subdiscipline>[]>>
 
-    abstract subdiscipline(id: number): Nullable<Subdiscipline> | Promise<Nullable<Subdiscipline>>;
+  abstract subdiscipline(
+    id: number,
+  ): Nullable<Subdiscipline> | Promise<Nullable<Subdiscipline>>
 
-    abstract subdisciplinesByName(name: string): Subdiscipline[] | Promise<Subdiscipline[]>;
+  abstract subdisciplinesByName(
+    name: string,
+  ): Subdiscipline[] | Promise<Subdiscipline[]>
 
-    abstract subdisciplinesByType(SGSlabel: SGSlabel, disciplineID?: Nullable<number>): Subdiscipline[] | Promise<Subdiscipline[]>;
+  abstract subdisciplinesByType(
+    SGSlabel: SGSlabel,
+    disciplineID?: Nullable<number>,
+  ): Subdiscipline[] | Promise<Subdiscipline[]>
 
-    abstract trophies(): Nullable<Trophy>[] | Promise<Nullable<Trophy>[]>;
+  abstract trophies(): Nullable<Trophy>[] | Promise<Nullable<Trophy>[]>
 
-    abstract trophy(id: number): Nullable<Trophy> | Promise<Nullable<Trophy>>;
+  abstract trophy(id: number): Nullable<Trophy> | Promise<Nullable<Trophy>>
 
-    abstract communities(): Community[] | Promise<Community[]>;
+  abstract communities(): Community[] | Promise<Community[]>
 
-    abstract community(id: number): Community | Promise<Community>;
+  abstract community(id: number): Community | Promise<Community>
 
-    abstract groups(): Nullable<Group>[] | Promise<Nullable<Group>[]>;
+  abstract groups(): Nullable<Group>[] | Promise<Nullable<Group>[]>
 
-    abstract group(id: number): Nullable<Group> | Promise<Nullable<Group>>;
+  abstract group(id: number): Nullable<Group> | Promise<Nullable<Group>>
 
-    abstract performers(registrationID?: Nullable<number>): Nullable<Performer>[] | Promise<Nullable<Performer>[]>;
+  abstract performers(
+    registrationID?: Nullable<number>,
+  ): Nullable<Performer>[] | Promise<Nullable<Performer>[]>
 
-    abstract performer(id: number): Nullable<Performer> | Promise<Nullable<Performer>>;
+  abstract performer(
+    id: number,
+  ): Nullable<Performer> | Promise<Nullable<Performer>>
 
-    abstract registeredClasses(): Nullable<RegisteredClass>[] | Promise<Nullable<RegisteredClass>[]>;
+  abstract registeredClasses():
+    | Nullable<RegisteredClass>[]
+    | Promise<Nullable<RegisteredClass>[]>
 
-    abstract registeredClass(id: number): Nullable<RegisteredClass> | Promise<Nullable<RegisteredClass>>;
+  abstract registeredClass(
+    id: number,
+  ): Nullable<RegisteredClass> | Promise<Nullable<RegisteredClass>>
 
-    abstract registrations(userID?: Nullable<number>, performerType?: Nullable<SGSlabel>): Nullable<Registration>[] | Promise<Nullable<Registration>[]>;
+  abstract registrations(
+    userID?: Nullable<number>,
+    performerType?: Nullable<SGSlabel>,
+  ): Nullable<Registration>[] | Promise<Nullable<Registration>[]>
 
-    abstract registration(id: number): Nullable<Registration> | Promise<Nullable<Registration>>;
+  abstract registration(
+    id: number,
+  ): Nullable<Registration> | Promise<Nullable<Registration>>
 
-    abstract schools(): Nullable<School>[] | Promise<Nullable<School>[]>;
+  abstract schools(): Nullable<School>[] | Promise<Nullable<School>[]>
 
-    abstract school(id: number, name?: Nullable<string>): Nullable<School> | Promise<Nullable<School>>;
+  abstract school(
+    id: number,
+    name?: Nullable<string>,
+  ): Nullable<School> | Promise<Nullable<School>>
 
-    abstract selections(): Nullable<Selection>[] | Promise<Nullable<Selection>[]>;
+  abstract selections(): Nullable<Selection>[] | Promise<Nullable<Selection>[]>
 
-    abstract selection(id: number): Nullable<Selection> | Promise<Nullable<Selection>>;
+  abstract selection(
+    id: number,
+  ): Nullable<Selection> | Promise<Nullable<Selection>>
 
-    abstract teachers(): Nullable<Teacher>[] | Promise<Nullable<Teacher>[]>;
+  abstract teachers(): Nullable<Teacher>[] | Promise<Nullable<Teacher>[]>
 
-    abstract teacher(id: number): Nullable<Teacher> | Promise<Nullable<Teacher>>;
+  abstract teacher(id: number): Nullable<Teacher> | Promise<Nullable<Teacher>>
 
-    abstract users(): Nullable<User>[] | Promise<Nullable<User>[]>;
+  abstract users(): Nullable<User>[] | Promise<Nullable<User>[]>
 
-    abstract user(id?: Nullable<number>, firstName?: Nullable<string>, lastName?: Nullable<string>, phone?: Nullable<string>): Nullable<User> | Promise<Nullable<User>>;
+  abstract user(
+    id?: Nullable<number>,
+    firstName?: Nullable<string>,
+    lastName?: Nullable<string>,
+    phone?: Nullable<string>,
+  ): Nullable<User> | Promise<Nullable<User>>
 }
 
 export abstract class IMutation {
-    abstract categoryCreate(categoryInput: CategoryInput): CategoryPayload | Promise<CategoryPayload>;
+  abstract categoryCreate(
+    categoryInput: CategoryInput,
+  ): CategoryPayload | Promise<CategoryPayload>
 
-    abstract categoryUpdate(categoryID: number, categoryInput: CategoryInput): CategoryPayload | Promise<CategoryPayload>;
+  abstract categoryUpdate(
+    categoryID: number,
+    categoryInput: CategoryInput,
+  ): CategoryPayload | Promise<CategoryPayload>
 
-    abstract categoryDelete(categoryID: number): Nullable<CategoryPayload> | Promise<Nullable<CategoryPayload>>;
+  abstract categoryDelete(
+    categoryID: number,
+  ): Nullable<CategoryPayload> | Promise<Nullable<CategoryPayload>>
 
-    abstract disciplineCreate(disciplineInput: DisciplineInput): Nullable<DisciplinePayload> | Promise<Nullable<DisciplinePayload>>;
+  abstract disciplineCreate(
+    disciplineInput: DisciplineInput,
+  ): Nullable<DisciplinePayload> | Promise<Nullable<DisciplinePayload>>
 
-    abstract disciplineUpdate(id: number, disciplineInput: DisciplineInput): Nullable<DisciplinePayload> | Promise<Nullable<DisciplinePayload>>;
+  abstract disciplineUpdate(
+    id: number,
+    disciplineInput: DisciplineInput,
+  ): Nullable<DisciplinePayload> | Promise<Nullable<DisciplinePayload>>
 
-    abstract disciplineDelete(id: number): Nullable<DisciplinePayload> | Promise<Nullable<DisciplinePayload>>;
+  abstract disciplineDelete(
+    id: number,
+  ): Nullable<DisciplinePayload> | Promise<Nullable<DisciplinePayload>>
 
-    abstract festivalClassCreate(SGSlabel: SGSlabel, festivalClass: FestivalClassInput): FestivalClassPayload | Promise<FestivalClassPayload>;
+  abstract festivalClassCreate(
+    SGSlabel: SGSlabel,
+    festivalClass: FestivalClassInput,
+  ): FestivalClassPayload | Promise<FestivalClassPayload>
 
-    abstract festivalClassUpdate(festivalClassID: number, festivalClass: FestivalClassInput): FestivalClassPayload | Promise<FestivalClassPayload>;
+  abstract festivalClassUpdate(
+    festivalClassID: number,
+    festivalClass: FestivalClassInput,
+  ): FestivalClassPayload | Promise<FestivalClassPayload>
 
-    abstract festivalClassDelete(festivalClassID: number): Nullable<FestivalClassPayload> | Promise<Nullable<FestivalClassPayload>>;
+  abstract festivalClassDelete(
+    festivalClassID: number,
+  ): Nullable<FestivalClassPayload> | Promise<Nullable<FestivalClassPayload>>
 
-    abstract instrumentCreate(instrument: InstrumentInput): InstrumentPayload | Promise<InstrumentPayload>;
+  abstract instrumentCreate(
+    instrument: InstrumentInput,
+  ): InstrumentPayload | Promise<InstrumentPayload>
 
-    abstract instrumentUpdate(instrumentID: number, instrument: InstrumentInput): InstrumentPayload | Promise<InstrumentPayload>;
+  abstract instrumentUpdate(
+    instrumentID: number,
+    instrument: InstrumentInput,
+  ): InstrumentPayload | Promise<InstrumentPayload>
 
-    abstract instrumentDelete(id: number): Nullable<InstrumentPayload> | Promise<Nullable<InstrumentPayload>>;
+  abstract instrumentDelete(
+    id: number,
+  ): Nullable<InstrumentPayload> | Promise<Nullable<InstrumentPayload>>
 
-    abstract levelCreate(level: LevelInput): LevelPayload | Promise<LevelPayload>;
+  abstract levelCreate(level: LevelInput): LevelPayload | Promise<LevelPayload>
 
-    abstract levelUpdate(levelID: number, level: LevelInput): LevelPayload | Promise<LevelPayload>;
+  abstract levelUpdate(
+    levelID: number,
+    level: LevelInput,
+  ): LevelPayload | Promise<LevelPayload>
 
-    abstract levelDelete(levelID: number): Nullable<LevelPayload> | Promise<Nullable<LevelPayload>>;
+  abstract levelDelete(
+    levelID: number,
+  ): Nullable<LevelPayload> | Promise<Nullable<LevelPayload>>
 
-    abstract subdisciplineCreate(disciplineID: number, subdiscipline: SubdisciplineInput): SubdisciplinePayload | Promise<SubdisciplinePayload>;
+  abstract subdisciplineCreate(
+    disciplineID: number,
+    subdiscipline: SubdisciplineInput,
+  ): SubdisciplinePayload | Promise<SubdisciplinePayload>
 
-    abstract subdisciplineUpdate(subdisciplineID: number, subdiscipline: SubdisciplineInput): SubdisciplinePayload | Promise<SubdisciplinePayload>;
+  abstract subdisciplineUpdate(
+    subdisciplineID: number,
+    subdiscipline: SubdisciplineInput,
+  ): SubdisciplinePayload | Promise<SubdisciplinePayload>
 
-    abstract subdisciplineDelete(subdisciplineID: number): Nullable<SubdisciplinePayload> | Promise<Nullable<SubdisciplinePayload>>;
+  abstract subdisciplineDelete(
+    subdisciplineID: number,
+  ): Nullable<SubdisciplinePayload> | Promise<Nullable<SubdisciplinePayload>>
 
-    abstract trophyCreate(trophyInput: TrophyInput): TrophyPayload | Promise<TrophyPayload>;
+  abstract trophyCreate(
+    trophyInput: TrophyInput,
+  ): TrophyPayload | Promise<TrophyPayload>
 
-    abstract trophyUpdate(id: number, trophyInput: TrophyInput): TrophyPayload | Promise<TrophyPayload>;
+  abstract trophyUpdate(
+    id: number,
+    trophyInput: TrophyInput,
+  ): TrophyPayload | Promise<TrophyPayload>
 
-    abstract trophyDelete(id: number): Nullable<TrophyPayload> | Promise<Nullable<TrophyPayload>>;
+  abstract trophyDelete(
+    id: number,
+  ): Nullable<TrophyPayload> | Promise<Nullable<TrophyPayload>>
 
-    abstract communityCreate(registrationID: number, communityInput: CommunityInput): CommunityPayload | Promise<CommunityPayload>;
+  abstract communityCreate(
+    registrationID: number,
+    communityInput: CommunityInput,
+  ): CommunityPayload | Promise<CommunityPayload>
 
-    abstract communityUpdate(communityID: number, communityInput: CommunityInput): CommunityPayload | Promise<CommunityPayload>;
+  abstract communityUpdate(
+    communityID: number,
+    communityInput: CommunityInput,
+  ): CommunityPayload | Promise<CommunityPayload>
 
-    abstract communityDelete(communityID: number): CommunityPayload | Promise<CommunityPayload>;
+  abstract communityDelete(
+    communityID: number,
+  ): CommunityPayload | Promise<CommunityPayload>
 
-    abstract groupCreate(registrationID: number, groupInput: GroupInput): GroupPayload | Promise<GroupPayload>;
+  abstract groupCreate(
+    registrationID: number,
+    groupInput: GroupInput,
+  ): GroupPayload | Promise<GroupPayload>
 
-    abstract groupUpdate(id: number, groupInput: GroupInput): GroupPayload | Promise<GroupPayload>;
+  abstract groupUpdate(
+    id: number,
+    groupInput: GroupInput,
+  ): GroupPayload | Promise<GroupPayload>
 
-    abstract groupDelete(id: number): GroupPayload | Promise<GroupPayload>;
+  abstract groupDelete(id: number): GroupPayload | Promise<GroupPayload>
 
-    abstract performerCreate(registrationID: number, performerInput: PerformerInput): PerformerPayload | Promise<PerformerPayload>;
+  abstract performerCreate(
+    registrationID: number,
+    performerInput: PerformerInput,
+  ): PerformerPayload | Promise<PerformerPayload>
 
-    abstract performerUpdate(performerID: number, performerInput: PerformerInput): PerformerPayload | Promise<PerformerPayload>;
+  abstract performerUpdate(
+    performerID: number,
+    performerInput: PerformerInput,
+  ): PerformerPayload | Promise<PerformerPayload>
 
-    abstract performerDelete(performerID: number): Nullable<PerformerPayload> | Promise<Nullable<PerformerPayload>>;
+  abstract performerDelete(
+    performerID: number,
+  ): Nullable<PerformerPayload> | Promise<Nullable<PerformerPayload>>
 
-    abstract registeredClassCreate(registrationID: number, registeredClassInput: RegisteredClassInput): RegisteredClassPayload | Promise<RegisteredClassPayload>;
+  abstract registeredClassCreate(
+    registrationID: number,
+    registeredClassInput: RegisteredClassInput,
+  ): RegisteredClassPayload | Promise<RegisteredClassPayload>
 
-    abstract registeredClassUpdate(registeredClassID: number, registeredClassInput: RegisteredClassInput): RegisteredClassPayload | Promise<RegisteredClassPayload>;
+  abstract registeredClassUpdate(
+    registeredClassID: number,
+    registeredClassInput: RegisteredClassInput,
+  ): RegisteredClassPayload | Promise<RegisteredClassPayload>
 
-    abstract registeredClassDelete(registeredClassID: number): Nullable<RegisteredClassPayload> | Promise<Nullable<RegisteredClassPayload>>;
+  abstract registeredClassDelete(
+    registeredClassID: number,
+  ):
+    | Nullable<RegisteredClassPayload>
+    | Promise<Nullable<RegisteredClassPayload>>
 
-    abstract registrationCreate(performerType: SGSlabel, label?: Nullable<string>): RegistrationPayload | Promise<RegistrationPayload>;
+  abstract registrationCreate(
+    performerType: SGSlabel,
+    label?: Nullable<string>,
+  ): RegistrationPayload | Promise<RegistrationPayload>
 
-    abstract registrationUpdate(registrationID: number, registration: RegistrationInput): RegistrationPayload | Promise<RegistrationPayload>;
+  abstract registrationUpdate(
+    registrationID: number,
+    registration: RegistrationInput,
+  ): RegistrationPayload | Promise<RegistrationPayload>
 
-    abstract registrationDelete(registrationID: number): RegistrationPayload | Promise<RegistrationPayload>;
+  abstract registrationDelete(
+    registrationID: number,
+  ): RegistrationPayload | Promise<RegistrationPayload>
 
-    abstract schoolCreate(registrationID: number, school: SchoolInput): SchoolPayload | Promise<SchoolPayload>;
+  abstract schoolCreate(
+    registrationID: number,
+    school: SchoolInput,
+  ): SchoolPayload | Promise<SchoolPayload>
 
-    abstract schoolUpdate(schoolID: number, school: SchoolInput): SchoolPayload | Promise<SchoolPayload>;
+  abstract schoolUpdate(
+    schoolID: number,
+    school: SchoolInput,
+  ): SchoolPayload | Promise<SchoolPayload>
 
-    abstract schoolDelete(schoolID: number): Nullable<SchoolPayload> | Promise<Nullable<SchoolPayload>>;
+  abstract schoolDelete(
+    schoolID: number,
+  ): Nullable<SchoolPayload> | Promise<Nullable<SchoolPayload>>
 
-    abstract selectionCreate(registeredClassID: number, selection: SelectionInput): SelectionPayload | Promise<SelectionPayload>;
+  abstract selectionCreate(
+    registeredClassID: number,
+    selection: SelectionInput,
+  ): SelectionPayload | Promise<SelectionPayload>
 
-    abstract selectionUpdate(selectionID: number, selection: SelectionInput): SelectionPayload | Promise<SelectionPayload>;
+  abstract selectionUpdate(
+    selectionID: number,
+    selection: SelectionInput,
+  ): SelectionPayload | Promise<SelectionPayload>
 
-    abstract selectionDelete(selectionID: number): Nullable<SelectionPayload> | Promise<Nullable<SelectionPayload>>;
+  abstract selectionDelete(
+    selectionID: number,
+  ): Nullable<SelectionPayload> | Promise<Nullable<SelectionPayload>>
 
-    abstract teacherCreate(registrationID: number, teacher: TeacherInput): TeacherPayload | Promise<TeacherPayload>;
+  abstract teacherCreate(
+    registrationID: number,
+    teacher: TeacherInput,
+  ): TeacherPayload | Promise<TeacherPayload>
 
-    abstract teacherUpdate(teacherID: number, teacher: TeacherInput): TeacherPayload | Promise<TeacherPayload>;
+  abstract teacherUpdate(
+    teacherID: number,
+    teacher: TeacherInput,
+  ): TeacherPayload | Promise<TeacherPayload>
 
-    abstract teacherDelete(teacherID: number): Nullable<TeacherPayload> | Promise<Nullable<TeacherPayload>>;
+  abstract teacherDelete(
+    teacherID: number,
+  ): Nullable<TeacherPayload> | Promise<Nullable<TeacherPayload>>
 
-    abstract userCreate(userInput: UserInput): UserPayload | Promise<UserPayload>;
+  abstract userCreate(userInput: UserInput): UserPayload | Promise<UserPayload>
 
-    abstract userUpdate(id: number, userInput: UserInput): UserPayload | Promise<UserPayload>;
+  abstract userUpdate(
+    id: number,
+    userInput: UserInput,
+  ): UserPayload | Promise<UserPayload>
 
-    abstract userDelete(id: number): UserPayload | Promise<UserPayload>;
+  abstract userDelete(id: number): UserPayload | Promise<UserPayload>
 }
 
 export class CategoryPayload {
-    userErrors: UserError[];
-    category?: Nullable<Category>;
+  userErrors: UserError[]
+  category?: Nullable<Category>
 }
 
 export class Discipline {
-    id: number;
-    name?: Nullable<string>;
-    subdisciplines?: Nullable<Nullable<Subdiscipline>[]>;
+  id: number
+  name?: Nullable<string>
+  subdisciplines?: Nullable<Nullable<Subdiscipline>[]>
 }
 
 export class DisciplinePayload {
-    userErrors: UserError[];
-    discipline?: Nullable<Discipline>;
+  userErrors: UserError[]
+  discipline?: Nullable<Discipline>
 }
 
 export class FestivalClass {
-    id: number;
-    classNumber: string;
-    subdiscipline: Subdiscipline;
-    level: Level;
-    category: Category;
-    maxSelection: number;
-    minSelection: number;
-    requiredSelection?: Nullable<string>;
-    SGSlabel: SGSlabel;
-    price?: Nullable<number>;
-    trophies?: Nullable<Nullable<Trophy>[]>;
+  id: number
+  classNumber: string
+  subdiscipline: Subdiscipline
+  level: Level
+  category: Category
+  maxSelection: number
+  minSelection: number
+  requiredSelection?: Nullable<string>
+  SGSlabel: SGSlabel
+  price?: Nullable<number>
+  trophies?: Nullable<Nullable<Trophy>[]>
 }
 
 export class FestivalClassPayload {
-    userErrors: UserError[];
-    festivalClass?: Nullable<FestivalClass>;
+  userErrors: UserError[]
+  festivalClass?: Nullable<FestivalClass>
 }
 
 export class Instrument {
-    id: number;
-    name: string;
+  id: number
+  name: string
 }
 
 export class InstrumentPayload {
-    userErrors: UserError[];
-    instrument?: Nullable<Instrument>;
+  userErrors: UserError[]
+  instrument?: Nullable<Instrument>
 }
 
 export class Level {
-    id: number;
-    name: string;
-    description?: Nullable<string>;
-    classes: Nullable<FestivalClass>[];
+  id: number
+  name: string
+  description?: Nullable<string>
+  classes: Nullable<FestivalClass>[]
 }
 
 export class LevelPayload {
-    userErrors: UserError[];
-    level?: Nullable<Level>;
+  userErrors: UserError[]
+  level?: Nullable<Level>
 }
 
 export class Subdiscipline {
-    id: number;
-    name: string;
-    discipline: Discipline;
-    description?: Nullable<string>;
-    maxPerformers?: Nullable<number>;
-    minPerformers?: Nullable<number>;
-    SGSlabel: SGSlabel;
-    price?: Nullable<number>;
-    classes: FestivalClass[];
+  id: number
+  name: string
+  discipline: Discipline
+  description?: Nullable<string>
+  maxPerformers?: Nullable<number>
+  minPerformers?: Nullable<number>
+  SGSlabel: SGSlabel
+  price?: Nullable<number>
+  classes: FestivalClass[]
 }
 
 export class SubdisciplinePayload {
-    userErrors: UserError[];
-    subdiscpline?: Nullable<Subdiscipline>;
+  userErrors: UserError[]
+  subdiscpline?: Nullable<Subdiscipline>
 }
 
 export class Trophy {
-    id: number;
-    name: string;
-    description?: Nullable<string>;
-    classes?: Nullable<Nullable<FestivalClass>[]>;
+  id: number
+  name: string
+  description?: Nullable<string>
+  classes?: Nullable<Nullable<FestivalClass>[]>
 }
 
 export class TrophyPayload {
-    userErrors: UserError[];
-    trophy?: Nullable<Trophy>;
+  userErrors: UserError[]
+  trophy?: Nullable<Trophy>
 }
 
 export class Community {
-    id: number;
-    name: string;
-    conflictPerformers?: Nullable<string>;
-    groupSize?: Nullable<number>;
-    chaperones?: Nullable<number>;
-    wheelchairs?: Nullable<number>;
-    earliestTime?: Nullable<string>;
-    latestTime?: Nullable<string>;
-    unavailable?: Nullable<string>;
+  id: number
+  name: string
+  conflictPerformers?: Nullable<string>
+  groupSize?: Nullable<number>
+  chaperones?: Nullable<number>
+  wheelchairs?: Nullable<number>
+  earliestTime?: Nullable<string>
+  latestTime?: Nullable<string>
+  unavailable?: Nullable<string>
 }
 
 export class CommunityPayload {
-    userErrors: UserError[];
-    community?: Nullable<Community>;
+  userErrors: UserError[]
+  community?: Nullable<Community>
 }
 
 export class Group {
-    id: string;
-    name?: Nullable<string>;
-    groupType?: Nullable<string>;
-    numberOfPerformers?: Nullable<number>;
-    age?: Nullable<number>;
-    instruments?: Nullable<string>;
+  id: string
+  name?: Nullable<string>
+  groupType?: Nullable<string>
+  numberOfPerformers?: Nullable<number>
+  age?: Nullable<number>
+  instruments?: Nullable<string>
 }
 
 export class GroupPayload {
-    userErrors: UserError[];
-    group?: Nullable<Group>;
+  userErrors: UserError[]
+  group?: Nullable<Group>
 }
 
 export class Performer {
-    id: string;
-    firstName?: Nullable<string>;
-    lastName?: Nullable<string>;
-    apartment?: Nullable<string>;
-    streetNumber?: Nullable<string>;
-    streetName?: Nullable<string>;
-    city?: Nullable<string>;
-    province?: Nullable<string>;
-    postalCode?: Nullable<string>;
-    phone?: Nullable<string>;
-    email?: Nullable<EmailAddress>;
-    age?: Nullable<number>;
-    otherClasses?: Nullable<string>;
-    instrument?: Nullable<string>;
-    level?: Nullable<string>;
+  id: string
+  firstName?: Nullable<string>
+  lastName?: Nullable<string>
+  apartment?: Nullable<string>
+  streetNumber?: Nullable<string>
+  streetName?: Nullable<string>
+  city?: Nullable<string>
+  province?: Nullable<string>
+  postalCode?: Nullable<string>
+  phone?: Nullable<string>
+  email?: Nullable<EmailAddress>
+  age?: Nullable<number>
+  otherClasses?: Nullable<string>
+  instrument?: Nullable<string>
+  level?: Nullable<string>
 }
 
 export class PerformerPayload {
-    userErrors: UserError[];
-    performer?: Nullable<Performer>;
+  userErrors: UserError[]
+  performer?: Nullable<Performer>
 }
 
 export class RegisteredClass {
-    id: string;
-    selections?: Nullable<Nullable<Selection>[]>;
-    classNumber?: Nullable<string>;
-    discipline?: Nullable<string>;
-    subdiscipline?: Nullable<string>;
-    level?: Nullable<string>;
-    category?: Nullable<string>;
-    numberOfSelections?: Nullable<number>;
-    price?: Nullable<number>;
-    schoolCommunityId?: Nullable<number>;
+  id: string
+  selections?: Nullable<Nullable<Selection>[]>
+  classNumber?: Nullable<string>
+  discipline?: Nullable<string>
+  subdiscipline?: Nullable<string>
+  level?: Nullable<string>
+  category?: Nullable<string>
+  numberOfSelections?: Nullable<number>
+  price?: Nullable<number>
+  schoolCommunityId?: Nullable<number>
 }
 
 export class RegisteredClassPayload {
-    userErrors: UserError[];
-    registeredClass?: Nullable<RegisteredClass>;
+  userErrors: UserError[]
+  registeredClass?: Nullable<RegisteredClass>
 }
 
 export class Registration {
-    id: number;
-    label?: Nullable<string>;
-    user: User;
-    performers?: Nullable<Nullable<Performer>[]>;
-    registeredClasses?: Nullable<Nullable<RegisteredClass>[]>;
-    groups?: Nullable<Nullable<Group>[]>;
-    communities?: Nullable<Nullable<Community>[]>;
-    teacher?: Nullable<Teacher>;
-    school?: Nullable<School>;
-    performerType?: Nullable<SGSlabel>;
-    totalAmt?: Nullable<number>;
-    payedAmt?: Nullable<number>;
-    transactionInfo?: Nullable<string>;
-    confirmation?: Nullable<string>;
-    submittedAt?: Nullable<DateTime>;
-    createdAt?: Nullable<DateTime>;
-    updatedAt?: Nullable<DateTime>;
+  id: number
+  label?: Nullable<string>
+  user: User
+  performers?: Nullable<Nullable<Performer>[]>
+  registeredClasses?: Nullable<Nullable<RegisteredClass>[]>
+  groups?: Nullable<Nullable<Group>[]>
+  communities?: Nullable<Nullable<Community>[]>
+  teacher?: Nullable<Teacher>
+  school?: Nullable<School>
+  performerType?: Nullable<SGSlabel>
+  totalAmt?: Nullable<number>
+  payedAmt?: Nullable<number>
+  transactionInfo?: Nullable<string>
+  confirmation?: Nullable<string>
+  submittedAt?: Nullable<DateTime>
+  createdAt?: Nullable<DateTime>
+  updatedAt?: Nullable<DateTime>
 }
 
 export class RegistrationPayload {
-    userErrors: UserError[];
-    registration?: Nullable<Registration>;
+  userErrors: UserError[]
+  registration?: Nullable<Registration>
 }
 
 export class School {
-    id: string;
-    name: string;
-    division?: Nullable<string>;
-    streetNumber?: Nullable<string>;
-    streetName?: Nullable<string>;
-    city?: Nullable<string>;
-    province?: Nullable<string>;
-    postalCode?: Nullable<string>;
-    phone?: Nullable<string>;
-    schoolGroups?: Nullable<Nullable<Community>[]>;
+  id: string
+  name: string
+  division?: Nullable<string>
+  streetNumber?: Nullable<string>
+  streetName?: Nullable<string>
+  city?: Nullable<string>
+  province?: Nullable<string>
+  postalCode?: Nullable<string>
+  phone?: Nullable<string>
+  schoolGroups?: Nullable<Nullable<Community>[]>
 }
 
 export class SchoolPayload {
-    userErrors: UserError[];
-    school?: Nullable<School>;
+  userErrors: UserError[]
+  school?: Nullable<School>
 }
 
 export class Selection {
-    id: string;
-    title?: Nullable<string>;
-    largerWork?: Nullable<string>;
-    movement?: Nullable<string>;
-    composer?: Nullable<string>;
-    duration?: Nullable<string>;
+  id: string
+  title?: Nullable<string>
+  largerWork?: Nullable<string>
+  movement?: Nullable<string>
+  composer?: Nullable<string>
+  duration?: Nullable<string>
 }
 
 export class SelectionPayload {
-    userErrors: UserError[];
-    selection?: Nullable<Selection>;
+  userErrors: UserError[]
+  selection?: Nullable<Selection>
 }
 
 export class Teacher {
-    id: string;
-    prefix?: Nullable<string>;
-    firstName?: Nullable<string>;
-    lastName?: Nullable<string>;
-    apartment?: Nullable<string>;
-    streetNumber?: Nullable<string>;
-    streetName?: Nullable<string>;
-    city?: Nullable<string>;
-    province?: Nullable<string>;
-    postalCode?: Nullable<string>;
-    phone?: Nullable<string>;
-    email?: Nullable<EmailAddress>;
+  id: string
+  prefix?: Nullable<string>
+  firstName?: Nullable<string>
+  lastName?: Nullable<string>
+  apartment?: Nullable<string>
+  streetNumber?: Nullable<string>
+  streetName?: Nullable<string>
+  city?: Nullable<string>
+  province?: Nullable<string>
+  postalCode?: Nullable<string>
+  phone?: Nullable<string>
+  email?: Nullable<EmailAddress>
 }
 
 export class TeacherPayload {
-    userErrors: UserError[];
-    teacher?: Nullable<Teacher>;
+  userErrors: UserError[]
+  teacher?: Nullable<Teacher>
 }
 
 export class User {
-    id: number;
-    email?: Nullable<string>;
-    staff?: Nullable<boolean>;
-    admin?: Nullable<boolean>;
-    firstName?: Nullable<string>;
-    lastName?: Nullable<string>;
-    apartment?: Nullable<string>;
-    streetNumber?: Nullable<string>;
-    streetName?: Nullable<string>;
-    city?: Nullable<string>;
-    province?: Nullable<string>;
-    postalCode?: Nullable<string>;
-    phone?: Nullable<string>;
-    registrations: Registration[];
+  id: number
+  email?: Nullable<string>
+  staff?: Nullable<boolean>
+  admin?: Nullable<boolean>
+  firstName?: Nullable<string>
+  lastName?: Nullable<string>
+  apartment?: Nullable<string>
+  streetNumber?: Nullable<string>
+  streetName?: Nullable<string>
+  city?: Nullable<string>
+  province?: Nullable<string>
+  postalCode?: Nullable<string>
+  phone?: Nullable<string>
+  registrations: Registration[]
 }
 
 export class UserPayload {
-    userErrors: UserError[];
-    user?: Nullable<User>;
+  userErrors: UserError[]
+  user?: Nullable<User>
 }
 
-export type DateTime = any;
-export type Duration = any;
-export type EmailAddress = any;
-export type Time = any;
-type Nullable<T> = T | null;
+export type DateTime = any
+export type Duration = any
+export type EmailAddress = any
+export type Time = any
+type Nullable<T> = T | null
