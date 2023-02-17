@@ -1,23 +1,22 @@
-import { Field } from '@nestjs/graphql'
-import { InputType } from '@nestjs/graphql'
-import { Int } from '@nestjs/graphql'
-import { tbl_classlistCreateNestedManyWithoutTbl_levelInput } from '../tbl-classlist/tbl-classlist-create-nested-many-without-tbl-level.input'
-import { Type } from 'class-transformer'
+import { Field } from '@nestjs/graphql';
+import { InputType } from '@nestjs/graphql';
+import { Int } from '@nestjs/graphql';
+import { tbl_classlistCreateNestedManyWithoutTbl_levelInput } from '../tbl-classlist/tbl-classlist-create-nested-many-without-tbl-level.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class tbl_levelCreateInput {
-  @Field(() => String, { nullable: false })
-  name!: string
 
-  @Field(() => String, { nullable: true })
-  description?: string
+    @Field(() => String, {nullable:false})
+    name!: string;
 
-  @Field(() => Int, { nullable: true })
-  order?: number
+    @Field(() => String, {nullable:true})
+    description?: string;
 
-  @Field(() => tbl_classlistCreateNestedManyWithoutTbl_levelInput, {
-    nullable: true,
-  })
-  @Type(() => tbl_classlistCreateNestedManyWithoutTbl_levelInput)
-  tbl_classlist?: tbl_classlistCreateNestedManyWithoutTbl_levelInput
+    @Field(() => Int, {nullable:true})
+    order?: number;
+
+    @Field(() => tbl_classlistCreateNestedManyWithoutTbl_levelInput, {nullable:true})
+    @Type(() => tbl_classlistCreateNestedManyWithoutTbl_levelInput)
+    tbl_classlist?: tbl_classlistCreateNestedManyWithoutTbl_levelInput;
 }

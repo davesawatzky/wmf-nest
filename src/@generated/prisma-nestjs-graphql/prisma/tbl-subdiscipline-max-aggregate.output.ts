@@ -1,33 +1,34 @@
-import { Field } from '@nestjs/graphql'
-import { ObjectType } from '@nestjs/graphql'
-import { Int } from '@nestjs/graphql'
-import { tbl_subdiscipline_SGSlabel } from './tbl-subdiscipline-sg-slabel.enum'
-import { Decimal } from '@prisma/client/runtime'
-import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
+import { Field } from '@nestjs/graphql';
+import { ObjectType } from '@nestjs/graphql';
+import { Int } from '@nestjs/graphql';
+import { tbl_subdiscipline_SGSlabel } from './tbl-subdiscipline-sg-slabel.enum';
+import { Decimal } from '@prisma/client/runtime';
+import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 
 @ObjectType()
 export class Tbl_subdisciplineMaxAggregate {
-  @Field(() => Int, { nullable: true })
-  id?: number
 
-  @Field(() => Int, { nullable: true })
-  disciplineID?: number
+    @Field(() => Int, {nullable:true})
+    id?: number;
 
-  @Field(() => String, { nullable: true })
-  name?: string
+    @Field(() => Int, {nullable:true})
+    disciplineID?: number;
 
-  @Field(() => String, { nullable: true })
-  description?: string
+    @Field(() => String, {nullable:true})
+    name?: string;
 
-  @Field(() => Int, { nullable: true })
-  maxPerformers?: number
+    @Field(() => String, {nullable:true})
+    description?: string;
 
-  @Field(() => Int, { nullable: true })
-  minPerformers?: number
+    @Field(() => Int, {nullable:true})
+    maxPerformers?: number;
 
-  @Field(() => tbl_subdiscipline_SGSlabel, { nullable: true })
-  SGSlabel?: keyof typeof tbl_subdiscipline_SGSlabel
+    @Field(() => Int, {nullable:true})
+    minPerformers?: number;
 
-  @Field(() => GraphQLDecimal, { nullable: true })
-  price?: Decimal
+    @Field(() => tbl_subdiscipline_SGSlabel, {nullable:true})
+    SGSlabel?: keyof typeof tbl_subdiscipline_SGSlabel;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    price?: Decimal;
 }

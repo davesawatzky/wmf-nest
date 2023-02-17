@@ -1,9 +1,10 @@
-import { Field } from '@nestjs/graphql'
-import { InputType } from '@nestjs/graphql'
-import { IntFieldUpdateOperationsInput } from '../prisma/int-field-update-operations.input'
+import { Field } from '@nestjs/graphql';
+import { InputType } from '@nestjs/graphql';
+import { IntFieldUpdateOperationsInput } from '../prisma/int-field-update-operations.input';
 
 @InputType()
 export class tbl_class_trophyUncheckedUpdateWithoutTbl_classlistInput {
-  @Field(() => IntFieldUpdateOperationsInput, { nullable: true })
-  trophyID?: IntFieldUpdateOperationsInput
+
+    @Field(() => IntFieldUpdateOperationsInput, {nullable:true})
+    trophyID?: IntFieldUpdateOperationsInput;
 }

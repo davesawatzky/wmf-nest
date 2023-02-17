@@ -1,11 +1,12 @@
-import { Field } from '@nestjs/graphql'
-import { ArgsType } from '@nestjs/graphql'
-import { tbl_classlistWhereUniqueInput } from '../tbl-classlist/tbl-classlist-where-unique.input'
-import { Type } from 'class-transformer'
+import { Field } from '@nestjs/graphql';
+import { ArgsType } from '@nestjs/graphql';
+import { tbl_classlistWhereUniqueInput } from '../tbl-classlist/tbl-classlist-where-unique.input';
+import { Type } from 'class-transformer';
 
 @ArgsType()
 export class FindUniquetblClasslistOrThrowArgs {
-  @Field(() => tbl_classlistWhereUniqueInput, { nullable: false })
-  @Type(() => tbl_classlistWhereUniqueInput)
-  where!: tbl_classlistWhereUniqueInput
+
+    @Field(() => tbl_classlistWhereUniqueInput, {nullable:false})
+    @Type(() => tbl_classlistWhereUniqueInput)
+    where!: tbl_classlistWhereUniqueInput;
 }

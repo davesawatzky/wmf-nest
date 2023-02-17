@@ -1,32 +1,33 @@
-import { Field } from '@nestjs/graphql'
-import { ArgsType } from '@nestjs/graphql'
-import { tbl_registrationWhereInput } from '../tbl-registration/tbl-registration-where.input'
-import { Type } from 'class-transformer'
-import { tbl_registrationOrderByWithRelationInput } from '../tbl-registration/tbl-registration-order-by-with-relation.input'
-import { tbl_registrationWhereUniqueInput } from '../tbl-registration/tbl-registration-where-unique.input'
-import { Int } from '@nestjs/graphql'
-import { Tbl_registrationScalarFieldEnum } from './tbl-registration-scalar-field.enum'
+import { Field } from '@nestjs/graphql';
+import { ArgsType } from '@nestjs/graphql';
+import { tbl_registrationWhereInput } from '../tbl-registration/tbl-registration-where.input';
+import { Type } from 'class-transformer';
+import { tbl_registrationOrderByWithRelationInput } from '../tbl-registration/tbl-registration-order-by-with-relation.input';
+import { tbl_registrationWhereUniqueInput } from '../tbl-registration/tbl-registration-where-unique.input';
+import { Int } from '@nestjs/graphql';
+import { Tbl_registrationScalarFieldEnum } from './tbl-registration-scalar-field.enum';
 
 @ArgsType()
 export class FindFirsttblRegistrationArgs {
-  @Field(() => tbl_registrationWhereInput, { nullable: true })
-  @Type(() => tbl_registrationWhereInput)
-  where?: tbl_registrationWhereInput
 
-  @Field(() => [tbl_registrationOrderByWithRelationInput], { nullable: true })
-  @Type(() => tbl_registrationOrderByWithRelationInput)
-  orderBy?: Array<tbl_registrationOrderByWithRelationInput>
+    @Field(() => tbl_registrationWhereInput, {nullable:true})
+    @Type(() => tbl_registrationWhereInput)
+    where?: tbl_registrationWhereInput;
 
-  @Field(() => tbl_registrationWhereUniqueInput, { nullable: true })
-  @Type(() => tbl_registrationWhereUniqueInput)
-  cursor?: tbl_registrationWhereUniqueInput
+    @Field(() => [tbl_registrationOrderByWithRelationInput], {nullable:true})
+    @Type(() => tbl_registrationOrderByWithRelationInput)
+    orderBy?: Array<tbl_registrationOrderByWithRelationInput>;
 
-  @Field(() => Int, { nullable: true })
-  take?: number
+    @Field(() => tbl_registrationWhereUniqueInput, {nullable:true})
+    @Type(() => tbl_registrationWhereUniqueInput)
+    cursor?: tbl_registrationWhereUniqueInput;
 
-  @Field(() => Int, { nullable: true })
-  skip?: number
+    @Field(() => Int, {nullable:true})
+    take?: number;
 
-  @Field(() => [Tbl_registrationScalarFieldEnum], { nullable: true })
-  distinct?: Array<keyof typeof Tbl_registrationScalarFieldEnum>
+    @Field(() => Int, {nullable:true})
+    skip?: number;
+
+    @Field(() => [Tbl_registrationScalarFieldEnum], {nullable:true})
+    distinct?: Array<keyof typeof Tbl_registrationScalarFieldEnum>;
 }

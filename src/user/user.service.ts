@@ -19,9 +19,9 @@ export class UserService {
     })
   }
 
-  async update(id: User['id'], userInput: UserInput) {
+  async update(userID: User['id'], userInput: UserInput) {
     return this.prisma.tbl_user.update({
-      where: { id },
+      where: { id: userID },
       data: { ...userInput },
     })
   }

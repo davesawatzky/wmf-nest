@@ -7,8 +7,8 @@ import {
   Args,
 } from '@nestjs/graphql'
 import { UserService } from './user.service'
-import { UserInput, User } from 'src/graphql'
-import { tbl_user, tbl_registration } from '@prisma/client'
+import { UserInput } from 'src/graphql'
+import { tbl_user } from '@prisma/client'
 import { RegistrationService } from 'src/submissions/registration/registration.service'
 // import { CreateUserInput } from './dto/create-user.input'
 // import { UpdateUserInput } from './dto/update-user.input'
@@ -36,10 +36,10 @@ export class UserResolver {
 
   @Mutation('userUpdate')
   update(
-    @Args('id') id: tbl_user['id'],
+    @Args('userID') userID: tbl_user['id'],
     @Args('userInput') userInput: UserInput,
   ) {
-    return this.userService.update(id, userInput)
+    return this.userService.update(userID, userInput)
   }
 
   @Mutation('userDelete')

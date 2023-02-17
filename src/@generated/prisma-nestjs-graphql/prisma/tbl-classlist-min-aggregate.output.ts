@@ -1,39 +1,40 @@
-import { Field } from '@nestjs/graphql'
-import { ObjectType } from '@nestjs/graphql'
-import { Int } from '@nestjs/graphql'
-import { tbl_SGS } from './tbl-sgs.enum'
-import { Decimal } from '@prisma/client/runtime'
-import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
+import { Field } from '@nestjs/graphql';
+import { ObjectType } from '@nestjs/graphql';
+import { Int } from '@nestjs/graphql';
+import { tbl_SGS } from './tbl-sgs.enum';
+import { Decimal } from '@prisma/client/runtime';
+import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 
 @ObjectType()
 export class Tbl_classlistMinAggregate {
-  @Field(() => Int, { nullable: true })
-  id?: number
 
-  @Field(() => String, { nullable: true })
-  classNumber?: string
+    @Field(() => Int, {nullable:true})
+    id?: number;
 
-  @Field(() => Int, { nullable: true })
-  subdisciplineID?: number
+    @Field(() => String, {nullable:true})
+    classNumber?: string;
 
-  @Field(() => Int, { nullable: true })
-  categoryID?: number
+    @Field(() => Int, {nullable:true})
+    subdisciplineID?: number;
 
-  @Field(() => Int, { nullable: true })
-  levelID?: number
+    @Field(() => Int, {nullable:true})
+    categoryID?: number;
 
-  @Field(() => Int, { nullable: true })
-  minSelection?: number
+    @Field(() => Int, {nullable:true})
+    levelID?: number;
 
-  @Field(() => Int, { nullable: true })
-  maxSelection?: number
+    @Field(() => Int, {nullable:true})
+    minSelection?: number;
 
-  @Field(() => String, { nullable: true })
-  requiredSelection?: string
+    @Field(() => Int, {nullable:true})
+    maxSelection?: number;
 
-  @Field(() => tbl_SGS, { nullable: true })
-  SGSlabel?: keyof typeof tbl_SGS
+    @Field(() => String, {nullable:true})
+    requiredSelection?: string;
 
-  @Field(() => GraphQLDecimal, { nullable: true })
-  price?: Decimal
+    @Field(() => tbl_SGS, {nullable:true})
+    SGSlabel?: keyof typeof tbl_SGS;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    price?: Decimal;
 }
