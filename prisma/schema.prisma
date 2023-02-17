@@ -6,13 +6,6 @@ generator client {
   binaryTargets = ["native"]
 }
 
-generator nestgraphql {
-    provider = "node node_modules/prisma-nestjs-graphql"
-    output = "../src/@generated/prisma-nestjs-graphql"
-    fields_Validator_from = "class-validator"
-    fields_Validator_input = true
-}
-
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
@@ -115,13 +108,9 @@ model tbl_reg_performer {
   streetNumber     String?          @db.VarChar(6)
   streetName       String?          @db.VarChar(50)
   city             String           @default("Winnipeg") @db.VarChar(30)
-  /// @Validator.MaxLength(3)
   province         String           @default("MB") @db.VarChar(2)
-  /// @Validator.IsPostalCode('CA')
   postalCode       String?          @db.VarChar(7)
-  /// @Validator.IsPhoneNumber('CA')
   phone            String?          @db.VarChar(14)
-  /// @Validator.IsEmail()
   email            String?          @db.VarChar(50)
   age              Int?             @db.TinyInt
   instrument       String?          @db.VarChar(50)
@@ -142,11 +131,8 @@ model tbl_reg_school {
   streetNumber     String?          @db.VarChar(6)
   streetName       String?          @db.VarChar(100)
   city             String           @default("Winnipeg") @db.VarChar(30)
-  /// @Validator.MaxLength(3)
   province         String           @default("MB") @db.VarChar(30)
-  /// @Validator.IsPostalCode('CA')
   postalCode       String?          @db.VarChar(7)
-  /// @Validator.IsPhoneNumber('CA')
   phone            String?          @db.VarChar(14)
   createdAt        DateTime         @default(now()) @db.DateTime(0)
   updatedAt        DateTime         @default(now()) @updatedAt @db.DateTime(0)
@@ -180,13 +166,9 @@ model tbl_reg_teacher {
   streetNumber     String?          @db.VarChar(6)
   streetName       String?          @db.VarChar(100)
   city             String           @default("Winnipeg") @db.VarChar(30)
-  /// @Validator.MaxLength(3)
   province         String           @default("MB") @db.VarChar(30)
-  /// @Validator.IsPostalCode('CA')
   postalCode       String?          @db.VarChar(7)
-  /// @Validator.IsPhoneNumber('CA')
   phone            String?          @db.VarChar(14)
-  /// @Validator.IsEmail()
   email            String?          @db.VarChar(50)
   createdAt        DateTime         @default(now()) @db.DateTime(0)
   updatedAt        DateTime         @default(now()) @updatedAt @db.DateTime(0)
@@ -261,7 +243,6 @@ model tbl_trophy {
 
 model tbl_user {
   id               Int                @id @default(autoincrement())
-  /// @Validator.IsEmail()
   email            String             @unique(map: "uniqueEmail") @db.VarChar(255)
   password         String             @db.VarChar(255)
   staff            Boolean            @default(false)
@@ -272,11 +253,8 @@ model tbl_user {
   streetNumber     String?            @db.VarChar(6)
   streetName       String?            @db.VarChar(50)
   city             String?            @db.VarChar(30)
-  /// @Validator.MaxLength(3)
   province         String?            @db.VarChar(2)
-  /// @Validator.IsPostalCode('CA')
   postalCode       String?            @db.VarChar(7)
-  /// @Validator.IsPhoneNumber('CA')
   phone            String?            @db.VarChar(14)
   updatedAt        DateTime           @default(now()) @updatedAt @db.DateTime(0)
   createdAt        DateTime           @default(now()) @db.DateTime(0)
