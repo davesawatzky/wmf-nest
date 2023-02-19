@@ -6,6 +6,8 @@ import {
   DurationResolver,
   TimeResolver,
   EmailAddressResolver,
+  PhoneNumberResolver,
+  PostalCodeResolver,
 } from 'graphql-scalars'
 import { join } from 'path'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
@@ -27,9 +29,14 @@ import { TrophyModule } from './festival/trophy/trophy.module'
 import { RegisteredClassModule } from './submissions/registered-class/registered-class.module'
 import { TeacherModule } from './submissions/teacher/teacher.module'
 import { SelectionModule } from './submissions/selection/selection.module'
+import { AuthModule } from './auth/auth.module'
+import { ConfigModule } from '@nestjs/config'
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       typePaths: ['./**/*.graphql'],
@@ -43,8 +50,11 @@ import { SelectionModule } from './submissions/selection/selection.module'
         Duration: DurationResolver,
         EmailAddress: EmailAddressResolver,
         Time: TimeResolver,
+        PhoneNumber: PhoneNumberResolver,
+        PostalCode: PostalCodeResolver,
       },
       playground: false,
+      debug: true,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
     PrismaModule,
@@ -64,6 +74,7 @@ import { SelectionModule } from './submissions/selection/selection.module'
     RegisteredClassModule,
     TeacherModule,
     SelectionModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

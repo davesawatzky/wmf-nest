@@ -10,6 +10,8 @@ import { UserService } from './user.service'
 import { UserInput } from 'src/graphql'
 import { tbl_user } from '@prisma/client'
 import { RegistrationService } from 'src/submissions/registration/registration.service'
+import { UseGuards } from '@nestjs/common'
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 // import { CreateUserInput } from './dto/create-user.input'
 // import { UpdateUserInput } from './dto/update-user.input'
 
@@ -23,6 +25,7 @@ export class UserResolver {
   /** Queries */
 
   @Query('users')
+  @UseGuards(JwtAuthGuard)
   findAll() {
     return this.userService.findAll()
   }

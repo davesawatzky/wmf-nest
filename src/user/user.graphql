@@ -1,6 +1,10 @@
+scalar PhoneNumber
+scalar EmailAddress
+scalar PostalCode
+
 type Query {
   users: [User]!
-	user(id: Int, firstName: String, lastName: String, phone: String): User
+	user(id: Int, firstName: String, lastName: String, phone: PhoneNumber, email: EmailAddress): User
 }
 
 type Mutation {
@@ -11,7 +15,7 @@ type Mutation {
 
 type User {
 	id: Int!
-	email: String
+	email: EmailAddress
 	staff: Boolean
 	admin: Boolean
 	firstName: String
@@ -21,9 +25,9 @@ type User {
 	streetName: String
 	city: String
 	province: String
-	postalCode: String
-	phone: String
-	registrations: [Registration!]!
+	postalCode: PostalCode
+	phone: PhoneNumber
+	registrations: [Registration]
 }
 
 input UserInput {
@@ -36,8 +40,8 @@ input UserInput {
 	streetName: String
 	city: String
 	province: String
-	postalCode: String
-	phone: String
+	postalCode: PostalCode
+	phone: PhoneNumber
 }
 
 type UserPayload {

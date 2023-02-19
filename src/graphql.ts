@@ -15,6 +15,18 @@ export enum SGSlabel {
     COMMUNITY = "COMMUNITY"
 }
 
+export class CredentialsSignin {
+    email: EmailAddress;
+    password: string;
+}
+
+export class CredentialsSignup {
+    firstName: string;
+    lastName: string;
+    email: EmailAddress;
+    password: string;
+}
+
 export class CategoryInput {
     name: string;
     description?: Nullable<string>;
@@ -90,8 +102,8 @@ export class PerformerInput {
     streetName?: Nullable<string>;
     city: string;
     province: string;
-    postalCode?: Nullable<string>;
-    phone?: Nullable<string>;
+    postalCode?: Nullable<PostalCode>;
+    phone?: Nullable<PhoneNumber>;
     email?: Nullable<EmailAddress>;
     age?: Nullable<number>;
     otherClasses?: Nullable<string>;
@@ -127,8 +139,8 @@ export class SchoolInput {
     streetName?: Nullable<string>;
     city?: Nullable<string>;
     province?: Nullable<string>;
-    postalCode?: Nullable<string>;
-    phone?: Nullable<string>;
+    postalCode?: Nullable<PostalCode>;
+    phone?: Nullable<PhoneNumber>;
 }
 
 export class SelectionInput {
@@ -148,8 +160,8 @@ export class TeacherInput {
     streetName?: Nullable<string>;
     city: string;
     province: string;
-    postalCode?: Nullable<string>;
-    phone?: Nullable<string>;
+    postalCode?: Nullable<PostalCode>;
+    phone?: Nullable<PhoneNumber>;
     email?: Nullable<EmailAddress>;
 }
 
@@ -163,24 +175,13 @@ export class UserInput {
     streetName?: Nullable<string>;
     city?: Nullable<string>;
     province?: Nullable<string>;
-    postalCode?: Nullable<string>;
-    phone?: Nullable<string>;
-}
-
-export class UserError {
-    message: string;
-    field: string[];
-}
-
-export class Category {
-    id: number;
-    name: string;
-    description?: Nullable<string>;
-    requiredComposer?: Nullable<string>;
-    classes: FestivalClass[];
+    postalCode?: Nullable<PostalCode>;
+    phone?: Nullable<PhoneNumber>;
 }
 
 export abstract class IQuery {
+    abstract auth(id: number): Nullable<User> | Promise<Nullable<User>>;
+
     abstract categories(levelID?: Nullable<number>, subdisciplineID?: Nullable<number>): Nullable<Nullable<Category>[]> | Promise<Nullable<Nullable<Category>[]>>;
 
     abstract category(id: number): Nullable<Category> | Promise<Nullable<Category>>;
@@ -255,10 +256,14 @@ export abstract class IQuery {
 
     abstract users(): Nullable<User>[] | Promise<Nullable<User>[]>;
 
-    abstract user(id?: Nullable<number>, firstName?: Nullable<string>, lastName?: Nullable<string>, phone?: Nullable<string>): Nullable<User> | Promise<Nullable<User>>;
+    abstract user(id?: Nullable<number>, firstName?: Nullable<string>, lastName?: Nullable<string>, phone?: Nullable<PhoneNumber>, email?: Nullable<EmailAddress>): Nullable<User> | Promise<Nullable<User>>;
 }
 
 export abstract class IMutation {
+    abstract signup(credentials: CredentialsSignup): AuthPayload | Promise<AuthPayload>;
+
+    abstract signin(credentials: CredentialsSignin): AuthPayload | Promise<AuthPayload>;
+
     abstract categoryCreate(categoryInput: CategoryInput): CategoryPayload | Promise<CategoryPayload>;
 
     abstract categoryUpdate(categoryID: number, categoryInput: CategoryInput): CategoryPayload | Promise<CategoryPayload>;
@@ -354,6 +359,25 @@ export abstract class IMutation {
     abstract userUpdate(id: number, userInput: UserInput): UserPayload | Promise<UserPayload>;
 
     abstract userDelete(id: number): UserPayload | Promise<UserPayload>;
+}
+
+export class AuthPayload {
+    userErrors: UserError[];
+    access_token?: Nullable<string>;
+    user?: Nullable<User>;
+}
+
+export class UserError {
+    message: string;
+    field: string[];
+}
+
+export class Category {
+    id: number;
+    name: string;
+    description?: Nullable<string>;
+    requiredComposer?: Nullable<string>;
+    classes: FestivalClass[];
 }
 
 export class CategoryPayload {
@@ -482,8 +506,8 @@ export class Performer {
     streetName?: Nullable<string>;
     city?: Nullable<string>;
     province?: Nullable<string>;
-    postalCode?: Nullable<string>;
-    phone?: Nullable<string>;
+    postalCode?: Nullable<PostalCode>;
+    phone?: Nullable<PhoneNumber>;
     email?: Nullable<EmailAddress>;
     age?: Nullable<number>;
     otherClasses?: Nullable<string>;
@@ -547,8 +571,8 @@ export class School {
     streetName?: Nullable<string>;
     city?: Nullable<string>;
     province?: Nullable<string>;
-    postalCode?: Nullable<string>;
-    phone?: Nullable<string>;
+    postalCode?: Nullable<PostalCode>;
+    phone?: Nullable<PhoneNumber>;
     schoolGroups?: Nullable<Nullable<Community>[]>;
 }
 
@@ -581,8 +605,8 @@ export class Teacher {
     streetName?: Nullable<string>;
     city?: Nullable<string>;
     province?: Nullable<string>;
-    postalCode?: Nullable<string>;
-    phone?: Nullable<string>;
+    postalCode?: Nullable<PostalCode>;
+    phone?: Nullable<PhoneNumber>;
     email?: Nullable<EmailAddress>;
 }
 
@@ -593,7 +617,7 @@ export class TeacherPayload {
 
 export class User {
     id: number;
-    email?: Nullable<string>;
+    email?: Nullable<EmailAddress>;
     staff?: Nullable<boolean>;
     admin?: Nullable<boolean>;
     firstName?: Nullable<string>;
@@ -603,9 +627,9 @@ export class User {
     streetName?: Nullable<string>;
     city?: Nullable<string>;
     province?: Nullable<string>;
-    postalCode?: Nullable<string>;
-    phone?: Nullable<string>;
-    registrations: Registration[];
+    postalCode?: Nullable<PostalCode>;
+    phone?: Nullable<PhoneNumber>;
+    registrations?: Nullable<Nullable<Registration>[]>;
 }
 
 export class UserPayload {
@@ -613,8 +637,10 @@ export class UserPayload {
     user?: Nullable<User>;
 }
 
+export type EmailAddress = any;
 export type DateTime = any;
 export type Duration = any;
-export type EmailAddress = any;
 export type Time = any;
+export type PhoneNumber = any;
+export type PostalCode = any;
 type Nullable<T> = T | null;

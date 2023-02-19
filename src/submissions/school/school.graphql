@@ -1,3 +1,7 @@
+scalar EmailAddress
+scalar PhoneNumber
+scalar PostalCode
+
 type School {
 	id: ID!
 	name: String!
@@ -6,8 +10,8 @@ type School {
 	streetName: String
 	city: String
 	province: String
-	postalCode: String
-	phone: String
+	postalCode: PostalCode
+	phone: PhoneNumber
 	schoolGroups: [Community]
 }
 
@@ -18,8 +22,8 @@ input SchoolInput {
 	streetName: String
 	city: String
 	province: String
-	postalCode: String
-	phone: String
+	postalCode: PostalCode
+	phone: PhoneNumber
 }
 
 type Query {

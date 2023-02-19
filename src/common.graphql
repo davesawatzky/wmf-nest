@@ -3,6 +3,8 @@ scalar DateTime
 scalar Duration
 scalar EmailAddress
 scalar Time
+scalar PhoneNumber
+scalar PostalCode
 
 type UserError {
 	message: String!
