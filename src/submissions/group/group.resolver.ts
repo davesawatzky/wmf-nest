@@ -1,46 +1,51 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
 import { GroupService } from './group.service'
-import { GroupInput } from 'src/graphql'
-// import { CreateGroupInput } from './dto/create-group.input'
-// import { UpdateGroupInput } from './dto/update-group.input'
-import { tbl_registration, tbl_reg_group } from '@prisma/client'
+import { GroupPayload } from './entities/group.entity'
+import { GroupInput } from './dto/group.input'
+import { Group } from './entities/group.entity'
+import { tbl_registration } from '@prisma/client'
 
-@Resolver('Group')
+@Resolver(() => Group)
 export class GroupResolver {
   constructor(private readonly groupService: GroupService) {}
 
   /** Queries */
 
-  @Query('groups')
-  findAll() {
+  @Query(() => [Group])
+  async groups() {
     return this.groupService.findAll()
   }
 
-  @Query('group')
-  findOne(@Args('groupID') groupID: tbl_reg_group['id']) {
+  @Query(() => Group)
+  async group(@Args('groupID', { type: () => Int }) groupID: Group['id']) {
     return this.groupService.findOne(groupID)
   }
 
   /** Mutations */
 
-  @Mutation('groupCreate')
+  @Mutation(() => GroupPayload)
   create(
-    @Args('registrationID') registrationID: tbl_registration['id'],
-    @Args('groupInput') groupInput: Partial<GroupInput>,
+    @Args('registrationID', { type: () => Int })
+    registrationID: tbl_registration['id'],
+    @Args('groupInput', { type: () => GroupInput })
+    groupInput: Partial<GroupInput>,
   ) {
     return this.groupService.create(registrationID, groupInput)
   }
 
-  @Mutation('groupUpdate')
-  update(
-    @Args('groupID') groupID: tbl_reg_group['id'],
-    @Args('groupInput') groupInput: Partial<GroupInput>,
+  @Mutation(() => GroupPayload)
+  async groupUpdate(
+    @Args('groupID', { type: () => Int }) groupID: Group['id'],
+    @Args('groupInput', { type: () => GroupInput })
+    groupInput: Partial<GroupInput>,
   ) {
     return this.groupService.update(groupID, groupInput)
   }
 
-  @Mutation('groupDelete')
-  remove(@Args('groupID') groupID: tbl_reg_group['id']) {
+  @Mutation(() => GroupPayload)
+  async groupDelete(
+    @Args('groupID', { type: () => Int }) groupID: Group['id'],
+  ) {
     return this.groupService.remove(groupID)
   }
 }

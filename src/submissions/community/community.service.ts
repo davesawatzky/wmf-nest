@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { tbl_registration, tbl_reg_community } from '@prisma/client'
-import { CommunityInput } from 'src/graphql'
+import { CommunityInput } from './dto/community.input'
 import { PrismaService } from 'src/prisma/prisma.service'
-// import { CreateCommunityInput } from './dto/create-community.input'
-// import { UpdateCommunityInput } from './dto/update-community.input'
 
 @Injectable()
 export class CommunityService {

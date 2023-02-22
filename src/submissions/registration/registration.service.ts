@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import { RegistrationInput, Registration, SGSlabel } from 'src/graphql'
+import { RegistrationInput } from './dto/registration.input'
 import { PrismaService } from 'src/prisma/prisma.service'
+import { SGSlabel } from 'src/common.entity'
 import { tbl_user, tbl_registration } from '@prisma/client'
-// import { CreateRegistrationInput } from './dto/create-registration.input';
-// import { UpdateRegistrationInput } from './dto/update-registration.input';
 
 @Injectable()
 export class RegistrationService {

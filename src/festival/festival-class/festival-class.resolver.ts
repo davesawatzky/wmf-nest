@@ -5,22 +5,21 @@ import {
   Mutation,
   Args,
   Parent,
+  Int,
 } from '@nestjs/graphql'
 import { FestivalClassService } from './festival-class.service'
-import {
-  FestivalClassInput,
-  FestivalClassSearchArgs,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  SGSlabel,
-} from 'src/graphql'
+import { FestivalClass } from './entities/festival-class.entity'
+import { FestivalClassInput } from './dto/festival-class.input'
+import { FestivalClassSearchArgs } from './dto/festival-class.input'
+import { FestivalClassPayload } from './entities/festival-class.entity'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { SGSlabel } from 'src/common.entity'
 import { SubdisciplineService } from '../subdiscipline/subdiscipline.service'
 import { LevelService } from '../level/level.service'
 import { CategoryService } from '../category/category.service'
 import { tbl_classlist } from '@prisma/client'
-// import { CreateFestivalClassInput } from './dto/create-festival-class.input'
-// import { UpdateFestivalClassInput } from './dto/update-festival-class.input'
 
-@Resolver('FestivalClass')
+@Resolver(() => FestivalClass)
 export class FestivalClassResolver {
   constructor(
     private festivalClassService: FestivalClassService,
@@ -31,36 +30,38 @@ export class FestivalClassResolver {
 
   /** Queries */
 
-  @Query('festivalClasses')
-  findAll(@Args('SGSlabel') SGSlabel: SGSlabel) {
+  @Query(() => [FestivalClass])
+  async festivalClasses(@Args('SGSlabel') SGSlabel: SGSlabel) {
     return this.festivalClassService.findAll(SGSlabel)
   }
 
-  @Query('festivalClassSearch')
-  search(
+  @Query(() => [FestivalClass])
+  async festivalClassSearch(
     @Args('festivalClassSearch')
     festivalClassSearch: FestivalClassSearchArgs,
   ) {
     return this.festivalClassService.search(festivalClassSearch)
   }
 
-  @Query('festivalClass')
-  findById(@Args('id') id: tbl_classlist['id']) {
+  @Query(() => FestivalClass)
+  async festivalClass(
+    @Args('id', { type: () => Int }) id: FestivalClass['id'],
+  ) {
     return this.festivalClassService.findById(id)
   }
 
-  @Query('festivalClassByNumber')
-  findByNumber(
-    @Args('festivalClassNumber')
-    festivalClassNumber: tbl_classlist['classNumber'],
+  @Query(() => FestivalClass)
+  async festivalClassByNumber(
+    @Args('festivalClassNumber', { type: () => String })
+    festivalClassNumber: FestivalClass['classNumber'],
   ) {
     return this.festivalClassService.findByNumber(festivalClassNumber)
   }
 
   /** Mutations */
 
-  @Mutation('festivalClassCreate')
-  create(
+  @Mutation(() => FestivalClassPayload)
+  async festivalClassCreate(
     @Args('SGSlabel') SGSlabel: SGSlabel,
     @Args('festivalClass')
     festivalClass: FestivalClassInput,
@@ -68,40 +69,45 @@ export class FestivalClassResolver {
     return this.festivalClassService.create(SGSlabel, festivalClass)
   }
 
-  @Mutation('festivalClassUpdate')
-  update(
-    @Args('festivalClassID') festivalClassID: tbl_classlist['id'],
-    @Args('festivalClass') festivalClass: FestivalClassInput,
+  @Mutation(() => FestivalClassPayload)
+  async festivalClassUpdate(
+    @Args('festivalClassID', { type: () => Int })
+    festivalClassID: FestivalClass['id'],
+    @Args('festivalClass', { type: () => FestivalClassInput })
+    festivalClass: Partial<FestivalClassInput>,
   ) {
     return this.festivalClassService.update(festivalClassID, festivalClass)
   }
 
-  @Mutation('festivalClassDelete')
-  remove(@Args('id') id: tbl_classlist['id']) {
-    return this.festivalClassService.remove(id)
+  @Mutation(() => FestivalClassPayload)
+  async festivalClassDelete(
+    @Args('festivalClassID', { type: () => Int })
+    festivalClassID: FestivalClass['id'],
+  ) {
+    return this.festivalClassService.remove(festivalClassID)
   }
 
   /** Field Resolvers */
 
-  @ResolveField('trophies')
-  trophies(@Parent() festivalClass: tbl_classlist) {
-    const { id }: { id: tbl_classlist['id'] } = festivalClass
+  @ResolveField()
+  async trophies(@Parent() festivalClass: FestivalClass) {
+    const { id }: { id: FestivalClass['id'] } = festivalClass
     return this.festivalClassService.findClassTrophies(id)
   }
 
-  @ResolveField('level')
+  @ResolveField()
   level(@Parent() festivalClass: tbl_classlist) {
     const { levelID }: { levelID: tbl_classlist['levelID'] } = festivalClass
     return this.levelService.findOne(levelID)
   }
-  @ResolveField('subdiscipline')
+  @ResolveField()
   subdiscipline(@Parent() festivalClass: tbl_classlist) {
     const {
       subdisciplineID,
     }: { subdisciplineID: tbl_classlist['subdisciplineID'] } = festivalClass
     return this.subdisciplineService.findOne(subdisciplineID)
   }
-  @ResolveField('category')
+  @ResolveField()
   category(@Parent() festivalClass: tbl_classlist) {
     const { categoryID }: { categoryID: tbl_classlist['categoryID'] } =
       festivalClass

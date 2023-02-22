@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
-import { UserInput, User } from 'src/graphql'
+import { UserInput } from './dto/user.input'
 import { tbl_user } from '@prisma/client'
-// import { CreateUserInput } from './dto/create-user.input'
-// import { UpdateUserInput } from './dto/update-user.input'
 
 @Injectable()
 export class UserService {
@@ -13,13 +11,13 @@ export class UserService {
     return this.prisma.tbl_user.findMany()
   }
 
-  async findOne(id: User['id']) {
+  async findOne(userID: tbl_user['id']) {
     return this.prisma.tbl_user.findUnique({
-      where: { id },
+      where: { id: userID },
     })
   }
 
-  async update(userID: User['id'], userInput: UserInput) {
+  async update(userID: tbl_user['id'], userInput: UserInput) {
     return this.prisma.tbl_user.update({
       where: { id: userID },
       data: { ...userInput },

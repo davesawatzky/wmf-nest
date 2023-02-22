@@ -5,14 +5,14 @@ import {
   Query,
   Mutation,
   Args,
+  Int,
 } from '@nestjs/graphql'
 import { TrophyService } from './trophy.service'
 import { FestivalClassService } from '../festival-class/festival-class.service'
-import { FestivalClass, Trophy, TrophyInput } from 'src/graphql'
-// import { CreateTrophyInput } from './dto/create-trophy.input'
-// import { UpdateTrophyInput } from './dto/update-trophy.input'
+import { Trophy, TrophyPayload } from './entities/trophy.entity'
+import { TrophyInput } from './dto/trophy.input'
 
-@Resolver('Trophy')
+@Resolver(() => Trophy)
 export class TrophyResolver {
   constructor(
     private readonly trophyService: TrophyService,
@@ -21,40 +21,40 @@ export class TrophyResolver {
 
   /** Queries */
 
-  @Query('trophies')
-  findAll() {
+  @Query(() => [Trophy])
+  async trophies() {
     return this.trophyService.findAll()
   }
 
-  @Query('trophy')
-  findOne(@Args('id') id: Trophy['id']) {
+  @Query(() => Trophy)
+  async trophy(@Args('id', { type: () => Int }) id: Trophy['id']) {
     return this.trophyService.findOne(id)
   }
 
   /** Mutations */
 
-  @Mutation('trophyCreate')
-  create(@Args('trophyInput') trophyInput: TrophyInput) {
+  @Mutation(() => TrophyPayload)
+  async trophyCreate(@Args('trophyInput') trophyInput: TrophyInput) {
     return this.trophyService.create(trophyInput)
   }
 
-  @Mutation('trophyUpdate')
-  update(
-    @Args('trophyID') trophyID: Trophy['id'],
+  @Mutation(() => TrophyPayload)
+  async trophyUpdate(
+    @Args('trophyID', { type: () => Int }) trophyID: Trophy['id'],
     @Args('trophyInput') trophyInput: TrophyInput,
   ) {
     return this.trophyService.update(trophyID, trophyInput)
   }
 
-  @Mutation('trophyDelete')
-  remove(@Args('id') id: Trophy['id']) {
+  @Mutation(() => TrophyPayload)
+  async trophyDelete(@Args('id', { type: () => Int }) id: Trophy['id']) {
     return this.trophyService.remove(id)
   }
 
   /** Field Resolvers */
 
-  @ResolveField('classes')
-  async getClasses(@Parent() trophy) {
+  @ResolveField()
+  async festivalClasses(@Parent() trophy: Trophy) {
     const { id }: { id: Trophy['id'] } = trophy
     return this.trophyService.findTrophyClasses(id)
   }

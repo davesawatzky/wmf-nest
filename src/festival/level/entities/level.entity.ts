@@ -1,0 +1,18 @@
+import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { FestivalClass } from '../../festival-class/entities/festival-class.entity'
+import { UserError } from 'src/common.entity'
+
+@ObjectType()
+export class Level {
+  @Field(() => Int)
+  id: number
+  name: string
+  description?: string
+  classes?: FestivalClass[]
+}
+
+@ObjectType()
+export class LevelPayload {
+  userErrors: UserError[]
+  level?: Level
+}

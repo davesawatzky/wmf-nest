@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { Trophy, TrophyInput } from 'src/graphql'
+import { tbl_trophy } from '@prisma/client'
 import { PrismaService } from 'src/prisma/prisma.service'
-// import { CreateTrophyInput } from './dto/create-trophy.input'
-// import { UpdateTrophyInput } from './dto/update-trophy.input'
+import { TrophyInput } from './dto/trophy.input'
 
 @Injectable()
 export class TrophyService {
@@ -18,7 +17,7 @@ export class TrophyService {
     return this.prisma.tbl_trophy.findMany()
   }
 
-  async findTrophyClasses(trophyID: Trophy['id']) {
+  async findTrophyClasses(trophyID: tbl_trophy['id']) {
     return this.prisma.tbl_classlist.findMany({
       where: {
         tbl_class_trophy: {
@@ -30,20 +29,20 @@ export class TrophyService {
     })
   }
 
-  async findOne(id: Trophy['id']) {
+  async findOne(id: tbl_trophy['id']) {
     return this.prisma.tbl_trophy.findUnique({
       where: { id },
     })
   }
 
-  async update(id: Trophy['id'], trophyInput: TrophyInput) {
+  async update(id: tbl_trophy['id'], trophyInput: TrophyInput) {
     return this.prisma.tbl_trophy.update({
       where: { id },
       data: { ...trophyInput },
     })
   }
 
-  async remove(id: Trophy['id']) {
+  async remove(id: tbl_trophy['id']) {
     return this.prisma.tbl_trophy.delete({
       where: { id },
     })

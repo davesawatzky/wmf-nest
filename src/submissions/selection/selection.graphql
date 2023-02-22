@@ -1,5 +1,5 @@
 type Selection {
-	id: ID!
+	id: Int!
 	title: String
 	largerWork: String
 	movement: String

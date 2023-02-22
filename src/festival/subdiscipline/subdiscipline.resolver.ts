@@ -5,9 +5,11 @@ import {
   Query,
   Mutation,
   Args,
+  Int,
 } from '@nestjs/graphql'
 import { SubdisciplineService } from './subdiscipline.service'
-import { SubdisciplineInput, SGSlabel } from 'src/graphql'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { SGSlabel } from 'src/common.entity'
 import {
   tbl_discipline,
   tbl_category,
@@ -15,10 +17,16 @@ import {
   tbl_subdiscipline,
 } from '@prisma/client'
 import { FestivalClassService } from '../festival-class/festival-class.service'
+import {
+  Subdiscipline,
+  SubdisciplinePayload,
+} from './entities/subdiscipline.entity'
+import { SubdisciplineInput } from './dto/subdiscipline.input'
+
 // import { SubdisciplineInput } from './dto/create-subdiscipline.input'
 // import { UpdateSubdisciplineInput } from './dto/update-subdiscipline.input'
 
-@Resolver('Subdiscipline')
+@Resolver(() => Subdiscipline)
 export class SubdisciplineResolver {
   constructor(
     private readonly subdisciplineService: SubdisciplineService,
@@ -27,60 +35,72 @@ export class SubdisciplineResolver {
 
   /** Queries */
 
-  @Query('subdisciplines')
-  async findAll(
-    @Args('disciplineID') disciplineID: tbl_discipline['id'],
-    @Args('levelID') levelID: tbl_level['id'],
-    @Args('categoryID') categoryID: tbl_category['id'],
+  @Query(() => [Subdiscipline])
+  async subdisciplines(
+    @Args('disciplineID', { type: () => Int })
+    disciplineID: tbl_discipline['id'],
+    @Args('levelID', { type: () => Int }) levelID: tbl_level['id'],
+    @Args('categoryID', { type: () => Int }) categoryID: tbl_category['id'],
   ) {
     return this.subdisciplineService.findAll(disciplineID, levelID, categoryID)
   }
 
-  @Query('subdiscipline')
-  async findOne(@Args('id') id: tbl_subdiscipline['id']) {
-    return this.subdisciplineService.findOne(id)
+  @Query(() => Subdiscipline)
+  async subdiscipline(
+    @Args('subdisciplineID', { type: () => Int })
+    subdisciplineID: Subdiscipline['id'],
+  ) {
+    return this.subdisciplineService.findOne(subdisciplineID)
   }
 
-  @Query('subdisciplinesByName')
-  async findSubByName(@Args('name') name: tbl_subdiscipline['name']) {
+  @Query(() => [Subdiscipline])
+  async subdisciplinesByName(
+    @Args('name', { type: () => String })
+    name: Subdiscipline['name'],
+  ) {
     return this.subdisciplineService.findSubByName(name)
   }
 
   /** Mutations */
 
-  @Mutation('subdisciplineCreate')
-  async create(
-    @Args('disciplineID') disciplineID: tbl_discipline['id'],
+  @Mutation(() => SubdisciplinePayload)
+  async subdisciplineCreate(
+    @Args('disciplineID', { type: () => Int })
+    disciplineID: tbl_discipline['id'],
     @Args('subdisciplineInput')
-    subdisciplineInput: tbl_subdiscipline,
+    subdisciplineInput: SubdisciplineInput,
   ) {
     return this.subdisciplineService.create(disciplineID, subdisciplineInput)
   }
 
-  @Mutation('subdisciplineUpdate')
-  update(
-    @Args('subdisciplineID') subdisciplineID: tbl_subdiscipline['id'],
-    @Args('subdisciplineInput')
+  @Mutation(() => SubdisciplinePayload)
+  async subdisciplineUpdate(
+    @Args('subdisciplineID', { type: () => Int })
+    subdisciplineID: Subdiscipline['id'],
+    @Args('subdisciplineInput', { type: () => SubdisciplineInput })
     subdisciplineInput: SubdisciplineInput,
   ) {
     return this.subdisciplineService.update(subdisciplineID, subdisciplineInput)
   }
 
-  @Mutation('subdisciplineDelete')
-  remove(@Args('id') id: tbl_subdiscipline['id']) {
-    return this.subdisciplineService.remove(id)
+  @Mutation(() => SubdisciplinePayload)
+  async subdisciplineDelete(
+    @Args('subdisciplineID', { type: () => Int })
+    subdisciplineID: Subdiscipline['id'],
+  ) {
+    return this.subdisciplineService.remove(subdisciplineID)
   }
 
   /** Field Resolvers */
 
-  @ResolveField('classes')
-  classes(
-    @Parent() { id }: tbl_subdiscipline,
+  @ResolveField()
+  async festivalClasses(
+    @Parent() Subdiscipline: tbl_subdiscipline,
     @Args('SGSlabel') SGSlabel: SGSlabel,
-    @Args('levelID') levelID: tbl_level['id'],
-    @Args('categoryID') categoryID: tbl_category['id'],
+    @Args('levelID', { type: () => Int }) levelID: tbl_level['id'],
+    @Args('categoryID', { type: () => Int }) categoryID: tbl_category['id'],
   ) {
-    const subdisciplineID = id
+    const subdisciplineID = Subdiscipline.id
     return this.festivalClassService.findAll(
       SGSlabel,
       subdisciplineID,

@@ -1,46 +1,56 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
 import { CommunityService } from './community.service'
-import { CommunityInput, Community, Registration } from 'src/graphql'
-import { tbl_registration, tbl_reg_community } from '@prisma/client'
-// import { CommunityInput } from './dto/create-community.input'
-// import { UpdateCommunityInput } from './dto/update-community.input'
+import { CommunityPayload } from './entities/community.entity'
+import { CommunityInput } from './dto/community.input'
+import { Community } from './entities/community.entity'
+import { tbl_registration } from '@prisma/client'
 
-@Resolver('Community')
+@Resolver(() => Community)
 export class CommunityResolver {
   constructor(private readonly communityService: CommunityService) {}
 
   /** Queries */
 
-  @Query('communities')
-  findAll() {
+  @Query(() => [Community])
+  async communities() {
     return this.communityService.findAll()
   }
 
-  @Query('community')
-  findOne(@Args('communityID') communityID: tbl_reg_community['id']) {
+  @Query(() => Community)
+  async community(
+    @Args('communityID', { type: () => Int })
+    communityID: Community['id'],
+  ) {
     return this.communityService.findOne(communityID)
   }
 
   /** Mutations */
 
-  @Mutation('communityCreate')
-  create(
-    @Args('registrationID') registrationID: tbl_registration['id'],
-    @Args('communityInput') communityInput: Partial<CommunityInput>,
+  @Mutation(() => CommunityPayload)
+  async communityCreate(
+    @Args('registrationID', { type: () => Int })
+    registrationID: tbl_registration['id'],
+    @Args('communityInput', { type: () => CommunityInput })
+    communityInput: Partial<CommunityInput>,
   ) {
     return this.communityService.create(registrationID, communityInput)
   }
 
-  @Mutation('communityUpdate')
-  update(
-    @Args('communityID') communityID: tbl_reg_community['id'],
-    @Args('communityInput') communityInput: Partial<CommunityInput>,
+  @Mutation(() => CommunityPayload)
+  async communityUpdate(
+    @Args('communityID', { type: () => Int })
+    communityID: Community['id'],
+    @Args('communityInput', { type: () => CommunityInput })
+    communityInput: Partial<CommunityInput>,
   ) {
     return this.communityService.update(communityID, communityInput)
   }
 
-  @Mutation('communityDelete')
-  remove(@Args('communityID') communityID: tbl_reg_community['id']) {
+  @Mutation(() => CommunityPayload)
+  async communityDelete(
+    @Args('communityID', { type: () => Int })
+    communityID: Community['id'],
+  ) {
     return this.communityService.remove(communityID)
   }
 }

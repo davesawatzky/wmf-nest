@@ -1,9 +1,9 @@
-scalar PhoneNumber
+scalar string
 scalar EmailAddress
-scalar PostalCode
+scalar string
 
 type Performer {
-	id: ID!
+	id: Int!
 	firstName: String
 	lastName: String
 	apartment: String
@@ -11,8 +11,8 @@ type Performer {
 	streetName: String
 	city: String
 	province: String
-	postalCode: PostalCode
-	phone: PhoneNumber
+	postalCode: string
+	phone: string
 	email: EmailAddress
 	age: Int
 	otherClasses: String
@@ -28,8 +28,8 @@ input PerformerInput {
 	streetName: String
 	city: String!
 	province: String!
-	postalCode: PostalCode
-	phone: PhoneNumber
+	postalCode: string
+	phone: string
 	email: EmailAddress
 	age: Int
 	otherClasses: String

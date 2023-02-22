@@ -1,18 +1,13 @@
-import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql'
+import { Resolver, Mutation, Args, Context } from '@nestjs/graphql'
 import { AuthService } from './auth.service'
-import { UserService } from 'src/user/user.service'
-import {
-  AuthPayload,
-  CredentialsSignup,
-  CredentialsSignin,
-  User,
-} from 'src/graphql'
+import { AuthPayload } from './entities/auth.entity'
+import { CredentialsSignup } from './dto/credentials-signup.input'
+import { CredentialsSignin } from './dto/credentials-signin.input'
+import { User } from '../user/entities/user.entity'
 import { UseGuards } from '@nestjs/common'
 import { GqlAuthGuard } from './gql-auth.guard'
-// import { CreateAuthInput } from './dto/create-auth.input'
-// import { UpdateAuthInput } from './dto/update-auth.input'
 
-@Resolver('Auth')
+@Resolver(() => User)
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
@@ -27,6 +22,7 @@ export class AuthResolver {
     @Args('credentials') credentials: CredentialsSignin,
     @Context() context,
   ): Promise<AuthPayload> {
-    return this.authService.signin(context.user)
+    const { user }: { user: Partial<User> } = context
+    return this.authService.signin(user)
   }
 }

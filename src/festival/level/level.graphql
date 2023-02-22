@@ -12,7 +12,7 @@ input LevelInput {
 }
 
 type Query {
-  levels(subdisciplineID: Int, categoryID: Int): [Level]
+  levels(categoryID: Int, subdisciplineID: Int): [Level]
 	level(id: Int!): Level
 	# levelsByName(name: String!): [Level!]
 }

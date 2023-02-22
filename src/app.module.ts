@@ -1,14 +1,5 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
-import {
-  DateResolver,
-  DateTimeResolver,
-  DurationResolver,
-  TimeResolver,
-  EmailAddressResolver,
-  PhoneNumberResolver,
-  PostalCodeResolver,
-} from 'graphql-scalars'
 import { join } from 'path'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core'
@@ -38,21 +29,17 @@ import { ConfigModule } from '@nestjs/config'
       isGlobal: true,
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
+      buildSchemaOptions: {
+        numberScalarMode: 'integer',
+      },
       driver: ApolloDriver,
-      typePaths: ['./**/*.graphql'],
-      definitions: {
-        path: join(process.cwd(), 'src/graphql.ts'),
-        outputAs: 'class',
-      },
-      resolvers: {
-        Date: DateResolver,
-        DateTime: DateTimeResolver,
-        Duration: DurationResolver,
-        EmailAddress: EmailAddressResolver,
-        Time: TimeResolver,
-        PhoneNumber: PhoneNumberResolver,
-        PostalCode: PostalCodeResolver,
-      },
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      sortSchema: true,
+      // typePaths: ['./**/*.graphql'],
+      // definitions: {
+      //   path: join(process.cwd(), 'src/graphql.ts'),
+      // outputAs: 'class',
+
       playground: false,
       debug: true,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],

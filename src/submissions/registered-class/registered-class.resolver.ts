@@ -5,15 +5,16 @@ import {
   Mutation,
   Args,
   ResolveField,
+  Int,
 } from '@nestjs/graphql'
 import { tbl_registration, tbl_reg_classes } from '@prisma/client'
 import { RegisteredClassService } from './registered-class.service'
-import { RegisteredClassInput } from 'src/graphql'
+import { RegisteredClassInput } from './dto/registered-class.input'
+import { RegisteredClassPayload } from './entities/registered-class.entity'
 import { SelectionService } from '../selection/selection.service'
-// import { CreateRegisteredClassInput } from './dto/create-registered-class.input'
-// import { UpdateRegisteredClassInput } from './dto/update-registered-class.input'
+import { RegisteredClass } from './entities/registered-class.entity'
 
-@Resolver('RegisteredClass')
+@Resolver(() => RegisteredClass)
 export class RegisteredClassResolver {
   constructor(
     private readonly registeredClassService: RegisteredClassService,
@@ -22,24 +23,26 @@ export class RegisteredClassResolver {
 
   /** Queries */
 
-  @Query('registeredClasses')
-  async findAll() {
+  @Query(() => [RegisteredClass])
+  async registeredClasses() {
     return this.registeredClassService.findAll()
   }
 
-  @Query('registeredClass')
-  async findOne(
-    @Args('registeredClassID') registeredClassID: tbl_reg_classes['id'],
+  @Query(() => RegisteredClass)
+  async registeredClass(
+    @Args('registeredClassID', { type: () => Int })
+    registeredClassID: RegisteredClass['id'],
   ) {
     return this.registeredClassService.findOne(registeredClassID)
   }
 
   /** Mutations */
 
-  @Mutation('registeredClassCreate')
-  async create(
-    @Args('registrationID') registrationID: tbl_registration['id'],
-    @Args('registeredClassInput')
+  @Mutation(() => RegisteredClassPayload)
+  async registeredClassCreate(
+    @Args('registrationID', { type: () => Int })
+    registrationID: tbl_registration['id'],
+    @Args('registeredClassInput', { type: () => RegisteredClassInput })
     registeredClassInput: Partial<RegisteredClassInput>,
   ) {
     return this.registeredClassService.create(
@@ -48,10 +51,11 @@ export class RegisteredClassResolver {
     )
   }
 
-  @Mutation('registeredClassUpdate')
-  async update(
-    @Args('registeredClassID') registeredClassID: tbl_reg_classes['id'],
-    @Args('registeredClassInput')
+  @Mutation(() => RegisteredClassPayload)
+  async registeredClassUpdate(
+    @Args('registeredClassID', { type: () => Int })
+    registeredClassID: RegisteredClass['id'],
+    @Args('registeredClassInput', { type: () => RegisteredClassInput })
     registeredClassInput: Partial<RegisteredClassInput>,
   ) {
     return this.registeredClassService.update(
@@ -60,18 +64,19 @@ export class RegisteredClassResolver {
     )
   }
 
-  @Mutation('registeredClassDelete')
-  async remove(
-    @Args('registeredClassID') registeredClassID: tbl_reg_classes['id'],
+  @Mutation(() => RegisteredClassPayload)
+  async registeredClassDelete(
+    @Args('registeredClassID', { type: () => Int })
+    registeredClassID: RegisteredClass['id'],
   ) {
     return this.registeredClassService.remove(registeredClassID)
   }
 
   /** Field Resolvers */
 
-  @ResolveField('selections')
+  @ResolveField()
   async selections(@Parent() registeredClass: tbl_reg_classes) {
-    const { id }: { id: tbl_reg_classes['id'] } = registeredClass
+    const { id }: { id: RegisteredClass['id'] } = registeredClass
     const registeredClassID = id
     return this.selectionService.findAll(registeredClassID)
   }

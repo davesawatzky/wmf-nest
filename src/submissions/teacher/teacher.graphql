@@ -1,9 +1,9 @@
 scalar EmailAddress
-scalar PhoneNumber
-scalar PostalCode
+scalar string
+scalar string
 
 type Teacher {
-	id: ID!
+	id: Int!
 	prefix: String
 	firstName: String
 	lastName: String
@@ -12,8 +12,8 @@ type Teacher {
 	streetName: String
 	city: String
 	province: String
-	postalCode: PostalCode
-	phone: PhoneNumber
+	postalCode: string
+	phone: string
 	email: EmailAddress
 }
 
@@ -26,8 +26,8 @@ input TeacherInput {
 	streetName: String
 	city: String!
 	province: String!
-	postalCode: PostalCode
-	phone: PhoneNumber
+	postalCode: string
+	phone: string
 	email: EmailAddress
 }
 

@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { tbl_registration, tbl_reg_school } from '@prisma/client'
-import { SchoolInput } from 'src/graphql'
+import { SchoolInput } from './dto/school.input'
 import { PrismaService } from 'src/prisma/prisma.service'
-import { CreateSchoolInput } from './dto/create-school.input'
-import { UpdateSchoolInput } from './dto/update-school.input'
 
 @Injectable()
 export class SchoolService {

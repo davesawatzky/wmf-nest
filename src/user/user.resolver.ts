@@ -5,17 +5,16 @@ import {
   Query,
   Mutation,
   Args,
+  Int,
 } from '@nestjs/graphql'
 import { UserService } from './user.service'
-import { UserInput } from 'src/graphql'
-import { tbl_user } from '@prisma/client'
+import { User, UserPayload } from './entities/user.entity'
+import { UserInput } from './dto/user.input'
 import { RegistrationService } from 'src/submissions/registration/registration.service'
 import { UseGuards } from '@nestjs/common'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
-// import { CreateUserInput } from './dto/create-user.input'
-// import { UpdateUserInput } from './dto/update-user.input'
 
-@Resolver('User')
+@Resolver(() => User)
 export class UserResolver {
   constructor(
     private readonly userService: UserService,
@@ -24,36 +23,40 @@ export class UserResolver {
 
   /** Queries */
 
-  @Query('users')
+  @Query(() => [User])
   @UseGuards(JwtAuthGuard)
-  findAll() {
+  async users() {
     return this.userService.findAll()
   }
 
-  @Query('user')
-  findOne(@Args('id') id: tbl_user['id']) {
-    return this.userService.findOne(id)
+  @Query(() => User)
+  async user(
+    @Args('userID', { type: () => Int })
+    userID: User['id'],
+  ): Promise<User> {
+    return this.userService.findOne(userID)
   }
 
   /** Mutations */
 
-  @Mutation('userUpdate')
-  update(
-    @Args('userID') userID: tbl_user['id'],
-    @Args('userInput') userInput: UserInput,
+  @Mutation(() => UserPayload)
+  async userUpdate(
+    @Args('userID', { type: () => Int }) userID: User['id'],
+    @Args('userInput', { type: () => Int }) userInput: UserInput,
   ) {
     return this.userService.update(userID, userInput)
   }
 
-  @Mutation('userDelete')
-  remove(@Args('id') id: tbl_user['id']) {
+  @Mutation(() => UserPayload)
+  async userDelete(@Args('id', { type: () => Int }) id: User['id']) {
     return this.userService.remove(id)
   }
 
   /** Field Resolvers */
 
-  @ResolveField('registrations')
-  findRegistrations(@Parent() user: tbl_user) {
-    return this.registrationService.findAll(user.id)
+  @ResolveField()
+  async registrations(@Parent() user: User) {
+    const { id }: { id: User['id'] } = user
+    return this.registrationService.findAll(id)
   }
 }

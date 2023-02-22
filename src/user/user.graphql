@@ -1,10 +1,10 @@
-scalar PhoneNumber
+scalar string
 scalar EmailAddress
-scalar PostalCode
+scalar string
 
 type Query {
   users: [User]!
-	user(id: Int, firstName: String, lastName: String, phone: PhoneNumber, email: EmailAddress): User
+	user(userID: Int!): User
 }
 
 type Mutation {
@@ -25,8 +25,8 @@ type User {
 	streetName: String
 	city: String
 	province: String
-	postalCode: PostalCode
-	phone: PhoneNumber
+	postalCode: string
+	phone: string
 	registrations: [Registration]
 }
 
@@ -40,8 +40,8 @@ input UserInput {
 	streetName: String
 	city: String
 	province: String
-	postalCode: PostalCode
-	phone: PhoneNumber
+	postalCode: string
+	phone: string
 }
 
 type UserPayload {

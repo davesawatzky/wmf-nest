@@ -1,46 +1,52 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
 import { TeacherService } from './teacher.service'
-import { tbl_registration, tbl_reg_teacher } from '@prisma/client'
-import { TeacherInput } from 'src/graphql'
-// import { CreateTeacherInput } from './dto/create-teacher.input'
-// import { UpdateTeacherInput } from './dto/update-teacher.input'
+import { tbl_registration } from '@prisma/client'
+import { TeacherInput } from './dto/teacher.input'
+import { Teacher, TeacherPayload } from './entities/teacher.entity'
 
-@Resolver('Teacher')
+@Resolver(() => Teacher)
 export class TeacherResolver {
   constructor(private readonly teacherService: TeacherService) {}
 
   /** Queries */
 
-  @Query('teachers')
-  findAll() {
+  @Query(() => [Teacher])
+  async teachers() {
     return this.teacherService.findAll()
   }
 
-  @Query('teacher')
-  findOne(@Args('teacherID') teacherID: tbl_reg_teacher['id']) {
+  @Query(() => Teacher)
+  async teacher(
+    @Args('teacherID', { type: () => Int }) teacherID: Teacher['id'],
+  ) {
     return this.teacherService.findOne(teacherID)
   }
 
   /** Mutations */
 
-  @Mutation('teacherCreate')
-  create(
-    @Args('registrationID') registrationID: tbl_registration['id'],
-    @Args('teacherInput') teacherInput: Partial<TeacherInput>,
+  @Mutation(() => TeacherPayload)
+  async teacherCreate(
+    @Args('registrationID', { type: () => Int })
+    registrationID: tbl_registration['id'],
+    @Args('teacherInput', { type: () => TeacherInput })
+    teacherInput: Partial<TeacherInput>,
   ) {
     return this.teacherService.create(registrationID, teacherInput)
   }
 
-  @Mutation('teacherUpdate')
-  update(
-    @Args('teacherID') teacherID: tbl_reg_teacher['id'],
-    @Args('teacherInput') teacherInput: Partial<TeacherInput>,
+  @Mutation(() => TeacherPayload)
+  async teacherUpdate(
+    @Args('teacherID', { type: () => Int }) teacherID: Teacher['id'],
+    @Args('teacherInput', { type: () => TeacherInput })
+    teacherInput: Partial<TeacherInput>,
   ) {
     return this.teacherService.update(teacherID, teacherInput)
   }
 
-  @Mutation('teacherDelete')
-  remove(@Args('teacherID') teacherID: tbl_reg_teacher['id']) {
+  @Mutation(() => TeacherPayload)
+  async teacherRemove(
+    @Args('teacherID', { type: () => Int }) teacherID: Teacher['id'],
+  ) {
     return this.teacherService.remove(teacherID)
   }
 }

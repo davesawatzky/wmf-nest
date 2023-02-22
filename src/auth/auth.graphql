@@ -24,5 +24,4 @@ type Mutation {
 type AuthPayload {
 	userErrors: [UserError!]!
 	access_token: String
-	user: User
 }

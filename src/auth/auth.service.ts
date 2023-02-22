@@ -1,16 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { tbl_user } from '@prisma/client'
-import {
-  AuthPayload,
-  CredentialsSignin,
-  CredentialsSignup,
-  User,
-} from 'src/graphql'
+import { AuthPayload } from './entities/auth.entity'
+import { CredentialsSignup } from './dto/credentials-signup.input'
+import { CredentialsSignin } from './dto/credentials-signin.input'
+import { User } from '../user/entities/user.entity'
 import { JwtService } from '@nestjs/jwt'
 import { PrismaService } from 'src/prisma/prisma.service'
 import * as bcrypt from 'bcrypt'
-// import { CreateAuthInput } from './dto/create-auth.input'
-// import { UpdateAuthInput } from './dto/update-auth.input'
 
 @Injectable()
 export class AuthService {
@@ -29,7 +24,6 @@ export class AuthService {
           },
         ],
         access_token: null,
-        user: null,
       }
     } else {
       const hashedPassword = await bcrypt.hash(credentialsSignup.password, 15)
@@ -44,12 +38,13 @@ export class AuthService {
           admin: false,
         },
       })
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = newUser
       return this.signin(result)
     }
   }
 
-  async signin(user: User) {
+  async signin(user: Partial<User>) {
     const payload = {
       username: user.email,
       sub: user.id,
@@ -59,21 +54,19 @@ export class AuthService {
     return {
       userErrors: [],
       access_token: this.jwtService.sign(payload),
-      ...user,
     }
   }
 
   async validateUser(
-    username: tbl_user['email'],
-    password: tbl_user['password'],
-  ): Promise<User | undefined> {
+    username: CredentialsSignin['email'],
+    password: CredentialsSignin['password'],
+  ) {
     const user = await this.prisma.tbl_user.findUnique({
-      where: { email: username },
+      where: { email: username.trim() },
     })
     const valid = await bcrypt.compare(password, user?.password)
-    console.log(valid)
-
     if (user && valid) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = user
       return result
     }

@@ -14,15 +14,15 @@ type FestivalClass {
 
 input FestivalClassInput {
 	classNumber: String!
-	# subdiscipline: Subdiscipline!
-	# level: Level!
-	# category: Category!
-	maxSelection: Int!
-	minSelection: Int!
+	subdisciplineID:Int!
+	levelID: Int!
+	categoryID: Int!
+	maxSelection: Int
+	minSelection: Int
 	requiredSelection: String
 	SGSlabel: SGSlabel!
 	price: Float
-	# trophies: [Trophy]
+	trophies: [Trophy]
 }
 
 input FestivalClassSearchArgs {
@@ -33,7 +33,7 @@ input FestivalClassSearchArgs {
 
 type Query {
   festivalClasses(SGSlabel: SGSlabel, subdisciplineID: Int, levelID: Int, categoryID: Int): [FestivalClass!]!
-	festivalClassSearch(festivalClassSearchArgs: FestivalClassSearchArgs!): [FestivalClass!]!
+	festivalClassSearch(festivalClassSearch: FestivalClassSearchArgs!): [FestivalClass!]!
 	festivalClass(id: Int!): FestivalClass!
 	festivalClassByNumber(festivalClassNumber: String!): FestivalClass
 }

@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
-import { DisciplineInput } from 'src/graphql'
+import { DisciplineInput } from './dto/discipline.input'
 import { tbl_discipline } from '@prisma/client'
-// import { CreateDisciplineInput } from './dto/create-discipline.input'
-// import { UpdateDisciplineInput } from './dto/update-discipline.input'
 
 @Injectable()
 export class DisciplineService {
@@ -25,7 +23,10 @@ export class DisciplineService {
     })
   }
 
-  async update(id: tbl_discipline['id'], DisciplineInput: DisciplineInput) {
+  async update(
+    id: tbl_discipline['id'],
+    DisciplineInput: Partial<tbl_discipline>,
+  ) {
     return await this.prisma.tbl_discipline.update({
       where: { id },
       data: { ...DisciplineInput },

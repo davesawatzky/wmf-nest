@@ -5,15 +5,23 @@ import {
   Query,
   Mutation,
   Args,
+  Int,
+  registerEnumType,
 } from '@nestjs/graphql'
 import { LevelService } from './level.service'
 import { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
-import { Level, LevelInput, SGSlabel } from 'src/graphql'
+import { Level, LevelPayload } from './entities/level.entity'
+import { LevelInput } from './dto/level.input'
 import { FestivalClassService } from '../festival-class/festival-class.service'
+import { SGSlabel } from 'src/common.entity'
 // import { CreateLevelInput } from './dto/create-level.input'
 // import { UpdateLevelInput } from './dto/update-level.input'
 
-@Resolver('Level')
+registerEnumType(SGSlabel, {
+  name: 'SGSlabel',
+  description: 'SOLO, GROUP, SCHOOL, COMMUNITY',
+})
+@Resolver(() => Level)
 export class LevelResolver {
   constructor(
     private readonly levelService: LevelService,
@@ -22,47 +30,51 @@ export class LevelResolver {
 
   /** Queries */
 
-  @Query('levels')
-  async findAll(
-    @Args('categoryID') categoryID: tbl_category['id'],
-    @Args('subdisciplineID') subdisciplineID: tbl_subdiscipline['id'],
+  @Query(() => [Level])
+  async levels(
+    @Args('categoryID', { type: () => Int }) categoryID: tbl_category['id'],
+    @Args('subdisciplineID', { type: () => Int })
+    subdisciplineID: tbl_subdiscipline['id'],
   ) {
     return this.levelService.findAll(categoryID, subdisciplineID)
   }
 
-  @Query('level')
-  findOne(@Args('id') id: tbl_level['id']) {
+  @Query(() => Level)
+  async level(@Args('id', { type: () => Int }) id: Level['id']) {
     return this.levelService.findOne(id)
   }
 
   /** Mutations */
 
-  @Mutation('levelCreate')
-  async create(@Args('levelInput') levelInput: LevelInput) {
+  @Mutation(() => LevelPayload)
+  async levelCreate(@Args('levelInput') levelInput: LevelInput) {
     return this.levelService.create(levelInput)
   }
 
-  @Mutation('levelUpdate')
-  update(
-    @Args('levelID') levelID: tbl_level['id'],
+  @Mutation(() => LevelPayload)
+  async levelUpdate(
+    @Args('levelID', { type: () => Int }) levelID: Level['id'],
     @Args('levelInput') levelInput: LevelInput,
   ) {
     return this.levelService.update(levelID, levelInput)
   }
 
-  @Mutation('levelDelete')
-  remove(@Args('id') id: tbl_level['id']) {
-    return this.levelService.remove(id)
+  @Mutation(() => LevelPayload)
+  async levelDelete(
+    @Args('levelID', { type: () => Int }) levelID: Level['id'],
+  ) {
+    return this.levelService.remove(levelID)
   }
 
   /** Field Resolver */
 
-  @ResolveField('classes')
+  @ResolveField()
   classes(
     @Parent() { id }: tbl_level,
     @Args('SGSlabel') SGSlabel: SGSlabel,
-    @Args('subdisciplineID') subdisciplineID: tbl_subdiscipline['id'],
-    @Args('categoryID') categoryID: tbl_category['id'],
+    @Args('subdisciplineID', { type: () => Int })
+    subdisciplineID: tbl_subdiscipline['id'],
+    @Args('categoryID', { type: () => Int }) categoryID: tbl_category['id'],
   ) {
     const levelID = id
     return this.festivalClassService.findAll(

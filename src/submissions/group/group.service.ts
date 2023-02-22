@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { tbl_registration, tbl_reg_group } from '@prisma/client'
-import { GroupInput } from 'src/graphql'
+import { GroupInput } from './dto/group.input'
 import { PrismaService } from 'src/prisma/prisma.service'
-// import { CreateGroupInput } from './dto/create-group.input'
-// import { UpdateGroupInput } from './dto/update-group.input'
 
 @Injectable()
 export class GroupService {

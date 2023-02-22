@@ -1,46 +1,57 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
 import { PerformerService } from './performer.service'
-import { PerformerInput } from 'src/graphql'
-import { tbl_registration, tbl_reg_performer } from '@prisma/client'
-// import { CreatePerformerInput } from './dto/create-performer.input'
-// import { UpdatePerformerInput } from './dto/update-performer.input'
+import { PerformerInput } from './dto/performer.input'
+import { PerformerPayload } from './entities/performer.entity'
+import { tbl_registration } from '@prisma/client'
+import { Performer } from './entities/performer.entity'
 
-@Resolver('Performer')
+@Resolver(() => Performer)
 export class PerformerResolver {
   constructor(private readonly performerService: PerformerService) {}
 
   /** Queries */
 
-  @Query('performers')
-  findAll() {
-    return this.performerService.findAll()
+  @Query(() => [Performer])
+  async performers(
+    @Args('registrationID', { type: () => Int })
+    registrationID: tbl_registration['id'],
+  ) {
+    return this.performerService.findAll(registrationID)
   }
 
-  @Query('performer')
-  findOne(@Args('performerID') performerID: tbl_reg_performer['id']) {
+  @Query(() => Performer)
+  async performer(
+    @Args('performerID', { type: () => Int })
+    performerID: Performer['id'],
+  ) {
     return this.performerService.findOne(performerID)
   }
 
   /** Mutations */
 
-  @Mutation('performerCreate')
-  create(
-    @Args('registrationID') registrationID: tbl_registration['id'],
-    @Args('performerInput') performerInput: Partial<PerformerInput>,
+  @Mutation(() => PerformerPayload)
+  async performerCreate(
+    @Args('registrationID', { type: () => Int })
+    registrationID: tbl_registration['id'],
+    @Args('performerInput', { type: () => PerformerInput })
+    performerInput: Partial<PerformerInput>,
   ) {
     return this.performerService.create(registrationID, performerInput)
   }
 
-  @Mutation('performerUpdate')
-  update(
-    @Args('performerID') performerID: tbl_reg_performer['id'],
-    @Args('performerInput') performerInput: Partial<PerformerInput>,
+  @Mutation(() => PerformerPayload)
+  async performerUpdate(
+    @Args('performerID', { type: () => Int }) performerID: Performer['id'],
+    @Args('performerInput', { type: () => PerformerInput })
+    performerInput: Partial<PerformerInput>,
   ) {
     return this.performerService.update(performerID, performerInput)
   }
 
-  @Mutation('performerDelete')
-  remove(@Args('id') id: number) {
-    return this.performerService.remove(id)
+  @Mutation(() => PerformerPayload)
+  async performerDelete(
+    @Args('performerID', { type: () => Int }) performerID: Performer['id'],
+  ) {
+    return this.performerService.remove(performerID)
   }
 }

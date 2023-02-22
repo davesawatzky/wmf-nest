@@ -1,26 +1,46 @@
 import { Injectable } from '@nestjs/common'
-import { CreateInstrumentInput } from './dto/create-instrument.input'
-import { UpdateInstrumentInput } from './dto/update-instrument.input'
+import { tbl_instruments } from '@prisma/client'
+import { PrismaService } from 'src/prisma/prisma.service'
 
 @Injectable()
 export class InstrumentService {
-  create(createInstrumentInput: CreateInstrumentInput) {
-    return 'This action adds a new instrument'
+  constructor(private prisma: PrismaService) {}
+
+  create(instrument: Partial<tbl_instruments>) {
+    return this.prisma.tbl_instruments.create({
+      data: {
+        ...instrument,
+      },
+    })
   }
 
   findAll() {
-    return `This action returns all instrument`
+    return this.prisma.tbl_instruments.findMany()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} instrument`
+  findOne(id: tbl_instruments['id']) {
+    return this.prisma.tbl_instruments.findUnique({
+      where: { id },
+    })
   }
 
-  update(id: number, updateInstrumentInput: UpdateInstrumentInput) {
-    return `This action updates a #${id} instrument`
+  update(
+    instrumentID: tbl_instruments['id'],
+    instrument: Partial<tbl_instruments>,
+  ) {
+    return this.prisma.tbl_instruments.update({
+      where: {
+        id: instrumentID,
+      },
+      data: {
+        ...instrument,
+      },
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} instrument`
+  remove(id: tbl_instruments['id']) {
+    return this.prisma.tbl_instruments.delete({
+      where: { id },
+    })
   }
 }

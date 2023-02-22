@@ -5,10 +5,10 @@ import {
   Mutation,
   Args,
   ResolveField,
+  Int,
 } from '@nestjs/graphql'
 import { RegistrationService } from './registration.service'
-import { RegistrationInput, Registration, SGSlabel } from 'src/graphql'
-import { tbl_registration, tbl_reg_performer, tbl_user } from '@prisma/client'
+import { tbl_registration, tbl_user } from '@prisma/client'
 import { PerformerService } from '../performer/performer.service'
 import { RegisteredClassService } from '../registered-class/registered-class.service'
 import { UserService } from 'src/user/user.service'
@@ -16,10 +16,14 @@ import { GroupService } from '../group/group.service'
 import { TeacherService } from '../teacher/teacher.service'
 import { CommunityService } from '../community/community.service'
 import { SchoolService } from '../school/school.service'
-// import { CreateRegistrationInput } from './dto/create-registration.input';
-// import { UpdateRegistrationInput } from './dto/update-registration.input';
+import {
+  Registration,
+  RegistrationPayload,
+} from './entities/registration.entity'
+import { RegistrationInput } from './dto/registration.input'
+import { SGSlabel } from 'src/common.entity'
 
-@Resolver('Registration')
+@Resolver(() => Registration)
 export class RegistrationResolver {
   constructor(
     private readonly registrationService: RegistrationService,
@@ -34,82 +38,89 @@ export class RegistrationResolver {
 
   /** Queries */
 
-  @Query('registrations')
-  async findAll(
-    @Args('userID') userID?: tbl_user['id'],
-    @Args('performerType') performerType?: SGSlabel,
+  @Query(() => [Registration])
+  async registrations(
+    @Args('userID', { type: () => Int }) userID?: tbl_user['id'],
+    @Args('performerType', { type: () => SGSlabel })
+    performerType?: Registration['performerType'],
   ) {
     return this.registrationService.findAll(userID, performerType)
   }
 
-  @Query('registration')
-  async findOne(@Args('id') id: tbl_registration['id']) {
+  @Query(() => Registration)
+  async registration(@Args('id', { type: () => Int }) id: Registration['id']) {
     return this.registrationService.findOne(id)
   }
 
   /** Mutations */
 
-  @Mutation('registrationCreate')
-  async create(
-    @Args('performerType') performerType: Registration['performerType'],
-    @Args('label') label: Registration['label'],
+  @Mutation(() => RegistrationPayload)
+  async registrationCreate(
+    @Args('performerType', { type: () => SGSlabel }) performerType: SGSlabel,
+    @Args('label', { type: () => String })
+    label: Registration['label'],
   ) {
     return this.registrationService.create(performerType, label)
   }
 
-  @Mutation('registrationUpdate')
-  async update(
-    @Args('registrationID') registrationID: Registration['id'],
-    @Args('registration') registration: Partial<RegistrationInput>,
+  @Mutation(() => RegistrationPayload)
+  async registrationUpdate(
+    @Args('registrationID', { type: () => Int })
+    registrationID: Registration['id'],
+    @Args('registration', { type: () => RegistrationInput })
+    registration: RegistrationInput,
   ) {
     return this.registrationService.update(registrationID, registration)
   }
 
-  @Mutation('registrationDelete')
-  async remove(@Args('id') id: tbl_registration['id']) {
-    return this.registrationService.remove(id)
+  @Mutation(() => RegistrationPayload)
+  async registrationDelete(
+    @Args('registrationID', { type: () => Int })
+    registrationID: Registration['id'],
+  ) {
+    return this.registrationService.remove(registrationID)
   }
 
   /** Field Resolvers */
 
-  @ResolveField('user')
+  @ResolveField()
   async user(@Parent() registration: tbl_registration) {
     const { userID }: { userID: tbl_registration['userID'] } = registration
     return this.userService.findOne(userID)
   }
-  @ResolveField('performers')
+  @ResolveField()
   async performers(@Parent() registration: tbl_registration) {
-    const { id }: { id: tbl_registration['id'] } = registration
+    const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return this.performerService.findAll(registrationID)
   }
-  @ResolveField('registeredClasses')
+  @ResolveField()
   async registeredClasses(@Parent() registration: tbl_registration) {
-    const { id }: { id: tbl_registration['id'] } = registration
+    const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return this.registeredClassService.findAll(registrationID)
   }
-  @ResolveField('groups')
+  @ResolveField()
   async groups(@Parent() registration: tbl_registration) {
-    const { id }: { id: tbl_registration['id'] } = registration
+    const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return this.groupService.findAll(registrationID)
   }
-  @ResolveField('communities')
+  @ResolveField()
   async communities(@Parent() registration: tbl_registration) {
-    const { id }: { id: tbl_registration['id'] } = registration
+    const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return this.communityService.findAll(registrationID)
   }
-  @ResolveField('teacher')
+  @ResolveField()
   async teacher(@Parent() registration: tbl_registration) {
-    const { id }: { id: tbl_registration['id'] } = registration
+    const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return this.teacherService.findOne(registrationID)
   }
-  @ResolveField('school')
+  @ResolveField()
   async school(@Parent() registration: tbl_registration) {
-    const { id }: { id: tbl_registration['id'] } = registration
+    const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return this.schoolService.findOne(registrationID)
   }

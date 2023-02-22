@@ -1,43 +1,48 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
 import { DisciplineService } from './discipline.service'
-import { DisciplineInput } from 'src/graphql'
-import { tbl_discipline } from '@prisma/client'
+import { DisciplinePayload } from './entities/discipline.entity'
+import { DisciplineInput } from './dto/discipline.input'
+import { Discipline } from './entities/discipline.entity'
 // import { CreateDisciplineInput } from './dto/create-discipline.input'
 // import { UpdateDisciplineInput } from './dto/update-discipline.input'
 
-@Resolver('Discipline')
+@Resolver(() => Discipline)
 export class DisciplineResolver {
   constructor(private readonly disciplineService: DisciplineService) {}
 
   /** Queries */
 
-  @Query('disciplines')
-  findAll() {
+  @Query(() => [Discipline])
+  async disciplines() {
     return this.disciplineService.findAll()
   }
 
-  @Query('discipline')
-  findOne(@Args('id') id: tbl_discipline['id']) {
+  @Query(() => Discipline)
+  async discipline(@Args('id', { type: () => Int }) id: Discipline['id']) {
     return this.disciplineService.findOne(id)
   }
 
   /** Mutations */
 
-  @Mutation('disciplineCreate')
-  create(@Args('disciplineInput') disciplineInput: DisciplineInput) {
+  @Mutation(() => DisciplinePayload)
+  async disciplineCreate(
+    @Args('disciplineInput') disciplineInput: DisciplineInput,
+  ) {
     return this.disciplineService.create(disciplineInput)
   }
 
-  @Mutation('disciplineUpdate')
-  update(
-    @Args('id') id: tbl_discipline['id'],
+  @Mutation(() => DisciplinePayload)
+  async disciplineUpdate(
+    @Args('id', { type: () => Int }) id: Discipline['id'],
     @Args('disciplineInput') disciplineInput: DisciplineInput,
   ) {
     return this.disciplineService.update(id, disciplineInput)
   }
 
-  @Mutation('disciplineDelete')
-  remove(@Args('id') id: tbl_discipline['id']) {
+  @Mutation(() => DisciplinePayload)
+  async disciplineDelete(
+    @Args('id', { type: () => Int }) id: Discipline['id'],
+  ) {
     return this.disciplineService.remove(id)
   }
 }

@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { tbl_registration, tbl_reg_performer } from '@prisma/client'
 import { PrismaService } from 'src/prisma/prisma.service'
-import { Performer, PerformerInput } from 'src/graphql'
-// import { CreatePerformerInput } from './dto/create-performer.input'
-// import { UpdatePerformerInput } from './dto/update-performer.input'
+import { PerformerInput } from './dto/performer.input'
 
 @Injectable()
 export class PerformerService {

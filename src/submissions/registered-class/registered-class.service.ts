@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { tbl_registration, tbl_reg_classes } from '@prisma/client'
-import { RegisteredClassInput } from 'src/graphql'
+import { RegisteredClassInput } from './dto/registered-class.input'
 import { PrismaService } from 'src/prisma/prisma.service'
-// import { CreateRegisteredClassInput } from './dto/create-registered-class.input'
-// import { UpdateRegisteredClassInput } from './dto/update-registered-class.input'
 
 @Injectable()
 export class RegisteredClassService {

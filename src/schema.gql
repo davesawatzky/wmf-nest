@@ -1,0 +1,537 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AuthPayload {
+  access_token: String
+  userErrors: [UserError!]!
+}
+
+type Category {
+  description: String
+  festivalClasses(SGSlabel: String!, levelID: Int!, subdisciplineID: Int!): [FestivalClass!]
+  id: Int!
+  name: String
+  requiredComposer: String
+}
+
+input CategoryInput {
+  description: String
+  name: String!
+  requiredComposer: String
+}
+
+type CategoryPayload {
+  category: Category
+  userErrors: [UserError!]!
+}
+
+type Community {
+  chaperones: Int
+  conflictPerformers: String
+  earliestTime: String
+  groupSize: Int
+  id: Int!
+  latestTime: String
+  name: String!
+  unavailable: String
+  wheelchairs: Int
+}
+
+input CommunityInput {
+  chaperones: Int
+  conflictPerformers: String
+  earliestTime: String
+  groupSize: Int
+  latestTime: String
+  name: String!
+  unavailable: String
+  wheelchairs: Int
+}
+
+type CommunityPayload {
+  community: Community
+  userErrors: [UserError!]!
+}
+
+input CredentialsSignin {
+  email: String!
+  password: String!
+}
+
+input CredentialsSignup {
+  email: String!
+  firstName: String!
+  lastName: String!
+  password: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+"""An arbitrary-precision Decimal type"""
+scalar Decimal
+
+type Discipline {
+  id: Int
+  name: String
+  subdisciplines: [Subdiscipline!]
+}
+
+input DisciplineInput {
+  name: String!
+}
+
+type DisciplinePayload {
+  discipline: Discipline
+  userErrors: [UserError!]!
+}
+
+type FestivalClass {
+  SGSlabel: SGSlabel!
+  category: Category!
+  classNumber: String!
+  id: Int!
+  level: Level!
+  maxSelection: Int!
+  minSelection: Int!
+  price: Decimal
+  requiredSelection: String
+  subdiscipline: Subdiscipline!
+  trophies: [Trophy!]
+}
+
+input FestivalClassInput {
+  SGSlabel: SGSlabel!
+  categoryID: Int!
+  classNumber: String!
+  levelID: Int!
+  maxSelection: Int!
+  minSelection: Int!
+  price: Decimal
+  requiredSelection: String
+  subdisciplineID: Int!
+}
+
+type FestivalClassPayload {
+  festivalClass: FestivalClass
+  userErrors: [UserError!]!
+}
+
+input FestivalClassSearchArgs {
+  categoryID: Int
+  levelID: Int
+  subdisciplineID: Int
+}
+
+type Group {
+  age: Int
+  groupType: String
+  id: Int!
+  instruments: String
+  name: String
+  numberOfPerformers: Int
+}
+
+input GroupInput {
+  age: Int
+  groupType: String
+  instruments: String
+  name: String!
+  numberOfPerformers: Int
+}
+
+type GroupPayload {
+  group: Group
+  userErrors: [UserError!]!
+}
+
+type Instrument {
+  id: Int!
+  name: String!
+}
+
+input InstrumentInput {
+  name: String
+}
+
+type InstrumentPayload {
+  instrument: Instrument
+  userErrors: [UserError!]!
+}
+
+type Level {
+  classes(SGSlabel: String!, categoryID: Int!, subdisciplineID: Int!): [FestivalClass!]
+  description: String
+  id: Int!
+  name: String!
+}
+
+input LevelInput {
+  description: String
+  name: String!
+}
+
+type LevelPayload {
+  level: Level
+  userErrors: [UserError!]!
+}
+
+type Mutation {
+  SchoolCreate(registrationID: Int!, schoolInput: SchoolInput!): SchoolPayload!
+  categoryCreate(categoryInput: CategoryInput!): CategoryPayload!
+  categoryDelete(id: Int!): CategoryPayload!
+  categoryUpdate(categoryID: Int!, categoryInput: CategoryInput!): CategoryPayload!
+  communityCreate(communityInput: CommunityInput!, registrationID: Int!): CommunityPayload!
+  communityDelete(communityID: Int!): CommunityPayload!
+  communityUpdate(communityID: Int!, communityInput: CommunityInput!): CommunityPayload!
+  create(groupInput: GroupInput!, registrationID: Int!): GroupPayload!
+  disciplineCreate(disciplineInput: DisciplineInput!): DisciplinePayload!
+  disciplineDelete(id: Int!): DisciplinePayload!
+  disciplineUpdate(disciplineInput: DisciplineInput!, id: Int!): DisciplinePayload!
+  festivalClassCreate(SGSlabel: String!, festivalClass: FestivalClassInput!): FestivalClassPayload!
+  festivalClassDelete(festivalClassID: Int!): FestivalClassPayload!
+  festivalClassUpdate(festivalClass: FestivalClassInput!, festivalClassID: Int!): FestivalClassPayload!
+  groupDelete(groupID: Int!): GroupPayload!
+  groupUpdate(groupID: Int!, groupInput: GroupInput!): GroupPayload!
+  instrumentCreate(instrument: InstrumentInput!): InstrumentPayload!
+  instrumentDelete(id: Int!): InstrumentPayload!
+  instrumentUpdate(instrument: InstrumentInput!, instrumentID: Int!): InstrumentPayload!
+  levelCreate(levelInput: LevelInput!): LevelPayload!
+  levelDelete(levelID: Int!): LevelPayload!
+  levelUpdate(levelID: Int!, levelInput: LevelInput!): LevelPayload!
+  performerCreate(performerInput: PerformerInput!, registrationID: Int!): PerformerPayload!
+  performerDelete(performerID: Int!): PerformerPayload!
+  performerUpdate(performerID: Int!, performerInput: PerformerInput!): PerformerPayload!
+  registeredClassCreate(registeredClassInput: RegisteredClassInput!, registrationID: Int!): RegisteredClassPayload!
+  registeredClassDelete(registeredClassID: Int!): RegisteredClassPayload!
+  registeredClassUpdate(registeredClassID: Int!, registeredClassInput: RegisteredClassInput!): RegisteredClassPayload!
+  registrationCreate(label: String!, performerType: SGSlabel!): RegistrationPayload!
+  registrationDelete(registrationID: Int!): RegistrationPayload!
+  registrationUpdate(registration: RegistrationInput!, registrationID: Int!): RegistrationPayload!
+  schoolDelete(schoolID: Int!): SchoolPayload!
+  schoolUpdate(schoolID: Int!, schoolInput: SchoolInput!): SchoolPayload!
+  selectionCreate(registeredClassID: Int!, selectionInput: SelectionInput!): SelectionPayload!
+  selectionDelete(selectionID: Int!): SelectionPayload!
+  selectionUpdate(selectionID: Int!, selectionInput: SelectionInput!): SelectionPayload!
+  signin(credentials: CredentialsSignin!): AuthPayload!
+  signup(credentials: CredentialsSignup!): AuthPayload!
+  subdisciplineCreate(disciplineID: Int!, subdisciplineInput: SubdisciplineInput!): SubdisciplinePayload!
+  subdisciplineDelete(subdisciplineID: Int!): SubdisciplinePayload!
+  subdisciplineUpdate(subdisciplineID: Int!, subdisciplineInput: SubdisciplineInput!): SubdisciplinePayload!
+  teacherCreate(registrationID: Int!, teacherInput: TeacherInput!): TeacherPayload!
+  teacherRemove(teacherID: Int!): TeacherPayload!
+  teacherUpdate(teacherID: Int!, teacherInput: TeacherInput!): TeacherPayload!
+  trophyCreate(trophyInput: TrophyInput!): TrophyPayload!
+  trophyDelete(id: Int!): TrophyPayload!
+  trophyUpdate(trophyID: Int!, trophyInput: TrophyInput!): TrophyPayload!
+  userDelete(id: Int!): UserPayload!
+  userUpdate(userID: Int!, userInput: Int!): UserPayload!
+}
+
+type Performer {
+  age: Int
+  apartment: String
+  city: String
+  email: String
+  firstName: String
+  id: Int!
+  instrument: String
+  lastName: String
+  level: String
+  otherClasses: String
+  phone: String
+  postalCode: String
+  province: String
+  streetName: String
+  streetNumber: String
+}
+
+input PerformerInput {
+  age: Int
+  apartment: String
+  city: String!
+  email: String
+  firstName: String
+  instrument: String
+  lastName: String
+  level: String
+  otherClasses: String
+  phone: String
+  postalCode: String
+  province: String!
+  streetName: String
+  streetNumber: String
+}
+
+type PerformerPayload {
+  performer: Performer
+  userErrors: [UserError!]!
+}
+
+type Query {
+  categories(levelID: Int!, subdisciplineID: Int!): [Category!]!
+  category(id: Int!): Category!
+  communities: [Community!]!
+  community(communityID: Int!): Community!
+  discipline(id: Int!): Discipline!
+  disciplines: [Discipline!]!
+  festivalClass(id: Int!): FestivalClass!
+  festivalClassByNumber(festivalClassNumber: String!): FestivalClass!
+  festivalClassSearch(festivalClassSearch: FestivalClassSearchArgs!): [FestivalClass!]!
+  festivalClasses(SGSlabel: String!): [FestivalClass!]!
+  group(groupID: Int!): Group!
+  groups: [Group!]!
+  instrument(id: Int!): Instrument!
+  instruments: [Instrument!]!
+  level(id: Int!): Level!
+  levels(categoryID: Int!, subdisciplineID: Int!): [Level!]!
+  performer(performerID: Int!): Performer!
+  performers(registrationID: Int!): [Performer!]!
+  registeredClass(registeredClassID: Int!): RegisteredClass!
+  registeredClasses: [RegisteredClass!]!
+  registration(id: Int!): Registration!
+  registrations(performerType: SGSlabel!, userID: Int!): [Registration!]!
+  school(schoolID: Int!): School!
+  schools: [School!]!
+  selection(selectionID: Int!): Selection!
+  selections: [Selection!]!
+  subdiscipline(subdisciplineID: Int!): Subdiscipline!
+  subdisciplines(categoryID: Int!, disciplineID: Int!, levelID: Int!): [Subdiscipline!]!
+  subdisciplinesByName(name: String!): [Subdiscipline!]!
+  teacher(teacherID: Int!): Teacher!
+  teachers: [Teacher!]!
+  trophies: [Trophy!]!
+  trophy(id: Int!): Trophy!
+  user(userID: Int!): User!
+  users: [User!]!
+}
+
+type RegisteredClass {
+  category: String
+  classNumber: String
+  discipline: String
+  id: Int!
+  level: String
+  numberOfSelections: Int
+  price: Decimal
+  schoolCommunityId: Int
+  selections: [Selection!]
+  subdiscipline: String
+}
+
+input RegisteredClassInput {
+  category: String
+  classNumber: String
+  discipline: String
+  level: String
+  numberOfSelections: Int
+  price: Decimal
+  schoolCommunityId: Int
+  subdiscipline: String
+}
+
+type RegisteredClassPayload {
+  registeredClass: RegisteredClass
+  userErrors: [UserError!]!
+}
+
+type Registration {
+  communities: [Community!]
+  confirmation: String
+  createdAt: DateTime
+  groups: [Group!]
+  id: Int!
+  label: String
+  payedAmt: Decimal
+  performerType: SGSlabel
+  performers: [Performer!]
+  registeredClasses: [RegisteredClass!]
+  school: School
+  submittedAt: DateTime
+  teacher: Teacher
+  totalAmt: Decimal
+  transactionInfo: String
+  updatedAt: DateTime
+  user: User!
+}
+
+input RegistrationInput {
+  confirmation: String
+  label: String
+  payedAmt: Decimal
+  performerType: SGSlabel
+  submittedAt: String
+  totalAmt: Decimal
+  transactionInfo: String
+}
+
+type RegistrationPayload {
+  registration: Registration
+  userErrors: [UserError!]!
+}
+
+"""SOLO, GROUP, SCHOOL, COMMUNITY"""
+enum SGSlabel {
+  COMMUNITY
+  GROUP
+  SCHOOL
+  SOLO
+}
+
+type School {
+  city: String
+  division: String
+  id: Int!
+  name: String!
+  phone: String
+  postalCode: String
+  province: String
+  schoolGroups: [Community!]
+  streetName: String
+  streetNumber: String
+}
+
+input SchoolInput {
+  city: String
+  division: String
+  name: String
+  phone: String
+  postalCode: String
+  province: String
+  streetName: String
+  streetNumber: String
+}
+
+type SchoolPayload {
+  school: School
+  userErrors: [UserError!]!
+}
+
+type Selection {
+  composer: String
+  duration: String
+  id: Int!
+  largerWork: String
+  movement: String
+  title: String
+}
+
+input SelectionInput {
+  composer: String
+  duration: String
+  largerWork: String
+  movement: String
+  title: String
+}
+
+type SelectionPayload {
+  selection: Selection
+  userErrors: [UserError!]!
+}
+
+type Subdiscipline {
+  SGSlabel: SGSlabel!
+  description: String!
+  discipline: Discipline
+  festivalClasses(SGSlabel: String!, categoryID: Int!, levelID: Int!): [FestivalClass!]
+  id: Int!
+  maxPerformers: Int!
+  minPerformers: Int!
+  name: String!
+  price: Decimal
+}
+
+input SubdisciplineInput {
+  SGSlabel: SGSlabel!
+  description: String
+  maxPerformers: Int
+  minPerformers: Int
+  name: String!
+  price: Decimal
+}
+
+type SubdisciplinePayload {
+  subdiscpline: Subdiscipline
+  userErrors: [UserError!]!
+}
+
+type Teacher {
+  apartment: String
+  city: String
+  email: String
+  firstName: String
+  id: Int!
+  lastName: String
+  phone: String
+  postalCode: String
+  prefix: String
+  province: String
+  streetName: String
+  streetNumber: String
+}
+
+input TeacherInput {
+  apartment: String
+  city: String!
+  email: String
+  firstName: String
+  lastName: String
+  phone: String
+  postalCode: String
+  prefix: String
+  province: String!
+  streetName: String
+  streetNumber: String
+}
+
+type TeacherPayload {
+  teacher: Teacher
+  userErrors: [UserError!]!
+}
+
+type Trophy {
+  description: String
+  festivalClasses: [FestivalClass!]
+  id: Int!
+  name: String!
+}
+
+input TrophyInput {
+  description: String
+  name: String!
+}
+
+type TrophyPayload {
+  trophy: Trophy
+  userErrors: [UserError!]!
+}
+
+type User {
+  admin: Boolean!
+  apartment: String
+  city: String
+  email: String!
+  firstName: String
+  id: Int!
+  lastName: String
+  phone: String
+  postalCode: String
+  province: String
+  registrations: [Registration!]
+  staff: Boolean!
+  streetName: String
+  streetNumber: String
+}
+
+type UserError {
+  field: [String!]!
+  message: String!
+}
+
+type UserPayload {
+  user: User
+  userErrors: [UserError!]!
+}

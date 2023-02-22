@@ -5,7 +5,7 @@ import {
   tbl_level,
   tbl_discipline,
 } from '@prisma/client'
-import { SubdisciplineInput } from 'src/graphql'
+import { SubdisciplineInput } from './dto/subdiscipline.input'
 import { PrismaService } from 'src/prisma/prisma.service'
 // import { CreateSubdisciplineInput } from './dto/create-subdiscipline.input'
 // import { UpdateSubdisciplineInput } from './dto/update-subdiscipline.input'
@@ -16,7 +16,7 @@ export class SubdisciplineService {
 
   async create(
     disciplineID: tbl_discipline['id'],
-    subdisciplineInput: tbl_subdiscipline,
+    subdisciplineInput: SubdisciplineInput,
   ) {
     return this.prisma.tbl_subdiscipline.create({
       data: {
@@ -44,7 +44,7 @@ export class SubdisciplineService {
     })
   }
 
-  findOne(id: tbl_subdiscipline['id']) {
+  async findOne(id: tbl_subdiscipline['id']) {
     return this.prisma.tbl_subdiscipline.findUnique({
       where: { id },
     })
