@@ -1,4 +1,5 @@
 import { InputType, Field, Int } from '@nestjs/graphql'
+import { IsPostalCode, IsPhoneNumber, IsEmail } from 'class-validator'
 
 @InputType()
 export class PerformerInput {
@@ -9,8 +10,14 @@ export class PerformerInput {
   streetName?: string
   city: string
   province: string
+
+  @IsPostalCode('CA')
   postalCode?: string
+
+  @IsPhoneNumber('CA')
   phone?: string
+
+  @IsEmail()
   email?: string
 
   @Field(() => Int)

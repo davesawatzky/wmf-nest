@@ -6,7 +6,7 @@ import { FestivalClass } from '../../festival-class/entities/festival-class.enti
 export class Category {
   @Field(() => Int)
   id: number
-  name?: string
+  name: string
   description?: string
   requiredComposer?: string
   festivalClasses?: FestivalClass[]

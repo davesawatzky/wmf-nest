@@ -1,5 +1,5 @@
 import { InputType, Field, Int, registerEnumType } from '@nestjs/graphql'
-import { Decimal } from '@prisma/client/runtime'
+import { Decimal } from '@prisma/client/runtime/library'
 import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
 import { Type, Transform } from 'class-transformer'
 import { SGSlabel } from 'src/common.entity'

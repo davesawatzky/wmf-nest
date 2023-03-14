@@ -4,8 +4,11 @@ import { GroupPayload } from './entities/group.entity'
 import { GroupInput } from './dto/group.input'
 import { Group } from './entities/group.entity'
 import { tbl_registration } from '@prisma/client'
+import { UseGuards } from '@nestjs/common/decorators'
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 
 @Resolver(() => Group)
+@UseGuards(JwtAuthGuard)
 export class GroupResolver {
   constructor(private readonly groupService: GroupService) {}
 

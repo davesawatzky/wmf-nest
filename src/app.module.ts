@@ -22,10 +22,12 @@ import { TeacherModule } from './submissions/teacher/teacher.module'
 import { SelectionModule } from './submissions/selection/selection.module'
 import { AuthModule } from './auth/auth.module'
 import { ConfigModule } from '@nestjs/config'
+import { AbilityModule } from './ability/ability.module'
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      envFilePath: `.env.${process.env.NODE_ENV}`,
       isGlobal: true,
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -62,6 +64,7 @@ import { ConfigModule } from '@nestjs/config'
     TeacherModule,
     SelectionModule,
     AuthModule,
+    AbilityModule,
   ],
 })
 export class AppModule {}

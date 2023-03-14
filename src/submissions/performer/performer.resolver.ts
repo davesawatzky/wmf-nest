@@ -4,8 +4,11 @@ import { PerformerInput } from './dto/performer.input'
 import { PerformerPayload } from './entities/performer.entity'
 import { tbl_registration } from '@prisma/client'
 import { Performer } from './entities/performer.entity'
+import { UseGuards } from '@nestjs/common/decorators'
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 
 @Resolver(() => Performer)
+@UseGuards(JwtAuthGuard)
 export class PerformerResolver {
   constructor(private readonly performerService: PerformerService) {}
 

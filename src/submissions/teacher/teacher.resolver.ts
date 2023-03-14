@@ -3,8 +3,11 @@ import { TeacherService } from './teacher.service'
 import { tbl_registration } from '@prisma/client'
 import { TeacherInput } from './dto/teacher.input'
 import { Teacher, TeacherPayload } from './entities/teacher.entity'
+import { UseGuards } from '@nestjs/common/decorators'
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 
 @Resolver(() => Teacher)
+@UseGuards(JwtAuthGuard)
 export class TeacherResolver {
   constructor(private readonly teacherService: TeacherService) {}
 

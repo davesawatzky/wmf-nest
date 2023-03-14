@@ -4,6 +4,7 @@ import { AuthGuard } from '@nestjs/passport'
 
 @Injectable()
 export class GqlAuthGuard extends AuthGuard('local') {
+  // 'local' is the name of the strategy being used
   constructor() {
     super()
   }

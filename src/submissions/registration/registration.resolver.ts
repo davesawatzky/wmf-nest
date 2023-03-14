@@ -22,8 +22,11 @@ import {
 } from './entities/registration.entity'
 import { RegistrationInput } from './dto/registration.input'
 import { SGSlabel } from 'src/common.entity'
+import { UseGuards } from '@nestjs/common/decorators'
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 
 @Resolver(() => Registration)
+@UseGuards(JwtAuthGuard)
 export class RegistrationResolver {
   constructor(
     private readonly registrationService: RegistrationService,

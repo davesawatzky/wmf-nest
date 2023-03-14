@@ -13,8 +13,11 @@ import { RegisteredClassInput } from './dto/registered-class.input'
 import { RegisteredClassPayload } from './entities/registered-class.entity'
 import { SelectionService } from '../selection/selection.service'
 import { RegisteredClass } from './entities/registered-class.entity'
+import { UseGuards } from '@nestjs/common/decorators'
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 
 @Resolver(() => RegisteredClass)
+@UseGuards(JwtAuthGuard)
 export class RegisteredClassResolver {
   constructor(
     private readonly registeredClassService: RegisteredClassService,

@@ -1,6 +1,7 @@
 import { InputType, Field, Int } from '@nestjs/graphql'
 import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
-import { Decimal } from '@prisma/client/runtime'
+import { Decimal } from '@prisma/client/runtime/library'
+import { IsInt } from 'class-validator'
 import { Transform, Type } from 'class-transformer'
 
 @InputType()
@@ -11,6 +12,7 @@ export class RegisteredClassInput {
   level?: string
   category?: string
 
+  @IsInt()
   @Field(() => Int)
   numberOfSelections?: number
 

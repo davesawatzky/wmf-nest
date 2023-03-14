@@ -1,5 +1,5 @@
 import { Field, ObjectType, Int, registerEnumType } from '@nestjs/graphql'
-import { Decimal } from '@prisma/client/runtime'
+import { Decimal } from '@prisma/client/runtime/library'
 import { SGSlabel, UserError } from 'src/common.entity'
 import { Subdiscipline } from '../../subdiscipline/entities/subdiscipline.entity'
 import { Level } from '../../level/entities/level.entity'

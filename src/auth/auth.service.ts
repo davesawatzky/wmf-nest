@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { AuthPayload } from './entities/auth.entity'
+import { AuthPayload } from './dto/auth.entity'
 import { CredentialsSignup } from './dto/credentials-signup.input'
 import { CredentialsSignin } from './dto/credentials-signin.input'
 import { User } from '../user/entities/user.entity'
@@ -13,7 +13,7 @@ export class AuthService {
 
   async signup(credentialsSignup: CredentialsSignup): Promise<AuthPayload> {
     const user = await this.prisma.tbl_user.findUnique({
-      where: { email: credentialsSignup.email },
+      where: { email: credentialsSignup.email.trim().toLowerCase() },
     })
     if (user) {
       return {
@@ -24,6 +24,7 @@ export class AuthService {
           },
         ],
         access_token: null,
+        user: null,
       }
     } else {
       const hashedPassword = await bcrypt.hash(credentialsSignup.password, 15)
@@ -48,12 +49,11 @@ export class AuthService {
     const payload = {
       username: user.email,
       sub: user.id,
-      admin: user.admin,
-      staff: user.staff,
     }
     return {
       userErrors: [],
       access_token: this.jwtService.sign(payload),
+      user: user,
     }
   }
 
@@ -62,7 +62,7 @@ export class AuthService {
     password: CredentialsSignin['password'],
   ) {
     const user = await this.prisma.tbl_user.findUnique({
-      where: { email: username.trim() },
+      where: { email: username.trim().toLowerCase() },
     })
     const valid = await bcrypt.compare(password, user?.password)
     if (user && valid) {

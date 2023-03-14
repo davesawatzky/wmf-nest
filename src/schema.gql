@@ -4,6 +4,7 @@
 
 type AuthPayload {
   access_token: String
+  user: User!
   userErrors: [UserError!]!
 }
 
@@ -11,7 +12,7 @@ type Category {
   description: String
   festivalClasses(SGSlabel: String!, levelID: Int!, subdisciplineID: Int!): [FestivalClass!]
   id: Int!
-  name: String
+  name: String!
   requiredComposer: String
 }
 

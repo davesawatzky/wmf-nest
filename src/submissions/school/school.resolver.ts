@@ -13,8 +13,11 @@ import { SchoolPayload } from './entities/school.entity'
 import { School } from './entities/school.entity'
 import { tbl_registration, tbl_reg_school } from '@prisma/client'
 import { CommunityService } from '../community/community.service'
+import { UseGuards } from '@nestjs/common/decorators'
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 
 @Resolver(() => School)
+@UseGuards(JwtAuthGuard)
 export class SchoolResolver {
   constructor(
     private readonly schoolService: SchoolService,

@@ -3,8 +3,11 @@ import { SelectionService } from './selection.service'
 import { Selection, SelectionPayload } from './entities/selection.entity'
 import { SelectionInput } from './dto/selection.input'
 import { tbl_reg_classes } from '@prisma/client'
+import { UseGuards } from '@nestjs/common/decorators'
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 
 @Resolver(() => Selection)
+@UseGuards(JwtAuthGuard)
 export class SelectionResolver {
   constructor(private readonly selectionService: SelectionService) {}
 
