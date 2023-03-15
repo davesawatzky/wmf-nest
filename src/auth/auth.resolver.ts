@@ -24,6 +24,7 @@ export class AuthResolver {
     @Args('credentials') credentials: CredentialsSignin,
     @Context() context,
   ) {
+    console.log(context.user)
     return this.authService.signin(context.user)
   }
 }

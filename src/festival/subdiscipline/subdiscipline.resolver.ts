@@ -7,6 +7,8 @@ import {
   Args,
   Int,
 } from '@nestjs/graphql'
+import { UseGuards } from '@nestjs/common'
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 import { SubdisciplineService } from './subdiscipline.service'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { SGSlabel } from 'src/common.entity'
@@ -23,10 +25,8 @@ import {
 } from './entities/subdiscipline.entity'
 import { SubdisciplineInput } from './dto/subdiscipline.input'
 
-// import { SubdisciplineInput } from './dto/create-subdiscipline.input'
-// import { UpdateSubdisciplineInput } from './dto/update-subdiscipline.input'
-
 @Resolver(() => Subdiscipline)
+@UseGuards(JwtAuthGuard)
 export class SubdisciplineResolver {
   constructor(
     private readonly subdisciplineService: SubdisciplineService,

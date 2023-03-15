@@ -8,20 +8,21 @@ import {
   Int,
   registerEnumType,
 } from '@nestjs/graphql'
+import { UseGuards } from '@nestjs/common'
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 import { LevelService } from './level.service'
 import { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
 import { Level, LevelPayload } from './entities/level.entity'
 import { LevelInput } from './dto/level.input'
 import { FestivalClassService } from '../festival-class/festival-class.service'
 import { SGSlabel } from 'src/common.entity'
-// import { CreateLevelInput } from './dto/create-level.input'
-// import { UpdateLevelInput } from './dto/update-level.input'
 
 registerEnumType(SGSlabel, {
   name: 'SGSlabel',
   description: 'SOLO, GROUP, SCHOOL, COMMUNITY',
 })
 @Resolver(() => Level)
+@UseGuards(JwtAuthGuard)
 export class LevelResolver {
   constructor(
     private readonly levelService: LevelService,

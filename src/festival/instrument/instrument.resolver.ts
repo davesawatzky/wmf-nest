@@ -1,12 +1,12 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
-import { Instrument } from './entities/instrument.entity'
-import { InstrumentPayload } from './entities/instrument.entity'
+import { UseGuards } from '@nestjs/common'
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
+import { Instrument, InstrumentPayload } from './entities/instrument.entity'
 import { InstrumentInput } from './dto/instrument.input'
 import { InstrumentService } from './instrument.service'
-// import { CreateInstrumentInput } from './dto/create-instrument.input'
-// import { UpdateInstrumentInput } from './dto/update-instrument.input'
 
 @Resolver(() => Instrument)
+@UseGuards(JwtAuthGuard)
 export class InstrumentResolver {
   constructor(private readonly instrumentService: InstrumentService) {}
 

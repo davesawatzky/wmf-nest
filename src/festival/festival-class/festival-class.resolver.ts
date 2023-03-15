@@ -7,11 +7,15 @@ import {
   Parent,
   Int,
 } from '@nestjs/graphql'
+import { UseGuards } from '@nestjs/common'
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 import { FestivalClassService } from './festival-class.service'
-import { FestivalClass } from './entities/festival-class.entity'
 import { FestivalClassInput } from './dto/festival-class.input'
 import { FestivalClassSearchArgs } from './dto/festival-class.input'
-import { FestivalClassPayload } from './entities/festival-class.entity'
+import {
+  FestivalClass,
+  FestivalClassPayload,
+} from './entities/festival-class.entity'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { SGSlabel } from 'src/common.entity'
 import { SubdisciplineService } from '../subdiscipline/subdiscipline.service'
@@ -20,6 +24,7 @@ import { CategoryService } from '../category/category.service'
 import { tbl_classlist } from '@prisma/client'
 
 @Resolver(() => FestivalClass)
+@UseGuards(JwtAuthGuard)
 export class FestivalClassResolver {
   constructor(
     private festivalClassService: FestivalClassService,

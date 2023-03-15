@@ -27,7 +27,10 @@ export class AuthService {
         user: null,
       }
     } else {
-      const hashedPassword = await bcrypt.hash(credentialsSignup.password, 15)
+      const hashedPassword = await bcrypt.hash(
+        credentialsSignup.password.trim(),
+        15,
+      )
       const { firstName, lastName, email } = credentialsSignup
       const newUser = await this.prisma.tbl_user.create({
         data: {
@@ -66,10 +69,26 @@ export class AuthService {
     })
     const valid = await bcrypt.compare(password, user?.password)
     if (user && valid) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user
+      const result = await this.stripProperties(user)
       return result
     }
     return null
+  }
+
+  async findAuthenticatedUser(id): Promise<User> {
+    const user = await this.prisma.tbl_user.findUnique({
+      where: { id },
+    })
+    if (user) {
+      const result = await this.stripProperties(user)
+      return result
+    }
+    return null
+  }
+
+  stripProperties(user) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userDetails } = user
+    return userDetails
   }
 }

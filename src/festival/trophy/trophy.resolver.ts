@@ -7,12 +7,15 @@ import {
   Args,
   Int,
 } from '@nestjs/graphql'
+import { UseGuards } from '@nestjs/common'
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 import { TrophyService } from './trophy.service'
 import { FestivalClassService } from '../festival-class/festival-class.service'
 import { Trophy, TrophyPayload } from './entities/trophy.entity'
 import { TrophyInput } from './dto/trophy.input'
 
 @Resolver(() => Trophy)
+@UseGuards(JwtAuthGuard)
 export class TrophyResolver {
   constructor(
     private readonly trophyService: TrophyService,

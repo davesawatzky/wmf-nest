@@ -1,12 +1,12 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
+import { UseGuards } from '@nestjs/common'
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 import { DisciplineService } from './discipline.service'
-import { DisciplinePayload } from './entities/discipline.entity'
+import { Discipline, DisciplinePayload } from './entities/discipline.entity'
 import { DisciplineInput } from './dto/discipline.input'
-import { Discipline } from './entities/discipline.entity'
-// import { CreateDisciplineInput } from './dto/create-discipline.input'
-// import { UpdateDisciplineInput } from './dto/update-discipline.input'
 
 @Resolver(() => Discipline)
+@UseGuards(JwtAuthGuard)
 export class DisciplineResolver {
   constructor(private readonly disciplineService: DisciplineService) {}
 
