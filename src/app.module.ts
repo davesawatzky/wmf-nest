@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { join } from 'path'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
-import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core'
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default'
 import { PrismaModule } from './prisma/prisma.module'
 import { UserModule } from './user/user.module'
 import { RegistrationModule } from './submissions/registration/registration.module'
@@ -23,6 +23,7 @@ import { SelectionModule } from './submissions/selection/selection.module'
 import { AuthModule } from './auth/auth.module'
 import { ConfigModule } from '@nestjs/config'
 import { AbilityModule } from './ability/ability.module'
+import { SubmissionModule } from './submissions/submission/submission.module'
 
 @Module({
   imports: [
@@ -43,7 +44,6 @@ import { AbilityModule } from './ability/ability.module'
       // outputAs: 'class',
 
       playground: false,
-      debug: true,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
     PrismaModule,
@@ -65,6 +65,7 @@ import { AbilityModule } from './ability/ability.module'
     SelectionModule,
     AuthModule,
     AbilityModule,
+    SubmissionModule,
   ],
 })
 export class AppModule {}

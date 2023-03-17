@@ -35,7 +35,7 @@ export class Registration {
   @Field(() => GraphQLDecimal)
   payedAmt?: number
   transactionInfo?: string
-  confirmation?: string
+  submission?: string
   submittedAt?: Date
   createdAt?: Date
   updatedAt?: Date

@@ -1,19 +1,20 @@
-import { InputType, Field } from '@nestjs/graphql'
-import { SGSlabel } from 'src/common.entity'
+import { Field, GraphQLISODateTime, InputType } from '@nestjs/graphql'
+import { IsDate, IsString } from 'class-validator'
 import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
 import { Decimal } from '@prisma/client/runtime/library'
 import { Type, Transform } from 'class-transformer'
 
 @InputType()
-export class RegistrationInput {
-  label?: string
+export class SubmissionInput {
+  @Field(() => GraphQLISODateTime)
+  @IsDate()
+  submittedAt: Date
 
-  @Field(() => SGSlabel)
-  performerType?: SGSlabel
+  @IsString()
+  submission: string
 
   @Field(() => GraphQLDecimal)
   @Type(() => Object)
   @Transform(() => transformToDecimal)
-  totalAmt?: Decimal
-  transactionInfo?: string
+  payedAmt?: Decimal
 }

@@ -46,7 +46,7 @@ export class RegisteredClassResolver {
     @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
     @Args('registeredClassInput', { type: () => RegisteredClassInput })
-    registeredClassInput: Partial<RegisteredClassInput>,
+    registeredClassInput: RegisteredClassInput,
   ) {
     return this.registeredClassService.create(
       registrationID,
@@ -59,7 +59,7 @@ export class RegisteredClassResolver {
     @Args('registeredClassID', { type: () => Int })
     registeredClassID: RegisteredClass['id'],
     @Args('registeredClassInput', { type: () => RegisteredClassInput })
-    registeredClassInput: Partial<RegisteredClassInput>,
+    registeredClassInput: RegisteredClassInput,
   ) {
     return this.registeredClassService.update(
       registeredClassID,

@@ -222,6 +222,7 @@ type Mutation {
   subdisciplineCreate(disciplineID: Int!, subdisciplineInput: SubdisciplineInput!): SubdisciplinePayload!
   subdisciplineDelete(subdisciplineID: Int!): SubdisciplinePayload!
   subdisciplineUpdate(subdisciplineID: Int!, subdisciplineInput: SubdisciplineInput!): SubdisciplinePayload!
+  submitRegistration(registrationID: Int!): RegistrationPayload!
   teacherCreate(registrationID: Int!, teacherInput: TeacherInput!): TeacherPayload!
   teacherRemove(teacherID: Int!): TeacherPayload!
   teacherUpdate(teacherID: Int!, teacherInput: TeacherInput!): TeacherPayload!
@@ -302,6 +303,7 @@ type Query {
   subdiscipline(subdisciplineID: Int!): Subdiscipline!
   subdisciplines(categoryID: Int!, disciplineID: Int!, levelID: Int!): [Subdiscipline!]!
   subdisciplinesByName(name: String!): [Subdiscipline!]!
+  submissions(performerType: SGSlabel!): Registration!
   teacher(teacherID: Int!): Teacher!
   teachers: [Teacher!]!
   trophies: [Trophy!]!
@@ -341,7 +343,6 @@ type RegisteredClassPayload {
 
 type Registration {
   communities: [Community!]
-  confirmation: String
   createdAt: DateTime
   groups: [Group!]
   id: Int!
@@ -351,6 +352,7 @@ type Registration {
   performers: [Performer!]
   registeredClasses: [RegisteredClass!]
   school: School
+  submission: String
   submittedAt: DateTime
   teacher: Teacher
   totalAmt: Decimal
@@ -360,11 +362,8 @@ type Registration {
 }
 
 input RegistrationInput {
-  confirmation: String
   label: String
-  payedAmt: Decimal
   performerType: SGSlabel
-  submittedAt: String
   totalAmt: Decimal
   transactionInfo: String
 }
