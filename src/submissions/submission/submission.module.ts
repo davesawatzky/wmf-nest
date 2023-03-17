@@ -4,7 +4,7 @@ import { SubmissionResolver } from './submission.resolver'
 import { SubmissionService } from './submission.service'
 
 @Module({
-  providers: [SubmissionResolver],
+  providers: [SubmissionResolver, SubmissionService],
   imports: [RegistrationModule],
   exports: [SubmissionService],
 })

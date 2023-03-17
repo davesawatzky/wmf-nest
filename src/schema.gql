@@ -303,7 +303,7 @@ type Query {
   subdiscipline(subdisciplineID: Int!): Subdiscipline!
   subdisciplines(categoryID: Int!, disciplineID: Int!, levelID: Int!): [Subdiscipline!]!
   subdisciplinesByName(name: String!): [Subdiscipline!]!
-  submissions(performerType: SGSlabel!): Registration!
+  submissions(performerType: SGSlabel!): [Registration!]!
   teacher(teacherID: Int!): Teacher!
   teachers: [Teacher!]!
   trophies: [Trophy!]!
