@@ -17,7 +17,7 @@ import {
   FestivalClassPayload,
 } from './entities/festival-class.entity'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { SGSlabel } from 'src/common.entity'
+import { SGS_label } from 'src/common.entity'
 import { SubdisciplineService } from '../subdiscipline/subdiscipline.service'
 import { LevelService } from '../level/level.service'
 import { CategoryService } from '../category/category.service'
@@ -36,8 +36,8 @@ export class FestivalClassResolver {
   /** Queries */
 
   @Query(() => [FestivalClass])
-  async festivalClasses(@Args('SGSlabel') SGSlabel: SGSlabel) {
-    return this.festivalClassService.findAll(SGSlabel)
+  async festivalClasses(@Args('SGS_label') SGS_label: SGS_label) {
+    return this.festivalClassService.findAll(SGS_label)
   }
 
   @Query(() => [FestivalClass])
@@ -58,7 +58,7 @@ export class FestivalClassResolver {
   @Query(() => FestivalClass)
   async festivalClassByNumber(
     @Args('festivalClassNumber', { type: () => String })
-    festivalClassNumber: FestivalClass['classNumber'],
+    festivalClassNumber: FestivalClass['class_number'],
   ) {
     return this.festivalClassService.findByNumber(festivalClassNumber)
   }
@@ -67,11 +67,11 @@ export class FestivalClassResolver {
 
   @Mutation(() => FestivalClassPayload)
   async festivalClassCreate(
-    @Args('SGSlabel') SGSlabel: SGSlabel,
+    @Args('SGS_label') SGS_label: SGS_label,
     @Args('festivalClass')
     festivalClass: FestivalClassInput,
   ) {
-    return this.festivalClassService.create(SGSlabel, festivalClass)
+    return this.festivalClassService.create(SGS_label, festivalClass)
   }
 
   @Mutation(() => FestivalClassPayload)

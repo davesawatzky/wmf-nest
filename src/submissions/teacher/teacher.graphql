@@ -5,28 +5,28 @@ scalar string
 type Teacher {
 	id: Int!
 	prefix: String
-	firstName: String
-	lastName: String
+	first_name: String
+	last_name: String
 	apartment: String
-	streetNumber: String
-	streetName: String
+	street_number: String
+	street_name: String
 	city: String
 	province: String
-	postalCode: string
+	postal_code: string
 	phone: string
 	email: EmailAddress
 }
 
 input TeacherInput {
 	prefix: String
-	firstName: String
-	lastName: String
+	first_name: String
+	last_name: String
 	apartment: String
-	streetNumber: String
-	streetName: String
+	street_number: String
+	street_name: String
 	city: String!
 	province: String!
-	postalCode: string
+	postal_code: string
 	phone: string
 	email: EmailAddress
 }

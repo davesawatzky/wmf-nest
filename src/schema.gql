@@ -10,16 +10,16 @@ type AuthPayload {
 
 type Category {
   description: String
-  festivalClasses(SGSlabel: String!, levelID: Int!, subdisciplineID: Int!): [FestivalClass!]
+  festivalClasses(SGS_label: String!, levelID: Int!, subdisciplineID: Int!): [FestivalClass!]
   id: Int!
   name: String!
-  requiredComposer: String
+  require_composer: String
 }
 
 input CategoryInput {
   description: String
   name: String!
-  requiredComposer: String
+  required_composer: String
 }
 
 type CategoryPayload {
@@ -29,11 +29,11 @@ type CategoryPayload {
 
 type Community {
   chaperones: Int
-  conflictPerformers: String
-  earliestTime: String
-  groupSize: Int
+  conflict_performers: String
+  earliest_time: String
+  group_size: Int
   id: Int!
-  latestTime: String
+  latest_time: String
   name: String!
   unavailable: String
   wheelchairs: Int
@@ -41,10 +41,10 @@ type Community {
 
 input CommunityInput {
   chaperones: Int
-  conflictPerformers: String
-  earliestTime: String
-  groupSize: Int
-  latestTime: String
+  conflict_performers: String
+  earliest_time: String
+  group_size: Int
+  latest_time: String
   name: String!
   unavailable: String
   wheelchairs: Int
@@ -62,8 +62,8 @@ input CredentialsSignin {
 
 input CredentialsSignup {
   email: String!
-  firstName: String!
-  lastName: String!
+  first_name: String!
+  last_name: String!
   password: String!
 }
 
@@ -91,28 +91,28 @@ type DisciplinePayload {
 }
 
 type FestivalClass {
-  SGSlabel: SGSlabel!
+  SGS_label: SGS_label!
   category: Category!
-  classNumber: String!
+  class_number: String!
   id: Int!
   level: Level!
-  maxSelection: Int!
-  minSelection: Int!
+  max_selection: Int!
+  min_selection: Int!
   price: Decimal
-  requiredSelection: String
+  required_selection: String
   subdiscipline: Subdiscipline!
   trophies: [Trophy!]
 }
 
 input FestivalClassInput {
-  SGSlabel: SGSlabel!
+  SGS_label: SGS_label!
   categoryID: Int!
-  classNumber: String!
+  class_number: String!
   levelID: Int!
-  maxSelection: Int!
-  minSelection: Int!
+  max_selection: Int!
+  min_selection: Int!
   price: Decimal
-  requiredSelection: String
+  required_selection: String
   subdisciplineID: Int!
 }
 
@@ -164,7 +164,7 @@ type InstrumentPayload {
 }
 
 type Level {
-  classes(SGSlabel: String!, categoryID: Int!, subdisciplineID: Int!): [FestivalClass!]
+  classes(SGS_label: String!, categoryID: Int!, subdisciplineID: Int!): [FestivalClass!]
   description: String
   id: Int!
   name: String!
@@ -192,7 +192,7 @@ type Mutation {
   disciplineCreate(disciplineInput: DisciplineInput!): DisciplinePayload!
   disciplineDelete(id: Int!): DisciplinePayload!
   disciplineUpdate(disciplineInput: DisciplineInput!, id: Int!): DisciplinePayload!
-  festivalClassCreate(SGSlabel: String!, festivalClass: FestivalClassInput!): FestivalClassPayload!
+  festivalClassCreate(SGS_label: String!, festivalClass: FestivalClassInput!): FestivalClassPayload!
   festivalClassDelete(festivalClassID: Int!): FestivalClassPayload!
   festivalClassUpdate(festivalClass: FestivalClassInput!, festivalClassID: Int!): FestivalClassPayload!
   groupDelete(groupID: Int!): GroupPayload!
@@ -209,7 +209,7 @@ type Mutation {
   registeredClassCreate(registeredClassInput: RegisteredClassInput!, registrationID: Int!): RegisteredClassPayload!
   registeredClassDelete(registeredClassID: Int!): RegisteredClassPayload!
   registeredClassUpdate(registeredClassID: Int!, registeredClassInput: RegisteredClassInput!): RegisteredClassPayload!
-  registrationCreate(label: String!, performerType: SGSlabel!): RegistrationPayload!
+  registrationCreate(label: String!, performer_type: SGS_label!): RegistrationPayload!
   registrationDelete(registrationID: Int!): RegistrationPayload!
   registrationUpdate(registration: RegistrationInput!, registrationID: Int!): RegistrationPayload!
   schoolDelete(schoolID: Int!): SchoolPayload!
@@ -222,7 +222,7 @@ type Mutation {
   subdisciplineCreate(disciplineID: Int!, subdisciplineInput: SubdisciplineInput!): SubdisciplinePayload!
   subdisciplineDelete(subdisciplineID: Int!): SubdisciplinePayload!
   subdisciplineUpdate(subdisciplineID: Int!, subdisciplineInput: SubdisciplineInput!): SubdisciplinePayload!
-  submitRegistration(registrationID: Int!): RegistrationPayload!
+  submitRegistration(registrationID: Int!): SubmissionPayload!
   teacherCreate(registrationID: Int!, teacherInput: TeacherInput!): TeacherPayload!
   teacherRemove(teacherID: Int!): TeacherPayload!
   teacherUpdate(teacherID: Int!, teacherInput: TeacherInput!): TeacherPayload!
@@ -238,17 +238,17 @@ type Performer {
   apartment: String
   city: String
   email: String
-  firstName: String
+  first_name: String
   id: Int!
   instrument: String
-  lastName: String
+  last_name: String
   level: String
   otherClasses: String
   phone: String
-  postalCode: String
+  postal_code: String
   province: String
-  streetName: String
-  streetNumber: String
+  street_name: String
+  street_number: String
 }
 
 input PerformerInput {
@@ -256,16 +256,16 @@ input PerformerInput {
   apartment: String
   city: String!
   email: String
-  firstName: String
+  first_name: String
   instrument: String
-  lastName: String
+  last_name: String
   level: String
   otherClasses: String
   phone: String
-  postalCode: String
+  postal_code: String
   province: String!
-  streetName: String
-  streetNumber: String
+  street_name: String
+  street_number: String
 }
 
 type PerformerPayload {
@@ -283,7 +283,7 @@ type Query {
   festivalClass(id: Int!): FestivalClass!
   festivalClassByNumber(festivalClassNumber: String!): FestivalClass!
   festivalClassSearch(festivalClassSearch: FestivalClassSearchArgs!): [FestivalClass!]!
-  festivalClasses(SGSlabel: String!): [FestivalClass!]!
+  festivalClasses(SGS_label: String!): [FestivalClass!]!
   group(groupID: Int!): Group!
   groups: [Group!]!
   instrument(id: Int!): Instrument!
@@ -295,7 +295,7 @@ type Query {
   registeredClass(registeredClassID: Int!): RegisteredClass!
   registeredClasses: [RegisteredClass!]!
   registration(id: Int!): Registration!
-  registrations(performerType: SGSlabel!, userID: Int!): [Registration!]!
+  registrations(performer_type: SGS_label!, userID: Int!): [Registration!]!
   school(schoolID: Int!): School!
   schools: [School!]!
   selection(selectionID: Int!): Selection!
@@ -303,7 +303,7 @@ type Query {
   subdiscipline(subdisciplineID: Int!): Subdiscipline!
   subdisciplines(categoryID: Int!, disciplineID: Int!, levelID: Int!): [Subdiscipline!]!
   subdisciplinesByName(name: String!): [Subdiscipline!]!
-  submissions(performerType: SGSlabel!): [Registration!]!
+  submissions(performer_type: SGS_label!): [Registration!]!
   teacher(teacherID: Int!): Teacher!
   teachers: [Teacher!]!
   trophies: [Trophy!]!
@@ -314,7 +314,7 @@ type Query {
 
 type RegisteredClass {
   category: String
-  classNumber: String
+  class_number: String
   discipline: String
   id: Int!
   level: String
@@ -327,12 +327,12 @@ type RegisteredClass {
 
 input RegisteredClassInput {
   category: String
-  classNumber: String
+  class_number: String
   discipline: String
   level: String
-  numberOfSelections: Int
+  number_of_selections: Int
   price: Decimal
-  schoolCommunityId: Int
+  school_communityId: Int
   subdiscipline: String
 }
 
@@ -343,27 +343,27 @@ type RegisteredClassPayload {
 
 type Registration {
   communities: [Community!]
-  createdAt: DateTime
+  created_at: DateTime
   groups: [Group!]
   id: Int!
   label: String
   payedAmt: Decimal
-  performerType: SGSlabel
+  performer_type: SGS_label
   performers: [Performer!]
   registeredClasses: [RegisteredClass!]
   school: School
   submission: String
-  submittedAt: DateTime
+  submitted_at: DateTime
   teacher: Teacher
   totalAmt: Decimal
   transactionInfo: String
-  updatedAt: DateTime
+  updated_at: DateTime
   user: User!
 }
 
 input RegistrationInput {
   label: String
-  performerType: SGSlabel
+  performer_type: SGS_label
   totalAmt: Decimal
   transactionInfo: String
 }
@@ -374,7 +374,7 @@ type RegistrationPayload {
 }
 
 """SOLO, GROUP, SCHOOL, COMMUNITY"""
-enum SGSlabel {
+enum SGS_label {
   COMMUNITY
   GROUP
   SCHOOL
@@ -387,11 +387,11 @@ type School {
   id: Int!
   name: String!
   phone: String
-  postalCode: String
+  postal_code: String
   province: String
   schoolGroups: [Community!]
-  streetName: String
-  streetNumber: String
+  street_name: String
+  street_number: String
 }
 
 input SchoolInput {
@@ -399,10 +399,10 @@ input SchoolInput {
   division: String
   name: String
   phone: String
-  postalCode: String
+  postal_code: String
   province: String
-  streetName: String
-  streetNumber: String
+  street_name: String
+  street_number: String
 }
 
 type SchoolPayload {
@@ -433,10 +433,10 @@ type SelectionPayload {
 }
 
 type Subdiscipline {
-  SGSlabel: SGSlabel!
+  SGS_label: SGS_label!
   description: String!
   discipline: Discipline
-  festivalClasses(SGSlabel: String!, categoryID: Int!, levelID: Int!): [FestivalClass!]
+  festivalClasses(SGS_label: String!, categoryID: Int!, levelID: Int!): [FestivalClass!]
   id: Int!
   maxPerformers: Int!
   minPerformers: Int!
@@ -445,7 +445,7 @@ type Subdiscipline {
 }
 
 input SubdisciplineInput {
-  SGSlabel: SGSlabel!
+  SGS_label: SGS_label!
   description: String
   maxPerformers: Int
   minPerformers: Int
@@ -458,33 +458,43 @@ type SubdisciplinePayload {
   userErrors: [UserError!]!
 }
 
+type Submission {
+  submission: String!
+  submitted_at: DateTime!
+}
+
+type SubmissionPayload {
+  submission: Submission
+  userErrors: [UserError!]!
+}
+
 type Teacher {
   apartment: String
   city: String
   email: String
-  firstName: String
+  first_name: String
   id: Int!
-  lastName: String
+  last_name: String
   phone: String
-  postalCode: String
+  postal_code: String
   prefix: String
   province: String
-  streetName: String
-  streetNumber: String
+  street_name: String
+  street_number: String
 }
 
 input TeacherInput {
   apartment: String
   city: String!
   email: String
-  firstName: String
-  lastName: String
+  first_name: String
+  last_name: String
   phone: String
-  postalCode: String
+  postal_code: String
   prefix: String
   province: String!
-  streetName: String
-  streetNumber: String
+  street_name: String
+  street_number: String
 }
 
 type TeacherPayload {
@@ -514,16 +524,16 @@ type User {
   apartment: String
   city: String
   email: String!
-  firstName: String
+  first_name: String
   id: Int!
-  lastName: String
+  last_name: String
   phone: String
-  postalCode: String
+  postal_code: String
   province: String
   registrations: [Registration!]
   staff: Boolean!
-  streetName: String
-  streetNumber: String
+  street_name: String
+  street_number: String
 }
 
 type UserError {

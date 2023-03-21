@@ -2,7 +2,7 @@ import { InputType, Field } from '@nestjs/graphql'
 import { Decimal } from '@prisma/client/runtime/library'
 import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
 import { Transform, Type } from 'class-transformer'
-import { SGSlabel } from 'src/common.entity'
+import { SGS_label } from 'src/common.entity'
 
 @InputType()
 export class SubdisciplineInput {
@@ -11,8 +11,8 @@ export class SubdisciplineInput {
   maxPerformers?: number
   minPerformers?: number
 
-  @Field(() => SGSlabel)
-  SGSlabel: SGSlabel
+  @Field(() => SGS_label)
+  SGS_label: SGS_label
 
   @Field(() => GraphQLDecimal)
   @Type(() => Object)

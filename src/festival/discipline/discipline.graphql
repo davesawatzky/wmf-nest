@@ -12,7 +12,7 @@ type Query {
 	disciplines: [Discipline]
 	discipline(id: Int!): Discipline
 	disciplinesByName(name: String!): [Discipline]
-	disciplinesByType(SGSlabel: SGSlabel!): [Discipline]
+	disciplinesByType(SGS_label: SGS_label!): [Discipline]
 }
 
 type Mutation {

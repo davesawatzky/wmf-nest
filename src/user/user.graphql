@@ -18,14 +18,14 @@ type User {
 	email: EmailAddress
 	staff: Boolean
 	admin: Boolean
-	firstName: String
-	lastName: String
+	first_name: String
+	last_name: String
 	apartment: String
-	streetNumber: String
-	streetName: String
+	street_number: String
+	street_name: String
 	city: String
 	province: String
-	postalCode: string
+	postal_code: string
 	phone: string
 	registrations: [Registration]
 }
@@ -33,14 +33,14 @@ type User {
 input UserInput {
 	staff: Boolean
 	admin: Boolean
-	firstName: String
-	lastName: String
+	first_name: String
+	last_name: String
 	apartment: String
-	streetNumber: String
-	streetName: String
+	street_number: String
+	street_name: String
 	city: String
 	province: String
-	postalCode: string
+	postal_code: string
 	phone: string
 }
 

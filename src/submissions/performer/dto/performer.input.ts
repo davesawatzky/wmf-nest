@@ -3,16 +3,16 @@ import { IsPostalCode, IsPhoneNumber, IsEmail } from 'class-validator'
 
 @InputType()
 export class PerformerInput {
-  firstName?: string
-  lastName?: string
+  first_name?: string
+  last_name?: string
   apartment?: string
-  streetNumber?: string
-  streetName?: string
+  street_number?: string
+  street_name?: string
   city: string
   province: string
 
   @IsPostalCode('CA')
-  postalCode?: string
+  postal_code?: string
 
   @IsPhoneNumber('CA')
   phone?: string

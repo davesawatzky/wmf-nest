@@ -8,11 +8,11 @@ export class School {
   id: number
   name: string
   division?: string
-  streetNumber?: string
-  streetName?: string
+  street_number?: string
+  street_name?: string
   city?: string
   province?: string
-  postalCode?: string
+  postal_code?: string
   phone?: string
   schoolGroups?: Community[]
 }

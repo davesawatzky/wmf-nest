@@ -2,16 +2,16 @@ import { InputType, Field, Int, registerEnumType } from '@nestjs/graphql'
 import { Decimal } from '@prisma/client/runtime/library'
 import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
 import { Type, Transform } from 'class-transformer'
-import { SGSlabel } from 'src/common.entity'
+import { SGS_label } from 'src/common.entity'
 
-registerEnumType(SGSlabel, {
-  name: 'SGSlabel',
+registerEnumType(SGS_label, {
+  name: 'SGS_label',
   description: 'SOLO, GROUP, SCHOOL, COMMUNITY',
 })
 
 @InputType()
 export class FestivalClassInput {
-  classNumber: string
+  class_number: string
 
   @Field(() => Int)
   subdisciplineID: number
@@ -23,14 +23,14 @@ export class FestivalClassInput {
   categoryID: number
 
   @Field(() => Int)
-  maxSelection: number
+  max_selection: number
 
   @Field(() => Int)
-  minSelection: number
-  requiredSelection?: string
+  min_selection: number
+  required_selection?: string
 
-  @Field(() => SGSlabel)
-  SGSlabel: SGSlabel
+  @Field(() => SGS_label)
+  SGS_label: SGS_label
 
   @Field(() => GraphQLDecimal)
   @Type(() => Object)

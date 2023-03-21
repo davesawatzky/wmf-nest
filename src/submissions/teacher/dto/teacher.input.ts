@@ -4,16 +4,16 @@ import { IsPostalCode, IsEmail, IsPhoneNumber } from 'class-validator'
 @InputType()
 export class TeacherInput {
   prefix?: string
-  firstName?: string
-  lastName?: string
+  first_name?: string
+  last_name?: string
   apartment?: string
-  streetNumber?: string
-  streetName?: string
+  street_number?: string
+  street_name?: string
   city: string
   province: string
 
   @IsPostalCode('CA')
-  postalCode?: string
+  postal_code?: string
 
   @IsPhoneNumber('CA')
   phone?: string

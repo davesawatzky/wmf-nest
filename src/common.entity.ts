@@ -5,14 +5,14 @@ import { ObjectType, registerEnumType } from '@nestjs/graphql'
  *
  * (enum) SOLO, GROUP, SCHOOL, COMMUNITY
  */
-export enum SGSlabel {
+export enum SGS_label {
   SOLO = 'SOLO',
   GROUP = 'GROUP',
   SCHOOL = 'SCHOOL',
   COMMUNITY = 'COMMUNITY',
 }
 
-registerEnumType(SGSlabel, { name: 'SGSlabel' })
+registerEnumType(SGS_label, { name: 'SGS_label' })
 
 @ObjectType()
 export class UserError {

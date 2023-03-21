@@ -5,13 +5,13 @@ import { IsPostalCode, IsPhoneNumber } from 'class-validator'
 export class SchoolInput {
   name?: string
   division?: string
-  streetNumber?: string
-  streetName?: string
+  street_number?: string
+  street_name?: string
   city?: string
   province?: string
 
   @IsPostalCode('CA')
-  postalCode?: string
+  postal_code?: string
 
   @IsPhoneNumber('CA')
   phone?: string

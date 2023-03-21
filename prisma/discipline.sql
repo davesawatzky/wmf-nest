@@ -1,0 +1,15 @@
+INSERT INTO tbl_discipline (id, name) VALUES
+	(1, 'Brass'),
+	(2, 'Mixed Group'),
+	(3, 'Classical Guitar'),
+	(4, 'Handbells'),
+	(5, 'Multi Discipline'),
+	(6, 'Percussion'),
+	(7, 'Piano'),
+	(8, 'Pipe Organ'),
+	(9, 'Strings'),
+	(10, 'Vocal'),
+	(11, 'Woodwinds'),
+	(12, 'Choral'),
+	(13, 'School'),
+	(14, 'Musical Theatre/G&S');

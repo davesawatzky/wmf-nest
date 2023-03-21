@@ -6,18 +6,18 @@ export class Community {
   @Field(() => Int)
   id: number
   name: string
-  conflictPerformers?: string
+  conflict_performers?: string
 
   @Field(() => Int)
-  groupSize?: number
+  group_size?: number
 
   @Field(() => Int)
   chaperones?: number
 
   @Field(() => Int)
   wheelchairs?: number
-  earliestTime?: string
-  latestTime?: string
+  earliest_time?: string
+  latest_time?: string
   unavailable?: string
 }
 

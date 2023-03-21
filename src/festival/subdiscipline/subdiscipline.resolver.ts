@@ -11,7 +11,7 @@ import { UseGuards } from '@nestjs/common'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 import { SubdisciplineService } from './subdiscipline.service'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { SGSlabel } from 'src/common.entity'
+import { SGS_label } from 'src/common.entity'
 import {
   tbl_discipline,
   tbl_category,
@@ -96,13 +96,13 @@ export class SubdisciplineResolver {
   @ResolveField()
   async festivalClasses(
     @Parent() Subdiscipline: tbl_subdiscipline,
-    @Args('SGSlabel') SGSlabel: SGSlabel,
+    @Args('SGS_label') SGS_label: SGS_label,
     @Args('levelID', { type: () => Int }) levelID: tbl_level['id'],
     @Args('categoryID', { type: () => Int }) categoryID: tbl_category['id'],
   ) {
     const subdisciplineID = Subdiscipline.id
     return this.festivalClassService.findAll(
-      SGSlabel,
+      SGS_label,
       subdisciplineID,
       levelID,
       categoryID,

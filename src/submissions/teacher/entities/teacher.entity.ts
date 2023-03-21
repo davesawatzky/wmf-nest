@@ -6,14 +6,14 @@ export class Teacher {
   @Field(() => Int)
   id: number
   prefix?: string
-  firstName?: string
-  lastName?: string
+  first_name?: string
+  last_name?: string
   apartment?: string
-  streetNumber?: string
-  streetName?: string
+  street_number?: string
+  street_name?: string
   city?: string
   province?: string
-  postalCode?: string
+  postal_code?: string
   phone?: string
   email?: string
 }

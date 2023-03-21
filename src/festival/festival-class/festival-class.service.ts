@@ -10,17 +10,17 @@ import {
   tbl_classlist,
   tbl_class_trophy,
 } from '@prisma/client'
-import { SGSlabel } from 'src/common.entity'
+import { SGS_label } from 'src/common.entity'
 
 @Injectable()
 export class FestivalClassService {
   constructor(private prisma: PrismaService) {}
 
-  async create(SGSlabel: SGSlabel, festivalClass: FestivalClassInput) {
+  async create(SGS_label: SGS_label, festivalClass: FestivalClassInput) {
     return {
       festivalClass: await this.prisma.tbl_classlist.create({
         data: {
-          SGSlabel,
+          SGS_label,
           ...festivalClass,
         },
       }),
@@ -28,13 +28,13 @@ export class FestivalClassService {
   }
 
   async findAll(
-    SGSlabel?: SGSlabel,
+    SGS_label?: SGS_label,
     subdisciplineID?: tbl_subdiscipline['id'],
     levelID?: tbl_level['id'],
     categoryID?: tbl_category['id'],
   ) {
     return this.prisma.tbl_classlist.findMany({
-      where: { SGSlabel, subdisciplineID, levelID, categoryID },
+      where: { SGS_label, subdisciplineID, levelID, categoryID },
     })
   }
 
@@ -67,9 +67,9 @@ export class FestivalClassService {
     })
   }
 
-  async findByNumber(classNumber: tbl_classlist['classNumber']) {
+  async findByNumber(class_number: tbl_classlist['class_number']) {
     return this.prisma.tbl_classlist.findUnique({
-      where: { classNumber },
+      where: { class_number },
     })
   }
 

@@ -3,8 +3,8 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 import { Registration } from '../registration/entities/registration.entity'
 import { UseGuards } from '@nestjs/common'
 import { SubmissionService } from '../submission/submission.service'
-import { RegistrationPayload } from '../registration/entities/registration.entity'
-import { SGSlabel } from 'src/common.entity'
+import { SubmissionPayload } from './entities/submission.entity'
+import { SGS_label } from 'src/common.entity'
 
 @Resolver(() => Registration)
 @UseGuards(JwtAuthGuard)
@@ -13,13 +13,13 @@ export class SubmissionResolver {
 
   @Query(() => [Registration])
   async submissions(
-    @Args('performerType', { type: () => SGSlabel })
-    performerType?: Registration['performerType'],
+    @Args('performer_type', { type: () => SGS_label })
+    performer_type?: Registration['performer_type'],
   ) {
-    return this.submissionService.submissions(performerType)
+    return this.submissionService.submissions(performer_type)
   }
 
-  @Mutation(() => RegistrationPayload)
+  @Mutation(() => SubmissionPayload)
   async submitRegistration(
     @Args('registrationID', { type: () => Int })
     registrationID: Registration['id'],

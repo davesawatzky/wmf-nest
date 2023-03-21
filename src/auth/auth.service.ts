@@ -31,11 +31,11 @@ export class AuthService {
         credentialsSignup.password.trim(),
         15,
       )
-      const { firstName, lastName, email } = credentialsSignup
+      const { first_name, last_name, email } = credentialsSignup
       const newUser = await this.prisma.tbl_user.create({
         data: {
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
+          first_name: first_name.trim(),
+          last_name: last_name.trim(),
           email: email.trim().toLowerCase(),
           password: hashedPassword,
           staff: false,

@@ -4,10 +4,10 @@ import { Type, Transform } from 'class-transformer'
 import { Decimal } from '@prisma/client/runtime/library'
 import { Discipline } from '../../discipline/entities/discipline.entity'
 import { FestivalClass } from '../../festival-class/entities/festival-class.entity'
-import { SGSlabel, UserError } from 'src/common.entity'
+import { SGS_label, UserError } from 'src/common.entity'
 
-registerEnumType(SGSlabel, {
-  name: 'SGSlabel',
+registerEnumType(SGS_label, {
+  name: 'SGS_label',
 })
 
 @ObjectType()
@@ -19,8 +19,8 @@ export class Subdiscipline {
   maxPerformers: number
   minPerformers: number
 
-  @Field(() => SGSlabel)
-  SGSlabel: SGSlabel
+  @Field(() => SGS_label)
+  SGS_label: SGS_label
 
   @Field(() => GraphQLDecimal)
   @Type(() => Object)

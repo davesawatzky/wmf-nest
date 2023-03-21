@@ -15,14 +15,14 @@ export class RegisteredClassService {
     const classExists = await this.prisma.tbl_reg_classes.findMany({
       where: {
         regID: registrationID,
-        classNumber: registeredClassInput.classNumber,
+        class_number: registeredClassInput.class_number,
       },
     })
-    if (classExists.length > 0 && registeredClassInput.classNumber) {
+    if (classExists.length > 0 && registeredClassInput.class_number) {
       return {
         userErrors: [
           {
-            message: `Registration form already includes class ${registeredClassInput.classNumber}.  Cannot add duplicate class.`,
+            message: `Registration form already includes class ${registeredClassInput.class_number}.  Cannot add duplicate class.`,
           },
         ],
         registeredClass: null,

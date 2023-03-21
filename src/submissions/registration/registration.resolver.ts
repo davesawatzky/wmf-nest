@@ -6,6 +6,7 @@ import {
   Args,
   ResolveField,
   Int,
+  Context,
 } from '@nestjs/graphql'
 import { RegistrationService } from './registration.service'
 import { tbl_registration, tbl_user } from '@prisma/client'
@@ -21,9 +22,10 @@ import {
   RegistrationPayload,
 } from './entities/registration.entity'
 import { RegistrationInput } from './dto/registration.input'
-import { SGSlabel } from 'src/common.entity'
+import { SGS_label } from 'src/common.entity'
 import { UseGuards } from '@nestjs/common/decorators'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
+import { User } from 'src/user/entities/user.entity'
 
 @Resolver(() => Registration)
 @UseGuards(JwtAuthGuard)
@@ -44,10 +46,10 @@ export class RegistrationResolver {
   @Query(() => [Registration])
   async registrations(
     @Args('userID', { type: () => Int }) userID?: tbl_user['id'],
-    @Args('performerType', { type: () => SGSlabel })
-    performerType?: Registration['performerType'],
+    @Args('performer_type', { type: () => SGS_label })
+    performer_type?: Registration['performer_type'],
   ) {
-    return this.registrationService.findAll(userID, performerType)
+    return this.registrationService.findAll(userID, performer_type)
   }
 
   @Query(() => Registration)
@@ -59,11 +61,17 @@ export class RegistrationResolver {
 
   @Mutation(() => RegistrationPayload)
   async registrationCreate(
-    @Args('performerType', { type: () => SGSlabel }) performerType: SGSlabel,
+    @Args('performer_type', { type: () => SGS_label })
+    performer_type: SGS_label,
     @Args('label', { type: () => String })
     label: Registration['label'],
+    @Context() context,
   ) {
-    return this.registrationService.create(performerType, label)
+    return this.registrationService.create(
+      context.req.user.id,
+      performer_type,
+      label,
+    )
   }
 
   @Mutation(() => RegistrationPayload)

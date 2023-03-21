@@ -6,11 +6,11 @@ type School {
 	id: Int!
 	name: String!
 	division: String
-	streetNumber: String
-	streetName: String
+	street_number: String
+	street_name: String
 	city: String
 	province: String
-	postalCode: string
+	postal_code: string
 	phone: string
 	schoolGroups: [Community]
 }
@@ -18,11 +18,11 @@ type School {
 input SchoolInput {
 	name: String
 	division: String
-	streetNumber: String
-	streetName: String
+	street_number: String
+	street_name: String
 	city: String
 	province: String
-	postalCode: string
+	postal_code: string
 	phone: string
 }
 

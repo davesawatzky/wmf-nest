@@ -8,20 +8,20 @@ type Registration {
 	communities: [Community]
 	teacher: Teacher
 	school: School
-	performerType: SGSlabel
+	performer_type: SGS_label
 	totalAmt: Float
 	payedAmt: Float
 	transactionInfo: String
 	confirmation: String
-	submittedAt: DateTime
-	createdAt: DateTime
-	updatedAt: DateTime
+	submitted_at: DateTime
+	created_at: DateTime
+	updated_at: DateTime
 }
 
 input RegistrationInput {
 	label: String
-	performerType: SGSlabel
-	submittedAt: String
+	performer_type: SGS_label
+	submitted_at: String
 	totalAmt: Float
 	payedAmt: Float
 	transactionInfo: String
@@ -29,13 +29,13 @@ input RegistrationInput {
 }
 
 type Query {
-  registrations(userID: Int, performerType: SGSlabel): [Registration]!
+  registrations(userID: Int, performer_type: SGS_label): [Registration]!
   registration(id: Int!): Registration
 }
 
 type Mutation {
   registrationCreate(
-		performerType: SGSlabel!
+		performer_type: SGS_label!
 		label: String
 	): RegistrationPayload!
 	registrationUpdate(

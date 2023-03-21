@@ -1,26 +1,31 @@
 import { Injectable } from '@nestjs/common'
 import { RegistrationInput } from './dto/registration.input'
 import { PrismaService } from 'src/prisma/prisma.service'
-import { SGSlabel } from 'src/common.entity'
+import { SGS_label } from 'src/common.entity'
 import { tbl_user, tbl_registration } from '@prisma/client'
 
 @Injectable()
 export class RegistrationService {
   constructor(private prisma: PrismaService) {}
 
-  async create(performerType, label) {
+  async create(
+    userID: tbl_registration['userID'],
+    performer_type: SGS_label,
+    label: tbl_registration['label'],
+  ) {
     label == '' ? 'Registration Form' : label
     return this.prisma.tbl_registration.create({
       data: {
-        performerType,
+        userID,
+        performer_type,
         label,
       },
     })
   }
 
-  async findAll(userID?: tbl_user['id'], performerType?: SGSlabel) {
+  async findAll(userID?: tbl_user['id'], performer_type?: SGS_label) {
     return this.prisma.tbl_registration.findMany({
-      where: { userID, performerType },
+      where: { userID, performer_type },
     })
   }
 

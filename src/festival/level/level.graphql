@@ -3,7 +3,7 @@ type Level {
 	name: String!
 	description: String
 	# categories(categoryID: Int): [Category]
-	classes(SGSlabel: SGSlabel, subdisciplineID: Int, categoryID: Int): [FestivalClass]!
+	classes(SGS_label: SGS_label, subdisciplineID: Int, categoryID: Int): [FestivalClass]!
 }
 
 input LevelInput {

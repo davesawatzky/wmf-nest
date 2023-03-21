@@ -4,11 +4,11 @@ import { IsInt } from 'class-validator'
 @InputType()
 export class CommunityInput {
   name: string
-  conflictPerformers?: string
+  conflict_performers?: string
 
   @IsInt()
   @Field(() => Int)
-  groupSize?: number
+  group_size?: number
 
   @IsInt()
   @Field(() => Int)
@@ -17,7 +17,7 @@ export class CommunityInput {
   @IsInt()
   @Field(() => Int)
   wheelchairs?: number
-  earliestTime?: string
-  latestTime?: string
+  earliest_time?: string
+  latest_time?: string
   unavailable?: string
 }

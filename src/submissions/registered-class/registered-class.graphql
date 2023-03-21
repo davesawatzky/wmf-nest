@@ -1,7 +1,7 @@
 type RegisteredClass {
 	id: Int!
 	selections: [Selection]
-	classNumber: String
+	class_number: String
 	discipline: String
 	subdiscipline: String
 	level: String
@@ -12,7 +12,7 @@ type RegisteredClass {
 }
 
 input RegisteredClassInput {
-	classNumber: String
+	class_number: String
 	discipline: String
 	subdiscipline: String
 	level: String
