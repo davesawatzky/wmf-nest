@@ -12,10 +12,10 @@ datasource db {
 
 model tbl_category {
   id                Int              @id @default(autoincrement())
-  name              String           @db.VarChar(255)
+  name              String           @db.Text
   description       String?          @db.Text
-  required_composer String?          @db.VarChar(255)
-  tbl_classlist    tbl_classlist[]
+  required_composer String?          @db.Text
+  tbl_classlist     tbl_classlist[]
 }
 
 model tbl_class_trophy {
@@ -30,14 +30,14 @@ model tbl_class_trophy {
 
 model tbl_classlist {
   id                 Int                @id @default(autoincrement())
-  class_number       String             @unique @db.VarChar(12)
+  class_number       String             @unique @db.Text
   subdisciplineID    Int
   categoryID         Int
   levelID            Int
   min_selection      Int
   max_selection      Int
-  required_selection String?            @db.VarChar(255)
-  SGS_label           tbl_SGS           @default(SOLO)
+  required_selection String?            @db.Text
+  SGS_label          tbl_SGS            @default(SOLO)
   price              Decimal?           @db.Decimal(7, 2)
   tbl_category       tbl_category       @relation(fields: [categoryID], references: [id], onUpdate: Restrict)
   tbl_level          tbl_level          @relation(fields: [levelID], references: [id], onUpdate: Restrict)
@@ -51,33 +51,41 @@ model tbl_classlist {
 
 model tbl_discipline {
   id                Int                 @id @default(autoincrement())
-  name              String              @db.VarChar(50)
+  name              String              @db.Text
   tbl_subdiscipline tbl_subdiscipline[]
 }
 
+model tbl_field_config {
+  id                  Int           @id @default(autoincrement())
+  table_name          String        @db.Text
+  field_name          String        @db.Text
+  submission_required Boolean       @db.Boolean
+  custom_field        Boolean?      @db.Boolean
+  custom_field_type   String?       @db.Text
+}
 model tbl_level {
   id                 Int             @id @default(autoincrement())
-  name               String          @db.VarChar(50)
+  name               String          @db.Text
   description        String?         @db.Text
   sort_order         Int?
-  tbl_classlist tbl_classlist[]
+  tbl_classlist      tbl_classlist[]
 }
 
 model tbl_reg_classes {
   id                   Int                 @id @default(autoincrement())
   regID                Int
-  class_number         String?             @db.VarChar(9)
-  discipline           String?             @db.VarChar(30)
-  subdiscipline        String?             @db.VarChar(30)
-  level                String?             @db.VarChar(30)
-  category             String?             @db.VarChar(30)
+  class_number         String?             @db.Text
+  discipline           String?             @db.Text
+  subdiscipline        String?             @db.Text
+  level                String?             @db.Text
+  category             String?             @db.Text
   number_of_selections Int?                @db.SmallInt
   school_communityID   Int?
   price                Decimal?            @db.Decimal(7, 2)
   created_at           DateTime            @default(now()) @db.Timestamp()
   updated_at           DateTime            @default(now()) @updatedAt @db.Timestamp()
   tbl_registration     tbl_registration    @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
-  tbl_reg_selection  tbl_reg_selection[]
+  tbl_reg_selection    tbl_reg_selection[]
 
   @@index([regID])
 }
@@ -85,11 +93,11 @@ model tbl_reg_classes {
 model tbl_reg_group {
   id                    Int                   @id @default(autoincrement())
   regID                 Int
-  name                  String?               @db.VarChar(50)
-  group_type            String?               @db.VarChar(15)
+  name                  String?               @db.Text
+  group_type            String?               @db.Text
   number_of_performers  Int?                  @db.SmallInt
   age                   Int?                  @db.SmallInt
-  instruments           String?               @db.VarChar(200)
+  instruments           String?               @db.Text
   created_at            DateTime              @default(now()) @db.Timestamp()
   updated_at            DateTime              @default(now()) @updatedAt @db.Timestamp()
   tbl_registration      tbl_registration      @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
@@ -101,20 +109,20 @@ model tbl_reg_group {
 model tbl_reg_performer {
   id                Int              @id @default(autoincrement())
   regID             Int
-  last_name         String?          @db.VarChar(30)
-  first_name        String?          @db.VarChar(30)
-  apartment         String?          @db.VarChar(5)
-  street_number     String?          @db.VarChar(6)
-  street_name       String?          @db.VarChar(50)
-  city              String           @default("Winnipeg") @db.VarChar(30)
-  province          String           @default("MB") @db.VarChar(2)
-  postal_code       String?          @db.VarChar(7)
-  phone             String?          @db.VarChar(14)
-  email             String?          @db.VarChar(50)
+  last_name         String?          @db.Text
+  first_name        String?          @db.Text
+  apartment         String?          @db.Text
+  street_number     String?          @db.Text
+  street_name       String?          @db.Text
+  city              String           @default("Winnipeg") @db.Text
+  province          String           @default("MB") @db.Text
+  postal_code       String?          @db.Text
+  phone             String?          @db.Text
+  email             String?          @db.Text
   age               Int?             @db.SmallInt
-  instrument        String?          @db.VarChar(50)
-  level             String?          @db.VarChar(20)
-  other_classes     String?          @db.VarChar(255)
+  instrument        String?          @db.Text
+  level             String?          @db.Text
+  other_classes     String?          @db.Text
   created_at        DateTime         @default(now()) @db.Timestamp()
   updated_at        DateTime         @default(now()) @updatedAt @db.Timestamp()
   tbl_registration  tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
@@ -124,15 +132,15 @@ model tbl_reg_performer {
 
 model tbl_reg_school {
   id                Int              @id @default(autoincrement())
-  regID             Int              @unique(map: "school_constraint")
-  name              String?          @default("") @db.VarChar(50)
-  division          String?          @db.VarChar(50)
-  street_number     String?          @db.VarChar(6)
-  street_name       String?          @db.VarChar(100)
-  city              String           @default("Winnipeg") @db.VarChar(30)
-  province          String           @default("MB") @db.VarChar(30)
-  postal_code       String?          @db.VarChar(7)
-  phone             String?          @db.VarChar(14)
+  regID             Int              @unique
+  name              String?          @default("") @db.Text
+  division          String?          @db.Text
+  street_number     String?          @db.Text
+  street_name       String?          @db.Text
+  city              String           @default("Winnipeg") @db.Text
+  province          String           @default("MB") @db.Text
+  postal_code       String?          @db.Text
+  phone             String?          @db.Text
   created_at        DateTime         @default(now()) @db.Timestamp()
   updated_at        DateTime         @default(now()) @updatedAt @db.Timestamp()
   tbl_registration  tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
@@ -143,11 +151,11 @@ model tbl_reg_school {
 model tbl_reg_selection {
   id               Int             @id @default(autoincrement())
   classpickID      Int
-  title            String?         @db.VarChar(100)
-  larger_work      String?         @db.VarChar(100)
-  movement         String?         @db.VarChar(30)
-  composer         String?         @db.VarChar(30)
-  duration         String          @default("0:00") @db.VarChar(10)
+  title            String?         @db.Text
+  larger_work      String?         @db.Text
+  movement         String?         @db.Text
+  composer         String?         @db.Text
+  duration         String          @default("0:00") @db.Text
   created_at       DateTime        @default(now()) @db.Timestamp()
   updated_at       DateTime        @default(now()) @updatedAt @db.Timestamp()
   tbl_reg_classes  tbl_reg_classes @relation(fields: [classpickID], references: [id], onDelete: Cascade, onUpdate: Restrict)
@@ -157,21 +165,21 @@ model tbl_reg_selection {
 
 model tbl_reg_teacher {
   id                Int              @id @default(autoincrement())
-  regID             Int              @unique(map: "teacher_constraint")
-  prefix            String?          @db.VarChar(5)
-  last_name         String?          @db.VarChar(30)
-  first_name        String?          @db.VarChar(30)
-  apartment         String?          @db.VarChar(5)
-  street_number     String?          @db.VarChar(6)
-  street_name       String?          @db.VarChar(100)
-  city              String           @default("Winnipeg") @db.VarChar(30)
-  province          String           @default("MB") @db.VarChar(30)
-  postal_code       String?          @db.VarChar(7)
-  phone             String?          @db.VarChar(14)
-  email             String?          @db.VarChar(50)
+  regID             Int              @unique
+  prefix            String?          @db.Text
+  last_name         String?          @db.Text
+  first_name        String?          @db.Text
+  apartment         String?          @db.Text
+  street_number     String?          @db.Text
+  street_name       String?          @db.Text
+  city              String           @default("Winnipeg") @db.Text
+  province          String           @default("MB") @db.Text
+  postal_code       String?          @db.Text
+  phone             String?          @db.Text
+  email             String?          @db.Text
   created_at        DateTime         @default(now()) @db.Timestamp()
   updated_at        DateTime         @default(now()) @updatedAt @db.Timestamp()
-  tbl_registration tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  tbl_registration  tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
   @@index([regID])
 }
@@ -189,43 +197,43 @@ model tbl_reg_unavailable {
 }
 
 model tbl_registration {
-  id                 Int                            @id @default(autoincrement())
-  userID             Int?                           @default(0)
-  label              String                         @default("Registration Form") @db.VarChar(100)
-  performer_type     tbl_registration_performer_type @default(SOLO)
-  submitted_at       DateTime?                      @db.Timestamp()
-  total_amt          Decimal?                       @db.Decimal(10, 2)
-  payed_amt          Decimal?                       @db.Decimal(10, 2)
-  transaction_info   String?                        @db.VarChar(200)
-  submission         String?                        @unique @db.VarChar(20)
-  created_at         DateTime                       @default(now()) @db.Timestamp()
-  updated_at         DateTime                       @default(now()) @updatedAt @db.Timestamp()
-  tbl_user          tbl_user?                       @relation(fields: [userID], references: [id], onUpdate: Restrict)
-  tbl_reg_classes   tbl_reg_classes[]
-  tbl_reg_community tbl_reg_community[]
-  tbl_reg_group     tbl_reg_group[]
-  tbl_reg_performer tbl_reg_performer[]
-  tbl_reg_school    tbl_reg_school?
-  tbl_reg_teacher   tbl_reg_teacher?
+  id                 Int         @id @default(autoincrement())
+  userID             Int?        @default(0)
+  label              String      @default("Registration Form") @db.Text
+  performer_type     tbl_SGS     @default(SOLO)
+  submitted_at       DateTime?   @db.Timestamp()
+  total_amt          Decimal?    @db.Decimal(10, 2)
+  payed_amt          Decimal?    @db.Decimal(10, 2)
+  transaction_info   String?     @db.Text
+  submission         String?     @unique @db.Text
+  created_at         DateTime    @default(now()) @db.Timestamp()
+  updated_at         DateTime    @default(now()) @updatedAt @db.Timestamp()
+  tbl_user           tbl_user?   @relation(fields: [userID], references: [id], onUpdate: Restrict)
+  tbl_reg_classes    tbl_reg_classes[]
+  tbl_reg_community  tbl_reg_community[]
+  tbl_reg_group      tbl_reg_group[]
+  tbl_reg_performer  tbl_reg_performer[]
+  tbl_reg_school     tbl_reg_school?
+  tbl_reg_teacher    tbl_reg_teacher?
 
   @@index([userID])
 }
 
 model tbl_sacred {
   id         Int    @id
-  composer   String @db.VarChar(255)
-  large_work String @db.VarChar(255)
-  title      String @db.VarChar(255)
+  composer   String @db.Text
+  large_work String @db.Text
+  title      String @db.Text
 }
 
 model tbl_subdiscipline {
   id              Int                        @id @default(autoincrement())
   disciplineID    Int
-  name            String                     @db.VarChar(50)
+  name            String                     @db.Text
   description     String?                    @db.Text
   max_performers  Int?
   min_performers  Int?
-  SGS_label       tbl_subdiscipline_SGSlabel
+  SGS_label       tbl_SGS
   price           Decimal?                   @db.Decimal(7, 2)
   tbl_discipline  tbl_discipline             @relation(fields: [disciplineID], references: [id], onDelete: NoAction, onUpdate: NoAction)
   tbl_classlist   tbl_classlist[]
@@ -235,26 +243,26 @@ model tbl_subdiscipline {
 
 model tbl_trophy {
   id               Int                @id @default(autoincrement())
-  name             String             @db.VarChar(255)
+  name             String             @db.Text
   description      String?            @db.Text
   tbl_class_trophy tbl_class_trophy[]
 }
 
 model tbl_user {
   id                Int                @id @default(autoincrement())
-  email             String             @unique @db.VarChar(255)
-  password          String             @db.VarChar(255)
+  email             String             @unique @db.Text
+  password          String             @db.Text
   staff             Boolean            @default(false)
   admin             Boolean            @default(false)
-  first_name        String?            @db.VarChar(30)
-  last_name         String?            @db.VarChar(30)
-  apartment         String?            @db.VarChar(5)
-  street_number     String?            @db.VarChar(6)
-  street_name       String?            @db.VarChar(50)
-  city              String?            @db.VarChar(30)
-  province          String?            @db.VarChar(2)
-  postal_code       String?            @db.VarChar(7)
-  phone             String?            @db.VarChar(14)
+  first_name        String?            @db.Text
+  last_name         String?            @db.Text
+  apartment         String?            @db.Text
+  street_number     String?            @db.Text
+  street_name       String?            @db.Text
+  city              String?            @db.Text
+  province          String?            @db.Text
+  postal_code       String?            @db.Text
+  phone             String?            @db.Text
   updated_at        DateTime           @default(now()) @updatedAt @db.Timestamp()
   created_at        DateTime           @default(now()) @db.Timestamp()
   tbl_registration  tbl_registration[]
@@ -263,12 +271,12 @@ model tbl_user {
 model tbl_reg_community {
   id                  Int              @id @default(autoincrement())
   regID               Int
-  name                String?          @db.VarChar(50)
-  group_size           Int?
+  name                String?          @db.Text
+  group_size          Int?
   chaperones          Int?
   wheelchairs         Int?
-  earliest_time       String?          @db.VarChar(20)
-  latest_time         String?          @db.VarChar(20)
+  earliest_time       String?          @db.Text
+  latest_time         String?          @db.Text
   unavailable         String?          @db.Text
   conflict_performers String?          @db.Text
   created_at          DateTime         @default(now()) @db.Timestamp()
@@ -280,24 +288,10 @@ model tbl_reg_community {
 
 model tbl_instruments {
   id   Int    @id @default(autoincrement())
-  name String @default("0") @db.VarChar(50)
+  name String @default("0") @db.Text
 }
 
 enum tbl_SGS {
-  SOLO
-  GROUP
-  SCHOOL
-  COMMUNITY
-}
-
-enum tbl_registration_performer_type {
-  SOLO
-  GROUP
-  SCHOOL
-  COMMUNITY
-}
-
-enum tbl_subdiscipline_SGSlabel {
   SOLO
   GROUP
   SCHOOL

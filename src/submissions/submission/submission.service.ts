@@ -3,7 +3,13 @@ import { SubmissionInput } from './dto/submission.input'
 import { randomInt } from 'crypto'
 import { SGS_label } from 'src/common.entity'
 import { PrismaService } from 'src/prisma/prisma.service'
-import { tbl_registration } from '@prisma/client'
+import {
+  tbl_registration,
+  tbl_reg_classes,
+  tbl_reg_performer,
+  tbl_reg_selection,
+  tbl_reg_teacher,
+} from '@prisma/client'
 import { CommunityService } from '../community/community.service'
 import { Community } from '../community/entities/community.entity'
 import { GroupService } from '../group/group.service'
@@ -24,6 +30,14 @@ import { UserError } from 'src/common.entity'
 export interface Result {
   submittable: boolean
   error?: UserError
+}
+
+export interface FullRegistration extends tbl_registration {
+  tbl_reg_performer: tbl_reg_performer[]
+  tbl_reg_teacher: tbl_reg_teacher
+  tbl_reg_classes: tbl_reg_classes & {
+    tbl_reg_selection: tbl_reg_selection[]
+  }
 }
 @Injectable()
 export class SubmissionService {
@@ -53,10 +67,11 @@ export class SubmissionService {
     ).performer_type
 
     let verified = true
+    let registration = {}
 
     switch (performer_type) {
       case 'SOLO':
-        const registration = await this.prisma.tbl_registration.findUnique({
+        registration = await this.prisma.tbl_registration.findUnique({
           where: { id },
           include: {
             tbl_reg_performer: true,
@@ -68,47 +83,67 @@ export class SubmissionService {
             },
           },
         })
-
         console.log(registration)
-
-        // verified = [
-        //   await this.confirmPerformers(id),
-        //   await this.confirmRegisteredClasses(id),
-        //   await this.confirmTeacher(id),
-        // ].every((value) => value === true)
         break
 
       case 'GROUP':
-        verified = [
-          await this.confirmGroups(id),
-          await this.confirmPerformers(id),
-          await this.confirmRegisteredClasses(id),
-          await this.confirmTeacher(id),
-        ].every((value) => value === true)
+        registration = await this.prisma.tbl_registration.findUnique({
+          where: { id },
+          include: {
+            tbl_reg_group: true,
+            tbl_reg_performer: true,
+            tbl_reg_teacher: true,
+            tbl_reg_classes: {
+              include: {
+                tbl_reg_selection: true,
+              },
+            },
+          },
+        })
+        console.log(registration)
         break
 
       case 'COMMUNITY':
-        verified = [
-          await this.confirmCommunities(id),
-          await this.confirmRegisteredClasses(id),
-          await this.confirmTeacher(id),
-        ].every((value) => value === true)
+        registration = await this.prisma.tbl_registration.findUnique({
+          where: {
+            id,
+          },
+          include: {
+            tbl_reg_community: true,
+            tbl_reg_teacher: true,
+            tbl_reg_classes: {
+              include: {
+                tbl_reg_selection: true,
+              },
+            },
+          },
+        })
+        console.log(registration)
         break
 
       case 'SCHOOL':
         const schoolID = (await this.schoolService.findOne(id)).id
-        verified = [
-          await this.confirmSchool(id),
-          await this.confirmTeacher(id),
-          await this.confirmCommunities(schoolID),
-          await this.confirmRegisteredClasses(id),
-        ].every((value) => value === true)
+        registration = await this.prisma.tbl_registration.findUnique({
+          where: { id },
+          include: {
+            tbl_reg_school: true,
+            tbl_reg_community: true, //TODO: Fix the School code.  Need to create a new db table.
+            tbl_reg_teacher: true,
+            tbl_reg_classes: {
+              include: {
+                tbl_reg_selection: true,
+              },
+            },
+          },
+        })
         break
 
       default:
         verified = false
         break
     }
+
+    verified = this.emptyValueCheck(registration)
 
     if (verified === false) {
       return {
@@ -200,10 +235,24 @@ export class SubmissionService {
     return result
   }
 
-  private emptyValueCheck(obj: object): boolean {
-    const values = Object.values(obj)
-    const result = values.every((value) => {
-      return value !== null && value !== undefined && value !== ''
+  private isObj(obj: any): boolean {
+    return typeof obj === 'object' && obj !== null
+  }
+
+  private emptyValueCheck(registration: object): boolean {
+    let result = true
+    result = Object.keys(registration).every((key): boolean => {
+      if (this.isObj(registration[key])) {
+        return this.emptyValueCheck(registration[key])
+      } else if (registration[key] instanceof Array) {
+        registration[key].every((val) => this.emptyValueCheck(val))
+      } else {
+        return (
+          registration[key] !== null &&
+          registration[key] !== undefined &&
+          registration[key] !== ''
+        )
+      }
     })
     return result
   }

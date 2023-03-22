@@ -38,11 +38,6 @@ import { SubmissionModule } from './submissions/submission/submission.module'
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
-      // typePaths: ['./**/*.graphql'],
-      // definitions: {
-      //   path: join(process.cwd(), 'src/graphql.ts'),
-      // outputAs: 'class',
-
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
