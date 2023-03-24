@@ -24,6 +24,7 @@ import { AuthModule } from './auth/auth.module'
 import { ConfigModule } from '@nestjs/config'
 import { AbilityModule } from './ability/ability.module'
 import { SubmissionModule } from './submissions/submission/submission.module'
+import { SchoolGroupModule } from './submissions/school-group/school-group.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { SubmissionModule } from './submissions/submission/submission.module'
     AuthModule,
     AbilityModule,
     SubmissionModule,
+    SchoolGroupModule,
   ],
 })
 export class AppModule {}

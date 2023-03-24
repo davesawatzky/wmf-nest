@@ -19,9 +19,9 @@ export class CommunityService {
     })
   }
 
-  findAll(registrationOrSchoolID?: tbl_registration['id']) {
+  findAll(registrationID?: tbl_registration['id']) {
     return this.prisma.tbl_reg_community.findMany({
-      where: { regID: registrationOrSchoolID },
+      where: { regID: registrationID },
     })
   }
 

@@ -4,8 +4,11 @@ import { randomInt } from 'crypto'
 import { SGS_label } from 'src/common.entity'
 import { PrismaService } from 'src/prisma/prisma.service'
 import {
+  tbl_field_config,
   tbl_registration,
   tbl_reg_classes,
+  tbl_reg_schoolgroup,
+  tbl_reg_school,
   tbl_reg_performer,
   tbl_reg_selection,
   tbl_reg_teacher,
@@ -21,6 +24,8 @@ import { RegisteredClass } from '../registered-class/entities/registered-class.e
 import { RegistrationService } from '../registration/registration.service'
 import { SchoolService } from '../school/school.service'
 import { School } from '../school/entities/school.entity'
+import { SchoolGroupService } from '../school-group/school-group.service'
+import { SchoolGroup } from '../school-group/entities/school-group.entity'
 import { SelectionService } from '../selection/selection.service'
 import { Selection } from '../selection/entities/selection.entity'
 import { TeacherService } from '../teacher/teacher.service'
@@ -53,6 +58,8 @@ export class SubmissionService {
     private teacherService: TeacherService,
   ) {}
 
+  private requiredField = []
+
   async submissions(performer_type?: SGS_label) {
     return this.prisma.tbl_registration.findMany({
       where: {
@@ -62,6 +69,8 @@ export class SubmissionService {
   }
 
   async submit(id: tbl_registration['id']) {
+    this.requiredField = await this.prisma.tbl_field_config.findMany()
+
     const performer_type = await (
       await this.registrationService.findOne(id)
     ).performer_type
@@ -83,7 +92,6 @@ export class SubmissionService {
             },
           },
         })
-        console.log(registration)
         break
 
       case 'GROUP':
@@ -100,7 +108,7 @@ export class SubmissionService {
             },
           },
         })
-        console.log(registration)
+
         break
 
       case 'COMMUNITY':
@@ -118,16 +126,18 @@ export class SubmissionService {
             },
           },
         })
-        console.log(registration)
+
         break
 
       case 'SCHOOL':
-        const schoolID = (await this.schoolService.findOne(id)).id
         registration = await this.prisma.tbl_registration.findUnique({
           where: { id },
           include: {
-            tbl_reg_school: true,
-            tbl_reg_community: true, //TODO: Fix the School code.  Need to create a new db table.
+            tbl_reg_school: {
+              include: {
+                tbl_reg_schoolgroup: true,
+              },
+            },
             tbl_reg_teacher: true,
             tbl_reg_classes: {
               include: {
@@ -143,7 +153,7 @@ export class SubmissionService {
         break
     }
 
-    verified = this.emptyValueCheck(registration)
+    verified = this.emptyValueCheck(registration, 'tbl_registration')
 
     if (verified === false) {
       return {
@@ -171,89 +181,94 @@ export class SubmissionService {
     }
   }
 
-  private async confirmCommunities(regID): Promise<boolean> {
-    const communities: Community[] = await this.communityService.findAll(regID)
-    const result = await communities.every((community) => {
-      return this.emptyValueCheck(community)
-    })
-    return result
-  }
-
-  private async confirmGroups(regID): Promise<boolean> {
-    const groups: Group[] = await this.groupService.findAll(regID)
-    console.log(groups)
-    const result = await groups.every((group) => {
-      return this.emptyValueCheck(group)
-    })
-    return result
-  }
-
-  private async confirmPerformers(regID): Promise<boolean> {
-    const performers: Performer[] = await this.performerService.findAll(regID)
-    console.log(performers)
-    const result = await performers.every((performer) => {
-      return this.emptyValueCheck(performer)
-    })
-    return result
-  }
-
-  private async confirmRegisteredClasses(regID): Promise<boolean> {
-    const registeredClasses: RegisteredClass[] =
-      await this.registeredClassService.findAll(regID)
-    const result = await registeredClasses.every((registeredClass) => {
-      // const selectionResult = this.confirmSelections(registeredClass.id)
-      // console.log(selectionResult)
-
-      // if (selectionResult === false) {
-      //   return false
-      // }
-      return this.emptyValueCheck(registeredClass)
-    })
-    return result
-  }
-
-  private async confirmSelections(registeredClassID): Promise<boolean> {
-    const selections: Selection[] = await this.selectionService.findAll(
-      registeredClassID,
-    )
-    console.log(selections)
-    const result = await selections.every((selection) => {
-      return this.emptyValueCheck(selection)
-    })
-    return result
-  }
-
-  private async confirmSchool(regID): Promise<boolean> {
-    const school: School = await this.schoolService.findOne(regID)
-    const result = await this.emptyValueCheck(school)
-    return result
-  }
-
-  private async confirmTeacher(regID): Promise<boolean> {
-    const teacher: Teacher = await this.teacherService.findOne(null, regID)
-    const result = await this.emptyValueCheck(teacher)
-    return result
-  }
-
   private isObj(obj: any): boolean {
     return typeof obj === 'object' && obj !== null
   }
 
-  private emptyValueCheck(registration: object): boolean {
+  private emptyValueCheck(registration: object, tableName: string): boolean {
     let result = true
+
     result = Object.keys(registration).every((key): boolean => {
-      if (this.isObj(registration[key])) {
-        return this.emptyValueCheck(registration[key])
-      } else if (registration[key] instanceof Array) {
-        registration[key].every((val) => this.emptyValueCheck(val))
-      } else {
-        return (
-          registration[key] !== null &&
-          registration[key] !== undefined &&
-          registration[key] !== ''
-        )
+      if (registration[key] instanceof Array) {
+        return registration[key].every((val) => this.emptyValueCheck(val, key))
+      } else if (this.isObj(registration[key])) {
+        return this.emptyValueCheck(registration[key], key)
+      } else if (
+        registration[key] === null ||
+        registration[key] === undefined ||
+        registration[key] === ''
+      ) {
+        const isRequired = this.requiredField.find((el) => {
+          return el.table_name == tableName && el.field_name == key
+        })
+        return !isRequired.submission_required
       }
+      return true
     })
     return result
   }
 }
+
+// private async confirmCommunities(regID): Promise<boolean> {
+//   const communities: Community[] = await this.communityService.findAll(regID)
+//   const result = await communities.every((community) => {
+//     return this.emptyValueCheck(community, 'tbl_reg_community')
+//   })
+//   return result
+// }
+
+// private async confirmGroups(regID): Promise<boolean> {
+//   const groups: Group[] = await this.groupService.findAll(regID)
+//   console.log(groups)
+//   const result = await groups.every((group) => {
+//     return this.emptyValueCheck(group, 'tbl_reg_group')
+//   })
+//   return result
+// }
+
+// private async confirmPerformers(regID): Promise<boolean> {
+//   const performers: Performer[] = await this.performerService.findAll(regID)
+//   console.log(performers)
+//   const result = await performers.every((performer) => {
+//     return this.emptyValueCheck(performer, 'tbl_reg_performer')
+//   })
+//   return result
+// }
+
+// private async confirmRegisteredClasses(regID): Promise<boolean> {
+//   const registeredClasses: RegisteredClass[] =
+//     await this.registeredClassService.findAll(regID)
+//   const result = await registeredClasses.every((registeredClass) => {
+// const selectionResult = this.confirmSelections(registeredClass.id)
+// console.log(selectionResult)
+
+// if (selectionResult === false) {
+//   return false
+// }
+//     return this.emptyValueCheck(registeredClass, 'tbl_reg_classes')
+//   })
+//   return result
+// }
+
+// private async confirmSelections(registeredClassID): Promise<boolean> {
+//   const selections: Selection[] = await this.selectionService.findAll(
+//     registeredClassID,
+//   )
+//   console.log(selections)
+//   const result = await selections.every((selection) => {
+//     return this.emptyValueCheck(selection, 'tbl_reg_selection')
+//   })
+//   return result
+// }
+
+// private async confirmSchool(regID): Promise<boolean> {
+//   const school: School = await this.schoolService.findOne(regID)
+//   const result = await this.emptyValueCheck(school, 'tbl_reg_school')
+//   return result
+// }
+
+// private async confirmTeacher(regID): Promise<boolean> {
+//   const teacher: Teacher = await this.teacherService.findOne(null, regID)
+//   const result = await this.emptyValueCheck(teacher, 'tbl_reg_teacher')
+//   return result
+// }

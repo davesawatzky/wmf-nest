@@ -15,8 +15,11 @@ export class CommunityResolver {
   /** Queries */
 
   @Query(() => [Community])
-  async communities() {
-    return this.communityService.findAll()
+  async communities(
+    @Args('registrationID', { type: () => Int })
+    registrationID: tbl_registration['id'],
+  ) {
+    return this.communityService.findAll(registrationID)
   }
 
   @Query(() => Community)

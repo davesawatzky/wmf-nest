@@ -12,7 +12,7 @@ import { SchoolInput } from './dto/school.input'
 import { SchoolPayload } from './entities/school.entity'
 import { School } from './entities/school.entity'
 import { tbl_registration, tbl_reg_school } from '@prisma/client'
-import { CommunityService } from '../community/community.service'
+import { SchoolGroupService } from '../school-group/school-group.service'
 import { UseGuards } from '@nestjs/common/decorators'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 
@@ -21,7 +21,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 export class SchoolResolver {
   constructor(
     private readonly schoolService: SchoolService,
-    private readonly communityService: CommunityService,
+    private readonly schoolGroupService: SchoolGroupService,
   ) {}
 
   /** Queries */
@@ -71,7 +71,7 @@ export class SchoolResolver {
   @ResolveField()
   async schoolGroups(@Parent() school: tbl_reg_school) {
     const { id }: { id: School['id'] } = school
-    const schoolAsRegID = id
-    return this.communityService.findAll(schoolAsRegID)
+    const schoolID = id
+    return this.schoolGroupService.findAll(schoolID)
   }
 }

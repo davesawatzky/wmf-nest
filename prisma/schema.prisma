@@ -80,11 +80,12 @@ model tbl_reg_classes {
   level                String?             @db.Text
   category             String?             @db.Text
   number_of_selections Int?                @db.SmallInt
-  school_communityID   Int?
+  school_groupID       Int?
   price                Decimal?            @db.Decimal(7, 2)
   created_at           DateTime            @default(now()) @db.Timestamp()
   updated_at           DateTime            @default(now()) @updatedAt @db.Timestamp()
   tbl_registration     tbl_registration    @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  tbl_reg_schoolgroup  tbl_reg_schoolgroup? @relation(fields: [school_groupID], references: [id], onDelete: Cascade, onUpdate: Restrict)
   tbl_reg_selection    tbl_reg_selection[]
 
   @@index([regID])
@@ -131,21 +132,41 @@ model tbl_reg_performer {
 }
 
 model tbl_reg_school {
-  id                Int              @id @default(autoincrement())
-  regID             Int              @unique
-  name              String?          @default("") @db.Text
-  division          String?          @db.Text
-  street_number     String?          @db.Text
-  street_name       String?          @db.Text
-  city              String           @default("Winnipeg") @db.Text
-  province          String           @default("MB") @db.Text
-  postal_code       String?          @db.Text
-  phone             String?          @db.Text
-  created_at        DateTime         @default(now()) @db.Timestamp()
-  updated_at        DateTime         @default(now()) @updatedAt @db.Timestamp()
-  tbl_registration  tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  id                    Int              @id @default(autoincrement())
+  regID                 Int              @unique
+  name                  String?          @default("") @db.Text
+  division              String?          @db.Text
+  street_number         String?          @db.Text
+  street_name           String?          @db.Text
+  city                  String           @default("Winnipeg") @db.Text
+  province              String           @default("MB") @db.Text
+  postal_code           String?          @db.Text
+  phone                 String?          @db.Text
+  created_at            DateTime         @default(now()) @db.Timestamp()
+  updated_at            DateTime         @default(now()) @updatedAt @db.Timestamp()
+  tbl_reg_schoolgroup   tbl_reg_schoolgroup[]
+  tbl_registration      tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
   @@index([regID])
+}
+
+model tbl_reg_schoolgroup {
+  id                  Int              @id @default(autoincrement())
+  schoolID            Int
+  name                String?          @db.Text
+  group_size          Int?
+  chaperones          Int?
+  wheelchairs         Int?
+  earliest_time       String?          @db.Text
+  latest_time         String?          @db.Text
+  unavailable         String?          @db.Text
+  conflict_performers String?          @db.Text
+  created_at          DateTime         @default(now()) @db.Timestamp()
+  updated_at          DateTime         @default(now()) @db.Timestamp()
+  tbl_reg_school      tbl_reg_school   @relation(fields: [schoolID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  tbl_reg_classes     tbl_reg_classes[]
+
+  @@index([schoolID])
 }
 
 model tbl_reg_selection {
@@ -233,7 +254,7 @@ model tbl_subdiscipline {
   description     String?                    @db.Text
   max_performers  Int?
   min_performers  Int?
-  SGS_label       tbl_SGS
+  SGS_label       tbl_subdiscipline_SGSlabel
   price           Decimal?                   @db.Decimal(7, 2)
   tbl_discipline  tbl_discipline             @relation(fields: [disciplineID], references: [id], onDelete: NoAction, onUpdate: NoAction)
   tbl_classlist   tbl_classlist[]
@@ -292,6 +313,13 @@ model tbl_instruments {
 }
 
 enum tbl_SGS {
+  SOLO
+  GROUP
+  SCHOOL
+  COMMUNITY
+}
+
+enum tbl_subdiscipline_SGSlabel {
   SOLO
   GROUP
   SCHOOL
