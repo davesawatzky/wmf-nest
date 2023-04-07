@@ -7,6 +7,7 @@ import {
 } from '@prisma/client'
 import { SubdisciplineInput } from './dto/subdiscipline.input'
 import { PrismaService } from 'src/prisma/prisma.service'
+import { SGS_label } from 'src/common.entity'
 // import { CreateSubdisciplineInput } from './dto/create-subdiscipline.input'
 // import { UpdateSubdisciplineInput } from './dto/update-subdiscipline.input'
 
@@ -30,9 +31,11 @@ export class SubdisciplineService {
     disciplineID: tbl_discipline['id'],
     levelID: tbl_level['id'],
     categoryID: tbl_category['id'],
+    SGS_label: SGS_label,
   ) {
     return await this.prisma.tbl_subdiscipline.findMany({
       where: {
+        SGS_label,
         disciplineID,
         tbl_classlist: {
           some: {

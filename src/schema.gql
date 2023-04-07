@@ -13,7 +13,7 @@ type Category {
   festivalClasses(SGS_label: String!, levelID: Int!, subdisciplineID: Int!): [FestivalClass!]
   id: Int!
   name: String!
-  require_composer: String
+  required_composer: String
 }
 
 input CategoryInput {
@@ -188,13 +188,13 @@ type Mutation {
   communityCreate(communityInput: CommunityInput!, registrationID: Int!): CommunityPayload!
   communityDelete(communityID: Int!): CommunityPayload!
   communityUpdate(communityID: Int!, communityInput: CommunityInput!): CommunityPayload!
-  create(groupInput: GroupInput!, registrationID: Int!): GroupPayload!
   disciplineCreate(disciplineInput: DisciplineInput!): DisciplinePayload!
   disciplineDelete(id: Int!): DisciplinePayload!
   disciplineUpdate(disciplineInput: DisciplineInput!, id: Int!): DisciplinePayload!
   festivalClassCreate(SGS_label: String!, festivalClass: FestivalClassInput!): FestivalClassPayload!
   festivalClassDelete(festivalClassID: Int!): FestivalClassPayload!
   festivalClassUpdate(festivalClass: FestivalClassInput!, festivalClassID: Int!): FestivalClassPayload!
+  groupCreate(groupInput: GroupInput!, registrationID: Int!): GroupPayload!
   groupDelete(groupID: Int!): GroupPayload!
   groupUpdate(groupID: Int!, groupInput: GroupInput!): GroupPayload!
   instrumentCreate(instrument: InstrumentInput!): InstrumentPayload!
@@ -213,6 +213,9 @@ type Mutation {
   registrationDelete(registrationID: Int!): RegistrationPayload!
   registrationUpdate(registration: RegistrationInput!, registrationID: Int!): RegistrationPayload!
   schoolDelete(schoolID: Int!): SchoolPayload!
+  schoolGroupCreate(schoolGroupInput: SchoolGroupInput!, schoolID: Int!): SchoolGroupPayload!
+  schoolGroupDelete(schoolGroupID: Int!): SchoolGroupPayload!
+  schoolGroupUpdate(schoolGroupID: Int!, schoolGroupInput: SchoolGroupInput!): SchoolGroupPayload!
   schoolUpdate(schoolID: Int!, schoolInput: SchoolInput!): SchoolPayload!
   selectionCreate(registeredClassID: Int!, selectionInput: SelectionInput!): SelectionPayload!
   selectionDelete(selectionID: Int!): SelectionPayload!
@@ -224,7 +227,7 @@ type Mutation {
   subdisciplineUpdate(subdisciplineID: Int!, subdisciplineInput: SubdisciplineInput!): SubdisciplinePayload!
   submitRegistration(registrationID: Int!): SubmissionPayload!
   teacherCreate(registrationID: Int!, teacherInput: TeacherInput!): TeacherPayload!
-  teacherRemove(teacherID: Int!): TeacherPayload!
+  teacherDelete(teacherID: Int!): TeacherPayload!
   teacherUpdate(teacherID: Int!, teacherInput: TeacherInput!): TeacherPayload!
   trophyCreate(trophyInput: TrophyInput!): TrophyPayload!
   trophyDelete(id: Int!): TrophyPayload!
@@ -276,7 +279,7 @@ type PerformerPayload {
 type Query {
   categories(levelID: Int!, subdisciplineID: Int!): [Category!]!
   category(id: Int!): Category!
-  communities: [Community!]!
+  communities(registrationID: Int!): [Community!]!
   community(communityID: Int!): Community!
   discipline(id: Int!): Discipline!
   disciplines: [Discipline!]!
@@ -297,11 +300,13 @@ type Query {
   registration(id: Int!): Registration!
   registrations(performer_type: SGS_label!, userID: Int!): [Registration!]!
   school(schoolID: Int!): School!
+  schoolGroup(schoolID: Int!): SchoolGroup!
+  schoolGroups(schoolID: Int!): [SchoolGroup!]!
   schools: [School!]!
   selection(selectionID: Int!): Selection!
   selections: [Selection!]!
   subdiscipline(subdisciplineID: Int!): Subdiscipline!
-  subdisciplines(categoryID: Int!, disciplineID: Int!, levelID: Int!): [Subdiscipline!]!
+  subdisciplines(categoryID: Int!, disciplineID: Int!, levelID: Int!, performer_type: SGS_label!): [Subdiscipline!]!
   subdisciplinesByName(name: String!): [Subdiscipline!]!
   submissions(performer_type: SGS_label!): [Registration!]!
   teacher(teacherID: Int!): Teacher!
@@ -394,6 +399,34 @@ type School {
   street_number: String
 }
 
+type SchoolGroup {
+  chaperones: Int
+  conflict_performers: String
+  earliest_time: String
+  group_size: Int
+  id: Int!
+  latest_time: String
+  name: String!
+  unavailable: String
+  wheelchairs: Int
+}
+
+input SchoolGroupInput {
+  chaperones: Int
+  conflict_performers: String
+  earliest_time: String
+  group_size: Int
+  latest_time: String
+  name: String!
+  unavailable: String
+  wheelchairs: Int
+}
+
+type SchoolGroupPayload {
+  schoolGroup: SchoolGroup
+  userErrors: [UserError!]!
+}
+
 input SchoolInput {
   city: String
   division: String
@@ -459,13 +492,14 @@ type SubdisciplinePayload {
 }
 
 type Submission {
+  payedAmt: Decimal
   submission: String!
   submitted_at: DateTime!
 }
 
 type SubmissionPayload {
   submission: Submission
-  userErrors: [UserError!]!
+  userErrors: [UserError!]
 }
 
 type Teacher {

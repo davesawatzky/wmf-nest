@@ -41,8 +41,15 @@ export class SubdisciplineResolver {
     disciplineID: tbl_discipline['id'],
     @Args('levelID', { type: () => Int }) levelID: tbl_level['id'],
     @Args('categoryID', { type: () => Int }) categoryID: tbl_category['id'],
+    @Args('performer_type', { type: () => SGS_label })
+    performer_type: SGS_label,
   ) {
-    return this.subdisciplineService.findAll(disciplineID, levelID, categoryID)
+    return this.subdisciplineService.findAll(
+      disciplineID,
+      levelID,
+      categoryID,
+      performer_type,
+    )
   }
 
   @Query(() => Subdiscipline)

@@ -47,7 +47,7 @@ export class TeacherResolver {
   }
 
   @Mutation(() => TeacherPayload)
-  async teacherRemove(
+  async teacherDelete(
     @Args('teacherID', { type: () => Int }) teacherID: Teacher['id'],
   ) {
     return this.teacherService.remove(teacherID)

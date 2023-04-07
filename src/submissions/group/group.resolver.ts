@@ -27,7 +27,7 @@ export class GroupResolver {
   /** Mutations */
 
   @Mutation(() => GroupPayload)
-  create(
+  async groupCreate(
     @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
     @Args('groupInput', { type: () => GroupInput })

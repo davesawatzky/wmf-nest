@@ -1,61 +1,16 @@
 import { Injectable } from '@nestjs/common'
-import { SubmissionInput } from './dto/submission.input'
 import { randomInt } from 'crypto'
 import { SGS_label } from 'src/common.entity'
 import { PrismaService } from 'src/prisma/prisma.service'
-import {
-  tbl_field_config,
-  tbl_registration,
-  tbl_reg_classes,
-  tbl_reg_schoolgroup,
-  tbl_reg_school,
-  tbl_reg_performer,
-  tbl_reg_selection,
-  tbl_reg_teacher,
-} from '@prisma/client'
-import { CommunityService } from '../community/community.service'
-import { Community } from '../community/entities/community.entity'
-import { GroupService } from '../group/group.service'
-import { Group } from '../group/entities/group.entity'
-import { PerformerService } from '../performer/performer.service'
-import { Performer } from '../performer/entities/performer.entity'
-import { RegisteredClassService } from '../registered-class/registered-class.service'
-import { RegisteredClass } from '../registered-class/entities/registered-class.entity'
+import { tbl_registration } from '@prisma/client'
+import { Submission, SubmissionPayload } from './entities/submission.entity'
 import { RegistrationService } from '../registration/registration.service'
-import { SchoolService } from '../school/school.service'
-import { School } from '../school/entities/school.entity'
-import { SchoolGroupService } from '../school-group/school-group.service'
-import { SchoolGroup } from '../school-group/entities/school-group.entity'
-import { SelectionService } from '../selection/selection.service'
-import { Selection } from '../selection/entities/selection.entity'
-import { TeacherService } from '../teacher/teacher.service'
-import { Teacher } from '../teacher/entities/teacher.entity'
-import { UserError } from 'src/common.entity'
 
-export interface Result {
-  submittable: boolean
-  error?: UserError
-}
-
-export interface FullRegistration extends tbl_registration {
-  tbl_reg_performer: tbl_reg_performer[]
-  tbl_reg_teacher: tbl_reg_teacher
-  tbl_reg_classes: tbl_reg_classes & {
-    tbl_reg_selection: tbl_reg_selection[]
-  }
-}
 @Injectable()
 export class SubmissionService {
   constructor(
     private prisma: PrismaService,
-    private communityService: CommunityService,
-    private groupService: GroupService,
-    private performerService: PerformerService,
-    private registeredClassService: RegisteredClassService,
     private registrationService: RegistrationService,
-    private schoolService: SchoolService,
-    private selectionService: SelectionService,
-    private teacherService: TeacherService,
   ) {}
 
   private requiredField = []
@@ -68,7 +23,7 @@ export class SubmissionService {
     })
   }
 
-  async submit(id: tbl_registration['id']) {
+  async submit(id: tbl_registration['id']): Promise<SubmissionPayload> {
     this.requiredField = await this.prisma.tbl_field_config.findMany()
 
     const performer_type = await (
@@ -168,17 +123,32 @@ export class SubmissionService {
       }
     }
 
-    const submissionData: SubmissionInput = await {
+    const submissionData: Submission = await {
       submitted_at: new Date(),
       submission: 'WMF-' + id + '-' + randomInt(1000, 9999),
     }
-    return {
-      userErrors: [],
-      submission: this.prisma.tbl_registration.update({
+
+    // return {
+    //   userErrors: [],
+    //   submission: this.prisma.tbl_registration.update({
+    //     where: { id },
+    //     data: {
+    //       submitted_at: submissionData.submitted_at,
+    //       submission: submissionData.submission,
+    //     },
+    //   }),
+    // }
+
+    return (
+      await this.prisma.tbl_registration.update({
         where: { id },
         data: { ...submissionData },
       }),
-    }
+      {
+        userErrors: [],
+        submission: submissionData,
+      }
+    )
   }
 
   private isObj(obj: any): boolean {
