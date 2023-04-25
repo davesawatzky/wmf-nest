@@ -1,18 +1,18 @@
 type Selection {
-	id: Int!
-	title: String
-	largerWork: String
-	movement: String
-	composer: String
-	duration: String
+  id: Int!
+  title: String
+  largerWork: String
+  movement: String
+  composer: String
+  duration: String
 }
 
 input SelectionInput {
-	title: String
-	largerWork: String
-	movement: String
-	composer: String
-	duration: String
+  title: String
+  largerWork: String
+  movement: String
+  composer: String
+  duration: String
 }
 
 type Query {
@@ -21,12 +21,18 @@ type Query {
 }
 
 type Mutation {
-  selectionCreate(registeredClassID: Int!, selection: SelectionInput!): SelectionPayload!
-  selectionUpdate(selectionID: Int!, selection: SelectionInput!): SelectionPayload!
+  selectionCreate(
+    registeredClassID: Int!
+    selection: SelectionInput!
+  ): SelectionPayload!
+  selectionUpdate(
+    selectionID: Int!
+    selection: SelectionInput!
+  ): SelectionPayload!
   selectionDelete(selectionID: Int!): SelectionPayload
 }
 
 type SelectionPayload {
-  userErrors:[UserError!]!
+  userErrors: [UserError!]!
   selection: Selection
 }

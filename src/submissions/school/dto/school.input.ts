@@ -1,18 +1,20 @@
 import { InputType } from '@nestjs/graphql'
-import { IsPostalCode, IsPhoneNumber } from 'class-validator'
+import { IsPostalCode, IsPhoneNumber, IsOptional } from 'class-validator'
 
 @InputType()
 export class SchoolInput {
   name?: string
   division?: string
-  street_number?: string
-  street_name?: string
+  streetNumber?: string
+  streetName?: string
   city?: string
   province?: string
 
   @IsPostalCode('CA')
-  postal_code?: string
+  @IsOptional()
+  postalCode?: string
 
   @IsPhoneNumber('CA')
+  @IsOptional()
   phone?: string
 }

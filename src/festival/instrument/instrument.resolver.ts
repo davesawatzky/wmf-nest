@@ -33,15 +33,13 @@ export class InstrumentResolver {
   async instrumentUpdate(
     @Args('instrumentID', { type: () => Int })
     instrumentID: Instrument['id'],
-    @Args('instrument') instrument: InstrumentInput,
+    @Args('instrument') instrument: InstrumentInput
   ) {
     return this.instrumentService.update(instrumentID, instrument)
   }
 
   @Mutation(() => InstrumentPayload)
-  async instrumentDelete(
-    @Args('id', { type: () => Int }) id: Instrument['id'],
-  ) {
+  async instrumentDelete(@Args('id', { type: () => Int }) id: Instrument['id']) {
     return this.instrumentService.remove(id)
   }
 }

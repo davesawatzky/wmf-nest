@@ -19,9 +19,7 @@ export class TeacherResolver {
   }
 
   @Query(() => Teacher)
-  async teacher(
-    @Args('teacherID', { type: () => Int }) teacherID: Teacher['id'],
-  ) {
+  async teacher(@Args('teacherID', { type: () => Int }) teacherID: Teacher['id']) {
     return this.teacherService.findOne(teacherID)
   }
 
@@ -32,7 +30,7 @@ export class TeacherResolver {
     @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
     @Args('teacherInput', { type: () => TeacherInput })
-    teacherInput: Partial<TeacherInput>,
+    teacherInput: Partial<TeacherInput>
   ) {
     return this.teacherService.create(registrationID, teacherInput)
   }
@@ -41,15 +39,13 @@ export class TeacherResolver {
   async teacherUpdate(
     @Args('teacherID', { type: () => Int }) teacherID: Teacher['id'],
     @Args('teacherInput', { type: () => TeacherInput })
-    teacherInput: Partial<TeacherInput>,
+    teacherInput: Partial<TeacherInput>
   ) {
     return this.teacherService.update(teacherID, teacherInput)
   }
 
   @Mutation(() => TeacherPayload)
-  async teacherDelete(
-    @Args('teacherID', { type: () => Int }) teacherID: Teacher['id'],
-  ) {
+  async teacherDelete(@Args('teacherID', { type: () => Int }) teacherID: Teacher['id']) {
     return this.teacherService.remove(teacherID)
   }
 }

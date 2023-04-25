@@ -1,12 +1,4 @@
-import {
-  Resolver,
-  Parent,
-  Query,
-  Mutation,
-  Args,
-  ResolveField,
-  Int,
-} from '@nestjs/graphql'
+import { Resolver, Parent, Query, Mutation, Args, ResolveField, Int } from '@nestjs/graphql'
 import { tbl_registration, tbl_reg_classes } from '@prisma/client'
 import { RegisteredClassService } from './registered-class.service'
 import { RegisteredClassInput } from './dto/registered-class.input'
@@ -21,7 +13,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 export class RegisteredClassResolver {
   constructor(
     private readonly registeredClassService: RegisteredClassService,
-    private readonly selectionService: SelectionService,
+    private readonly selectionService: SelectionService
   ) {}
 
   /** Queries */
@@ -34,7 +26,7 @@ export class RegisteredClassResolver {
   @Query(() => RegisteredClass)
   async registeredClass(
     @Args('registeredClassID', { type: () => Int })
-    registeredClassID: RegisteredClass['id'],
+    registeredClassID: RegisteredClass['id']
   ) {
     return this.registeredClassService.findOne(registeredClassID)
   }
@@ -46,12 +38,9 @@ export class RegisteredClassResolver {
     @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
     @Args('registeredClassInput', { type: () => RegisteredClassInput })
-    registeredClassInput: RegisteredClassInput,
+    registeredClassInput: RegisteredClassInput
   ) {
-    return this.registeredClassService.create(
-      registrationID,
-      registeredClassInput,
-    )
+    return this.registeredClassService.create(registrationID, registeredClassInput)
   }
 
   @Mutation(() => RegisteredClassPayload)
@@ -59,18 +48,15 @@ export class RegisteredClassResolver {
     @Args('registeredClassID', { type: () => Int })
     registeredClassID: RegisteredClass['id'],
     @Args('registeredClassInput', { type: () => RegisteredClassInput })
-    registeredClassInput: RegisteredClassInput,
+    registeredClassInput: RegisteredClassInput
   ) {
-    return this.registeredClassService.update(
-      registeredClassID,
-      registeredClassInput,
-    )
+    return this.registeredClassService.update(registeredClassID, registeredClassInput)
   }
 
   @Mutation(() => RegisteredClassPayload)
   async registeredClassDelete(
     @Args('registeredClassID', { type: () => Int })
-    registeredClassID: RegisteredClass['id'],
+    registeredClassID: RegisteredClass['id']
   ) {
     return this.registeredClassService.remove(registeredClassID)
   }

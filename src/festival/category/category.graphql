@@ -3,7 +3,7 @@ type Category {
 	name: String!
 	description: String
 	requiredComposer: String
-	classes(SGS_label: SGS_label, subdisciplineID: Int, levelID: Int): [FestivalClass!]!
+	classes(SGSLabel: SGSLabel, subdisciplineID: Int, levelID: Int): [FestivalClass!]!
 }
 
 input CategoryInput {

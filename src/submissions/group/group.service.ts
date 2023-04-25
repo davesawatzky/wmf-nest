@@ -7,16 +7,16 @@ import { PrismaService } from 'src/prisma/prisma.service'
 export class GroupService {
   constructor(private prisma: PrismaService) {}
 
-  create(
-    registrationID: tbl_registration['id'],
-    groupInput: Partial<GroupInput>,
-  ) {
-    return this.prisma.tbl_reg_group.create({
-      data: {
-        regID: registrationID,
-        ...groupInput,
-      },
-    })
+  create(registrationID: tbl_registration['id'], groupInput: Partial<GroupInput>) {
+    return {
+      userErrors: [],
+      group: this.prisma.tbl_reg_group.create({
+        data: {
+          regID: registrationID,
+          ...groupInput,
+        },
+      }),
+    }
   }
 
   findAll(registrationID?: tbl_registration['id']) {

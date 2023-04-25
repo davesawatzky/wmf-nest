@@ -9,7 +9,7 @@ type UserError {
 	field: [String!]!
 }
 
-enum SGS_label {
+enum SGSLabel {
 	SOLO
 	GROUP
 	SCHOOL

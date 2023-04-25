@@ -8,7 +8,7 @@ export class Category {
   id: number
   name: string
   description?: string
-  required_composer?: string
+  requiredComposer?: string
   festivalClasses?: FestivalClass[]
 }
 

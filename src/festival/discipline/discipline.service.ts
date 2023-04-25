@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { DisciplineInput } from './dto/discipline.input'
 import { tbl_discipline } from '@prisma/client'
+import { SGSLabel } from 'src/common.entity'
 
 @Injectable()
 export class DisciplineService {
@@ -13,8 +14,20 @@ export class DisciplineService {
     })
   }
 
-  async findAll() {
-    return this.prisma.tbl_discipline.findMany()
+  async findAll(SGSLabel?: SGSLabel) {
+    return this.prisma.tbl_discipline.findMany({
+      where: {
+        tbl_subdiscipline: {
+          some: {
+            tbl_classlist: {
+              some: {
+                SGSLabel,
+              },
+            },
+          },
+        },
+      },
+    })
   }
 
   async findOne(id: tbl_discipline['id']) {
@@ -23,10 +36,7 @@ export class DisciplineService {
     })
   }
 
-  async update(
-    id: tbl_discipline['id'],
-    DisciplineInput: Partial<tbl_discipline>,
-  ) {
+  async update(id: tbl_discipline['id'], DisciplineInput: Partial<tbl_discipline>) {
     return await this.prisma.tbl_discipline.update({
       where: { id },
       data: { ...DisciplineInput },

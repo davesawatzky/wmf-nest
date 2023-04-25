@@ -6,8 +6,8 @@ input CredentialsSignin {
 }
 
 input CredentialsSignup {
-	first_name: String!
-	last_name: String!
+	firstName: String!
+	lastName: String!
 	email: EmailAddress!
 	password: String!
 }

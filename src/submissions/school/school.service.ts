@@ -7,26 +7,23 @@ import { PrismaService } from 'src/prisma/prisma.service'
 export class SchoolService {
   constructor(private prisma: PrismaService) {}
 
-  create(
-    registrationID: tbl_registration['id'],
-    schoolInput: Partial<SchoolInput>,
-  ) {
-    return this.prisma.tbl_reg_school.create({
-      data: {
-        regID: registrationID,
-        ...schoolInput,
-      },
-    })
+  create(registrationID: tbl_registration['id'], schoolInput?: SchoolInput) {
+    return {
+      userErrors: [],
+      school: this.prisma.tbl_reg_school.create({
+        data: {
+          regID: registrationID,
+          ...schoolInput,
+        },
+      }),
+    }
   }
 
   findAll() {
     return this.prisma.tbl_reg_school.findMany()
   }
 
-  findOne(
-    registrationID?: tbl_registration['id'],
-    schoolID?: tbl_reg_school['id'],
-  ) {
+  findOne(registrationID?: tbl_registration['id'], schoolID?: tbl_reg_school['id']) {
     return this.prisma.tbl_reg_school.findUnique({
       where: { regID: registrationID, id: schoolID },
     })

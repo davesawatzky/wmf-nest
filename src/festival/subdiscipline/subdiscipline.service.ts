@@ -1,13 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import {
-  tbl_subdiscipline,
-  tbl_category,
-  tbl_level,
-  tbl_discipline,
-} from '@prisma/client'
+import { tbl_subdiscipline, tbl_category, tbl_level, tbl_discipline } from '@prisma/client'
 import { SubdisciplineInput } from './dto/subdiscipline.input'
 import { PrismaService } from 'src/prisma/prisma.service'
-import { SGS_label } from 'src/common.entity'
+import { SGSLabel } from 'src/common.entity'
 // import { CreateSubdisciplineInput } from './dto/create-subdiscipline.input'
 // import { UpdateSubdisciplineInput } from './dto/update-subdiscipline.input'
 
@@ -15,10 +10,7 @@ import { SGS_label } from 'src/common.entity'
 export class SubdisciplineService {
   constructor(private prisma: PrismaService) {}
 
-  async create(
-    disciplineID: tbl_discipline['id'],
-    subdisciplineInput: SubdisciplineInput,
-  ) {
+  async create(disciplineID: tbl_discipline['id'], subdisciplineInput: SubdisciplineInput) {
     return this.prisma.tbl_subdiscipline.create({
       data: {
         disciplineID: disciplineID,
@@ -28,14 +20,14 @@ export class SubdisciplineService {
   }
 
   async findAll(
-    disciplineID: tbl_discipline['id'],
-    levelID: tbl_level['id'],
-    categoryID: tbl_category['id'],
-    SGS_label: SGS_label,
+    disciplineID?: tbl_discipline['id'],
+    levelID?: tbl_level['id'],
+    categoryID?: tbl_category['id'],
+    SGSLabel?: SGSLabel
   ) {
     return await this.prisma.tbl_subdiscipline.findMany({
       where: {
-        SGS_label,
+        SGSLabel,
         disciplineID,
         tbl_classlist: {
           some: {
@@ -65,10 +57,7 @@ export class SubdisciplineService {
   //   })
   // }
 
-  async update(
-    id: tbl_subdiscipline['id'],
-    subdisciplineInput: SubdisciplineInput,
-  ) {
+  async update(id: tbl_subdiscipline['id'], subdisciplineInput: SubdisciplineInput) {
     return this.prisma.tbl_subdiscipline.update({
       where: { id },
       data: { ...subdisciplineInput },

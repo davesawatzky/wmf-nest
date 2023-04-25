@@ -4,10 +4,10 @@ import { IsEmail, IsStrongPassword, IsString } from 'class-validator'
 @InputType()
 export class CredentialsSignup {
   @IsString()
-  first_name: string
+  firstName: string
 
   @IsString()
-  last_name: string
+  lastName: string
 
   @IsEmail()
   email: string

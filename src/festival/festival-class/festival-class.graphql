@@ -1,26 +1,26 @@
 type FestivalClass {
 	id: Int!
-	class_number: String!
+	classNumber: String!
 	subdiscipline: Subdiscipline!
 	level: Level!
 	category: Category!
-	max_selection: Int!
-	min_selection: Int!
+	maxSelection: Int!
+	minSelection: Int!
 	requiredSelection: String
-	SGS_label: SGS_label!
+	SGSLabel: SGSLabel!
 	price: Float
 	trophies: [Trophy]
 }
 
 input FestivalClassInput {
-	class_number: String!
+	classNumber: String!
 	subdisciplineID:Int!
 	levelID: Int!
 	categoryID: Int!
-	max_selection: Int
-	min_selection: Int
-	required_selection: String
-	SGS_label: SGS_label!
+	maxSelection: Int
+	minSelection: Int
+	requiredSelection: String
+	SGSLabel: SGSLabel!
 	price: Float
 	trophies: [Trophy]
 }
@@ -32,14 +32,14 @@ input FestivalClassSearchArgs {
 }
 
 type Query {
-  festivalClasses(SGS_label: SGS_label, subdisciplineID: Int, levelID: Int, categoryID: Int): [FestivalClass!]!
+  festivalClasses(SGSLabel: SGSLabel, subdisciplineID: Int, levelID: Int, categoryID: Int): [FestivalClass!]!
 	festivalClassSearch(festivalClassSearch: FestivalClassSearchArgs!): [FestivalClass!]!
 	festivalClass(id: Int!): FestivalClass!
 	festivalClassByNumber(festivalClassNumber: String!): FestivalClass
 }
 
 type Mutation {
-  festivalClassCreate(SGS_label: SGS_label!, festivalClass: FestivalClassInput!): FestivalClassPayload!
+  festivalClassCreate(SGSLabel: SGSLabel!, festivalClass: FestivalClassInput!): FestivalClassPayload!
   festivalClassUpdate(festivalClassID: Int!, festivalClass:FestivalClassInput!): FestivalClassPayload!
   festivalClassDelete(festivalClassID: Int!): FestivalClassPayload
 }

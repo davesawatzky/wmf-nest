@@ -5,10 +5,10 @@ type Subdiscipline {
 	description: String
 	maxPerformers: Int
 	minPerformers: Int
-	SGS_label: SGS_label!
+	SGSLabel: SGSLabel!
 	price: Float
-	# levels(levelID: Int): [Level]
-	classes(SGS_label: SGS_label, levelID: Int, categoryID: Int): [FestivalClass!]!
+	levels(levelID: Int): [Level]
+	classes(SGSLabel: SGSLabel, levelID: Int, categoryID: Int): [FestivalClass!]!
 }
 
 input SubdisciplineInput {
@@ -17,7 +17,7 @@ input SubdisciplineInput {
 	description: String
 	maxPerformers: Int
 	minPerformers: Int
-	SGS_label: SGS_label
+	SGSLabel: SGSLabel
 	price: Float
 }
 
@@ -25,7 +25,7 @@ type Query {
   subdisciplines(disciplineID: Int, levelID: Int, categoryID: Int): [Subdiscipline]
   subdiscipline(id: Int!): Subdiscipline
   subdisciplinesByName(name: String!): [Subdiscipline!]!
-  subdisciplinesByType(SGS_label: SGS_label!, disciplineID: Int ): [Subdiscipline!]!
+  subdisciplinesByType(SGSLabel: SGSLabel!, disciplineID: Int ): [Subdiscipline!]!
 }
 
 type Mutation {

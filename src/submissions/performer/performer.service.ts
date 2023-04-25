@@ -7,16 +7,16 @@ import { PerformerInput } from './dto/performer.input'
 export class PerformerService {
   constructor(private prisma: PrismaService) {}
 
-  create(
-    registrationID: tbl_registration['id'],
-    performerInput: Partial<PerformerInput>,
-  ) {
-    return this.prisma.tbl_reg_performer.create({
-      data: {
-        regID: registrationID,
-        ...performerInput,
-      },
-    })
+  create(registrationID: tbl_registration['id'], performerInput: Partial<PerformerInput>) {
+    return {
+      userErrors: [],
+      performer: this.prisma.tbl_reg_performer.create({
+        data: {
+          regID: registrationID,
+          ...performerInput,
+        },
+      }),
+    }
   }
 
   findAll(registrationID?: tbl_registration['id']) {
@@ -31,10 +31,7 @@ export class PerformerService {
     })
   }
 
-  update(
-    performerID: tbl_reg_performer['id'],
-    performerInput: Partial<PerformerInput>,
-  ) {
+  update(performerID: tbl_reg_performer['id'], performerInput: Partial<PerformerInput>) {
     return this.prisma.tbl_reg_performer.update({
       where: { id: performerID },
       data: { ...performerInput },

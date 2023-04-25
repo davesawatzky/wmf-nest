@@ -17,7 +17,7 @@ export class PerformerResolver {
   @Query(() => [Performer])
   async performers(
     @Args('registrationID', { type: () => Int })
-    registrationID: tbl_registration['id'],
+    registrationID: tbl_registration['id']
   ) {
     return this.performerService.findAll(registrationID)
   }
@@ -25,7 +25,7 @@ export class PerformerResolver {
   @Query(() => Performer)
   async performer(
     @Args('performerID', { type: () => Int })
-    performerID: Performer['id'],
+    performerID: Performer['id']
   ) {
     return this.performerService.findOne(performerID)
   }
@@ -37,7 +37,7 @@ export class PerformerResolver {
     @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
     @Args('performerInput', { type: () => PerformerInput })
-    performerInput: Partial<PerformerInput>,
+    performerInput: Partial<PerformerInput>
   ) {
     return this.performerService.create(registrationID, performerInput)
   }
@@ -46,15 +46,13 @@ export class PerformerResolver {
   async performerUpdate(
     @Args('performerID', { type: () => Int }) performerID: Performer['id'],
     @Args('performerInput', { type: () => PerformerInput })
-    performerInput: Partial<PerformerInput>,
+    performerInput: Partial<PerformerInput>
   ) {
     return this.performerService.update(performerID, performerInput)
   }
 
   @Mutation(() => PerformerPayload)
-  async performerDelete(
-    @Args('performerID', { type: () => Int }) performerID: Performer['id'],
-  ) {
+  async performerDelete(@Args('performerID', { type: () => Int }) performerID: Performer['id']) {
     return this.performerService.remove(performerID)
   }
 }

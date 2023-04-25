@@ -17,7 +17,7 @@ export class CommunityResolver {
   @Query(() => [Community])
   async communities(
     @Args('registrationID', { type: () => Int })
-    registrationID: tbl_registration['id'],
+    registrationID: tbl_registration['id']
   ) {
     return this.communityService.findAll(registrationID)
   }
@@ -25,7 +25,7 @@ export class CommunityResolver {
   @Query(() => Community)
   async community(
     @Args('communityID', { type: () => Int })
-    communityID: Community['id'],
+    communityID: Community['id']
   ) {
     return this.communityService.findOne(communityID)
   }
@@ -37,7 +37,7 @@ export class CommunityResolver {
     @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
     @Args('communityInput', { type: () => CommunityInput })
-    communityInput: Partial<CommunityInput>,
+    communityInput: CommunityInput
   ) {
     return this.communityService.create(registrationID, communityInput)
   }
@@ -47,7 +47,7 @@ export class CommunityResolver {
     @Args('communityID', { type: () => Int })
     communityID: Community['id'],
     @Args('communityInput', { type: () => CommunityInput })
-    communityInput: Partial<CommunityInput>,
+    communityInput: Partial<CommunityInput>
   ) {
     return this.communityService.update(communityID, communityInput)
   }
@@ -55,7 +55,7 @@ export class CommunityResolver {
   @Mutation(() => CommunityPayload)
   async communityDelete(
     @Args('communityID', { type: () => Int })
-    communityID: Community['id'],
+    communityID: Community['id']
   ) {
     return this.communityService.remove(communityID)
   }

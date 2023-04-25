@@ -1,11 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import {
-  MongoAbility,
-  createMongoAbility,
-  AbilityBuilder,
-  ExtractSubjectType,
-  InferSubjects,
-} from '@casl/ability'
+import { MongoAbility, createMongoAbility, AbilityBuilder, ExtractSubjectType, InferSubjects } from '@casl/ability'
 import { User } from '../user/entities/user.entity'
 
 export enum Action {
@@ -23,16 +17,12 @@ export type AppAbility = MongoAbility<[Action, Subjects]>
 @Injectable()
 export class AbilityFactory {
   defineAbility(user: User) {
-    const { can, cannot, build } = new AbilityBuilder<AppAbility>(
-      createMongoAbility,
-    )
+    const { can, cannot, build } = new AbilityBuilder<AppAbility>(createMongoAbility)
 
     if (user.admin) {
       can(Action.Users, 'all')
     } else {
-      cannot(Action.Users, 'all').because(
-        'your special message: only admins!!!',
-      )
+      cannot(Action.Users, 'all').because('your special message: only admins!!!')
     }
     return build({
       detectSubjectType: (item): any => {

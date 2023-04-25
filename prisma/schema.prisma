@@ -5,17 +5,18 @@ generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native"]
 }
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model tbl_category {
-  id                Int              @id @default(autoincrement())
-  name              String           @db.Text
-  description       String?          @db.Text
-  required_composer String?          @db.Text
-  tbl_classlist     tbl_classlist[]
+  id               Int             @id @default(autoincrement())
+  name             String          @db.Text
+  description      String?         @db.Text
+  requiredComposer String?         @map("required_composer") @db.Text
+  tbl_classlist    tbl_classlist[]
 }
 
 model tbl_class_trophy {
@@ -29,20 +30,20 @@ model tbl_class_trophy {
 }
 
 model tbl_classlist {
-  id                 Int                @id @default(autoincrement())
-  class_number       String             @unique @db.Text
-  subdisciplineID    Int
-  categoryID         Int
-  levelID            Int
-  min_selection      Int
-  max_selection      Int
-  required_selection String?            @db.Text
-  SGS_label          tbl_SGS            @default(SOLO)
-  price              Decimal?           @db.Decimal(7, 2)
-  tbl_category       tbl_category       @relation(fields: [categoryID], references: [id], onUpdate: Restrict)
-  tbl_level          tbl_level          @relation(fields: [levelID], references: [id], onUpdate: Restrict)
-  tbl_subdiscipline  tbl_subdiscipline  @relation(fields: [subdisciplineID], references: [id], onUpdate: Restrict)
-  tbl_class_trophy   tbl_class_trophy[]
+  id                Int                @id @default(autoincrement())
+  classNumber       String             @unique @db.Text
+  subdisciplineID   Int
+  categoryID        Int
+  levelID           Int
+  minSelection      Int                @map("min_selection")
+  maxSelection      Int                @map("max_selection")
+  requiredSelection String?            @map("required_selection") @db.Text
+  SGSLabel          tbl_SGS            @default(SOLO) @map("SGS_label")
+  price             Decimal?           @db.Decimal(7, 2)
+  tbl_category      tbl_category       @relation(fields: [categoryID], references: [id], onUpdate: Restrict)
+  tbl_level         tbl_level          @relation(fields: [levelID], references: [id], onUpdate: Restrict)
+  tbl_subdiscipline tbl_subdiscipline  @relation(fields: [subdisciplineID], references: [id], onUpdate: Restrict)
+  tbl_class_trophy  tbl_class_trophy[]
 
   @@index([categoryID])
   @@index([levelID])
@@ -56,208 +57,209 @@ model tbl_discipline {
 }
 
 model tbl_field_config {
-  id                  Int           @id @default(autoincrement())
-  table_name          String        @db.Text
-  field_name          String        @db.Text
-  submission_required Boolean       @db.Boolean
-  custom_field        Boolean?      @db.Boolean
-  custom_field_type   String?       @db.Text
+  id                 Int      @id @default(autoincrement())
+  tableName          String   @map("table_name") @db.Text
+  fieldName          String   @map("field_name") @db.Text
+  submissionRequired Boolean  @map("submission_required") @db.Boolean
+  customField        Boolean? @map("custom_field") @db.Boolean
+  customFieldType    String?  @map("custom_field_type") @db.Text
 }
+
 model tbl_level {
-  id                 Int             @id @default(autoincrement())
-  name               String          @db.Text
-  description        String?         @db.Text
-  sort_order         Int?
-  tbl_classlist      tbl_classlist[]
+  id            Int             @id @default(autoincrement())
+  name          String          @db.Text
+  description   String?         @db.Text
+  sortOrder     Int?            @map("sort_order")
+  tbl_classlist tbl_classlist[]
 }
 
 model tbl_reg_classes {
-  id                   Int                 @id @default(autoincrement())
-  regID                Int
-  class_number         String?             @db.Text
-  discipline           String?             @db.Text
-  subdiscipline        String?             @db.Text
-  level                String?             @db.Text
-  category             String?             @db.Text
-  number_of_selections Int?                @db.SmallInt
-  school_groupID       Int?
-  price                Decimal?            @db.Decimal(7, 2)
-  created_at           DateTime            @default(now()) @db.Timestamp()
-  updated_at           DateTime            @default(now()) @updatedAt @db.Timestamp()
-  tbl_registration     tbl_registration    @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
-  tbl_reg_schoolgroup  tbl_reg_schoolgroup? @relation(fields: [school_groupID], references: [id], onDelete: Cascade, onUpdate: Restrict)
-  tbl_reg_selection    tbl_reg_selection[]
+  id                  Int                  @id @default(autoincrement())
+  regID               Int
+  classNumber         String?              @map("class_number") @db.Text
+  discipline          String?              @db.Text
+  subdiscipline       String?              @db.Text
+  level               String?              @db.Text
+  category            String?              @db.Text
+  numberOfSelections  Int?                 @map("number_of_selections") @db.SmallInt
+  schoolGroupID       Int?                 @map("school_groupID")
+  price               Decimal?             @db.Decimal(7, 2)
+  createdAt           DateTime             @default(now()) @map("created_at") @db.Timestamp()
+  updatedAt           DateTime             @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
+  tbl_registration    tbl_registration     @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  tbl_reg_schoolgroup tbl_reg_schoolgroup? @relation(fields: [schoolGroupID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  tbl_reg_selection   tbl_reg_selection[]
 
   @@index([regID])
 }
 
 model tbl_reg_group {
-  id                    Int                   @id @default(autoincrement())
-  regID                 Int
-  name                  String?               @db.Text
-  group_type            String?               @db.Text
-  number_of_performers  Int?                  @db.SmallInt
-  age                   Int?                  @db.SmallInt
-  instruments           String?               @db.Text
-  created_at            DateTime              @default(now()) @db.Timestamp()
-  updated_at            DateTime              @default(now()) @updatedAt @db.Timestamp()
-  tbl_registration      tbl_registration      @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
-  tbl_reg_unavailable   tbl_reg_unavailable[]
+  id                  Int                   @id @default(autoincrement())
+  regID               Int
+  name                String?               @db.Text
+  groupType           String?               @map("group_type") @db.Text
+  numberOfPerformers  Int?                  @map("number_of_performers") @db.SmallInt
+  age                 Int?                  @db.SmallInt
+  instruments         String?               @db.Text
+  createdAt           DateTime              @default(now()) @map("created_at") @db.Timestamp()
+  updatedAt           DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
+  tbl_registration    tbl_registration      @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  tbl_reg_unavailable tbl_reg_unavailable[]
 
   @@index([regID])
 }
 
 model tbl_reg_performer {
-  id                Int              @id @default(autoincrement())
-  regID             Int
-  last_name         String?          @db.Text
-  first_name        String?          @db.Text
-  apartment         String?          @db.Text
-  street_number     String?          @db.Text
-  street_name       String?          @db.Text
-  city              String           @default("Winnipeg") @db.Text
-  province          String           @default("MB") @db.Text
-  postal_code       String?          @db.Text
-  phone             String?          @db.Text
-  email             String?          @db.Text
-  age               Int?             @db.SmallInt
-  instrument        String?          @db.Text
-  level             String?          @db.Text
-  other_classes     String?          @db.Text
-  created_at        DateTime         @default(now()) @db.Timestamp()
-  updated_at        DateTime         @default(now()) @updatedAt @db.Timestamp()
-  tbl_registration  tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  id               Int              @id @default(autoincrement())
+  regID            Int
+  lastName         String?          @map("last_name") @db.Text
+  firstName        String?          @map("first_name") @db.Text
+  apartment        String?          @db.Text
+  streetNumber     String?          @map("street_number") @db.Text
+  streetName       String?          @map("street_name") @db.Text
+  city             String           @default("Winnipeg") @db.Text
+  province         String           @default("MB") @db.Text
+  postalCode       String?          @map("postal_code") @db.Text
+  phone            String?          @db.Text
+  email            String?          @db.Text
+  age              Int?             @db.SmallInt
+  instrument       String?          @db.Text
+  level            String?          @db.Text
+  otherClasses     String?          @map("other_classes") @db.Text
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamp()
+  updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
+  tbl_registration tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
   @@index([regID])
 }
 
 model tbl_reg_school {
-  id                    Int              @id @default(autoincrement())
-  regID                 Int              @unique
-  name                  String?          @default("") @db.Text
-  division              String?          @db.Text
-  street_number         String?          @db.Text
-  street_name           String?          @db.Text
-  city                  String           @default("Winnipeg") @db.Text
-  province              String           @default("MB") @db.Text
-  postal_code           String?          @db.Text
-  phone                 String?          @db.Text
-  created_at            DateTime         @default(now()) @db.Timestamp()
-  updated_at            DateTime         @default(now()) @updatedAt @db.Timestamp()
-  tbl_reg_schoolgroup   tbl_reg_schoolgroup[]
-  tbl_registration      tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  id                  Int                   @id @default(autoincrement())
+  regID               Int                   @unique
+  name                String?               @default("") @db.Text
+  division            String?               @db.Text
+  streetNumber        String?               @map("street_number") @db.Text
+  streetName          String?               @map("street_name") @db.Text
+  city                String                @default("Winnipeg") @db.Text
+  province            String                @default("MB") @db.Text
+  postalCode          String?               @map("postal_code") @db.Text
+  phone               String?               @db.Text
+  createdAt           DateTime              @default(now()) @map("created_at") @db.Timestamp()
+  updatedAt           DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
+  tbl_reg_schoolgroup tbl_reg_schoolgroup[]
+  tbl_registration    tbl_registration      @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
   @@index([regID])
 }
 
 model tbl_reg_schoolgroup {
-  id                  Int              @id @default(autoincrement())
-  schoolID            Int
-  name                String?          @db.Text
-  group_size          Int?
-  chaperones          Int?
-  wheelchairs         Int?
-  earliest_time       String?          @db.Text
-  latest_time         String?          @db.Text
-  unavailable         String?          @db.Text
-  conflict_performers String?          @db.Text
-  created_at          DateTime         @default(now()) @db.Timestamp()
-  updated_at          DateTime         @default(now()) @db.Timestamp()
-  tbl_reg_school      tbl_reg_school   @relation(fields: [schoolID], references: [id], onDelete: Cascade, onUpdate: Restrict)
-  tbl_reg_classes     tbl_reg_classes[]
+  id                 Int               @id @default(autoincrement())
+  schoolID           Int
+  name               String?           @db.Text
+  groupSize          Int?              @map("group_size")
+  chaperones         Int?
+  wheelchairs        Int?
+  earliestTime       String?           @map("earliest_time") @db.Text
+  latestTime         String?           @map("latest_time") @db.Text
+  unavailable        String?           @db.Text
+  conflictPerformers String?           @map("conflict_performers") @db.Text
+  createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamp()
+  updatedAt          DateTime          @default(now()) @map("updated_at") @db.Timestamp()
+  tbl_reg_school     tbl_reg_school    @relation(fields: [schoolID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  tbl_reg_classes    tbl_reg_classes[]
 
   @@index([schoolID])
 }
 
 model tbl_reg_selection {
-  id               Int             @id @default(autoincrement())
-  classpickID      Int
-  title            String?         @db.Text
-  larger_work      String?         @db.Text
-  movement         String?         @db.Text
-  composer         String?         @db.Text
-  duration         String          @default("0:00") @db.Text
-  created_at       DateTime        @default(now()) @db.Timestamp()
-  updated_at       DateTime        @default(now()) @updatedAt @db.Timestamp()
-  tbl_reg_classes  tbl_reg_classes @relation(fields: [classpickID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  id              Int             @id @default(autoincrement())
+  classpickID     Int
+  title           String?         @db.Text
+  largerWork      String?         @map("larger_work") @db.Text
+  movement        String?         @db.Text
+  composer        String?         @db.Text
+  duration        String          @default("0:00") @db.Text
+  createdAt       DateTime        @default(now()) @map("created_at") @db.Timestamp()
+  updatedAt       DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
+  tbl_reg_classes tbl_reg_classes @relation(fields: [classpickID], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
   @@index([classpickID])
 }
 
 model tbl_reg_teacher {
-  id                Int              @id @default(autoincrement())
-  regID             Int              @unique
-  prefix            String?          @db.Text
-  last_name         String?          @db.Text
-  first_name        String?          @db.Text
-  apartment         String?          @db.Text
-  street_number     String?          @db.Text
-  street_name       String?          @db.Text
-  city              String           @default("Winnipeg") @db.Text
-  province          String           @default("MB") @db.Text
-  postal_code       String?          @db.Text
-  phone             String?          @db.Text
-  email             String?          @db.Text
-  created_at        DateTime         @default(now()) @db.Timestamp()
-  updated_at        DateTime         @default(now()) @updatedAt @db.Timestamp()
-  tbl_registration  tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  id               Int              @id @default(autoincrement())
+  regID            Int              @unique
+  prefix           String?          @db.Text
+  lastName         String?          @map("last_name") @db.Text
+  firstName        String?          @map("first_name") @db.Text
+  apartment        String?          @db.Text
+  streetNumber     String?          @map("street_number") @db.Text
+  streetName       String?          @map("steet_name") @db.Text
+  city             String           @default("Winnipeg") @db.Text
+  province         String           @default("MB") @db.Text
+  postalCode       String?          @map("postal_code") @db.Text
+  phone            String?          @db.Text
+  email            String?          @db.Text
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamp()
+  updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
+  tbl_registration tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
   @@index([regID])
 }
 
 model tbl_reg_unavailable {
-  id             Int           @id @default(autoincrement())
-  groupID        Int
-  date           DateTime      @db.Date
-  time           DateTime      @db.Time(0)
-  created_at     DateTime      @default(now()) @db.Timestamp()
-  updated_at     DateTime      @default(now()) @updatedAt @db.Timestamp()
-  tbl_reg_group  tbl_reg_group @relation(fields: [groupID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  id            Int           @id @default(autoincrement())
+  groupID       Int
+  date          DateTime      @db.Date
+  time          DateTime      @db.Time(0)
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp()
+  updatedAt     DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
+  tbl_reg_group tbl_reg_group @relation(fields: [groupID], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
   @@index([groupID])
 }
 
 model tbl_registration {
-  id                 Int         @id @default(autoincrement())
-  userID             Int?        @default(0)
-  label              String      @default("Registration Form") @db.Text
-  performer_type     tbl_SGS     @default(SOLO)
-  submitted_at       DateTime?   @db.Timestamp()
-  total_amt          Decimal?    @db.Decimal(10, 2)
-  payed_amt          Decimal?    @db.Decimal(10, 2)
-  transaction_info   String?     @db.Text
-  submission         String?     @unique @db.Text
-  created_at         DateTime    @default(now()) @db.Timestamp()
-  updated_at         DateTime    @default(now()) @updatedAt @db.Timestamp()
-  tbl_user           tbl_user?   @relation(fields: [userID], references: [id], onUpdate: Restrict)
-  tbl_reg_classes    tbl_reg_classes[]
-  tbl_reg_community  tbl_reg_community[]
-  tbl_reg_group      tbl_reg_group[]
-  tbl_reg_performer  tbl_reg_performer[]
-  tbl_reg_school     tbl_reg_school?
-  tbl_reg_teacher    tbl_reg_teacher?
+  id                Int                 @id @default(autoincrement())
+  userID            Int?                @default(0)
+  label             String              @default("Registration Form") @db.Text
+  performerType     tbl_SGS             @default(SOLO) @map("performer_type")
+  submittedAt       DateTime?           @map("submitted_at") @db.Timestamp()
+  totalAmt          Decimal?            @map("total_amt") @db.Decimal(10, 2)
+  payedAmt          Decimal?            @map("payed_amt") @db.Decimal(10, 2)
+  transactionInfo   String?             @map("transaction_info") @db.Text
+  submission        String?             @unique @db.Text
+  createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp()
+  updatedAt         DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
+  tbl_user          tbl_user?           @relation(fields: [userID], references: [id], onUpdate: Restrict)
+  tbl_reg_classes   tbl_reg_classes[]
+  tbl_reg_community tbl_reg_community[]
+  tbl_reg_group     tbl_reg_group[]
+  tbl_reg_performer tbl_reg_performer[]
+  tbl_reg_school    tbl_reg_school?
+  tbl_reg_teacher   tbl_reg_teacher?
 
   @@index([userID])
 }
 
 model tbl_sacred {
-  id         Int    @id
-  composer   String @db.Text
-  large_work String @db.Text
-  title      String @db.Text
+  id        Int    @id
+  composer  String @db.Text
+  largeWork String @map("large_work") @db.Text
+  title     String @db.Text
 }
 
 model tbl_subdiscipline {
-  id              Int                        @id @default(autoincrement())
-  disciplineID    Int
-  name            String                     @db.Text
-  description     String?                    @db.Text
-  max_performers  Int?
-  min_performers  Int?
-  SGS_label       tbl_subdiscipline_SGSlabel
-  price           Decimal?                   @db.Decimal(7, 2)
-  tbl_discipline  tbl_discipline             @relation(fields: [disciplineID], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  tbl_classlist   tbl_classlist[]
+  id             Int                        @id @default(autoincrement())
+  disciplineID   Int
+  name           String                     @db.Text
+  description    String?                    @db.Text
+  maxPerformers  Int?                       @map("max_performers")
+  minPerformers  Int?                       @map("min_performers")
+  SGSLabel       tbl_subdiscipline_SGSlabel @map("SGS_label")
+  price          Decimal?                   @db.Decimal(7, 2)
+  tbl_discipline tbl_discipline             @relation(fields: [disciplineID], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tbl_classlist  tbl_classlist[]
 
   @@index([disciplineID])
 }
@@ -270,39 +272,39 @@ model tbl_trophy {
 }
 
 model tbl_user {
-  id                Int                @id @default(autoincrement())
-  email             String             @unique @db.Text
-  password          String             @db.Text
-  staff             Boolean            @default(false)
-  admin             Boolean            @default(false)
-  first_name        String?            @db.Text
-  last_name         String?            @db.Text
-  apartment         String?            @db.Text
-  street_number     String?            @db.Text
-  street_name       String?            @db.Text
-  city              String?            @db.Text
-  province          String?            @db.Text
-  postal_code       String?            @db.Text
-  phone             String?            @db.Text
-  updated_at        DateTime           @default(now()) @updatedAt @db.Timestamp()
-  created_at        DateTime           @default(now()) @db.Timestamp()
-  tbl_registration  tbl_registration[]
+  id               Int                @id @default(autoincrement())
+  email            String             @unique @db.Text
+  password         String             @db.Text
+  staff            Boolean            @default(false)
+  admin            Boolean            @default(false)
+  firstName        String?            @map("first_name") @db.Text
+  lastName         String?            @map("last_name") @db.Text
+  apartment        String?            @db.Text
+  streetNumber     String?            @map("street_number") @db.Text
+  streetName       String?            @map("street_name") @db.Text
+  city             String?            @db.Text
+  province         String?            @db.Text
+  postalCode       String?            @map("postal_code") @db.Text
+  phone            String?            @db.Text
+  updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
+  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamp()
+  tbl_registration tbl_registration[]
 }
 
 model tbl_reg_community {
-  id                  Int              @id @default(autoincrement())
-  regID               Int
-  name                String?          @db.Text
-  group_size          Int?
-  chaperones          Int?
-  wheelchairs         Int?
-  earliest_time       String?          @db.Text
-  latest_time         String?          @db.Text
-  unavailable         String?          @db.Text
-  conflict_performers String?          @db.Text
-  created_at          DateTime         @default(now()) @db.Timestamp()
-  updated_at          DateTime         @default(now()) @db.Timestamp()
-  tbl_registration    tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  id                 Int              @id @default(autoincrement())
+  regID              Int
+  name               String?          @db.Text
+  groupSize          Int?             @map("group_size")
+  chaperones         Int?
+  wheelchairs        Int?
+  earliestTime       String?          @map("earliest_time") @db.Text
+  latestTime         String?          @map("latest_time") @db.Text
+  unavailable        String?          @db.Text
+  conflictPerformers String?          @map("conflict_performers") @db.Text
+  createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamp()
+  updatedAt          DateTime         @default(now()) @map("updated_at") @db.Timestamp()
+  tbl_registration   tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
   @@index([regID])
 }

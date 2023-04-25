@@ -10,7 +10,7 @@ export class RegisteredClass {
   @Field(() => Int)
   id: number
   selections?: Selection[]
-  class_number?: string
+  classNumber?: string
   discipline?: string
   subdiscipline?: string
   level?: string
@@ -23,7 +23,7 @@ export class RegisteredClass {
   @Type(() => Object)
   @Transform(transformToDecimal)
   price?: Decimal
-  schoolCommunityId?: number
+  schoolGroupID?: number
 }
 
 @ObjectType()

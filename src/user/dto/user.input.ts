@@ -8,16 +8,16 @@ export class UserInput {
 
   @IsBoolean()
   admin?: boolean
-  first_name?: string
-  last_name?: string
+  firstName?: string
+  lastName?: string
   apartment?: string
-  street_number?: string
-  street_name?: string
+  streetNumber?: string
+  streetName?: string
   city?: string
   province?: string
 
   @IsPostalCode('CA')
-  postal_code?: string
+  postalCode?: string
 
   @IsPhoneNumber('CA')
   phone?: string

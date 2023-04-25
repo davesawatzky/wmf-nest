@@ -8,7 +8,7 @@ import { Type, Transform } from 'class-transformer'
 export class SubmissionInput {
   @Field(() => GraphQLISODateTime)
   @IsDate()
-  submitted_at: Date
+  submittedAt: Date
 
   @IsString()
   submission: string

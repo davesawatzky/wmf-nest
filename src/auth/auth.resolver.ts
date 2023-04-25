@@ -12,18 +12,13 @@ export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Mutation(() => AuthPayload)
-  async signup(
-    @Args('credentials') credentials: CredentialsSignup,
-  ): Promise<AuthPayload> {
+  async signup(@Args('credentials') credentials: CredentialsSignup): Promise<AuthPayload> {
     return this.authService.signup(credentials)
   }
 
   @Mutation(() => AuthPayload)
   @UseGuards(GqlAuthGuard)
-  async signin(
-    @Args('credentials') credentials: CredentialsSignin,
-    @Context() context,
-  ) {
+  async signin(@Args('credentials') credentials: CredentialsSignin, @Context() context) {
     return this.authService.signin(context.user)
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { randomInt } from 'crypto'
-import { SGS_label } from 'src/common.entity'
+import { SGSLabel } from 'src/common.entity'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { tbl_registration } from '@prisma/client'
 import { Submission, SubmissionPayload } from './entities/submission.entity'
@@ -8,17 +8,14 @@ import { RegistrationService } from '../registration/registration.service'
 
 @Injectable()
 export class SubmissionService {
-  constructor(
-    private prisma: PrismaService,
-    private registrationService: RegistrationService,
-  ) {}
+  constructor(private prisma: PrismaService, private registrationService: RegistrationService) {}
 
   private requiredField = []
 
-  async submissions(performer_type?: SGS_label) {
+  async submissions(performerType?: SGSLabel) {
     return this.prisma.tbl_registration.findMany({
       where: {
-        performer_type,
+        performerType,
       },
     })
   }
@@ -26,14 +23,12 @@ export class SubmissionService {
   async submit(id: tbl_registration['id']): Promise<SubmissionPayload> {
     this.requiredField = await this.prisma.tbl_field_config.findMany()
 
-    const performer_type = await (
-      await this.registrationService.findOne(id)
-    ).performer_type
+    const performerType = await (await this.registrationService.findOne(id)).performerType
 
     let verified = true
     let registration = {}
 
-    switch (performer_type) {
+    switch (performerType) {
       case 'SOLO':
         registration = await this.prisma.tbl_registration.findUnique({
           where: { id },
@@ -114,8 +109,7 @@ export class SubmissionService {
       return {
         userErrors: [
           {
-            message:
-              'Submission cancelled. Please complete all required fields before submitting.',
+            message: 'Submission cancelled. Please complete all required fields before submitting.',
             field: [],
           },
         ],
@@ -124,7 +118,7 @@ export class SubmissionService {
     }
 
     const submissionData: Submission = await {
-      submitted_at: new Date(),
+      submittedAt: new Date(),
       submission: 'WMF-' + id + '-' + randomInt(1000, 9999),
     }
 
@@ -133,7 +127,7 @@ export class SubmissionService {
     //   submission: this.prisma.tbl_registration.update({
     //     where: { id },
     //     data: {
-    //       submitted_at: submissionData.submitted_at,
+    //       submittedAt: submissionData.submittedAt,
     //       submission: submissionData.submission,
     //     },
     //   }),
@@ -163,15 +157,11 @@ export class SubmissionService {
         return registration[key].every((val) => this.emptyValueCheck(val, key))
       } else if (this.isObj(registration[key])) {
         return this.emptyValueCheck(registration[key], key)
-      } else if (
-        registration[key] === null ||
-        registration[key] === undefined ||
-        registration[key] === ''
-      ) {
+      } else if (registration[key] === null || registration[key] === undefined || registration[key] === '') {
         const isRequired = this.requiredField.find((el) => {
-          return el.table_name == tableName && el.field_name == key
+          return el.tableName == tableName && el.fieldName == key
         })
-        return !isRequired.submission_required
+        return !isRequired.submissionRequired
       }
       return true
     })

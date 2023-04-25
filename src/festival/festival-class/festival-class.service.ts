@@ -3,24 +3,18 @@ import { PrismaService } from 'src/prisma/prisma.service'
 import { FestivalClassSearchArgs } from './dto/festival-class.input'
 import { FestivalClassInput } from './dto/festival-class.input'
 
-import {
-  tbl_subdiscipline,
-  tbl_category,
-  tbl_level,
-  tbl_classlist,
-  tbl_class_trophy,
-} from '@prisma/client'
-import { SGS_label } from 'src/common.entity'
+import { tbl_subdiscipline, tbl_category, tbl_level, tbl_classlist, tbl_class_trophy } from '@prisma/client'
+import { SGSLabel } from 'src/common.entity'
 
 @Injectable()
 export class FestivalClassService {
   constructor(private prisma: PrismaService) {}
 
-  async create(SGS_label: SGS_label, festivalClass: FestivalClassInput) {
+  async create(SGSLabel: SGSLabel, festivalClass: FestivalClassInput) {
     return {
       festivalClass: await this.prisma.tbl_classlist.create({
         data: {
-          SGS_label,
+          SGSLabel,
           ...festivalClass,
         },
       }),
@@ -28,13 +22,18 @@ export class FestivalClassService {
   }
 
   async findAll(
-    SGS_label?: SGS_label,
+    SGSLabel?: SGSLabel,
     subdisciplineID?: tbl_subdiscipline['id'],
     levelID?: tbl_level['id'],
-    categoryID?: tbl_category['id'],
+    categoryID?: tbl_category['id']
   ) {
     return this.prisma.tbl_classlist.findMany({
-      where: { SGS_label, subdisciplineID, levelID, categoryID },
+      where: {
+        SGSLabel,
+        subdisciplineID,
+        levelID,
+        categoryID,
+      },
     })
   }
 
@@ -67,16 +66,13 @@ export class FestivalClassService {
     })
   }
 
-  async findByNumber(class_number: tbl_classlist['class_number']) {
+  async findByNumber(classNumber: tbl_classlist['classNumber']) {
     return this.prisma.tbl_classlist.findUnique({
-      where: { class_number },
+      where: { classNumber },
     })
   }
 
-  async update(
-    festivalClassID: tbl_classlist['id'],
-    festivalClass: Partial<tbl_classlist>,
-  ) {
+  async update(festivalClassID: tbl_classlist['id'], festivalClass: Partial<tbl_classlist>) {
     return this.prisma.tbl_classlist.update({
       where: { id: festivalClassID },
       data: { ...festivalClass },

@@ -4,5 +4,5 @@ import { InputType } from '@nestjs/graphql'
 export class CategoryInput {
   name: string
   description?: string
-  required_composer?: string
+  requiredComposer?: string
 }

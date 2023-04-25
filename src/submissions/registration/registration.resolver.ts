@@ -1,13 +1,4 @@
-import {
-  Resolver,
-  Parent,
-  Query,
-  Mutation,
-  Args,
-  ResolveField,
-  Int,
-  Context,
-} from '@nestjs/graphql'
+import { Resolver, Parent, Query, Mutation, Args, ResolveField, Int, Context } from '@nestjs/graphql'
 import { RegistrationService } from './registration.service'
 import { tbl_registration, tbl_user } from '@prisma/client'
 import { PerformerService } from '../performer/performer.service'
@@ -17,12 +8,9 @@ import { GroupService } from '../group/group.service'
 import { TeacherService } from '../teacher/teacher.service'
 import { CommunityService } from '../community/community.service'
 import { SchoolService } from '../school/school.service'
-import {
-  Registration,
-  RegistrationPayload,
-} from './entities/registration.entity'
+import { Registration, RegistrationPayload } from './entities/registration.entity'
 import { RegistrationInput } from './dto/registration.input'
-import { SGS_label } from 'src/common.entity'
+import { SGSLabel } from 'src/common.entity'
 import { UseGuards } from '@nestjs/common/decorators'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 import { User } from 'src/user/entities/user.entity'
@@ -38,7 +26,7 @@ export class RegistrationResolver {
     private readonly groupService: GroupService,
     private readonly communityService: CommunityService,
     private readonly schoolService: SchoolService,
-    private readonly teacherService: TeacherService,
+    private readonly teacherService: TeacherService
   ) {}
 
   /** Queries */
@@ -46,10 +34,10 @@ export class RegistrationResolver {
   @Query(() => [Registration])
   async registrations(
     @Args('userID', { type: () => Int }) userID?: tbl_user['id'],
-    @Args('performer_type', { type: () => SGS_label })
-    performer_type?: Registration['performer_type'],
+    @Args('performerType', { type: () => SGSLabel })
+    performerType?: Registration['performerType']
   ) {
-    return this.registrationService.findAll(userID, performer_type)
+    return this.registrationService.findAll(userID, performerType)
   }
 
   @Query(() => Registration)
@@ -61,17 +49,13 @@ export class RegistrationResolver {
 
   @Mutation(() => RegistrationPayload)
   async registrationCreate(
-    @Args('performer_type', { type: () => SGS_label })
-    performer_type: SGS_label,
+    @Args('performerType', { type: () => SGSLabel })
+    performerType: SGSLabel,
     @Args('label', { type: () => String })
     label: Registration['label'],
-    @Context() context,
+    @Context() context
   ) {
-    return this.registrationService.create(
-      context.req.user.id,
-      performer_type,
-      label,
-    )
+    return this.registrationService.create(context.req.user.id, performerType, label)
   }
 
   @Mutation(() => RegistrationPayload)
@@ -79,7 +63,7 @@ export class RegistrationResolver {
     @Args('registrationID', { type: () => Int })
     registrationID: Registration['id'],
     @Args('registration', { type: () => RegistrationInput })
-    registration: RegistrationInput,
+    registration: RegistrationInput
   ) {
     return this.registrationService.update(registrationID, registration)
   }
@@ -87,7 +71,7 @@ export class RegistrationResolver {
   @Mutation(() => RegistrationPayload)
   async registrationDelete(
     @Args('registrationID', { type: () => Int })
-    registrationID: Registration['id'],
+    registrationID: Registration['id']
   ) {
     return this.registrationService.remove(registrationID)
   }

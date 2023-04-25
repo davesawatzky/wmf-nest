@@ -1,25 +1,25 @@
 type RegisteredClass {
-	id: Int!
-	selections: [Selection]
-	class_number: String
-	discipline: String
-	subdiscipline: String
-	level: String
-	category: String
-	numberOfSelections: Int
-	price: Float
-	schoolCommunityId: Int
+  id: Int!
+  selections: [Selection]
+  classNumber: String
+  discipline: String
+  subdiscipline: String
+  level: String
+  category: String
+  numberOfSelections: Int
+  price: Float
+  schoolGroupID: Int
 }
 
 input RegisteredClassInput {
-	class_number: String
-	discipline: String
-	subdiscipline: String
-	level: String
-	category: String
-	numberOfSelections: Int
-	price: Float
-	schoolCommunityId: Int
+  classNumber: String
+  discipline: String
+  subdiscipline: String
+  level: String
+  category: String
+  numberOfSelections: Int
+  price: Float
+  schoolGroupID: Int
 }
 
 type Query {
@@ -28,12 +28,18 @@ type Query {
 }
 
 type Mutation {
-  registeredClassCreate(registrationID: Int!, registeredClassInput:RegisteredClassInput!): RegisteredClassPayload!
-  registeredClassUpdate(registeredClassID: Int!, registeredClassInput:RegisteredClassInput!): RegisteredClassPayload!
+  registeredClassCreate(
+    registrationID: Int!
+    registeredClassInput: RegisteredClassInput!
+  ): RegisteredClassPayload!
+  registeredClassUpdate(
+    registeredClassID: Int!
+    registeredClassInput: RegisteredClassInput!
+  ): RegisteredClassPayload!
   registeredClassDelete(registeredClassID: Int!): RegisteredClassPayload
 }
 
 type RegisteredClassPayload {
-  userErrors:[UserError!]!
+  userErrors: [UserError!]!
   registeredClass: RegisteredClass
 }

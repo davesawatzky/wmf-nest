@@ -1,23 +1,23 @@
 type Community {
 	id: Int!
 	name: String!
-	conflict_performers: String
-	group_size: Int
+	conflictPerformers: String
+	groupSize: Int
 	chaperones: Int
 	wheelchairs: Int
-	earliest_time: String
-	latest_time: String
+	earliestTime: String
+	latestTime: String
 	unavailable: String
 }
 
 input CommunityInput {
 	name: String!
-	conflict_performers: String
-	group_size: Int
+	conflictPerformers: String
+	groupSize: Int
 	chaperones: Int
 	wheelchairs: Int
-	earliest_time: String
-	latest_time: String
+	earliestTime: String
+	latestTime: String
 	unavailable: String
 }
 

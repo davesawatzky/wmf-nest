@@ -1,12 +1,4 @@
-import {
-  Resolver,
-  ResolveField,
-  Parent,
-  Query,
-  Mutation,
-  Args,
-  Int,
-} from '@nestjs/graphql'
+import { Resolver, ResolveField, Parent, Query, Mutation, Args, Int } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 import { TrophyService } from './trophy.service'
@@ -19,7 +11,7 @@ import { TrophyInput } from './dto/trophy.input'
 export class TrophyResolver {
   constructor(
     private readonly trophyService: TrophyService,
-    private readonly festivalClassService: FestivalClassService,
+    private readonly festivalClassService: FestivalClassService
   ) {}
 
   /** Queries */
@@ -44,7 +36,7 @@ export class TrophyResolver {
   @Mutation(() => TrophyPayload)
   async trophyUpdate(
     @Args('trophyID', { type: () => Int }) trophyID: Trophy['id'],
-    @Args('trophyInput') trophyInput: TrophyInput,
+    @Args('trophyInput') trophyInput: TrophyInput
   ) {
     return this.trophyService.update(trophyID, trophyInput)
   }

@@ -3,38 +3,38 @@ scalar EmailAddress
 scalar string
 
 type Performer {
-	id: Int!
-	first_name: String
-	last_name: String
-	apartment: String
-	street_number: String
-	street_name: String
-	city: String
-	province: String
-	postal_code: string
-	phone: string
-	email: EmailAddress
-	age: Int
-	otherClasses: String
-	instrument: String
-	level: String
+  id: Int!
+  firstName: String
+  lastName: String
+  apartment: String
+  streetNumber: String
+  streetName: String
+  city: String
+  province: String
+  postalCode: string
+  phone: string
+  email: EmailAddress
+  age: Int
+  otherClasses: String
+  instrument: String
+  level: String
 }
 
 input PerformerInput {
-	first_name: String
-	last_name: String
-	apartment: String
-	street_number: String
-	street_name: String
-	city: String!
-	province: String!
-	postal_code: string
-	phone: string
-	email: EmailAddress
-	age: Int
-	otherClasses: String
-	instrument: String
-	level: String
+  firstName: String
+  lastName: String
+  apartment: String
+  streetNumber: String
+  streetName: String
+  city: String!
+  province: String!
+  postalCode: string
+  phone: string
+  email: EmailAddress
+  age: Int
+  otherClasses: String
+  instrument: String
+  level: String
 }
 
 type Query {
@@ -43,8 +43,14 @@ type Query {
 }
 
 type Mutation {
-  performerCreate(registrationID: Int!, performerInput: PerformerInput!): PerformerPayload!
-  performerUpdate(performerID: Int!, performerInput: PerformerInput!): PerformerPayload!
+  performerCreate(
+    registrationID: Int!
+    performerInput: PerformerInput!
+  ): PerformerPayload!
+  performerUpdate(
+    performerID: Int!
+    performerInput: PerformerInput!
+  ): PerformerPayload!
   performerDelete(performerID: Int!): PerformerPayload
 }
 

@@ -1,13 +1,4 @@
-import {
-  Resolver,
-  ResolveField,
-  Parent,
-  Query,
-  Mutation,
-  Args,
-  Int,
-  Context,
-} from '@nestjs/graphql'
+import { Resolver, ResolveField, Parent, Query, Mutation, Args, Int, Context } from '@nestjs/graphql'
 import { UserService } from './user.service'
 import { User, UserPayload } from './entities/user.entity'
 import { UserInput } from './dto/user.input'
@@ -26,7 +17,7 @@ export class UserResolver {
   constructor(
     private readonly userService: UserService,
     private readonly registrationService: RegistrationService,
-    private abilityFactory: AbilityFactory,
+    private abilityFactory: AbilityFactory
   ) {}
 
   /** Queries */
@@ -54,7 +45,7 @@ export class UserResolver {
   @Query(() => User)
   async user(
     @Args('userID', { type: () => Int })
-    userID: User['id'],
+    userID: User['id']
   ): Promise<User> {
     return this.userService.findOne(userID)
   }
@@ -65,7 +56,7 @@ export class UserResolver {
   @UsePipes(TrimPipe)
   async userUpdate(
     @Args('userID', { type: () => Int }) userID: User['id'],
-    @Args('userInput', { type: () => Int }) userInput: UserInput,
+    @Args('userInput', { type: () => Int }) userInput: UserInput
   ) {
     return this.userService.update(userID, userInput)
   }

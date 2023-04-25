@@ -6,7 +6,7 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
 @ObjectType()
 export class Submission {
   @Field(() => Date)
-  submitted_at: Date
+  submittedAt: Date
   submission: string
 
   @Field(() => GraphQLDecimal)

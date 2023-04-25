@@ -31,7 +31,7 @@ export class GroupResolver {
     @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
     @Args('groupInput', { type: () => GroupInput })
-    groupInput: Partial<GroupInput>,
+    groupInput: GroupInput
   ) {
     return this.groupService.create(registrationID, groupInput)
   }
@@ -40,15 +40,13 @@ export class GroupResolver {
   async groupUpdate(
     @Args('groupID', { type: () => Int }) groupID: Group['id'],
     @Args('groupInput', { type: () => GroupInput })
-    groupInput: Partial<GroupInput>,
+    groupInput: Partial<GroupInput>
   ) {
     return this.groupService.update(groupID, groupInput)
   }
 
   @Mutation(() => GroupPayload)
-  async groupDelete(
-    @Args('groupID', { type: () => Int }) groupID: Group['id'],
-  ) {
+  async groupDelete(@Args('groupID', { type: () => Int }) groupID: Group['id']) {
     return this.groupService.remove(groupID)
   }
 }

@@ -21,7 +21,7 @@ export class SelectionResolver {
   @Query(() => Selection)
   async selection(
     @Args('selectionID', { type: () => Int })
-    selectionID: Selection['id'],
+    selectionID: Selection['id']
   ) {
     return this.selectionService.findOne(selectionID)
   }
@@ -33,7 +33,7 @@ export class SelectionResolver {
     @Args('registeredClassID', { type: () => Int })
     registeredClassID: tbl_reg_classes['id'],
     @Args('selectionInput', { type: () => SelectionInput })
-    selectionInput: Partial<SelectionInput>,
+    selectionInput: Partial<SelectionInput>
   ) {
     return this.selectionService.create(registeredClassID, selectionInput)
   }
@@ -43,7 +43,7 @@ export class SelectionResolver {
     @Args('selectionID', { type: () => Int })
     selectionID: Selection['id'],
     @Args('selectionInput', { type: () => SelectionInput })
-    selectionInput: Partial<SelectionInput>,
+    selectionInput: Partial<SelectionInput>
   ) {
     return this.selectionService.update(selectionID, selectionInput)
   }
@@ -51,7 +51,7 @@ export class SelectionResolver {
   @Mutation(() => SelectionPayload)
   async selectionDelete(
     @Args('selectionID', { type: () => Int })
-    selectionID: Selection['id'],
+    selectionID: Selection['id']
   ) {
     return this.selectionService.remove(selectionID)
   }

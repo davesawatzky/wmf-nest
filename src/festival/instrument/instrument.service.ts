@@ -24,10 +24,7 @@ export class InstrumentService {
     })
   }
 
-  update(
-    instrumentID: tbl_instruments['id'],
-    instrument: Partial<tbl_instruments>,
-  ) {
+  update(instrumentID: tbl_instruments['id'], instrument: Partial<tbl_instruments>) {
     return this.prisma.tbl_instruments.update({
       where: {
         id: instrumentID,

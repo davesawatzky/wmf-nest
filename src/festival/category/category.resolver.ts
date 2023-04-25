@@ -1,18 +1,10 @@
-import {
-  Resolver,
-  ResolveField,
-  Parent,
-  Query,
-  Mutation,
-  Args,
-  Int,
-} from '@nestjs/graphql'
+import { Resolver, ResolveField, Parent, Query, Mutation, Args, Int } from '@nestjs/graphql'
 import { CategoryService } from './category.service'
 import { FestivalClassService } from '../festival-class/festival-class.service'
 import { CategoryInput } from './dto/category.input'
 import { Category, CategoryPayload } from './entities/category.entity'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { SGS_label } from 'src/common.entity'
+import { SGSLabel } from 'src/common.entity'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 import { UseGuards } from '@nestjs/common'
 import { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
@@ -22,7 +14,7 @@ import { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
 export class CategoryResolver {
   constructor(
     private readonly categoryService: CategoryService,
-    private readonly festivalClassService: FestivalClassService,
+    private readonly festivalClassService: FestivalClassService
   ) {}
 
   /** Queries */
@@ -31,7 +23,7 @@ export class CategoryResolver {
   async categories(
     @Args('levelID', { type: () => Int }) levelID: tbl_level['id'],
     @Args('subdisciplineID', { type: () => Int })
-    subdisciplineID: tbl_subdiscipline['id'],
+    subdisciplineID: tbl_subdiscipline['id']
   ) {
     return this.categoryService.findAll(levelID, subdisciplineID)
   }
@@ -52,7 +44,7 @@ export class CategoryResolver {
   async categoryUpdate(
     @Args('categoryID', { type: () => Int })
     categoryID: Category['id'],
-    @Args('categoryInput') categoryInput: CategoryInput,
+    @Args('categoryInput') categoryInput: CategoryInput
   ) {
     return this.categoryService.update(categoryID, categoryInput)
   }
@@ -66,17 +58,12 @@ export class CategoryResolver {
   @ResolveField()
   async festivalClasses(
     @Parent() { id }: tbl_category,
-    @Args('SGS_label') SGS_label: SGS_label,
+    @Args('SGSLabel') SGSLabel: SGSLabel,
     @Args('subdisciplineID', { type: () => Int })
     subdisciplineID: tbl_subdiscipline['id'],
-    @Args('levelID', { type: () => Int }) levelID: tbl_level['id'],
+    @Args('levelID', { type: () => Int }) levelID: tbl_level['id']
   ) {
     const categoryID = id
-    return this.festivalClassService.findAll(
-      SGS_label,
-      subdisciplineID,
-      levelID,
-      categoryID,
-    )
+    return this.festivalClassService.findAll(SGSLabel, subdisciplineID, levelID, categoryID)
   }
 }

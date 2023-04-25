@@ -1,25 +1,15 @@
 import { ForbiddenError } from '@casl/ability'
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  ForbiddenException,
-} from '@nestjs/common'
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { AbilityFactory } from './ability.factory'
 import { RequiredRule, CHECK_ABILITY } from './abilities.decorator'
 
 @Injectable()
 export class AbilitiesGuard implements CanActivate {
-  constructor(
-    private reflector: Reflector,
-    private caslAbilityFactory: AbilityFactory,
-  ) {}
+  constructor(private reflector: Reflector, private caslAbilityFactory: AbilityFactory) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const rules =
-      this.reflector.get<RequiredRule[]>(CHECK_ABILITY, context.getHandler()) ||
-      []
+    const rules = this.reflector.get<RequiredRule[]>(CHECK_ABILITY, context.getHandler()) || []
 
     // const { user } = context.switchToHttp().getRequest()
     console.log('----->Context: ', context)

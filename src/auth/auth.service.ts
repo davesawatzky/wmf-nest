@@ -27,15 +27,12 @@ export class AuthService {
         user: null,
       }
     } else {
-      const hashedPassword = await bcrypt.hash(
-        credentialsSignup.password.trim(),
-        15,
-      )
-      const { first_name, last_name, email } = credentialsSignup
+      const hashedPassword = await bcrypt.hash(credentialsSignup.password.trim(), 15)
+      const { firstName, lastName, email } = credentialsSignup
       const newUser = await this.prisma.tbl_user.create({
         data: {
-          first_name: first_name.trim(),
-          last_name: last_name.trim(),
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
           email: email.trim().toLowerCase(),
           password: hashedPassword,
           staff: false,
@@ -60,10 +57,7 @@ export class AuthService {
     }
   }
 
-  async validateUser(
-    username: CredentialsSignin['email'],
-    password: CredentialsSignin['password'],
-  ) {
+  async validateUser(username: CredentialsSignin['email'], password: CredentialsSignin['password']) {
     const user = await this.prisma.tbl_user.findUnique({
       where: { email: username.trim().toLowerCase() },
     })

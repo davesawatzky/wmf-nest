@@ -6,7 +6,7 @@ import { Transform, Type } from 'class-transformer'
 
 @InputType()
 export class RegisteredClassInput {
-  class_number?: string
+  classNumber?: string
   discipline?: string
   subdiscipline?: string
   level?: string
@@ -14,11 +14,11 @@ export class RegisteredClassInput {
 
   @IsInt()
   @Field(() => Int)
-  number_of_selections?: number
+  numberOfSelections?: number
 
   @Field(() => GraphQLDecimal)
   @Type(() => Object)
   @Transform(transformToDecimal)
   price?: Decimal
-  school_communityId?: number
+  schoolGroupID?: number
 }

@@ -8,32 +8,33 @@ import { PrismaService } from 'src/prisma/prisma.service'
 export class RegisteredClassService {
   constructor(private prisma: PrismaService) {}
 
-  async create(
-    registrationID: Registration['id'],
-    registeredClassInput: RegisteredClassInput,
-  ) {
-    const classExists = await this.prisma.tbl_reg_classes.findMany({
+  async create(registrationID: Registration['id'], registeredClassInput: RegisteredClassInput) {
+    const classExists = await this.prisma.tbl_reg_classes.count({
       where: {
         regID: registrationID,
-        class_number: registeredClassInput.class_number,
+        classNumber: registeredClassInput.classNumber,
       },
     })
-    if (classExists.length > 0 && registeredClassInput.class_number) {
+    if (classExists > 0 && registeredClassInput.classNumber) {
       return {
         userErrors: [
           {
-            message: `Registration form already includes class ${registeredClassInput.class_number}.  Cannot add duplicate class.`,
+            message: `Registration form already includes class ${registeredClassInput.classNumber}.  Cannot add duplicate class.`,
           },
         ],
         registeredClass: null,
       }
     }
-    return this.prisma.tbl_reg_classes.create({
-      data: {
-        regID: registrationID,
-        ...registeredClassInput,
-      },
-    })
+    console.log('----->RegisteredClassInput: ', registeredClassInput)
+    return {
+      userErrors: [],
+      registeredClass: this.prisma.tbl_reg_classes.create({
+        data: {
+          regID: registrationID,
+          ...registeredClassInput,
+        },
+      }),
+    }
   }
 
   async findAll(registrationID?: tbl_registration['id']) {
@@ -48,16 +49,12 @@ export class RegisteredClassService {
     })
   }
 
-  async update(
-    registeredClassID: tbl_reg_classes['id'],
-    registeredClassInput: RegisteredClassInput,
-  ) {
-    const classEntryExists: tbl_reg_classes | null =
-      await this.prisma.tbl_reg_classes.findUnique({
-        where: {
-          id: registeredClassID,
-        },
-      })
+  async update(registeredClassID: tbl_reg_classes['id'], registeredClassInput: RegisteredClassInput) {
+    const classEntryExists: tbl_reg_classes | null = await this.prisma.tbl_reg_classes.findUnique({
+      where: {
+        id: registeredClassID,
+      },
+    })
     if (!classEntryExists) {
       return {
         userErrors: [
@@ -75,12 +72,11 @@ export class RegisteredClassService {
   }
 
   async remove(registeredClassID: tbl_reg_classes['id']) {
-    const classEntryExists: tbl_reg_classes | null =
-      await this.prisma.tbl_reg_classes.findUnique({
-        where: {
-          id: registeredClassID,
-        },
-      })
+    const classEntryExists: tbl_reg_classes | null = await this.prisma.tbl_reg_classes.findUnique({
+      where: {
+        id: registeredClassID,
+      },
+    })
     if (!classEntryExists) {
       return {
         userErrors: [

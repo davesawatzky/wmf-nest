@@ -1,18 +1,18 @@
 type Group {
-	id: Int!
-	name: String
-	groupType: String
-	numberOfPerformers: Int
-	age: Int
-	instruments: String
+  id: Int!
+  name: String
+  groupType: String
+  numberOfPerformers: Int
+  age: Int
+  instruments: String
 }
 
 input GroupInput {
-	name: String!
-	groupType: String
-	numberOfPerformers: Int
-	age: Int
-	instruments: String
+  name: String!
+  groupType: String
+  numberOfPerformers: Int
+  age: Int
+  instruments: String
 }
 
 type Query {
@@ -22,8 +22,8 @@ type Query {
 
 type Mutation {
   groupCreate(registrationID: Int!, groupInput: GroupInput!): GroupPayload!
-	groupUpdate(id: Int!, groupInput: GroupInput!): GroupPayload!
-	groupDelete(id: Int!): GroupPayload!
+  groupUpdate(id: Int!, groupInput: GroupInput!): GroupPayload!
+  groupDelete(id: Int!): GroupPayload!
 }
 
 type GroupPayload {

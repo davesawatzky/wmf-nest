@@ -1,12 +1,4 @@
-import {
-  Resolver,
-  Parent,
-  Query,
-  Mutation,
-  Args,
-  ResolveField,
-  Int,
-} from '@nestjs/graphql'
+import { Resolver, Parent, Query, Mutation, Args, ResolveField, Int } from '@nestjs/graphql'
 import { SchoolService } from './school.service'
 import { SchoolInput } from './dto/school.input'
 import { SchoolPayload } from './entities/school.entity'
@@ -19,10 +11,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 @Resolver(() => School)
 @UseGuards(JwtAuthGuard)
 export class SchoolResolver {
-  constructor(
-    private readonly schoolService: SchoolService,
-    private readonly schoolGroupService: SchoolGroupService,
-  ) {}
+  constructor(private readonly schoolService: SchoolService, private readonly schoolGroupService: SchoolGroupService) {}
 
   /** Queries */
 
@@ -39,11 +28,11 @@ export class SchoolResolver {
   /** Mutations */
 
   @Mutation(() => SchoolPayload)
-  async SchoolCreate(
+  async schoolCreate(
     @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
-    @Args('schoolInput', { type: () => SchoolInput })
-    schoolInput: SchoolInput,
+    @Args('schoolInput', { type: () => SchoolInput, nullable: true })
+    schoolInput: SchoolInput
   ) {
     return this.schoolService.create(registrationID, schoolInput)
   }
@@ -53,7 +42,7 @@ export class SchoolResolver {
     @Args('schoolID', { type: () => Int })
     schoolID: tbl_reg_school['id'],
     @Args('schoolInput', { type: () => SchoolInput })
-    schoolInput: SchoolInput,
+    schoolInput: SchoolInput
   ) {
     return this.schoolService.update(schoolID, schoolInput)
   }
@@ -61,7 +50,7 @@ export class SchoolResolver {
   @Mutation(() => SchoolPayload)
   async schoolDelete(
     @Args('schoolID', { type: () => Int })
-    schoolID: tbl_reg_school['id'],
+    schoolID: tbl_reg_school['id']
   ) {
     return this.schoolService.remove(schoolID)
   }
