@@ -505,7 +505,7 @@ type SubmissionPayload {
 
 type Teacher {
   apartment: String
-  city: String
+  city: String!
   email: String
   firstName: String
   id: Int!
@@ -513,7 +513,7 @@ type Teacher {
   phone: String
   postalCode: String
   prefix: String
-  province: String
+  province: String!
   streetName: String
   streetNumber: String
 }
