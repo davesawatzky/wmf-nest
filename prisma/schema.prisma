@@ -31,7 +31,7 @@ model tbl_class_trophy {
 
 model tbl_classlist {
   id                Int                @id @default(autoincrement())
-  classNumber       String             @unique @db.Text
+  classNumber       String             @map("class_number") @unique @db.Text 
   subdisciplineID   Int
   categoryID        Int
   levelID           Int
