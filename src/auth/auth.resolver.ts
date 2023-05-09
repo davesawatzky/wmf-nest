@@ -19,6 +19,8 @@ export class AuthResolver {
   @Mutation(() => AuthPayload)
   @UseGuards(GqlAuthGuard)
   async signin(@Args('credentials') credentials: CredentialsSignin, @Context() context) {
+    console.log('Context-----> ', context);
+    
     return this.authService.signin(context.user)
   }
 }
