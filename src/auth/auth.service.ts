@@ -6,6 +6,7 @@ import { User } from '../user/entities/user.entity'
 import { JwtService } from '@nestjs/jwt'
 import { PrismaService } from 'src/prisma/prisma.service'
 import * as bcrypt from 'bcrypt'
+import { UserError } from 'src/common.entity'
 
 @Injectable()
 export class AuthService {
@@ -23,7 +24,7 @@ export class AuthService {
             field: null,
           },
         ],
-        access_token: null,
+        diatonicToken: null,
         user: null,
       }
     } else {
@@ -45,19 +46,20 @@ export class AuthService {
     }
   }
 
-  async signin(user: Partial<User>) {
+  async signin(user: Partial<User>): Promise<{user: Partial<User>; diatonicToken: string; userErrors:UserError[]}> {
     const payload = {
       username: user.email,
       sub: user.id,
     }
     return {
       userErrors: [],
-      access_token: this.jwtService.sign(payload),
+      diatonicToken: this.jwtService.sign(payload),
       user: user,
     }
   }
 
   async validateUser(username: CredentialsSignin['email'], password: CredentialsSignin['password']) {
+    console.log(username, password)
     const user = await this.prisma.tbl_user.findUnique({
       where: { email: username.trim().toLowerCase() },
     })
@@ -65,7 +67,7 @@ export class AuthService {
     if (user && valid) {
       const result = await this.stripProperties(user)
       return result
-    }
+    } 
     return null
   }
 
@@ -76,7 +78,7 @@ export class AuthService {
     if (user) {
       const result = await this.stripProperties(user)
       return result
-    }
+    } 
     return null
   }
 

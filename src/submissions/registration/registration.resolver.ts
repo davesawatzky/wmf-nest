@@ -33,11 +33,13 @@ export class RegistrationResolver {
 
   @Query(() => [Registration])
   async registrations(
+    @Context() context,
     @Args('userID', { type: () => Int }) userID?: tbl_user['id'],
-    @Args('performerType', { type: () => SGSLabel })
+    @Args('performerType', {nullable: true, type: () => SGSLabel })
     performerType?: Registration['performerType']
   ) {
-    return this.registrationService.findAll(userID, performerType)
+    console.log('-----Registrations Context: ', context)
+    return this.registrationService.findAll(context.user.id, performerType)
   }
 
   @Query(() => Registration)
@@ -55,6 +57,7 @@ export class RegistrationResolver {
     label: Registration['label'],
     @Context() context
   ) {
+    console.log('-----Registration Create Context: ', context)
     return this.registrationService.create(context.req.user.id, performerType, label)
   }
 

@@ -8,7 +8,7 @@ export class AuthPayload {
   userErrors: UserError[]
 
   @IsJWT()
-  access_token?: string
+  diatonicToken?: string
 
   @Field(() => User)
   user: Partial<User>

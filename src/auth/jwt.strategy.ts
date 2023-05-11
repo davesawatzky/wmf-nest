@@ -1,17 +1,30 @@
 import { ExtractJwt, Strategy } from 'passport-jwt'
+import { Request as RequestType } from 'express'
 import { PassportStrategy } from '@nestjs/passport'
 import { Injectable } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { User } from 'src/user/entities/user.entity'
+import { JwtSecretRequestType } from '@nestjs/jwt'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly authService: AuthService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        JwtStrategy.extractJWTFromCookie,
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ]),
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_SECRET_KEY,
     })
+  }
+
+  private static extractJWTFromCookie(req: RequestType) {
+    if (req.cookies) {
+      console.log('----->Cookie: ', req.cookies);
+      // return req.cookies.diatonicToken
+    }
+    return null
   }
 
   //payload = decoded JWT

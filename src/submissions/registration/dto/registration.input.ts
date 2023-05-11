@@ -9,7 +9,7 @@ export class RegistrationInput {
   label?: string
 
   @Field(() => SGSLabel)
-  performerType?: SGSLabel
+  performerType: SGSLabel
 
   @Field(() => GraphQLDecimal)
   @Type(() => Object)

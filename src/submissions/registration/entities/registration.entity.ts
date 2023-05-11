@@ -27,7 +27,7 @@ export class Registration {
   school?: School
 
   @Field(() => SGSLabel)
-  performerType?: SGSLabel
+  performerType: SGSLabel
 
   @Field(() => GraphQLDecimal)
   totalAmt?: number

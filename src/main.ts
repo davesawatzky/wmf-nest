@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 // import helmet from 'helmet'
 import * as cookieParser from 'cookie-parser'
+import { request } from 'express'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -26,13 +27,15 @@ async function bootstrap() {
   app.use(cookieParser())
 
   app.enableCors({
-    origin: 'http://localhost:3001',
+    origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    optionsSuccessStatus: 200,
     credentials: true,
     preflightContinue: false,
-    maxAge: 36000
+    maxAge: (1000 * 60 * 60 * 24), // 1 day
   })
 
-  await app.listen(3000)
+  const PORT = process.env.PORT || 3000
+  await app.listen(PORT)
 }
 bootstrap()
