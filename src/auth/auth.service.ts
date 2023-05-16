@@ -59,7 +59,6 @@ export class AuthService {
   }
 
   async validateUser(username: CredentialsSignin['email'], password: CredentialsSignin['password']) {
-    console.log(username, password)
     const user = await this.prisma.tbl_user.findUnique({
       where: { email: username.trim().toLowerCase() },
     })

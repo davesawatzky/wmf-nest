@@ -38,7 +38,6 @@ export class RegistrationResolver {
     @Args('performerType', {nullable: true, type: () => SGSLabel })
     performerType?: Registration['performerType']
   ) {
-    console.log('-----Registrations Context: ', context)
     return this.registrationService.findAll(context.user.id, performerType)
   }
 
@@ -57,7 +56,6 @@ export class RegistrationResolver {
     label: Registration['label'],
     @Context() context
   ) {
-    console.log('-----Registration Create Context: ', context)
     return this.registrationService.create(context.req.user.id, performerType, label)
   }
 

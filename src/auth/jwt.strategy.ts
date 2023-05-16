@@ -20,9 +20,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   private static extractJWTFromCookie(req: RequestType) {
-    if (req.cookies) {
-      console.log('----->Cookie: ', req.cookies);
-      // return req.cookies.diatonicToken
+    if (req.cookies && 'diatonicToken' in req.cookies) {
+      return req.cookies.diatonicToken
     }
     return null
   }

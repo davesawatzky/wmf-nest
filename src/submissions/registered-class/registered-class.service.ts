@@ -25,7 +25,6 @@ export class RegisteredClassService {
         registeredClass: null,
       }
     }
-    console.log('----->RegisteredClassInput: ', registeredClassInput)
     return {
       userErrors: [],
       registeredClass: this.prisma.tbl_reg_classes.create({

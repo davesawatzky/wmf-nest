@@ -25,10 +25,10 @@ export class AuthResolver {
     @Context('res') res: Response,
     @Context() context) {
     const { userErrors, diatonicToken, user } = await this.authService.signin(context.user)
-    console.log(diatonicToken)
     res.cookie('diatonicToken', diatonicToken, {
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: 'lax',
+      // secure: true,
       path:'/',
       domain: 'localhost',
       maxAge: 1000 * 60 * 60 * 1, // 1 hour
