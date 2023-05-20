@@ -5,10 +5,10 @@ import { Decimal } from '@prisma/client/runtime/library'
 import { Discipline } from '../../discipline/entities/discipline.entity'
 import { FestivalClass } from '../../festival-class/entities/festival-class.entity'
 import { Level } from 'src/festival/level/entities/level.entity'
-import { SGSLabel, UserError } from 'src/common.entity'
+import { PerformerType, UserError } from 'src/common.entity'
 
-registerEnumType(SGSLabel, {
-  name: 'SGSLabel',
+registerEnumType(PerformerType, {
+  name: 'PerformerType',
 })
 
 @ObjectType()
@@ -20,8 +20,8 @@ export class Subdiscipline {
   maxPerformers: number
   minPerformers: number
 
-  @Field(() => SGSLabel)
-  SGSLabel: SGSLabel
+  @Field(() => PerformerType)
+  performerType: PerformerType
 
   @Field(() => GraphQLDecimal)
   @Type(() => Object)

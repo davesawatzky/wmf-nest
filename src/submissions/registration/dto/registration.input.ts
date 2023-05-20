@@ -1,5 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql'
-import { SGSLabel } from 'src/common.entity'
+import { PerformerType } from 'src/common.entity'
 import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
 import { Decimal } from '@prisma/client/runtime/library'
 import { Type, Transform } from 'class-transformer'
@@ -8,8 +8,8 @@ import { Type, Transform } from 'class-transformer'
 export class RegistrationInput {
   label?: string
 
-  @Field(() => SGSLabel)
-  performerType: SGSLabel
+  @Field(() => PerformerType)
+  performerType: PerformerType
 
   @Field(() => GraphQLDecimal)
   @Type(() => Object)

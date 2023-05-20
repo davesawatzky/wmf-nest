@@ -4,7 +4,7 @@ import { Registration } from '../registration/entities/registration.entity'
 import { UseGuards } from '@nestjs/common'
 import { SubmissionService } from '../submission/submission.service'
 import { SubmissionPayload } from './entities/submission.entity'
-import { SGSLabel } from 'src/common.entity'
+import { PerformerType } from 'src/common.entity'
 
 @Resolver(() => Registration)
 @UseGuards(JwtAuthGuard)
@@ -13,7 +13,7 @@ export class SubmissionResolver {
 
   @Query(() => [Registration])
   async submissions(
-    @Args('performerType', { type: () => SGSLabel })
+    @Args('performerType', { type: () => PerformerType })
     performerType?: Registration['performerType']
   ) {
     return this.submissionService.submissions(performerType)

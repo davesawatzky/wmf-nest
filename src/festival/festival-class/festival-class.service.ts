@@ -4,17 +4,17 @@ import { FestivalClassSearchArgs } from './dto/festival-class.input'
 import { FestivalClassInput } from './dto/festival-class.input'
 
 import { tbl_subdiscipline, tbl_category, tbl_level, tbl_classlist, tbl_class_trophy } from '@prisma/client'
-import { SGSLabel } from 'src/common.entity'
+import { PerformerType } from 'src/common.entity'
 
 @Injectable()
 export class FestivalClassService {
   constructor(private prisma: PrismaService) {}
 
-  async create(SGSLabel: SGSLabel, festivalClass: FestivalClassInput) {
+  async create(performerType: PerformerType, festivalClass: FestivalClassInput) {
     return {
       festivalClass: await this.prisma.tbl_classlist.create({
         data: {
-          SGSLabel,
+          performerType,
           ...festivalClass,
         },
       }),
@@ -22,14 +22,14 @@ export class FestivalClassService {
   }
 
   async findAll(
-    SGSLabel?: SGSLabel,
+    performerType?: PerformerType,
     subdisciplineID?: tbl_subdiscipline['id'],
     levelID?: tbl_level['id'],
     categoryID?: tbl_category['id']
   ) {
     return this.prisma.tbl_classlist.findMany({
       where: {
-        SGSLabel,
+        performerType,
         subdisciplineID,
         levelID,
         categoryID,

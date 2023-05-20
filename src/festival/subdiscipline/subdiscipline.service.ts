@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { tbl_subdiscipline, tbl_category, tbl_level, tbl_discipline } from '@prisma/client'
 import { SubdisciplineInput } from './dto/subdiscipline.input'
 import { PrismaService } from 'src/prisma/prisma.service'
-import { SGSLabel } from 'src/common.entity'
+import { PerformerType } from 'src/common.entity'
 // import { CreateSubdisciplineInput } from './dto/create-subdiscipline.input'
 // import { UpdateSubdisciplineInput } from './dto/update-subdiscipline.input'
 
@@ -23,11 +23,11 @@ export class SubdisciplineService {
     disciplineID?: tbl_discipline['id'],
     levelID?: tbl_level['id'],
     categoryID?: tbl_category['id'],
-    SGSLabel?: SGSLabel
+    performerType?: PerformerType
   ) {
     return await this.prisma.tbl_subdiscipline.findMany({
       where: {
-        SGSLabel,
+        performerType,
         disciplineID,
         tbl_classlist: {
           some: {

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { DisciplineInput } from './dto/discipline.input'
 import { tbl_discipline } from '@prisma/client'
-import { SGSLabel } from 'src/common.entity'
+import { PerformerType } from 'src/common.entity'
 
 @Injectable()
 export class DisciplineService {
@@ -14,14 +14,14 @@ export class DisciplineService {
     })
   }
 
-  async findAll(SGSLabel?: SGSLabel) {
+  async findAll(performerType?: PerformerType) {
     return this.prisma.tbl_discipline.findMany({
       where: {
         tbl_subdiscipline: {
           some: {
             tbl_classlist: {
               some: {
-                SGSLabel,
+                performerType,
               },
             },
           },

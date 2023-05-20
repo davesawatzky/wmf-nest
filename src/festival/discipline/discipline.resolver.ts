@@ -5,7 +5,7 @@ import { DisciplineService } from './discipline.service'
 import { Discipline, DisciplinePayload } from './entities/discipline.entity'
 import { SubdisciplineService } from '../subdiscipline/subdiscipline.service'
 import { DisciplineInput } from './dto/discipline.input'
-import { SGSLabel } from 'src/common.entity'
+import { PerformerType } from 'src/common.entity'
 
 @Resolver(() => Discipline)
 @UseGuards(JwtAuthGuard)
@@ -19,10 +19,10 @@ export class DisciplineResolver {
 
   @Query(() => [Discipline])
   async disciplines(
-    @Args('SGSLabel', { type: () => SGSLabel, nullable: true })
-    SGSLabel: SGSLabel
+    @Args('performerType', { type: () => PerformerType, nullable: true })
+    performerType: PerformerType
   ) {
-    return this.disciplineService.findAll(SGSLabel)
+    return this.disciplineService.findAll(performerType)
   }
 
   @Query(() => Discipline)
@@ -53,10 +53,10 @@ export class DisciplineResolver {
   @ResolveField()
   async subdisciplines(
     @Parent() discipline: Discipline,
-    @Args('SGSLabel', { type: () => SGSLabel, nullable: true })
-    SGSLabel: SGSLabel
+    @Args('performerType', { type: () => PerformerType, nullable: true })
+    performerType: PerformerType
   ) {
     const { id } = discipline
-    return this.subdisciplineService.findAll(id, undefined, undefined, SGSLabel)
+    return this.subdisciplineService.findAll(id, undefined, undefined, performerType)
   }
 }

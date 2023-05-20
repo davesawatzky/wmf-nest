@@ -219,7 +219,7 @@ CREATE TABLE "tbl_registration" (
     "total_amt" DECIMAL(10,2),
     "payed_amt" DECIMAL(10,2),
     "transaction_info" TEXT,
-    "submission" TEXT,
+    "confirmation" TEXT,
     "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 

@@ -9,7 +9,7 @@ type UserError {
 	field: [String!]!
 }
 
-enum SGSLabel {
+enum PerformerType {
 	SOLO
 	GROUP
 	SCHOOL

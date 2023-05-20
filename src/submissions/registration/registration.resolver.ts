@@ -10,7 +10,7 @@ import { CommunityService } from '../community/community.service'
 import { SchoolService } from '../school/school.service'
 import { Registration, RegistrationPayload } from './entities/registration.entity'
 import { RegistrationInput } from './dto/registration.input'
-import { SGSLabel } from 'src/common.entity'
+import { PerformerType } from 'src/common.entity'
 import { UseGuards } from '@nestjs/common/decorators'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 import { User } from 'src/user/entities/user.entity'
@@ -35,9 +35,11 @@ export class RegistrationResolver {
   async registrations(
     @Context() context,
     @Args('userID', { type: () => Int }) userID?: tbl_user['id'],
-    @Args('performerType', {nullable: true, type: () => SGSLabel })
+    @Args('performerType', {nullable: true, type: () => PerformerType })
     performerType?: Registration['performerType']
   ) {
+    console.log(context.user.id);
+    
     return this.registrationService.findAll(context.user.id, performerType)
   }
 
@@ -50,8 +52,8 @@ export class RegistrationResolver {
 
   @Mutation(() => RegistrationPayload)
   async registrationCreate(
-    @Args('performerType', { type: () => SGSLabel })
-    performerType: SGSLabel,
+    @Args('performerType', { type: () => PerformerType })
+    performerType: PerformerType,
     @Args('label', { type: () => String })
     label: Registration['label'],
     @Context() context

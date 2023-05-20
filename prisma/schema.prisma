@@ -38,7 +38,7 @@ model tbl_classlist {
   minSelection      Int                @map("min_selection")
   maxSelection      Int                @map("max_selection")
   requiredSelection String?            @map("required_selection") @db.Text
-  SGSLabel          tbl_SGS            @default(SOLO) @map("SGS_label")
+  performerType     tbl_performer_type @default(SOLO) @map("performer_type")
   price             Decimal?           @db.Decimal(7, 2)
   tbl_category      tbl_category       @relation(fields: [categoryID], references: [id], onUpdate: Restrict)
   tbl_level         tbl_level          @relation(fields: [levelID], references: [id], onUpdate: Restrict)
@@ -223,12 +223,12 @@ model tbl_registration {
   id                Int                 @id @default(autoincrement())
   userID            Int?                @default(0)
   label             String              @default("Registration Form") @db.Text
-  performerType     tbl_SGS             @default(SOLO) @map("performer_type")
+  performerType     tbl_performer_type  @default(SOLO) @map("performer_type")
   submittedAt       DateTime?           @map("submitted_at") @db.Timestamp()
   totalAmt          Decimal?            @map("total_amt") @db.Decimal(10, 2)
   payedAmt          Decimal?            @map("payed_amt") @db.Decimal(10, 2)
   transactionInfo   String?             @map("transaction_info") @db.Text
-  submission        String?             @unique @db.Text
+  confirmation      String?             @unique @db.Text
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp()
   updatedAt         DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
   tbl_user          tbl_user?           @relation(fields: [userID], references: [id], onUpdate: Restrict)
@@ -256,7 +256,7 @@ model tbl_subdiscipline {
   description    String?                    @db.Text
   maxPerformers  Int?                       @map("max_performers")
   minPerformers  Int?                       @map("min_performers")
-  SGSLabel       tbl_subdiscipline_SGSlabel @map("SGS_label")
+  performerType  tbl_subdiscipline_performer_type @map("performer_type")
   price          Decimal?                   @db.Decimal(7, 2)
   tbl_discipline tbl_discipline             @relation(fields: [disciplineID], references: [id], onDelete: NoAction, onUpdate: NoAction)
   tbl_classlist  tbl_classlist[]
@@ -314,14 +314,14 @@ model tbl_instruments {
   name String @default("0") @db.Text
 }
 
-enum tbl_SGS {
+enum tbl_performer_type {
   SOLO
   GROUP
   SCHOOL
   COMMUNITY
 }
 
-enum tbl_subdiscipline_SGSlabel {
+enum tbl_subdiscipline_performer_type {
   SOLO
   GROUP
   SCHOOL

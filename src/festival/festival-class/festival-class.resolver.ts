@@ -6,7 +6,7 @@ import { FestivalClassInput } from './dto/festival-class.input'
 import { FestivalClassSearchArgs } from './dto/festival-class.input'
 import { FestivalClass, FestivalClassPayload } from './entities/festival-class.entity'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { SGSLabel } from 'src/common.entity'
+import { PerformerType } from 'src/common.entity'
 import { SubdisciplineService } from '../subdiscipline/subdiscipline.service'
 import { LevelService } from '../level/level.service'
 import { CategoryService } from '../category/category.service'
@@ -26,8 +26,8 @@ export class FestivalClassResolver {
 
   @Query(() => [FestivalClass])
   async festivalClasses(
-    @Args('SGSLabel', { type: () => SGSLabel, nullable: true })
-    SGSLabel: SGSLabel,
+    @Args('performerType', { type: () => PerformerType, nullable: true })
+    performerType: PerformerType,
     @Args('festivalClassSearch', {
       type: () => FestivalClassSearchArgs,
       nullable: true,
@@ -35,7 +35,7 @@ export class FestivalClassResolver {
     festivalClassSearch: FestivalClassSearchArgs
   ) {
     const { subdisciplineID, categoryID, levelID } = festivalClassSearch
-    return this.festivalClassService.findAll(SGSLabel, subdisciplineID, levelID, categoryID)
+    return this.festivalClassService.findAll(performerType, subdisciplineID, levelID, categoryID)
   }
 
   @Query(() => [FestivalClass])
@@ -63,11 +63,11 @@ export class FestivalClassResolver {
 
   @Mutation(() => FestivalClassPayload)
   async festivalClassCreate(
-    @Args('SGSLabel') SGSLabel: SGSLabel,
+    @Args('performerType') performerType: PerformerType,
     @Args('festivalClass')
     festivalClass: FestivalClassInput
   ) {
-    return this.festivalClassService.create(SGSLabel, festivalClass)
+    return this.festivalClassService.create(performerType, festivalClass)
   }
 
   @Mutation(() => FestivalClassPayload)

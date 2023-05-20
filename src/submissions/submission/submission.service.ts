@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { randomInt } from 'crypto'
-import { SGSLabel } from 'src/common.entity'
+import { PerformerType } from 'src/common.entity'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { tbl_registration } from '@prisma/client'
 import { Submission, SubmissionPayload } from './entities/submission.entity'
@@ -12,7 +12,7 @@ export class SubmissionService {
 
   private requiredField = []
 
-  async submissions(performerType?: SGSLabel) {
+  async submissions(performerType?: PerformerType) {
     return this.prisma.tbl_registration.findMany({
       where: {
         performerType,
@@ -119,7 +119,7 @@ export class SubmissionService {
 
     const submissionData: Submission = await {
       submittedAt: new Date(),
-      submission: 'WMF-' + id + '-' + randomInt(1000, 9999),
+      confirmation: 'WMF-' + id + '-' + randomInt(1000, 9999),
     }
 
     // return {
@@ -128,7 +128,7 @@ export class SubmissionService {
     //     where: { id },
     //     data: {
     //       submittedAt: submissionData.submittedAt,
-    //       submission: submissionData.submission,
+    //       confirmation: submissionData.confirmation,
     //     },
     //   }),
     // }

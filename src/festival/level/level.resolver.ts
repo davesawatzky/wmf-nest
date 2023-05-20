@@ -6,10 +6,10 @@ import { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
 import { Level, LevelPayload } from './entities/level.entity'
 import { LevelInput } from './dto/level.input'
 import { FestivalClassService } from '../festival-class/festival-class.service'
-import { SGSLabel } from 'src/common.entity'
+import { PerformerType } from 'src/common.entity'
 
-registerEnumType(SGSLabel, {
-  name: 'SGSLabel',
+registerEnumType(PerformerType, {
+  name: 'PerformerType',
   description: 'SOLO, GROUP, SCHOOL, COMMUNITY',
 })
 @Resolver(() => Level)
@@ -61,12 +61,12 @@ export class LevelResolver {
   @ResolveField()
   classes(
     @Parent() { id }: tbl_level,
-    @Args('SGSLabel') SGSLabel: SGSLabel,
+    @Args('performerType') performerType: PerformerType,
     @Args('subdisciplineID', { type: () => Int })
     subdisciplineID: tbl_subdiscipline['id'],
     @Args('categoryID', { type: () => Int }) categoryID: tbl_category['id']
   ) {
     const levelID = id
-    return this.festivalClassService.findAll(SGSLabel, subdisciplineID, levelID, categoryID)
+    return this.festivalClassService.findAll(performerType, subdisciplineID, levelID, categoryID)
   }
 }

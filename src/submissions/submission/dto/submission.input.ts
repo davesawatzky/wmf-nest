@@ -11,7 +11,7 @@ export class SubmissionInput {
   submittedAt: Date
 
   @IsString()
-  submission: string
+  confirmation: string
 
   @Field(() => GraphQLDecimal)
   @Type(() => Object)

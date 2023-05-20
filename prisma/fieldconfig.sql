@@ -1,4 +1,4 @@
-INSERT INTO tbl_field_config (id, table_name, field_name, submission_required, custom_field, custom_field_type) VALUES
+INSERT INTO tbl_field_config (id, table_name, field_name, confirmation_required, custom_field, custom_field_type) VALUES
 	(1, 'tbl_reg_classes', 'id', 'true', 'false', null),
 	(2, 'tbl_reg_classes', 'regID', 'true', 'false', null),
 	(3, 'tbl_reg_classes', 'class_number', 'true', 'false', null),
@@ -88,7 +88,7 @@ INSERT INTO tbl_field_config (id, table_name, field_name, submission_required, c
 	(87, 'tbl_registration', 'total_amt', 'false', 'false', null),
 	(88, 'tbl_registration', 'payed_amt', 'false', 'false', null),
 	(89, 'tbl_registration', 'transaction_info', 'false', 'false', null),
-	(90, 'tbl_registration', 'submission', 'false', 'false', null),
+	(90, 'tbl_registration', 'confirmation', 'false', 'false', null),
 	(91, 'tbl_registration', 'created_at', 'true', 'false', null),
 	(92, 'tbl_registration', 'updated_at', 'true', 'false', null),
 	(93, 'tbl_reg_community', 'id', 'true', 'false', null),
