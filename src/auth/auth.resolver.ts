@@ -14,7 +14,9 @@ export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Mutation(() => AuthPayload)
-  async signup(@Args('credentials') credentials: CredentialsSignup): Promise<AuthPayload> {
+  async signup(
+    @Args('credentials') credentials: CredentialsSignup
+  ): Promise<AuthPayload> {
     return this.authService.signup(credentials)
   }
 
@@ -23,13 +25,16 @@ export class AuthResolver {
   async signin(
     @Args('credentials') credentials: CredentialsSignin,
     @Context('res') res: Response,
-    @Context() context) {
-    const { userErrors, diatonicToken, user } = await this.authService.signin(context.user)
+    @Context() context
+  ) {
+    const { userErrors, diatonicToken, user } = await this.authService.signin(
+      context.user
+    )
     res.cookie('diatonicToken', diatonicToken, {
       httpOnly: true,
       sameSite: 'lax',
       // secure: true,
-      path:'/',
+      path: '/',
       domain: 'localhost',
       maxAge: 1000 * 60 * 60 * 1, // 1 hour
     })

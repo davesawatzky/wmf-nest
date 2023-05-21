@@ -7,7 +7,10 @@ import { PrismaService } from 'src/prisma/prisma.service'
 export class CommunityService {
   constructor(private prisma: PrismaService) {}
 
-  async create(registrationID: tbl_registration['id'], communityInput: Partial<CommunityInput>) {
+  async create(
+    registrationID: tbl_registration['id'],
+    communityInput: Partial<CommunityInput>
+  ) {
     return await {
       userErrors: [],
       community: this.prisma.tbl_reg_community.create({
@@ -31,7 +34,10 @@ export class CommunityService {
     })
   }
 
-  update(communityID: tbl_reg_community['id'], communityInput: Partial<CommunityInput>) {
+  update(
+    communityID: tbl_reg_community['id'],
+    communityInput: Partial<CommunityInput>
+  ) {
     return this.prisma.tbl_reg_community.update({
       where: { id: communityID },
       data: { ...communityInput },

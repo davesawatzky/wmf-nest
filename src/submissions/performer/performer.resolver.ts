@@ -52,7 +52,9 @@ export class PerformerResolver {
   }
 
   @Mutation(() => PerformerPayload)
-  async performerDelete(@Args('performerID', { type: () => Int }) performerID: Performer['id']) {
+  async performerDelete(
+    @Args('performerID', { type: () => Int }) performerID: Performer['id']
+  ) {
     return this.performerService.remove(performerID)
   }
 }

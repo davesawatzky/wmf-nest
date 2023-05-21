@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { tbl_subdiscipline, tbl_category, tbl_level, tbl_discipline } from '@prisma/client'
+import {
+  tbl_subdiscipline,
+  tbl_category,
+  tbl_level,
+  tbl_discipline,
+} from '@prisma/client'
 import { SubdisciplineInput } from './dto/subdiscipline.input'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { PerformerType } from 'src/common.entity'
@@ -10,7 +15,10 @@ import { PerformerType } from 'src/common.entity'
 export class SubdisciplineService {
   constructor(private prisma: PrismaService) {}
 
-  async create(disciplineID: tbl_discipline['id'], subdisciplineInput: SubdisciplineInput) {
+  async create(
+    disciplineID: tbl_discipline['id'],
+    subdisciplineInput: SubdisciplineInput
+  ) {
     return this.prisma.tbl_subdiscipline.create({
       data: {
         disciplineID: disciplineID,
@@ -57,7 +65,10 @@ export class SubdisciplineService {
   //   })
   // }
 
-  async update(id: tbl_subdiscipline['id'], subdisciplineInput: SubdisciplineInput) {
+  async update(
+    id: tbl_subdiscipline['id'],
+    subdisciplineInput: SubdisciplineInput
+  ) {
     return this.prisma.tbl_subdiscipline.update({
       where: { id },
       data: { ...subdisciplineInput },

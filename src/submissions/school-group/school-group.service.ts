@@ -7,7 +7,10 @@ import { tbl_reg_school, tbl_reg_schoolgroup } from '@prisma/client'
 export class SchoolGroupService {
   constructor(private prisma: PrismaService) {}
 
-  async create(schoolID: tbl_reg_school['id'], schoolGroupInput: Partial<SchoolGroupInput>) {
+  async create(
+    schoolID: tbl_reg_school['id'],
+    schoolGroupInput: Partial<SchoolGroupInput>
+  ) {
     return this.prisma.tbl_reg_schoolgroup.create({
       data: {
         schoolID: schoolID,
@@ -28,7 +31,10 @@ export class SchoolGroupService {
     })
   }
 
-  async update(schoolGroupID: tbl_reg_schoolgroup['id'], schoolGroupInput: SchoolGroupInput) {
+  async update(
+    schoolGroupID: tbl_reg_schoolgroup['id'],
+    schoolGroupInput: SchoolGroupInput
+  ) {
     return this.prisma.tbl_reg_schoolgroup.update({
       where: { id: schoolGroupID },
       data: { ...schoolGroupInput },

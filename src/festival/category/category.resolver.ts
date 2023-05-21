@@ -1,4 +1,12 @@
-import { Resolver, ResolveField, Parent, Query, Mutation, Args, Int } from '@nestjs/graphql'
+import {
+  Resolver,
+  ResolveField,
+  Parent,
+  Query,
+  Mutation,
+  Args,
+  Int,
+} from '@nestjs/graphql'
 import { CategoryService } from './category.service'
 import { FestivalClassService } from '../festival-class/festival-class.service'
 import { CategoryInput } from './dto/category.input'
@@ -64,6 +72,11 @@ export class CategoryResolver {
     @Args('levelID', { type: () => Int }) levelID: tbl_level['id']
   ) {
     const categoryID = id
-    return this.festivalClassService.findAll(performerType, subdisciplineID, levelID, categoryID)
+    return this.festivalClassService.findAll(
+      performerType,
+      subdisciplineID,
+      levelID,
+      categoryID
+    )
   }
 }

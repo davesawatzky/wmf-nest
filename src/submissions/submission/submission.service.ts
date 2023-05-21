@@ -8,7 +8,10 @@ import { RegistrationService } from '../registration/registration.service'
 
 @Injectable()
 export class SubmissionService {
-  constructor(private prisma: PrismaService, private registrationService: RegistrationService) {}
+  constructor(
+    private prisma: PrismaService,
+    private registrationService: RegistrationService
+  ) {}
 
   private requiredField = []
 
@@ -23,7 +26,9 @@ export class SubmissionService {
   async submit(id: tbl_registration['id']): Promise<SubmissionPayload> {
     this.requiredField = await this.prisma.tbl_field_config.findMany()
 
-    const performerType = await (await this.registrationService.findOne(id)).performerType
+    const performerType = await (
+      await this.registrationService.findOne(id)
+    ).performerType
 
     let verified = true
     let registration = {}
@@ -109,7 +114,8 @@ export class SubmissionService {
       return {
         userErrors: [
           {
-            message: 'Submission cancelled. Please complete all required fields before submitting.',
+            message:
+              'Submission cancelled. Please complete all required fields before submitting.',
             field: [],
           },
         ],
@@ -157,7 +163,11 @@ export class SubmissionService {
         return registration[key].every((val) => this.emptyValueCheck(val, key))
       } else if (this.isObj(registration[key])) {
         return this.emptyValueCheck(registration[key], key)
-      } else if (registration[key] === null || registration[key] === undefined || registration[key] === '') {
+      } else if (
+        registration[key] === null ||
+        registration[key] === undefined ||
+        registration[key] === ''
+      ) {
         const isRequired = this.requiredField.find((el) => {
           return el.tableName == tableName && el.fieldName == key
         })

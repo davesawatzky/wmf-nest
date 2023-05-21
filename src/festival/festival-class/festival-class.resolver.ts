@@ -1,10 +1,21 @@
-import { Resolver, ResolveField, Query, Mutation, Args, Parent, Int } from '@nestjs/graphql'
+import {
+  Resolver,
+  ResolveField,
+  Query,
+  Mutation,
+  Args,
+  Parent,
+  Int,
+} from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 import { FestivalClassService } from './festival-class.service'
 import { FestivalClassInput } from './dto/festival-class.input'
 import { FestivalClassSearchArgs } from './dto/festival-class.input'
-import { FestivalClass, FestivalClassPayload } from './entities/festival-class.entity'
+import {
+  FestivalClass,
+  FestivalClassPayload,
+} from './entities/festival-class.entity'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PerformerType } from 'src/common.entity'
 import { SubdisciplineService } from '../subdiscipline/subdiscipline.service'
@@ -35,7 +46,12 @@ export class FestivalClassResolver {
     festivalClassSearch: FestivalClassSearchArgs
   ) {
     const { subdisciplineID, categoryID, levelID } = festivalClassSearch
-    return this.festivalClassService.findAll(performerType, subdisciplineID, levelID, categoryID)
+    return this.festivalClassService.findAll(
+      performerType,
+      subdisciplineID,
+      levelID,
+      categoryID
+    )
   }
 
   @Query(() => [FestivalClass])
@@ -47,7 +63,9 @@ export class FestivalClassResolver {
   }
 
   @Query(() => FestivalClass)
-  async festivalClass(@Args('id', { type: () => Int }) id: FestivalClass['id']) {
+  async festivalClass(
+    @Args('id', { type: () => Int }) id: FestivalClass['id']
+  ) {
     return this.festivalClassService.findById(id)
   }
 
@@ -103,12 +121,15 @@ export class FestivalClassResolver {
   }
   @ResolveField()
   subdiscipline(@Parent() festivalClass: tbl_classlist) {
-    const { subdisciplineID }: { subdisciplineID: tbl_classlist['subdisciplineID'] } = festivalClass
+    const {
+      subdisciplineID,
+    }: { subdisciplineID: tbl_classlist['subdisciplineID'] } = festivalClass
     return this.subdisciplineService.findOne(subdisciplineID)
   }
   @ResolveField()
   category(@Parent() festivalClass: tbl_classlist) {
-    const { categoryID }: { categoryID: tbl_classlist['categoryID'] } = festivalClass
+    const { categoryID }: { categoryID: tbl_classlist['categoryID'] } =
+      festivalClass
     return this.categoryService.findOne(categoryID)
   }
 }

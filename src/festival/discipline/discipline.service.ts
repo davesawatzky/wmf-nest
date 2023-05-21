@@ -36,7 +36,10 @@ export class DisciplineService {
     })
   }
 
-  async update(id: tbl_discipline['id'], DisciplineInput: Partial<tbl_discipline>) {
+  async update(
+    id: tbl_discipline['id'],
+    DisciplineInput: Partial<tbl_discipline>
+  ) {
     return await this.prisma.tbl_discipline.update({
       where: { id },
       data: { ...DisciplineInput },

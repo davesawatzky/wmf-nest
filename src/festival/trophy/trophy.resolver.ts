@@ -1,4 +1,12 @@
-import { Resolver, ResolveField, Parent, Query, Mutation, Args, Int } from '@nestjs/graphql'
+import {
+  Resolver,
+  ResolveField,
+  Parent,
+  Query,
+  Mutation,
+  Args,
+  Int,
+} from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 import { TrophyService } from './trophy.service'

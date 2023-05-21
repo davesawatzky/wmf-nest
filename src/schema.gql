@@ -205,7 +205,7 @@ type Mutation {
   performerCreate(performerInput: PerformerInput!, registrationID: Int!): PerformerPayload!
   performerDelete(performerID: Int!): PerformerPayload!
   performerUpdate(performerID: Int!, performerInput: PerformerInput!): PerformerPayload!
-  registeredClassCreate(registeredClassInput: RegisteredClassInput!, registrationID: Int!): RegisteredClassPayload!
+  registeredClassCreate(registrationID: Int!): RegisteredClassPayload!
   registeredClassDelete(registeredClassID: Int!): RegisteredClassPayload!
   registeredClassUpdate(registeredClassID: Int!, registeredClassInput: RegisteredClassInput!): RegisteredClassPayload!
   registrationCreate(label: String!, performerType: PerformerType!): RegistrationPayload!
@@ -217,7 +217,7 @@ type Mutation {
   schoolGroupDelete(schoolGroupID: Int!): SchoolGroupPayload!
   schoolGroupUpdate(schoolGroupID: Int!, schoolGroupInput: SchoolGroupInput!): SchoolGroupPayload!
   schoolUpdate(schoolID: Int!, schoolInput: SchoolInput!): SchoolPayload!
-  selectionCreate(registeredClassID: Int!, selectionInput: SelectionInput!): SelectionPayload!
+  selectionCreate(registeredClassID: Int!): SelectionPayload!
   selectionDelete(selectionID: Int!): SelectionPayload!
   selectionUpdate(selectionID: Int!, selectionInput: SelectionInput!): SelectionPayload!
   signin(credentials: CredentialsSignin!): AuthPayload!

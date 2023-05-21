@@ -46,7 +46,9 @@ export class GroupResolver {
   }
 
   @Mutation(() => GroupPayload)
-  async groupDelete(@Args('groupID', { type: () => Int }) groupID: Group['id']) {
+  async groupDelete(
+    @Args('groupID', { type: () => Int }) groupID: Group['id']
+  ) {
     return this.groupService.remove(groupID)
   }
 }

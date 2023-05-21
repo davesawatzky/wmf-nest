@@ -19,7 +19,9 @@ export class TeacherResolver {
   }
 
   @Query(() => Teacher)
-  async teacher(@Args('teacherID', { type: () => Int }) teacherID: Teacher['id']) {
+  async teacher(
+    @Args('teacherID', { type: () => Int }) teacherID: Teacher['id']
+  ) {
     return this.teacherService.findOne(teacherID)
   }
 
@@ -45,7 +47,9 @@ export class TeacherResolver {
   }
 
   @Mutation(() => TeacherPayload)
-  async teacherDelete(@Args('teacherID', { type: () => Int }) teacherID: Teacher['id']) {
+  async teacherDelete(
+    @Args('teacherID', { type: () => Int }) teacherID: Teacher['id']
+  ) {
     return this.teacherService.remove(teacherID)
   }
 }

@@ -11,12 +11,16 @@ export class SchoolGroupResolver {
   /** Queries */
 
   @Query(() => [SchoolGroup])
-  async schoolGroups(@Args('schoolID', { type: () => Int }) schoolID: tbl_reg_schoolgroup['id']) {
+  async schoolGroups(
+    @Args('schoolID', { type: () => Int }) schoolID: tbl_reg_schoolgroup['id']
+  ) {
     return this.schoolGroupService.findAll(schoolID)
   }
 
   @Query(() => SchoolGroup)
-  async schoolGroup(@Args('schoolID', { type: () => Int }) schoolID: tbl_reg_schoolgroup['id']) {
+  async schoolGroup(
+    @Args('schoolID', { type: () => Int }) schoolID: tbl_reg_schoolgroup['id']
+  ) {
     return this.schoolGroupService.findOne(schoolID)
   }
 

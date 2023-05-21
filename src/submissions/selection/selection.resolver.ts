@@ -32,10 +32,10 @@ export class SelectionResolver {
   async selectionCreate(
     @Args('registeredClassID', { type: () => Int })
     registeredClassID: tbl_reg_classes['id'],
-    @Args('selectionInput', { type: () => SelectionInput })
-    selectionInput: Partial<SelectionInput>
+    // @Args('selectionInput', { type: () => SelectionInput })
+    // selectionInput: Partial<SelectionInput>
   ) {
-    return this.selectionService.create(registeredClassID, selectionInput)
+    return this.selectionService.create(registeredClassID)
   }
 
   @Mutation(() => SelectionPayload)

@@ -1,4 +1,12 @@
-import { Resolver, Parent, Query, Mutation, Args, ResolveField, Int } from '@nestjs/graphql'
+import {
+  Resolver,
+  Parent,
+  Query,
+  Mutation,
+  Args,
+  ResolveField,
+  Int,
+} from '@nestjs/graphql'
 import { SchoolService } from './school.service'
 import { SchoolInput } from './dto/school.input'
 import { SchoolPayload } from './entities/school.entity'
@@ -11,7 +19,10 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 @Resolver(() => School)
 @UseGuards(JwtAuthGuard)
 export class SchoolResolver {
-  constructor(private readonly schoolService: SchoolService, private readonly schoolGroupService: SchoolGroupService) {}
+  constructor(
+    private readonly schoolService: SchoolService,
+    private readonly schoolGroupService: SchoolGroupService
+  ) {}
 
   /** Queries */
 

@@ -1,12 +1,28 @@
-import { Resolver, ResolveField, Parent, Query, Mutation, Args, Int } from '@nestjs/graphql'
+import {
+  Resolver,
+  ResolveField,
+  Parent,
+  Query,
+  Mutation,
+  Args,
+  Int,
+} from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 import { SubdisciplineService } from './subdiscipline.service'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PerformerType } from 'src/common.entity'
-import { tbl_discipline, tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
+import {
+  tbl_discipline,
+  tbl_category,
+  tbl_level,
+  tbl_subdiscipline,
+} from '@prisma/client'
 import { FestivalClassService } from '../festival-class/festival-class.service'
-import { Subdiscipline, SubdisciplinePayload } from './entities/subdiscipline.entity'
+import {
+  Subdiscipline,
+  SubdisciplinePayload,
+} from './entities/subdiscipline.entity'
 import { SubdisciplineInput } from './dto/subdiscipline.input'
 
 @Resolver(() => Subdiscipline)
@@ -28,7 +44,12 @@ export class SubdisciplineResolver {
     @Args('performerType', { type: () => PerformerType })
     performerType: PerformerType
   ) {
-    return this.subdisciplineService.findAll(disciplineID, levelID, categoryID, performerType)
+    return this.subdisciplineService.findAll(
+      disciplineID,
+      levelID,
+      categoryID,
+      performerType
+    )
   }
 
   @Query(() => Subdiscipline)
@@ -90,6 +111,11 @@ export class SubdisciplineResolver {
     categoryID: tbl_category['id']
   ) {
     const subdisciplineID = Subdiscipline.id
-    return this.festivalClassService.findAll(performerType, subdisciplineID, levelID, categoryID)
+    return this.festivalClassService.findAll(
+      performerType,
+      subdisciplineID,
+      levelID,
+      categoryID
+    )
   }
 }

@@ -8,7 +8,11 @@ import { tbl_user, tbl_registration } from '@prisma/client'
 export class RegistrationService {
   constructor(private prisma: PrismaService) {}
 
-  async create(userID: tbl_registration['userID'], performerType: PerformerType, label: tbl_registration['label']) {
+  async create(
+    userID: tbl_registration['userID'],
+    performerType: PerformerType,
+    label: tbl_registration['label']
+  ) {
     label === '' ? 'Registration Form' : label
     return {
       userErrors: [],
@@ -24,7 +28,7 @@ export class RegistrationService {
 
   async findAll(userID?: tbl_user['id'], performerType?: PerformerType) {
     return this.prisma.tbl_registration.findMany({
-      where: { id: userID, performerType },
+      where: { userID, performerType },
     })
   }
 
@@ -34,7 +38,10 @@ export class RegistrationService {
     })
   }
 
-  async update(registrationID: tbl_registration['id'], registration: Partial<RegistrationInput>) {
+  async update(
+    registrationID: tbl_registration['id'],
+    registration: Partial<RegistrationInput>
+  ) {
     return this.prisma.tbl_registration.update({
       where: { id: registrationID },
       data: { ...registration },

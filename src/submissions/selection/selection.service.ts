@@ -7,11 +7,14 @@ import { PrismaService } from 'src/prisma/prisma.service'
 export class SelectionService {
   constructor(private prisma: PrismaService) {}
 
-  create(registeredClassID: tbl_reg_classes['id'], selectionInput: Partial<SelectionInput>) {
+  create(
+    registeredClassID: tbl_reg_classes['id'],
+    // selectionInput: Partial<SelectionInput>
+  ) {
     return this.prisma.tbl_reg_selection.create({
       data: {
         classpickID: registeredClassID,
-        ...selectionInput,
+        // ...selectionInput,
       },
     })
   }
@@ -28,7 +31,10 @@ export class SelectionService {
     })
   }
 
-  update(selectionID: tbl_reg_selection['id'], selectionInput: Partial<SelectionInput>) {
+  update(
+    selectionID: tbl_reg_selection['id'],
+    selectionInput: Partial<SelectionInput>
+  ) {
     return this.prisma.tbl_reg_selection.update({
       where: { id: selectionID },
       data: { ...selectionInput },

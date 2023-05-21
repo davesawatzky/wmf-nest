@@ -28,7 +28,10 @@ export class AuthService {
         user: null,
       }
     } else {
-      const hashedPassword = await bcrypt.hash(credentialsSignup.password.trim(), 15)
+      const hashedPassword = await bcrypt.hash(
+        credentialsSignup.password.trim(),
+        15
+      )
       const { firstName, lastName, email } = credentialsSignup
       const newUser = await this.prisma.tbl_user.create({
         data: {
@@ -46,7 +49,13 @@ export class AuthService {
     }
   }
 
-  async signin(user: Partial<User>): Promise<{user: Partial<User>; diatonicToken: string; userErrors:UserError[]}> {
+  async signin(
+    user: Partial<User>
+  ): Promise<{
+    user: Partial<User>
+    diatonicToken: string
+    userErrors: UserError[]
+  }> {
     const payload = {
       username: user.email,
       sub: user.id,
@@ -58,7 +67,10 @@ export class AuthService {
     }
   }
 
-  async validateUser(username: CredentialsSignin['email'], password: CredentialsSignin['password']) {
+  async validateUser(
+    username: CredentialsSignin['email'],
+    password: CredentialsSignin['password']
+  ) {
     const user = await this.prisma.tbl_user.findUnique({
       where: { email: username.trim().toLowerCase() },
     })
@@ -66,7 +78,7 @@ export class AuthService {
     if (user && valid) {
       const result = await this.stripProperties(user)
       return result
-    } 
+    }
     return null
   }
 
@@ -77,7 +89,7 @@ export class AuthService {
     if (user) {
       const result = await this.stripProperties(user)
       return result
-    } 
+    }
     return null
   }
 

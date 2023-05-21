@@ -33,7 +33,7 @@ import { SchoolGroupModule } from './submissions/school-group/school-group.modul
       isGlobal: true,
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
-      context:({req, res}) => ({req, res}),
+      context: ({ req, res }) => ({ req, res }),
       buildSchemaOptions: {
         numberScalarMode: 'integer',
       },

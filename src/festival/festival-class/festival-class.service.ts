@@ -3,14 +3,23 @@ import { PrismaService } from 'src/prisma/prisma.service'
 import { FestivalClassSearchArgs } from './dto/festival-class.input'
 import { FestivalClassInput } from './dto/festival-class.input'
 
-import { tbl_subdiscipline, tbl_category, tbl_level, tbl_classlist, tbl_class_trophy } from '@prisma/client'
+import {
+  tbl_subdiscipline,
+  tbl_category,
+  tbl_level,
+  tbl_classlist,
+  tbl_class_trophy,
+} from '@prisma/client'
 import { PerformerType } from 'src/common.entity'
 
 @Injectable()
 export class FestivalClassService {
   constructor(private prisma: PrismaService) {}
 
-  async create(performerType: PerformerType, festivalClass: FestivalClassInput) {
+  async create(
+    performerType: PerformerType,
+    festivalClass: FestivalClassInput
+  ) {
     return {
       festivalClass: await this.prisma.tbl_classlist.create({
         data: {
@@ -72,7 +81,10 @@ export class FestivalClassService {
     })
   }
 
-  async update(festivalClassID: tbl_classlist['id'], festivalClass: Partial<tbl_classlist>) {
+  async update(
+    festivalClassID: tbl_classlist['id'],
+    festivalClass: Partial<tbl_classlist>
+  ) {
     return this.prisma.tbl_classlist.update({
       where: { id: festivalClassID },
       data: { ...festivalClass },

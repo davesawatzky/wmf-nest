@@ -23,7 +23,7 @@ async function bootstrap() {
   //     },
   //   },
   // }))
- 
+
   app.use(cookieParser())
 
   app.enableCors({
@@ -32,7 +32,7 @@ async function bootstrap() {
     optionsSuccessStatus: 200,
     credentials: true,
     preflightContinue: false,
-    maxAge: (1000 * 60 * 60 * 24), // 1 day
+    maxAge: 1000 * 60 * 60 * 24, // 1 day
   })
 
   const PORT = process.env.PORT || 3000

@@ -39,7 +39,9 @@ export class InstrumentResolver {
   }
 
   @Mutation(() => InstrumentPayload)
-  async instrumentDelete(@Args('id', { type: () => Int }) id: Instrument['id']) {
+  async instrumentDelete(
+    @Args('id', { type: () => Int }) id: Instrument['id']
+  ) {
     return this.instrumentService.remove(id)
   }
 }

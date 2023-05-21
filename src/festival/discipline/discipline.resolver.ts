@@ -1,4 +1,12 @@
-import { Resolver, Query, Mutation, Args, Int, Parent, ResolveField } from '@nestjs/graphql'
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  Parent,
+  ResolveField,
+} from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 import { DisciplineService } from './discipline.service'
@@ -33,7 +41,9 @@ export class DisciplineResolver {
   /** Mutations */
 
   @Mutation(() => DisciplinePayload)
-  async disciplineCreate(@Args('disciplineInput') disciplineInput: DisciplineInput) {
+  async disciplineCreate(
+    @Args('disciplineInput') disciplineInput: DisciplineInput
+  ) {
     return this.disciplineService.create(disciplineInput)
   }
 
@@ -46,7 +56,9 @@ export class DisciplineResolver {
   }
 
   @Mutation(() => DisciplinePayload)
-  async disciplineDelete(@Args('id', { type: () => Int }) id: Discipline['id']) {
+  async disciplineDelete(
+    @Args('id', { type: () => Int }) id: Discipline['id']
+  ) {
     return this.disciplineService.remove(id)
   }
 
@@ -57,6 +69,11 @@ export class DisciplineResolver {
     performerType: PerformerType
   ) {
     const { id } = discipline
-    return this.subdisciplineService.findAll(id, undefined, undefined, performerType)
+    return this.subdisciplineService.findAll(
+      id,
+      undefined,
+      undefined,
+      performerType
+    )
   }
 }

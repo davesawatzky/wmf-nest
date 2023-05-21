@@ -14,7 +14,10 @@ export class CategoryService {
     })
   }
 
-  async findAll(levelID: tbl_level['id'], subdisciplineID: tbl_subdiscipline['id']) {
+  async findAll(
+    levelID: tbl_level['id'],
+    subdisciplineID: tbl_subdiscipline['id']
+  ) {
     return await this.prisma.tbl_category.findMany({
       where: {
         tbl_classlist: {

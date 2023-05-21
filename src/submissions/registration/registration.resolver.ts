@@ -1,4 +1,13 @@
-import { Resolver, Parent, Query, Mutation, Args, ResolveField, Int, Context } from '@nestjs/graphql'
+import {
+  Resolver,
+  Parent,
+  Query,
+  Mutation,
+  Args,
+  ResolveField,
+  Int,
+  Context,
+} from '@nestjs/graphql'
 import { RegistrationService } from './registration.service'
 import { tbl_registration, tbl_user } from '@prisma/client'
 import { PerformerService } from '../performer/performer.service'
@@ -8,7 +17,10 @@ import { GroupService } from '../group/group.service'
 import { TeacherService } from '../teacher/teacher.service'
 import { CommunityService } from '../community/community.service'
 import { SchoolService } from '../school/school.service'
-import { Registration, RegistrationPayload } from './entities/registration.entity'
+import {
+  Registration,
+  RegistrationPayload,
+} from './entities/registration.entity'
 import { RegistrationInput } from './dto/registration.input'
 import { PerformerType } from 'src/common.entity'
 import { UseGuards } from '@nestjs/common/decorators'
@@ -35,12 +47,10 @@ export class RegistrationResolver {
   async registrations(
     @Context() context,
     @Args('userID', { type: () => Int }) userID?: tbl_user['id'],
-    @Args('performerType', {nullable: true, type: () => PerformerType })
+    @Args('performerType', { nullable: true, type: () => PerformerType })
     performerType?: Registration['performerType']
   ) {
-    console.log(context.user.id);
-    
-    return this.registrationService.findAll(context.user.id, performerType)
+    return this.registrationService.findAll(context.req.user.id, performerType)
   }
 
   @Query(() => Registration)
@@ -58,7 +68,12 @@ export class RegistrationResolver {
     label: Registration['label'],
     @Context() context
   ) {
-    return this.registrationService.create(context.req.user.id, performerType, label)
+    console.log('UserID-----: ', context.req.user.id)
+    return this.registrationService.create(
+      context.req.user.id,
+      performerType,
+      label
+    )
   }
 
   @Mutation(() => RegistrationPayload)

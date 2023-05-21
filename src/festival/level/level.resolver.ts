@@ -1,4 +1,13 @@
-import { Resolver, ResolveField, Parent, Query, Mutation, Args, Int, registerEnumType } from '@nestjs/graphql'
+import {
+  Resolver,
+  ResolveField,
+  Parent,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  registerEnumType,
+} from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 import { LevelService } from './level.service'
@@ -52,7 +61,9 @@ export class LevelResolver {
   }
 
   @Mutation(() => LevelPayload)
-  async levelDelete(@Args('levelID', { type: () => Int }) levelID: Level['id']) {
+  async levelDelete(
+    @Args('levelID', { type: () => Int }) levelID: Level['id']
+  ) {
     return this.levelService.remove(levelID)
   }
 
@@ -67,6 +78,11 @@ export class LevelResolver {
     @Args('categoryID', { type: () => Int }) categoryID: tbl_category['id']
   ) {
     const levelID = id
-    return this.festivalClassService.findAll(performerType, subdisciplineID, levelID, categoryID)
+    return this.festivalClassService.findAll(
+      performerType,
+      subdisciplineID,
+      levelID,
+      categoryID
+    )
   }
 }

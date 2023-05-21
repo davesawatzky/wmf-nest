@@ -1,4 +1,12 @@
-import { Resolver, Parent, Query, Mutation, Args, ResolveField, Int } from '@nestjs/graphql'
+import {
+  Resolver,
+  Parent,
+  Query,
+  Mutation,
+  Args,
+  ResolveField,
+  Int,
+} from '@nestjs/graphql'
 import { tbl_registration, tbl_reg_classes } from '@prisma/client'
 import { RegisteredClassService } from './registered-class.service'
 import { RegisteredClassInput } from './dto/registered-class.input'
@@ -37,10 +45,13 @@ export class RegisteredClassResolver {
   async registeredClassCreate(
     @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
-    @Args('registeredClassInput', { type: () => RegisteredClassInput })
-    registeredClassInput: RegisteredClassInput
+    // @Args('registeredClassInput', { type: () => RegisteredClassInput })
+    // registeredClassInput: RegisteredClassInput
   ) {
-    return this.registeredClassService.create(registrationID, registeredClassInput)
+    return this.registeredClassService.create(
+      registrationID,
+      // registeredClassInput
+    )
   }
 
   @Mutation(() => RegisteredClassPayload)
@@ -50,7 +61,10 @@ export class RegisteredClassResolver {
     @Args('registeredClassInput', { type: () => RegisteredClassInput })
     registeredClassInput: RegisteredClassInput
   ) {
-    return this.registeredClassService.update(registeredClassID, registeredClassInput)
+    return this.registeredClassService.update(
+      registeredClassID,
+      registeredClassInput
+    )
   }
 
   @Mutation(() => RegisteredClassPayload)

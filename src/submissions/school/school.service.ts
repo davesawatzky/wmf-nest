@@ -23,7 +23,10 @@ export class SchoolService {
     return this.prisma.tbl_reg_school.findMany()
   }
 
-  findOne(registrationID?: tbl_registration['id'], schoolID?: tbl_reg_school['id']) {
+  findOne(
+    registrationID?: tbl_registration['id'],
+    schoolID?: tbl_reg_school['id']
+  ) {
     return this.prisma.tbl_reg_school.findUnique({
       where: { regID: registrationID, id: schoolID },
     })
