@@ -355,7 +355,7 @@ type RegisteredClassPayload {
 }
 
 type Registration {
-  communities: [Community!]
+  communities: Community
   confirmation: String
   createdAt: DateTime
   group: Group

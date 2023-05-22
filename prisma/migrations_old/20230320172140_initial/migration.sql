@@ -192,7 +192,7 @@ CREATE TABLE "tbl_registration" (
     "totalAmt" DECIMAL(10,2),
     "payedAmt" DECIMAL(10,2),
     "transactionInfo" VARCHAR(200),
-    "submission" VARCHAR(20),
+    "confirmation" VARCHAR(20),
     "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -323,7 +323,7 @@ CREATE INDEX "tbl_reg_teacher_regID_idx" ON "tbl_reg_teacher"("regID");
 CREATE INDEX "tbl_reg_unavailable_groupID_idx" ON "tbl_reg_unavailable"("groupID");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "tbl_registration_submission_key" ON "tbl_registration"("submission");
+CREATE UNIQUE INDEX "tbl_registration_confirmation_key" ON "tbl_registration"("confirmation");
 
 -- CreateIndex
 CREATE INDEX "tbl_registration_userID_idx" ON "tbl_registration"("userID");

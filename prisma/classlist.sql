@@ -1,4 +1,4 @@
-INSERT INTO tbl_classlist (id, class_number, "subdisciplineID", "categoryID", "levelID", min_selection, max_selection, required_selection, "SGS_label", price) VALUES
+INSERT INTO tbl_classlist (id, class_number, "subdisciplineID", "categoryID", "levelID", min_selection, max_selection, required_selection, "performer_type", price) VALUES
 	(1, '1101', 60, 4, 2, 1, 1, NULL, 'SOLO', 30.00),
 	(2, '1103', 60, 42, 2, 1, 1, NULL, 'SOLO', 30.00),
 	(3, '1104', 60, 22, 2, 1, 1, NULL, 'SOLO', 30.00),

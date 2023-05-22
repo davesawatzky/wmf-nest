@@ -1,4 +1,4 @@
-INSERT INTO tbl_field_config (id, table_name, field_name, confirmation_required, custom_field, custom_field_type) VALUES
+INSERT INTO tbl_field_config (id, table_name, field_name, submission_required, custom_field, custom_field_type) VALUES
 	(1, 'tbl_reg_classes', 'id', 'true', 'false', null),
 	(2, 'tbl_reg_classes', 'regID', 'true', 'false', null),
 	(3, 'tbl_reg_classes', 'class_number', 'true', 'false', null),

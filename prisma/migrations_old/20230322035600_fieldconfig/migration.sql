@@ -91,7 +91,7 @@ ALTER COLUMN "street_number" SET DATA TYPE TEXT;
 
 -- AlterTable
 ALTER TABLE "tbl_registration" ALTER COLUMN "label" SET DATA TYPE TEXT,
-ALTER COLUMN "submission" SET DATA TYPE TEXT,
+ALTER COLUMN "confirmation" SET DATA TYPE TEXT,
 DROP COLUMN "performer_type",
 ADD COLUMN     "performer_type" "tbl_registration_performer_type" NOT NULL DEFAULT 'SOLO',
 ALTER COLUMN "transaction_info" SET DATA TYPE TEXT;

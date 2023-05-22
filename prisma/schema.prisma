@@ -233,7 +233,7 @@ model tbl_registration {
   updatedAt         DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
   tbl_user          tbl_user?           @relation(fields: [userID], references: [id], onUpdate: Restrict)
   tbl_reg_classes   tbl_reg_classes[]
-  tbl_reg_community tbl_reg_community[]
+  tbl_reg_community tbl_reg_community?
   tbl_reg_group     tbl_reg_group?
   tbl_reg_performer tbl_reg_performer[]
   tbl_reg_school    tbl_reg_school?
@@ -293,7 +293,7 @@ model tbl_user {
 
 model tbl_reg_community {
   id                 Int              @id @default(autoincrement())
-  regID              Int
+  regID              Int              @unique
   name               String?          @db.Text
   groupSize          Int?             @map("group_size")
   chaperones         Int?

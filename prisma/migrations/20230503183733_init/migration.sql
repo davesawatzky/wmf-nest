@@ -353,7 +353,7 @@ CREATE INDEX "tbl_reg_teacher_regID_idx" ON "tbl_reg_teacher"("regID");
 CREATE INDEX "tbl_reg_unavailable_groupID_idx" ON "tbl_reg_unavailable"("groupID");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "tbl_registration_submission_key" ON "tbl_registration"("submission");
+CREATE UNIQUE INDEX "tbl_registration_confirmation_key" ON "tbl_registration"("confirmation");
 
 -- CreateIndex
 CREATE INDEX "tbl_registration_userID_idx" ON "tbl_registration"("userID");

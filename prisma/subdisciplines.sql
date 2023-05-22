@@ -1,4 +1,4 @@
-INSERT INTO tbl_subdiscipline (id, "disciplineID", name, description, max_performers, min_performers, "SGS_label", price) VALUES
+INSERT INTO tbl_subdiscipline (id, "disciplineID", name, description, max_performers, min_performers, "performer_type", price) VALUES
 	(1, 11, 'bassoon solo', NULL, 1, 1, 'SOLO', 30.00),
 	(2, 1, 'brass chamber group', '3 or more brass instruments with or without piano.  One performer per part.  If piano is used, the pianist must be an eligible member of the group and must not be playing an accompaniment or an orchestral reduction.', NULL, 3, 'GROUP', 40.00),
 	(3, 1, 'brass duet', '2 brass instruments, with or without piano accompaniment.', 2, 2, 'GROUP', 40.00),
