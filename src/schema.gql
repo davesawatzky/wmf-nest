@@ -184,7 +184,7 @@ type Mutation {
   categoryCreate(categoryInput: CategoryInput!): CategoryPayload!
   categoryDelete(id: Int!): CategoryPayload!
   categoryUpdate(categoryID: Int!, categoryInput: CategoryInput!): CategoryPayload!
-  communityCreate(communityInput: CommunityInput!, registrationID: Int!): CommunityPayload!
+  communityCreate(registrationID: Int!): CommunityPayload!
   communityDelete(communityID: Int!): CommunityPayload!
   communityUpdate(communityID: Int!, communityInput: CommunityInput!): CommunityPayload!
   disciplineCreate(disciplineInput: DisciplineInput!): DisciplinePayload!
@@ -193,7 +193,7 @@ type Mutation {
   festivalClassCreate(festivalClass: FestivalClassInput!, performerType: String!): FestivalClassPayload!
   festivalClassDelete(festivalClassID: Int!): FestivalClassPayload!
   festivalClassUpdate(festivalClass: FestivalClassInput!, festivalClassID: Int!): FestivalClassPayload!
-  groupCreate(groupInput: GroupInput!, registrationID: Int!): GroupPayload!
+  groupCreate(registrationID: Int!): GroupPayload!
   groupDelete(groupID: Int!): GroupPayload!
   groupUpdate(groupID: Int!, groupInput: GroupInput!): GroupPayload!
   instrumentCreate(instrument: InstrumentInput!): InstrumentPayload!
@@ -306,7 +306,7 @@ type Query {
   registeredClass(registeredClassID: Int!): RegisteredClass!
   registeredClasses: [RegisteredClass!]!
   registration(id: Int!): Registration!
-  registrations(performerType: PerformerType, userID: Int!): [Registration!]!
+  registrations(performerType: PerformerType): [Registration!]!
   school(schoolID: Int!): School!
   schoolGroup(schoolID: Int!): SchoolGroup!
   schoolGroups(schoolID: Int!): [SchoolGroup!]!
@@ -358,7 +358,7 @@ type Registration {
   communities: [Community!]
   confirmation: String
   createdAt: DateTime
-  groups: [Group!]
+  group: Group
   id: Int!
   label: String
   payedAmt: Decimal

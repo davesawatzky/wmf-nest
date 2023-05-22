@@ -9,14 +9,14 @@ export class CommunityService {
 
   async create(
     registrationID: tbl_registration['id'],
-    communityInput: Partial<CommunityInput>
+    // communityInput: Partial<CommunityInput>
   ) {
     return await {
       userErrors: [],
       community: this.prisma.tbl_reg_community.create({
         data: {
           regID: registrationID,
-          ...communityInput,
+          // ...communityInput,
         },
       }),
     }

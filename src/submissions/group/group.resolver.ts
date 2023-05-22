@@ -30,10 +30,10 @@ export class GroupResolver {
   async groupCreate(
     @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
-    @Args('groupInput', { type: () => GroupInput })
-    groupInput: GroupInput
+    // @Args('groupInput', { type: () => GroupInput })
+    // groupInput: GroupInput
   ) {
-    return this.groupService.create(registrationID, groupInput)
+    return this.groupService.create(registrationID)
   }
 
   @Mutation(() => GroupPayload)

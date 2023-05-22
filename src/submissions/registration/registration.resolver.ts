@@ -46,7 +46,7 @@ export class RegistrationResolver {
   @Query(() => [Registration])
   async registrations(
     @Context() context,
-    @Args('userID', { type: () => Int }) userID?: tbl_user['id'],
+    // @Args('userID', { type: () => Int }) userID?: tbl_user['id'],
     @Args('performerType', { nullable: true, type: () => PerformerType })
     performerType?: Registration['performerType']
   ) {
@@ -114,7 +114,7 @@ export class RegistrationResolver {
     return this.registeredClassService.findAll(registrationID)
   }
   @ResolveField()
-  async groups(@Parent() registration: tbl_registration) {
+  async group(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return this.groupService.findAll(registrationID)

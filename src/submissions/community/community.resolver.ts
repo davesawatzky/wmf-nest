@@ -36,10 +36,10 @@ export class CommunityResolver {
   async communityCreate(
     @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
-    @Args('communityInput', { type: () => CommunityInput })
-    communityInput: CommunityInput
+    // @Args('communityInput', { type: () => CommunityInput })
+    // communityInput: CommunityInput
   ) {
-    return this.communityService.create(registrationID, communityInput)
+    return this.communityService.create(registrationID)
   }
 
   @Mutation(() => CommunityPayload)

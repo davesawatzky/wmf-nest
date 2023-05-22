@@ -95,7 +95,7 @@ model tbl_reg_classes {
 
 model tbl_reg_group {
   id                  Int                   @id @default(autoincrement())
-  regID               Int
+  regID               Int                   @unique
   name                String?               @db.Text
   groupType           String?               @map("group_type") @db.Text
   numberOfPerformers  Int?                  @map("number_of_performers") @db.SmallInt
@@ -234,7 +234,7 @@ model tbl_registration {
   tbl_user          tbl_user?           @relation(fields: [userID], references: [id], onUpdate: Restrict)
   tbl_reg_classes   tbl_reg_classes[]
   tbl_reg_community tbl_reg_community[]
-  tbl_reg_group     tbl_reg_group[]
+  tbl_reg_group     tbl_reg_group?
   tbl_reg_performer tbl_reg_performer[]
   tbl_reg_school    tbl_reg_school?
   tbl_reg_teacher   tbl_reg_teacher?

@@ -9,14 +9,12 @@ export class GroupService {
 
   create(
     registrationID: tbl_registration['id'],
-    groupInput: Partial<GroupInput>
   ) {
     return {
       userErrors: [],
       group: this.prisma.tbl_reg_group.create({
         data: {
           regID: registrationID,
-          ...groupInput,
         },
       }),
     }

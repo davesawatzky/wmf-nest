@@ -21,7 +21,7 @@ export class Registration {
   user: User
   performers?: Performer[]
   registeredClasses?: RegisteredClass[]
-  groups?: Group[]
+  group?: Group
   communities?: Community[]
   teacher?: Teacher
   school?: School
