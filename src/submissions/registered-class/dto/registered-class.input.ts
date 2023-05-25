@@ -15,6 +15,12 @@ export class RegisteredClassInput {
   @IsInt()
   @Field(() => Int)
   numberOfSelections?: number
+  @IsInt()
+  @Field(() => Int)
+  minSelections?: number
+  @IsInt()
+  @Field(() => Int)
+  maxSelections?: number
 
   @Field(() => GraphQLDecimal)
   @Type(() => Object)

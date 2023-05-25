@@ -23,10 +23,10 @@ export class FestivalClassInput {
   categoryID: number
 
   @Field(() => Int)
-  maxSelection: number
+  maxSelections: number
 
   @Field(() => Int)
-  minSelection: number
+  minSelections: number
   requiredSelection?: string
 
   @Field(() => PerformerType)

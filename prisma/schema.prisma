@@ -35,8 +35,8 @@ model tbl_classlist {
   subdisciplineID   Int
   categoryID        Int
   levelID           Int
-  minSelection      Int                @map("min_selection")
-  maxSelection      Int                @map("max_selection")
+  minSelections     Int                @map("min_selections")
+  maxSelections     Int                @map("max_selections")
   requiredSelection String?            @map("required_selection") @db.Text
   performerType     tbl_performer_type @default(SOLO) @map("performer_type")
   price             Decimal?           @db.Decimal(7, 2)
@@ -81,6 +81,8 @@ model tbl_reg_classes {
   subdiscipline       String?              @db.Text
   level               String?              @db.Text
   category            String?              @db.Text
+  minSelections       Int?                 @map("min_selections") @db.SmallInt
+  maxSelections       Int?                 @map("max_selections") @db.SmallInt
   numberOfSelections  Int?                 @map("number_of_selections") @db.SmallInt
   schoolGroupID       Int?                 @map("school_groupID")
   price               Decimal?             @db.Decimal(7, 2)

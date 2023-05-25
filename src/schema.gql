@@ -95,8 +95,8 @@ type FestivalClass {
   classNumber: String!
   id: Int!
   level: Level!
-  maxSelection: Int!
-  minSelection: Int!
+  maxSelections: Int!
+  minSelections: Int!
   performerType: PerformerType!
   price: Decimal
   requiredSelection: String
@@ -108,8 +108,8 @@ input FestivalClassInput {
   categoryID: Int!
   classNumber: String!
   levelID: Int!
-  maxSelection: Int!
-  minSelection: Int!
+  maxSelections: Int!
+  minSelections: Int!
   performerType: PerformerType!
   price: Decimal
   requiredSelection: String
@@ -331,6 +331,8 @@ type RegisteredClass {
   discipline: String
   id: Int!
   level: String
+  maxSelections: Int
+  minSelections: Int
   numberOfSelections: Int
   price: Decimal
   schoolGroupID: Int
@@ -343,6 +345,8 @@ input RegisteredClassInput {
   classNumber: String
   discipline: String
   level: String
+  maxSelections: Int
+  minSelections: Int
   numberOfSelections: Int
   price: Decimal
   schoolGroupID: Int

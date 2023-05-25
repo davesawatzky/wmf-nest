@@ -18,6 +18,12 @@ export class RegisteredClass {
 
   @Field(() => Int)
   numberOfSelections?: number
+  @Field(() => Int)
+  minSelections?: number
+  @Field(() => Int)
+  maxSelections?: number
+
+
 
   @Field(() => GraphQLDecimal)
   @Type(() => Object)
