@@ -26,9 +26,9 @@ export class GroupService {
     })
   }
 
-  findOne(groupID: tbl_reg_group['id']) {
+  findOne(registrationID: tbl_registration['id']) {
     return this.prisma.tbl_reg_group.findUnique({
-      where: { id: groupID },
+      where: { regID: registrationID },
     })
   }
 

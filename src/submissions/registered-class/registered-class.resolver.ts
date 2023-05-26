@@ -27,8 +27,11 @@ export class RegisteredClassResolver {
   /** Queries */
 
   @Query(() => [RegisteredClass])
-  async registeredClasses() {
-    return this.registeredClassService.findAll()
+  async registeredClasses(
+    @Args('registrationID', {type: () => Int })
+    registrationID: tbl_registration['id']
+  ) {
+    return this.registeredClassService.findAll(registrationID)
   }
 
   @Query(() => RegisteredClass)
@@ -45,13 +48,8 @@ export class RegisteredClassResolver {
   async registeredClassCreate(
     @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
-    // @Args('registeredClassInput', { type: () => RegisteredClassInput })
-    // registeredClassInput: RegisteredClassInput
   ) {
-    return this.registeredClassService.create(
-      registrationID,
-      // registeredClassInput
-    )
+    return this.registeredClassService.create(registrationID)
   }
 
   @Mutation(() => RegisteredClassPayload)

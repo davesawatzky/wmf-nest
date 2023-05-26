@@ -22,7 +22,7 @@ export class Registration {
   performers?: Performer[]
   registeredClasses?: RegisteredClass[]
   group?: Group
-  communities?: Community
+  community?: Community
   teacher?: Teacher
   school?: School
 

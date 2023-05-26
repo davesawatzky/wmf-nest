@@ -9,15 +9,11 @@ export class CommunityService {
 
   async create(
     registrationID: tbl_registration['id'],
-    // communityInput: Partial<CommunityInput>
   ) {
     return await {
       userErrors: [],
       community: this.prisma.tbl_reg_community.create({
-        data: {
-          regID: registrationID,
-          // ...communityInput,
-        },
+        data: { regID: registrationID },
       }),
     }
   }
@@ -28,9 +24,9 @@ export class CommunityService {
     })
   }
 
-  findOne(communityID: tbl_reg_community['id']) {
+  findOne(registrationID: tbl_reg_community['id']) {
     return this.prisma.tbl_reg_community.findUnique({
-      where: { id: communityID },
+      where: { regID: registrationID },
     })
   }
 

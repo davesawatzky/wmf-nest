@@ -9,17 +9,15 @@ export class SchoolGroupService {
 
   async create(
     schoolID: tbl_reg_school['id'],
-    schoolGroupInput: Partial<SchoolGroupInput>
   ) {
     return this.prisma.tbl_reg_schoolgroup.create({
       data: {
         schoolID: schoolID,
-        ...schoolGroupInput,
       },
     })
   }
 
-  async findAll(schoolID?: tbl_reg_school['id']) {
+  async findAll(schoolID?: tbl_reg_schoolgroup['schoolID']) {
     return this.prisma.tbl_reg_schoolgroup.findMany({
       where: { schoolID },
     })

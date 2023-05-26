@@ -31,10 +31,7 @@ export class RegisteredClassService {
     return {
       userErrors: [],
       registeredClass: this.prisma.tbl_reg_classes.create({
-        data: {
-          regID: registrationID,
-          // ...registeredClassInput,
-        },
+        data: { regID: registrationID  },
       }),
     }
   }

@@ -9,16 +9,11 @@ export class PerformerService {
 
   create(
     registrationID: tbl_registration['id'],
-    performerInput: Partial<PerformerInput>
   ) {
-
     return {
       userErrors: [],
       performer: this.prisma.tbl_reg_performer.create({
-        data: {
-          regID: registrationID,
-          ...performerInput,
-        },
+        data: { regID: registrationID },
       }),
     }
   }

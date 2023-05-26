@@ -7,13 +7,12 @@ import { PrismaService } from 'src/prisma/prisma.service'
 export class SchoolService {
   constructor(private prisma: PrismaService) {}
 
-  create(registrationID: tbl_registration['id'], schoolInput?: SchoolInput) {
+  create(registrationID: tbl_registration['id']) {
     return {
       userErrors: [],
       school: this.prisma.tbl_reg_school.create({
         data: {
           regID: registrationID,
-          ...schoolInput,
         },
       }),
     }

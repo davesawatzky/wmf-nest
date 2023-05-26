@@ -24,10 +24,10 @@ export class CommunityResolver {
 
   @Query(() => Community)
   async community(
-    @Args('communityID', { type: () => Int })
-    communityID: Community['id']
+    @Args('registrationID', { type: () => Int })
+    registrationID: tbl_registration['id']
   ) {
-    return this.communityService.findOne(communityID)
+    return this.communityService.findOne(registrationID)
   }
 
   /** Mutations */
@@ -36,8 +36,6 @@ export class CommunityResolver {
   async communityCreate(
     @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
-    // @Args('communityInput', { type: () => CommunityInput })
-    // communityInput: CommunityInput
   ) {
     return this.communityService.create(registrationID)
   }

@@ -12,16 +12,16 @@ export class SchoolGroupResolver {
 
   @Query(() => [SchoolGroup])
   async schoolGroups(
-    @Args('schoolID', { type: () => Int }) schoolID: tbl_reg_schoolgroup['id']
+    @Args('schoolID', { type: () => Int }) schoolID: tbl_reg_schoolgroup['schoolID']
   ) {
     return this.schoolGroupService.findAll(schoolID)
   }
 
   @Query(() => SchoolGroup)
   async schoolGroup(
-    @Args('schoolID', { type: () => Int }) schoolID: tbl_reg_schoolgroup['id']
+    @Args('schoolGroupID', { type: () => Int }) schoolGroupID: tbl_reg_schoolgroup['id']
   ) {
-    return this.schoolGroupService.findOne(schoolID)
+    return this.schoolGroupService.findOne(schoolGroupID)
   }
 
   /** Mutations */
@@ -29,10 +29,8 @@ export class SchoolGroupResolver {
   @Mutation(() => SchoolGroupPayload)
   async schoolGroupCreate(
     @Args('schoolID', { type: () => Int }) schoolID: tbl_reg_school['id'],
-    @Args('schoolGroupInput', { type: () => SchoolGroupInput })
-    schoolGroupInput: SchoolGroupInput
-  ) {
-    return this.schoolGroupService.create(schoolID, schoolGroupInput)
+    ) {
+    return this.schoolGroupService.create(schoolID)
   }
 
   @Mutation(() => SchoolGroupPayload)

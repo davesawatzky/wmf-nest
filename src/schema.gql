@@ -202,7 +202,7 @@ type Mutation {
   levelCreate(levelInput: LevelInput!): LevelPayload!
   levelDelete(levelID: Int!): LevelPayload!
   levelUpdate(levelID: Int!, levelInput: LevelInput!): LevelPayload!
-  performerCreate(performerInput: PerformerInput!, registrationID: Int!): PerformerPayload!
+  performerCreate(registrationID: Int!): PerformerPayload!
   performerDelete(performerID: Int!): PerformerPayload!
   performerUpdate(performerID: Int!, performerInput: PerformerInput!): PerformerPayload!
   registeredClassCreate(registrationID: Int!): RegisteredClassPayload!
@@ -210,10 +210,10 @@ type Mutation {
   registeredClassUpdate(registeredClassID: Int!, registeredClassInput: RegisteredClassInput!): RegisteredClassPayload!
   registrationCreate(label: String!, performerType: PerformerType!): RegistrationPayload!
   registrationDelete(registrationID: Int!): RegistrationPayload!
-  registrationUpdate(registration: RegistrationInput!, registrationID: Int!): RegistrationPayload!
-  schoolCreate(registrationID: Int!, schoolInput: SchoolInput): SchoolPayload!
+  registrationUpdate(registrationID: Int!, registrationInput: RegistrationInput!): RegistrationPayload!
+  schoolCreate(registrationID: Int!): SchoolPayload!
   schoolDelete(schoolID: Int!): SchoolPayload!
-  schoolGroupCreate(schoolGroupInput: SchoolGroupInput!, schoolID: Int!): SchoolGroupPayload!
+  schoolGroupCreate(schoolID: Int!): SchoolGroupPayload!
   schoolGroupDelete(schoolGroupID: Int!): SchoolGroupPayload!
   schoolGroupUpdate(schoolGroupID: Int!, schoolGroupInput: SchoolGroupInput!): SchoolGroupPayload!
   schoolUpdate(schoolID: Int!, schoolInput: SchoolInput!): SchoolPayload!
@@ -288,14 +288,14 @@ type Query {
   categories(levelID: Int!, subdisciplineID: Int!): [Category!]!
   category(id: Int!): Category!
   communities(registrationID: Int!): [Community!]!
-  community(communityID: Int!): Community!
+  community(registrationID: Int!): Community!
   discipline(id: Int!): Discipline!
   disciplines(performerType: PerformerType): [Discipline!]!
   festivalClass(id: Int!): FestivalClass!
   festivalClassByNumber(festivalClassNumber: String!): FestivalClass!
   festivalClassSearch(festivalClassSearch: FestivalClassSearchArgs!): [FestivalClass!]!
   festivalClasses(festivalClassSearch: FestivalClassSearchArgs, performerType: PerformerType): [FestivalClass!]!
-  group(groupID: Int!): Group!
+  group(registrationID: Int!): Group!
   groups: [Group!]!
   instrument(id: Int!): Instrument!
   instruments: [Instrument!]!
@@ -304,11 +304,11 @@ type Query {
   performer(performerID: Int!): Performer!
   performers(registrationID: Int!): [Performer!]!
   registeredClass(registeredClassID: Int!): RegisteredClass!
-  registeredClasses: [RegisteredClass!]!
+  registeredClasses(registrationID: Int!): [RegisteredClass!]!
   registration(id: Int!): Registration!
   registrations(performerType: PerformerType): [Registration!]!
   school(schoolID: Int!): School!
-  schoolGroup(schoolID: Int!): SchoolGroup!
+  schoolGroup(schoolGroupID: Int!): SchoolGroup!
   schoolGroups(schoolID: Int!): [SchoolGroup!]!
   schools: [School!]!
   selection(selectionID: Int!): Selection!
@@ -359,7 +359,7 @@ type RegisteredClassPayload {
 }
 
 type Registration {
-  communities: Community
+  community: Community
   confirmation: String
   createdAt: DateTime
   group: Group

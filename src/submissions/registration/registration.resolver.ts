@@ -80,10 +80,10 @@ export class RegistrationResolver {
   async registrationUpdate(
     @Args('registrationID', { type: () => Int })
     registrationID: Registration['id'],
-    @Args('registration', { type: () => RegistrationInput })
-    registration: RegistrationInput
+    @Args('registrationInput', { type: () => RegistrationInput })
+    registrationInput: RegistrationInput
   ) {
-    return this.registrationService.update(registrationID, registration)
+    return this.registrationService.update(registrationID, registrationInput)
   }
 
   @Mutation(() => RegistrationPayload)
@@ -120,7 +120,7 @@ export class RegistrationResolver {
     return this.groupService.findAll(registrationID)
   }
   @ResolveField()
-  async communities(@Parent() registration: tbl_registration) {
+  async community(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return this.communityService.findAll(registrationID)

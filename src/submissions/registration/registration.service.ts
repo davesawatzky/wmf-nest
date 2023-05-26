@@ -40,11 +40,11 @@ export class RegistrationService {
 
   async update(
     registrationID: tbl_registration['id'],
-    registration: Partial<RegistrationInput>
+    registrationInput: Partial<RegistrationInput>
   ) {
     return this.prisma.tbl_registration.update({
       where: { id: registrationID },
-      data: { ...registration },
+      data: { ...registrationInput },
     })
   }
 

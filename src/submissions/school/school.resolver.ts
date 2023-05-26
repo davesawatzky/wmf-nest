@@ -42,10 +42,8 @@ export class SchoolResolver {
   async schoolCreate(
     @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
-    @Args('schoolInput', { type: () => SchoolInput, nullable: true })
-    schoolInput: SchoolInput
   ) {
-    return this.schoolService.create(registrationID, schoolInput)
+    return this.schoolService.create(registrationID)
   }
 
   @Mutation(() => SchoolPayload)

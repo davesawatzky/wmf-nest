@@ -20,8 +20,8 @@ export class GroupResolver {
   }
 
   @Query(() => Group)
-  async group(@Args('groupID', { type: () => Int }) groupID: Group['id']) {
-    return this.groupService.findOne(groupID)
+  async group(@Args('registrationID', { type: () => Int }) registrationID: tbl_registration['id']) {
+    return this.groupService.findOne(registrationID)
   }
 
   /** Mutations */
@@ -30,8 +30,6 @@ export class GroupResolver {
   async groupCreate(
     @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
-    // @Args('groupInput', { type: () => GroupInput })
-    // groupInput: GroupInput
   ) {
     return this.groupService.create(registrationID)
   }
