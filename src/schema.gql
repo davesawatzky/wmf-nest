@@ -285,7 +285,7 @@ enum PerformerType {
 }
 
 type Query {
-  categories(levelID: Int!, subdisciplineID: Int!): [Category!]!
+  categories(levelID: Int, subdisciplineID: Int): [Category!]!
   category(id: Int!): Category!
   communities(registrationID: Int!): [Community!]!
   community(registrationID: Int!): Community!
@@ -300,7 +300,7 @@ type Query {
   instrument(id: Int!): Instrument!
   instruments: [Instrument!]!
   level(id: Int!): Level!
-  levels(categoryID: Int!, subdisciplineID: Int!): [Level!]!
+  levels(categoryID: Int, subdisciplineID: Int): [Level!]!
   performer(performerID: Int!): Performer!
   performers(registrationID: Int!): [Performer!]!
   registeredClass(registeredClassID: Int!): RegisteredClass!
@@ -314,7 +314,7 @@ type Query {
   selection(selectionID: Int!): Selection!
   selections: [Selection!]!
   subdiscipline(subdisciplineID: Int!): Subdiscipline!
-  subdisciplines(categoryID: Int!, disciplineID: Int!, levelID: Int!, performerType: PerformerType!): [Subdiscipline!]!
+  subdisciplines(disciplineID: Int, performerType: PerformerType): [Subdiscipline!]!
   subdisciplinesByName(name: String!): [Subdiscipline!]!
   submissions(performerType: PerformerType!): [Registration!]!
   teacher(teacherID: Int!): Teacher!

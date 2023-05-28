@@ -9,14 +9,15 @@ export class SelectionService {
 
   create(
     registeredClassID: tbl_reg_classes['id'],
-    // selectionInput: Partial<SelectionInput>
   ) {
-    return this.prisma.tbl_reg_selection.create({
-      data: {
-        classpickID: registeredClassID,
-        // ...selectionInput,
-      },
-    })
+    return {
+      userErrors: [],
+      selection: this.prisma.tbl_reg_selection.create({
+        data: {
+          classpickID: registeredClassID,
+        },
+      })
+    }
   }
 
   findAll(registeredClassID?: tbl_reg_classes['id']) {
@@ -35,15 +36,21 @@ export class SelectionService {
     selectionID: tbl_reg_selection['id'],
     selectionInput: Partial<SelectionInput>
   ) {
-    return this.prisma.tbl_reg_selection.update({
-      where: { id: selectionID },
-      data: { ...selectionInput },
-    })
+    return {
+      userErrors: [],
+      selection: this.prisma.tbl_reg_selection.update({
+        where: { id: selectionID },
+        data: { ...selectionInput },
+      })
+    }
   }
 
   remove(selectionID: tbl_reg_selection['id']) {
-    return this.prisma.tbl_reg_selection.delete({
-      where: { id: selectionID },
-    })
+    return {
+      userErrors: [],
+      selection: this.prisma.tbl_reg_selection.delete({
+        where: { id: selectionID },
+      })
+    }
   }
 }

@@ -33,15 +33,21 @@ export class GroupService {
   }
 
   update(groupID: tbl_reg_group['id'], groupInput: Partial<GroupInput>) {
-    return this.prisma.tbl_reg_group.update({
-      where: { id: groupID },
-      data: { ...groupInput },
-    })
+    return {
+      userErrors: [],
+      group: this.prisma.tbl_reg_group.update({
+        where: { id: groupID },
+        data: { ...groupInput },
+      })
+    }
   }
 
   remove(groupID: tbl_reg_group['id']) {
-    return this.prisma.tbl_reg_group.delete({
-      where: { id: groupID },
-    })
+    return {
+      userErrors: [],
+      group: this.prisma.tbl_reg_group.delete({
+        where: { id: groupID },
+      })
+    }
   }
 }

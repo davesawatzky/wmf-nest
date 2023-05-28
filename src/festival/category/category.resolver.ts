@@ -29,8 +29,8 @@ export class CategoryResolver {
 
   @Query(() => [Category])
   async categories(
-    @Args('levelID', { type: () => Int }) levelID: tbl_level['id'],
-    @Args('subdisciplineID', { type: () => Int })
+    @Args('levelID', { type: () => Int, nullable: true }) levelID: tbl_level['id'],
+    @Args('subdisciplineID', { type: () => Int, nullable: true })
     subdisciplineID: tbl_subdiscipline['id']
   ) {
     return this.categoryService.findAll(levelID, subdisciplineID)

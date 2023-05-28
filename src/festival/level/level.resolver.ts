@@ -33,8 +33,8 @@ export class LevelResolver {
 
   @Query(() => [Level])
   async levels(
-    @Args('categoryID', { type: () => Int }) categoryID: tbl_category['id'],
-    @Args('subdisciplineID', { type: () => Int })
+    @Args('categoryID', { type: () => Int, nullable: true }) categoryID: tbl_category['id'],
+    @Args('subdisciplineID', { type: () => Int, nullable: true })
     subdisciplineID: tbl_subdiscipline['id']
   ) {
     return this.levelService.findAll(categoryID, subdisciplineID)

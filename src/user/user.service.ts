@@ -18,15 +18,21 @@ export class UserService {
   }
 
   async update(userID: tbl_user['id'], userInput: UserInput) {
-    return this.prisma.tbl_user.update({
-      where: { id: userID },
-      data: { ...userInput },
-    })
+    return {
+      userErrors: [],
+      user: this.prisma.tbl_user.update({
+        where: { id: userID },
+        data: { ...userInput },
+      })
+    }
   }
 
   async remove(id: tbl_user['id']) {
-    return this.prisma.tbl_user.delete({
-      where: { id },
-    })
+    return {
+      userErrors: [],
+      user: this.prisma.tbl_user.delete({
+        where: { id },
+      })
+    }
   }
 }

@@ -45,15 +45,21 @@ export class TeacherService {
     teacherID: tbl_reg_teacher['id'],
     teacherInput: Partial<TeacherInput>
   ) {
-    return this.prisma.tbl_reg_teacher.update({
-      where: { id: teacherID },
-      data: { ...teacherInput },
-    })
+    return {
+      userErrors: [],
+      teacher: this.prisma.tbl_reg_teacher.update({
+        where: { id: teacherID },
+        data: { ...teacherInput },
+      })
+    }
   }
 
   remove(teacherID: tbl_reg_teacher['id']) {
-    return this.prisma.tbl_reg_teacher.delete({
-      where: { id: teacherID },
-    })
+    return {
+      userErrors: [],
+      teacher: this.prisma.tbl_reg_teacher.delete({
+        where: { id: teacherID },
+      })
+    }
   }
 }

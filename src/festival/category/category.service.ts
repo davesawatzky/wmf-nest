@@ -9,49 +9,67 @@ export class CategoryService {
   constructor(private prisma: PrismaService) {}
 
   async create(categoryInput: CategoryInput) {
-    return await this.prisma.tbl_category.create({
-      data: { ...categoryInput },
-    })
+    return {
+      userErrors: [],
+      category: await this.prisma.tbl_category.create({
+        data: { ...categoryInput },
+      })
+    }
   }
 
   async findAll(
-    levelID: tbl_level['id'],
-    subdisciplineID: tbl_subdiscipline['id']
+    levelID?: tbl_level['id'],
+    subdisciplineID?: tbl_subdiscipline['id']
   ) {
-    return await this.prisma.tbl_category.findMany({
-      where: {
-        tbl_classlist: {
-          some: {
-            levelID,
-            subdisciplineID,
+    return {
+      userErrors: [],
+      categories: await this.prisma.tbl_category.findMany({
+        where: {
+          tbl_classlist: {
+            some: {
+              levelID,
+              subdisciplineID,
+            },
           },
         },
-      },
-    })
+      })
+    }
   }
 
   async findOne(id: tbl_category['id']) {
-    return this.prisma.tbl_category.findUnique({
-      where: { id },
-    })
+    return {
+      userErrors: [],
+      category: await this.prisma.tbl_category.findUnique({
+        where: { id },
+      })
+    }
   }
 
-  async findClasses(categoryID: tbl_category['id']) {
-    return this.prisma.tbl_classlist.findMany({
-      where: { categoryID },
-    })
-  }
+  // async findClasses(categoryID: tbl_category['id']) {
+  //   return {
+  //     userErrors: [],
+  //     classes: this.prisma.tbl_classlist.findMany({
+  //       where: { categoryID },
+  //     })
+  //   }
+  // }
 
   async update(id: tbl_category['id'], categoryInput: CategoryInput) {
-    return await this.prisma.tbl_category.update({
-      where: { id },
-      data: { ...categoryInput },
-    })
+    return {
+      userErrors: [],
+      category: await this.prisma.tbl_category.update({
+        where: { id },
+        data: { ...categoryInput },
+      })
+    }
   }
 
-  async remove(id: Category['id']) {
-    return await this.prisma.tbl_category.delete({
-      where: { id },
-    })
+  async remove(id: tbl_category['id']) {
+    return {
+      userErrors: [],
+        category: await this.prisma.tbl_category.delete({
+        where: { id },
+      })
+    }
   }
 }

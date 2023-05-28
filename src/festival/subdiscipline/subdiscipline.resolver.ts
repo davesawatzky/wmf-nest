@@ -37,17 +37,13 @@ export class SubdisciplineResolver {
 
   @Query(() => [Subdiscipline])
   async subdisciplines(
-    @Args('disciplineID', { type: () => Int })
+    @Args('disciplineID', { type: () => Int, nullable: true })
     disciplineID: tbl_discipline['id'],
-    @Args('levelID', { type: () => Int }) levelID: tbl_level['id'],
-    @Args('categoryID', { type: () => Int }) categoryID: tbl_category['id'],
-    @Args('performerType', { type: () => PerformerType })
+    @Args('performerType', { type: () => PerformerType, nullable: true })
     performerType: PerformerType
   ) {
     return this.subdisciplineService.findAll(
       disciplineID,
-      levelID,
-      categoryID,
       performerType
     )
   }

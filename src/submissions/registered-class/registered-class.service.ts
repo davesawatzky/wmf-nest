@@ -68,10 +68,13 @@ export class RegisteredClassService {
         registeredClass: null,
       }
     }
-    return this.prisma.tbl_reg_classes.update({
-      where: { id: registeredClassID },
-      data: { ...registeredClassInput },
-    })
+    return {
+      userErrors: [],
+      registeredClass: this.prisma.tbl_reg_classes.update({
+        where: { id: registeredClassID },
+        data: { ...registeredClassInput },
+      })
+    }
   }
 
   async remove(registeredClassID: tbl_reg_classes['id']) {
@@ -91,8 +94,11 @@ export class RegisteredClassService {
         registeredClass: null,
       }
     }
-    return this.prisma.tbl_reg_classes.delete({
-      where: { id: registeredClassID },
-    })
+    return {
+      userErrors: [],
+      registeredClass: this.prisma.tbl_reg_classes.delete({
+        where: { id: registeredClassID },
+      })
+    }
   }
 }

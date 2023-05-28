@@ -32,15 +32,21 @@ export class SchoolService {
   }
 
   update(schoolID: tbl_reg_school['id'], schoolInput: Partial<SchoolInput>) {
-    return this.prisma.tbl_reg_school.update({
-      where: { id: schoolID },
-      data: { ...schoolInput },
-    })
+    return {
+      userErrors: [],
+      school: this.prisma.tbl_reg_school.update({
+        where: { id: schoolID },
+        data: { ...schoolInput },
+      })
+    }
   }
 
   remove(schoolID: tbl_reg_school['id']) {
-    return this.prisma.tbl_reg_school.delete({
-      where: { id: schoolID },
-    })
+    return {
+      userErrors: [],
+      school: this.prisma.tbl_reg_school.delete({
+        where: { id: schoolID },
+      })
+    }
   }
 }

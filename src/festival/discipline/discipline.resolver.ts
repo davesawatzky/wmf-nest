@@ -62,6 +62,9 @@ export class DisciplineResolver {
     return this.disciplineService.remove(id)
   }
 
+  /**
+   * Field Resolvers
+   */
   @ResolveField()
   async subdisciplines(
     @Parent() discipline: Discipline,
@@ -71,8 +74,6 @@ export class DisciplineResolver {
     const { id } = discipline
     return this.subdisciplineService.findAll(
       id,
-      undefined,
-      undefined,
       performerType
     )
   }

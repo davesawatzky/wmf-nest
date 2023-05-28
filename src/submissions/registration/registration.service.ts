@@ -42,15 +42,21 @@ export class RegistrationService {
     registrationID: tbl_registration['id'],
     registrationInput: Partial<RegistrationInput>
   ) {
-    return this.prisma.tbl_registration.update({
-      where: { id: registrationID },
-      data: { ...registrationInput },
-    })
+    return {
+      userErrors: [],
+      registration: this.prisma.tbl_registration.update({
+        where: { id: registrationID },
+        data: { ...registrationInput },
+      })
+    }
   }
 
   async remove(id: tbl_registration['id']) {
-    return this.prisma.tbl_registration.delete({
-      where: { id },
-    })
+    return {
+      userErrors: [],
+      registration: this.prisma.tbl_registration.delete({
+        where: { id },
+      })
+    }
   }
 }

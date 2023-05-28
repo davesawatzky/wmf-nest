@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { DisciplineResolver } from '../discipline.resolver'
-import { DisciplineService } from '../discipline.service'
+import { DisciplineResolver } from './discipline.resolver'
+import { DisciplineService } from './discipline.service'
 
 describe('DisciplineResolver', () => {
   let resolver: DisciplineResolver

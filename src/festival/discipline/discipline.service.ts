@@ -9,46 +9,61 @@ export class DisciplineService {
   constructor(private prisma: PrismaService) {}
 
   async create(disciplineInput: DisciplineInput) {
-    return await this.prisma.tbl_discipline.create({
-      data: { ...disciplineInput },
-    })
+    return {
+      userErrors: [],
+      discipline: await this.prisma.tbl_discipline.create({
+        data: { ...disciplineInput },
+      })
+    }
   }
 
   async findAll(performerType?: PerformerType) {
-    return this.prisma.tbl_discipline.findMany({
-      where: {
-        tbl_subdiscipline: {
-          some: {
-            tbl_classlist: {
-              some: {
-                performerType,
+    return { 
+      userErrors: [],
+      disciplines: await this.prisma.tbl_discipline.findMany({
+        where: {
+          tbl_subdiscipline: {
+            some: {
+              tbl_classlist: {
+                some: {
+                  performerType,
+                },
               },
             },
           },
         },
-      },
-    })
+      })
+    }
   }
 
   async findOne(id: tbl_discipline['id']) {
-    return await this.prisma.tbl_discipline.findUnique({
-      where: { id },
-    })
+    return {
+      userErrors: [],
+      disciplines: await this.prisma.tbl_discipline.findUnique({
+        where: { id },
+      })
+    }
   }
 
   async update(
     id: tbl_discipline['id'],
     DisciplineInput: Partial<tbl_discipline>
   ) {
-    return await this.prisma.tbl_discipline.update({
-      where: { id },
-      data: { ...DisciplineInput },
-    })
+    return {
+      userErrors: [],
+      discipline: await this.prisma.tbl_discipline.update({
+        where: { id },
+        data: { ...DisciplineInput },
+      })
+    }
   }
 
   async remove(id: tbl_discipline['id']) {
-    return await this.prisma.tbl_discipline.delete({
-      where: { id },
-    })
+    return {
+      userErrors: [],
+      discipline: await this.prisma.tbl_discipline.delete({
+        where: { id },
+      })
+    }
   }
 }

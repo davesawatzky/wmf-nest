@@ -34,15 +34,21 @@ export class PerformerService {
     performerID: tbl_reg_performer['id'],
     performerInput: Partial<PerformerInput>
   ) {
-    return this.prisma.tbl_reg_performer.update({
-      where: { id: performerID },
-      data: { ...performerInput },
-    })
+    return {
+      userErrors: [],
+      performer: this.prisma.tbl_reg_performer.update({
+        where: { id: performerID },
+        data: { ...performerInput },
+      })
+    }
   }
 
   remove(performerID: tbl_reg_performer['id']) {
-    return this.prisma.tbl_reg_performer.delete({
-      where: { id: performerID },
-    })
+    return {
+      userErrors: [],
+      performer: this.prisma.tbl_reg_performer.delete({
+        where: { id: performerID },
+      })
+    }
   }
 }

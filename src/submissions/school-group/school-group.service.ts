@@ -10,11 +10,12 @@ export class SchoolGroupService {
   async create(
     schoolID: tbl_reg_school['id'],
   ) {
-    return this.prisma.tbl_reg_schoolgroup.create({
-      data: {
-        schoolID: schoolID,
-      },
-    })
+    return {
+      userErrors: [],
+      schoolGroup: this.prisma.tbl_reg_schoolgroup.create({
+        data: { schoolID: schoolID },
+      })
+    }
   }
 
   async findAll(schoolID?: tbl_reg_schoolgroup['schoolID']) {
@@ -33,15 +34,21 @@ export class SchoolGroupService {
     schoolGroupID: tbl_reg_schoolgroup['id'],
     schoolGroupInput: SchoolGroupInput
   ) {
-    return this.prisma.tbl_reg_schoolgroup.update({
-      where: { id: schoolGroupID },
-      data: { ...schoolGroupInput },
-    })
+    return {
+      userErrors: [],
+      schoolGroup: this.prisma.tbl_reg_schoolgroup.update({
+        where: { id: schoolGroupID },
+        data: { ...schoolGroupInput },
+      })
+    }
   }
 
   async remove(schoolGroupID: tbl_reg_schoolgroup['id']) {
-    return this.prisma.tbl_reg_schoolgroup.delete({
-      where: { id: schoolGroupID },
-    })
+    return {
+      userErrors: [],
+      schoolGroup: this.prisma.tbl_reg_schoolgroup.delete({
+        where: { id: schoolGroupID },
+      })
+    }
   }
 }
