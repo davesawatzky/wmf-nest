@@ -46,16 +46,18 @@ export class RegistrationResolver {
   @Query(() => [Registration])
   async registrations(
     @Context() context,
-    // @Args('userID', { type: () => Int }) userID?: tbl_user['id'],
     @Args('performerType', { nullable: true, type: () => PerformerType })
     performerType?: Registration['performerType']
   ) {
-    return this.registrationService.findAll(context.req.user.id, performerType)
+    return await this.registrationService.findAll(
+      context.req.user.id,
+      performerType
+    )
   }
 
   @Query(() => Registration)
   async registration(@Args('id', { type: () => Int }) id: Registration['id']) {
-    return this.registrationService.findOne(id)
+    return await this.registrationService.findOne(id)
   }
 
   /** Mutations */
@@ -69,7 +71,7 @@ export class RegistrationResolver {
     @Context() context
   ) {
     console.log('UserID-----: ', context.req.user.id)
-    return this.registrationService.create(
+    return await this.registrationService.create(
       context.req.user.id,
       performerType,
       label
@@ -83,7 +85,10 @@ export class RegistrationResolver {
     @Args('registrationInput', { type: () => RegistrationInput })
     registrationInput: RegistrationInput
   ) {
-    return this.registrationService.update(registrationID, registrationInput)
+    return await this.registrationService.update(
+      registrationID,
+      registrationInput
+    )
   }
 
   @Mutation(() => RegistrationPayload)
@@ -91,7 +96,7 @@ export class RegistrationResolver {
     @Args('registrationID', { type: () => Int })
     registrationID: Registration['id']
   ) {
-    return this.registrationService.remove(registrationID)
+    return await this.registrationService.remove(registrationID)
   }
 
   /** Field Resolvers */
@@ -99,42 +104,42 @@ export class RegistrationResolver {
   @ResolveField()
   async user(@Parent() registration: tbl_registration) {
     const { userID }: { userID: tbl_registration['userID'] } = registration
-    return this.userService.findOne(userID)
+    return await this.userService.findOne(userID)
   }
   @ResolveField()
   async performers(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
-    return this.performerService.findAll(registrationID)
+    return await this.performerService.findAll(registrationID)
   }
   @ResolveField()
   async registeredClasses(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
-    return this.registeredClassService.findAll(registrationID)
+    return await this.registeredClassService.findAll(registrationID)
   }
   @ResolveField()
   async group(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
-    return this.groupService.findAll(registrationID)
+    return await this.groupService.findAll(registrationID)
   }
   @ResolveField()
   async community(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
-    return this.communityService.findAll(registrationID)
+    return await this.communityService.findAll(registrationID)
   }
   @ResolveField()
   async teacher(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
-    return this.teacherService.findOne(registrationID)
+    return await this.teacherService.findOne(registrationID)
   }
   @ResolveField()
   async school(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
-    return this.schoolService.findOne(registrationID)
+    return await this.schoolService.findOne(registrationID)
   }
 }

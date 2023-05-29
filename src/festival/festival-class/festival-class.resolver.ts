@@ -46,7 +46,7 @@ export class FestivalClassResolver {
     festivalClassSearch: FestivalClassSearchArgs
   ) {
     const { subdisciplineID, categoryID, levelID } = festivalClassSearch
-    return this.festivalClassService.findAll(
+    return await this.festivalClassService.findAll(
       performerType,
       subdisciplineID,
       levelID,
@@ -59,14 +59,14 @@ export class FestivalClassResolver {
     @Args('festivalClassSearch', { type: () => FestivalClassSearchArgs })
     festivalClassSearch: FestivalClassSearchArgs
   ) {
-    return this.festivalClassService.search(festivalClassSearch)
+    return await this.festivalClassService.search(festivalClassSearch)
   }
 
   @Query(() => FestivalClass)
   async festivalClass(
     @Args('id', { type: () => Int }) id: FestivalClass['id']
   ) {
-    return this.festivalClassService.findById(id)
+    return await this.festivalClassService.findById(id)
   }
 
   @Query(() => FestivalClass)
@@ -74,7 +74,7 @@ export class FestivalClassResolver {
     @Args('festivalClassNumber', { type: () => String })
     festivalClassNumber: FestivalClass['classNumber']
   ) {
-    return this.festivalClassService.findByNumber(festivalClassNumber)
+    return await this.festivalClassService.findByNumber(festivalClassNumber)
   }
 
   /** Mutations */
@@ -85,7 +85,7 @@ export class FestivalClassResolver {
     @Args('festivalClass')
     festivalClass: FestivalClassInput
   ) {
-    return this.festivalClassService.create(performerType, festivalClass)
+    return await this.festivalClassService.create(performerType, festivalClass)
   }
 
   @Mutation(() => FestivalClassPayload)
@@ -95,7 +95,10 @@ export class FestivalClassResolver {
     @Args('festivalClass', { type: () => FestivalClassInput })
     festivalClass: Partial<FestivalClassInput>
   ) {
-    return this.festivalClassService.update(festivalClassID, festivalClass)
+    return await this.festivalClassService.update(
+      festivalClassID,
+      festivalClass
+    )
   }
 
   @Mutation(() => FestivalClassPayload)
@@ -103,7 +106,7 @@ export class FestivalClassResolver {
     @Args('festivalClassID', { type: () => Int })
     festivalClassID: FestivalClass['id']
   ) {
-    return this.festivalClassService.remove(festivalClassID)
+    return await this.festivalClassService.remove(festivalClassID)
   }
 
   /** Field Resolvers */
@@ -111,25 +114,25 @@ export class FestivalClassResolver {
   @ResolveField()
   async trophies(@Parent() festivalClass: FestivalClass) {
     const { id }: { id: FestivalClass['id'] } = festivalClass
-    return this.festivalClassService.findClassTrophies(id)
+    return await this.festivalClassService.findClassTrophies(id)
   }
 
   @ResolveField()
-  level(@Parent() festivalClass: tbl_classlist) {
+  async level(@Parent() festivalClass: tbl_classlist) {
     const { levelID }: { levelID: tbl_classlist['levelID'] } = festivalClass
-    return this.levelService.findOne(levelID)
+    return await this.levelService.findOne(levelID)
   }
   @ResolveField()
-  subdiscipline(@Parent() festivalClass: tbl_classlist) {
+  async subdiscipline(@Parent() festivalClass: tbl_classlist) {
     const {
       subdisciplineID,
     }: { subdisciplineID: tbl_classlist['subdisciplineID'] } = festivalClass
-    return this.subdisciplineService.findOne(subdisciplineID)
+    return await this.subdisciplineService.findOne(subdisciplineID)
   }
   @ResolveField()
-  category(@Parent() festivalClass: tbl_classlist) {
+  async category(@Parent() festivalClass: tbl_classlist) {
     const { categoryID }: { categoryID: tbl_classlist['categoryID'] } =
       festivalClass
-    return this.categoryService.findOne(categoryID)
+    return await this.categoryService.findOne(categoryID)
   }
 }

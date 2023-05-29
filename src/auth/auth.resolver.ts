@@ -17,7 +17,7 @@ export class AuthResolver {
   async signup(
     @Args('credentials') credentials: CredentialsSignup
   ): Promise<AuthPayload> {
-    return this.authService.signup(credentials)
+    return await this.authService.signup(credentials)
   }
 
   @Mutation(() => AuthPayload)

@@ -7,10 +7,10 @@ import { PrismaService } from 'src/prisma/prisma.service'
 export class SchoolService {
   constructor(private prisma: PrismaService) {}
 
-  create(registrationID: tbl_registration['id']) {
+  async create(registrationID: tbl_registration['id']) {
     return {
       userErrors: [],
-      school: this.prisma.tbl_reg_school.create({
+      school: await this.prisma.tbl_reg_school.create({
         data: {
           regID: registrationID,
         },
@@ -18,35 +18,38 @@ export class SchoolService {
     }
   }
 
-  findAll() {
-    return this.prisma.tbl_reg_school.findMany()
+  async findAll() {
+    return await this.prisma.tbl_reg_school.findMany()
   }
 
-  findOne(
+  async findOne(
     registrationID?: tbl_registration['id'],
     schoolID?: tbl_reg_school['id']
   ) {
-    return this.prisma.tbl_reg_school.findUnique({
+    return await this.prisma.tbl_reg_school.findUnique({
       where: { regID: registrationID, id: schoolID },
     })
   }
 
-  update(schoolID: tbl_reg_school['id'], schoolInput: Partial<SchoolInput>) {
+  async update(
+    schoolID: tbl_reg_school['id'],
+    schoolInput: Partial<SchoolInput>
+  ) {
     return {
       userErrors: [],
-      school: this.prisma.tbl_reg_school.update({
+      school: await this.prisma.tbl_reg_school.update({
         where: { id: schoolID },
         data: { ...schoolInput },
-      })
+      }),
     }
   }
 
-  remove(schoolID: tbl_reg_school['id']) {
+  async remove(schoolID: tbl_reg_school['id']) {
     return {
       userErrors: [],
-      school: this.prisma.tbl_reg_school.delete({
+      school: await this.prisma.tbl_reg_school.delete({
         where: { id: schoolID },
-      })
+      }),
     }
   }
 }

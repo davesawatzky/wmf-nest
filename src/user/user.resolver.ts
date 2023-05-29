@@ -43,7 +43,7 @@ export class UserResolver {
     // }
     // try {
     //   ForbiddenError.from(ability).throwUnlessCan(Action.Users, username)
-    return this.userService.findAll()
+    return await this.userService.findAll()
     // } catch (error) {
     //   if (error instanceof ForbiddenError) {
     //     throw new ForbiddenException(error.message)
@@ -55,8 +55,8 @@ export class UserResolver {
   async user(
     @Args('userID', { type: () => Int })
     userID: User['id']
-  ): Promise<User> {
-    return this.userService.findOne(userID)
+  ) {
+    return await this.userService.findOne(userID)
   }
 
   /** Mutations */
@@ -67,13 +67,13 @@ export class UserResolver {
     @Args('userID', { type: () => Int }) userID: User['id'],
     @Args('userInput', { type: () => Int }) userInput: UserInput
   ) {
-    return this.userService.update(userID, userInput)
+    return await this.userService.update(userID, userInput)
   }
 
   @Mutation(() => UserPayload)
   @UsePipes(TrimPipe)
   async userDelete(@Args('id', { type: () => Int }) id: User['id']) {
-    return this.userService.remove(id)
+    return await this.userService.remove(id)
   }
 
   /** Field Resolvers */
@@ -81,6 +81,6 @@ export class UserResolver {
   @ResolveField()
   async registrations(@Parent() user: User) {
     const { id }: { id: User['id'] } = user
-    return this.registrationService.findAll(id)
+    return await this.registrationService.findAll(id)
   }
 }

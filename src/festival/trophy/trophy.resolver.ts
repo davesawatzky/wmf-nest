@@ -16,27 +16,25 @@ import { TrophyInput } from './dto/trophy.input'
 @Resolver(() => Trophy)
 @UseGuards(JwtAuthGuard)
 export class TrophyResolver {
-  constructor(
-    private readonly trophyService: TrophyService,
-   ) {}
+  constructor(private readonly trophyService: TrophyService) {}
 
   /** Queries */
 
   @Query(() => [Trophy])
   async trophies() {
-    return this.trophyService.findAll()
+    return await this.trophyService.findAll()
   }
 
   @Query(() => Trophy)
   async trophy(@Args('id', { type: () => Int }) id: Trophy['id']) {
-    return this.trophyService.findOne(id)
+    return await this.trophyService.findOne(id)
   }
 
   /** Mutations */
 
   @Mutation(() => TrophyPayload)
   async trophyCreate(@Args('trophyInput') trophyInput: TrophyInput) {
-    return this.trophyService.create(trophyInput)
+    return await this.trophyService.create(trophyInput)
   }
 
   @Mutation(() => TrophyPayload)
@@ -44,12 +42,12 @@ export class TrophyResolver {
     @Args('trophyID', { type: () => Int }) trophyID: Trophy['id'],
     @Args('trophyInput') trophyInput: TrophyInput
   ) {
-    return this.trophyService.update(trophyID, trophyInput)
+    return await this.trophyService.update(trophyID, trophyInput)
   }
 
   @Mutation(() => TrophyPayload)
   async trophyDelete(@Args('id', { type: () => Int }) id: Trophy['id']) {
-    return this.trophyService.remove(id)
+    return await this.trophyService.remove(id)
   }
 
   /** Field Resolvers */
@@ -57,6 +55,6 @@ export class TrophyResolver {
   @ResolveField()
   async festivalClasses(@Parent() trophy: Trophy) {
     const { id }: { id: Trophy['id'] } = trophy
-    return this.trophyService.findTrophyClasses(id)
+    return await this.trophyService.findTrophyClasses(id)
   }
 }

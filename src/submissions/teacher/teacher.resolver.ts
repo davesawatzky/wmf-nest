@@ -15,14 +15,14 @@ export class TeacherResolver {
 
   @Query(() => [Teacher])
   async teachers() {
-    return this.teacherService.findAll()
+    return await this.teacherService.findAll()
   }
 
   @Query(() => Teacher)
   async teacher(
     @Args('teacherID', { type: () => Int }) teacherID: Teacher['id']
   ) {
-    return this.teacherService.findOne(teacherID)
+    return await this.teacherService.findOne(teacherID)
   }
 
   /** Mutations */
@@ -34,7 +34,7 @@ export class TeacherResolver {
     @Args('teacherInput', { type: () => TeacherInput })
     teacherInput: Partial<TeacherInput>
   ) {
-    return this.teacherService.create(registrationID, teacherInput)
+    return await this.teacherService.create(registrationID, teacherInput)
   }
 
   @Mutation(() => TeacherPayload)
@@ -43,13 +43,13 @@ export class TeacherResolver {
     @Args('teacherInput', { type: () => TeacherInput })
     teacherInput: Partial<TeacherInput>
   ) {
-    return this.teacherService.update(teacherID, teacherInput)
+    return await this.teacherService.update(teacherID, teacherInput)
   }
 
   @Mutation(() => TeacherPayload)
   async teacherDelete(
     @Args('teacherID', { type: () => Int }) teacherID: Teacher['id']
   ) {
-    return this.teacherService.remove(teacherID)
+    return await this.teacherService.remove(teacherID)
   }
 }

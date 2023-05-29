@@ -14,19 +14,19 @@ export class InstrumentResolver {
 
   @Query(() => [Instrument])
   async instruments() {
-    return this.instrumentService.findAll()
+    return await this.instrumentService.findAll()
   }
 
   @Query(() => Instrument)
   async instrument(@Args('id', { type: () => Int }) id: Instrument['id']) {
-    return this.instrumentService.findOne(id)
+    return await this.instrumentService.findOne(id)
   }
 
   /** Mutations */
 
   @Mutation(() => InstrumentPayload)
   async instrumentCreate(@Args('instrument') instrument: InstrumentInput) {
-    return this.instrumentService.create(instrument)
+    return await this.instrumentService.create(instrument)
   }
 
   @Mutation(() => InstrumentPayload)
@@ -35,13 +35,13 @@ export class InstrumentResolver {
     instrumentID: Instrument['id'],
     @Args('instrument') instrument: InstrumentInput
   ) {
-    return this.instrumentService.update(instrumentID, instrument)
+    return await this.instrumentService.update(instrumentID, instrument)
   }
 
   @Mutation(() => InstrumentPayload)
   async instrumentDelete(
     @Args('id', { type: () => Int }) id: Instrument['id']
   ) {
-    return this.instrumentService.remove(id)
+    return await this.instrumentService.remove(id)
   }
 }

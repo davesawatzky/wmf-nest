@@ -7,25 +7,23 @@ import { tbl_reg_school, tbl_reg_schoolgroup } from '@prisma/client'
 export class SchoolGroupService {
   constructor(private prisma: PrismaService) {}
 
-  async create(
-    schoolID: tbl_reg_school['id'],
-  ) {
+  async create(schoolID: tbl_reg_school['id']) {
     return {
       userErrors: [],
-      schoolGroup: this.prisma.tbl_reg_schoolgroup.create({
+      schoolGroup: await this.prisma.tbl_reg_schoolgroup.create({
         data: { schoolID: schoolID },
-      })
+      }),
     }
   }
 
   async findAll(schoolID?: tbl_reg_schoolgroup['schoolID']) {
-    return this.prisma.tbl_reg_schoolgroup.findMany({
+    return await this.prisma.tbl_reg_schoolgroup.findMany({
       where: { schoolID },
     })
   }
 
   async findOne(schoolGroupID: tbl_reg_schoolgroup['id']) {
-    return this.prisma.tbl_reg_schoolgroup.findUnique({
+    return await this.prisma.tbl_reg_schoolgroup.findUnique({
       where: { id: schoolGroupID },
     })
   }
@@ -36,19 +34,19 @@ export class SchoolGroupService {
   ) {
     return {
       userErrors: [],
-      schoolGroup: this.prisma.tbl_reg_schoolgroup.update({
+      schoolGroup: await this.prisma.tbl_reg_schoolgroup.update({
         where: { id: schoolGroupID },
         data: { ...schoolGroupInput },
-      })
+      }),
     }
   }
 
   async remove(schoolGroupID: tbl_reg_schoolgroup['id']) {
     return {
       userErrors: [],
-      schoolGroup: this.prisma.tbl_reg_schoolgroup.delete({
+      schoolGroup: await this.prisma.tbl_reg_schoolgroup.delete({
         where: { id: schoolGroupID },
-      })
+      }),
     }
   }
 }

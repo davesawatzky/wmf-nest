@@ -23,8 +23,6 @@ export class RegisteredClass {
   @Field(() => Int)
   maxSelections?: number
 
-
-
   @Field(() => GraphQLDecimal)
   @Type(() => Object)
   @Transform(transformToDecimal)

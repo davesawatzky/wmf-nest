@@ -287,7 +287,7 @@ enum PerformerType {
 type Query {
   categories(levelID: Int, subdisciplineID: Int): [Category!]!
   category(id: Int!): Category!
-  communities(registrationID: Int!): [Community!]!
+  communities: [Community!]!
   community(registrationID: Int!): Community!
   discipline(id: Int!): Discipline!
   disciplines(performerType: PerformerType): [Discipline!]!
@@ -312,7 +312,7 @@ type Query {
   schoolGroups(schoolID: Int!): [SchoolGroup!]!
   schools: [School!]!
   selection(selectionID: Int!): Selection!
-  selections: [Selection!]!
+  selections(registeredClassID: Int): [Selection!]!
   subdiscipline(subdisciplineID: Int!): Subdiscipline!
   subdisciplines(disciplineID: Int, performerType: PerformerType): [Subdiscipline!]!
   subdisciplinesByName(name: String!): [Subdiscipline!]!

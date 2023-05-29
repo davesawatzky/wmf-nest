@@ -13,24 +13,18 @@ export class InstrumentService {
         data: {
           ...instrument,
         },
-      })
+      }),
     }
   }
 
   async findAll() {
-    return {
-      userErrors: [],
-      instruments: await this.prisma.tbl_instruments.findMany()
-    }
+    return await this.prisma.tbl_instruments.findMany()
   }
 
   async findOne(id: tbl_instruments['id']) {
-    return {
-      userErrors: [],
-      instrument: await this.prisma.tbl_instruments.findUnique({
-        where: { id },
-      })
-    }
+    return await this.prisma.tbl_instruments.findUnique({
+      where: { id },
+    })
   }
 
   async update(
@@ -46,7 +40,7 @@ export class InstrumentService {
         data: {
           ...instrument,
         },
-      })
+      }),
     }
   }
 
@@ -55,7 +49,7 @@ export class InstrumentService {
       userErrors: [],
       instrument: await this.prisma.tbl_instruments.delete({
         where: { id },
-      })
+      }),
     }
   }
 }

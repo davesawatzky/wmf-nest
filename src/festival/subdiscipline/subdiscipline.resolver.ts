@@ -42,10 +42,7 @@ export class SubdisciplineResolver {
     @Args('performerType', { type: () => PerformerType, nullable: true })
     performerType: PerformerType
   ) {
-    return this.subdisciplineService.findAll(
-      disciplineID,
-      performerType
-    )
+    return await this.subdisciplineService.findAll(disciplineID, performerType)
   }
 
   @Query(() => Subdiscipline)
@@ -53,7 +50,7 @@ export class SubdisciplineResolver {
     @Args('subdisciplineID', { type: () => Int })
     subdisciplineID: Subdiscipline['id']
   ) {
-    return this.subdisciplineService.findOne(subdisciplineID)
+    return await this.subdisciplineService.findOne(subdisciplineID)
   }
 
   @Query(() => [Subdiscipline])
@@ -61,7 +58,7 @@ export class SubdisciplineResolver {
     @Args('name', { type: () => String })
     name: Subdiscipline['name']
   ) {
-    return this.subdisciplineService.findSubByName(name)
+    return await this.subdisciplineService.findSubByName(name)
   }
 
   /** Mutations */
@@ -73,7 +70,10 @@ export class SubdisciplineResolver {
     @Args('subdisciplineInput')
     subdisciplineInput: SubdisciplineInput
   ) {
-    return this.subdisciplineService.create(disciplineID, subdisciplineInput)
+    return await this.subdisciplineService.create(
+      disciplineID,
+      subdisciplineInput
+    )
   }
 
   @Mutation(() => SubdisciplinePayload)
@@ -83,7 +83,10 @@ export class SubdisciplineResolver {
     @Args('subdisciplineInput', { type: () => SubdisciplineInput })
     subdisciplineInput: SubdisciplineInput
   ) {
-    return this.subdisciplineService.update(subdisciplineID, subdisciplineInput)
+    return await this.subdisciplineService.update(
+      subdisciplineID,
+      subdisciplineInput
+    )
   }
 
   @Mutation(() => SubdisciplinePayload)
@@ -91,7 +94,7 @@ export class SubdisciplineResolver {
     @Args('subdisciplineID', { type: () => Int })
     subdisciplineID: Subdiscipline['id']
   ) {
-    return this.subdisciplineService.remove(subdisciplineID)
+    return await this.subdisciplineService.remove(subdisciplineID)
   }
 
   /** Field Resolvers */
@@ -107,7 +110,7 @@ export class SubdisciplineResolver {
     categoryID: tbl_category['id']
   ) {
     const subdisciplineID = Subdiscipline.id
-    return this.festivalClassService.findAll(
+    return await this.festivalClassService.findAll(
       performerType,
       subdisciplineID,
       levelID,

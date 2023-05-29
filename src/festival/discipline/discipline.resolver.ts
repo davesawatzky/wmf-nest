@@ -30,12 +30,12 @@ export class DisciplineResolver {
     @Args('performerType', { type: () => PerformerType, nullable: true })
     performerType: PerformerType
   ) {
-    return this.disciplineService.findAll(performerType)
+    return await this.disciplineService.findAll(performerType)
   }
 
   @Query(() => Discipline)
   async discipline(@Args('id', { type: () => Int }) id: Discipline['id']) {
-    return this.disciplineService.findOne(id)
+    return await this.disciplineService.findOne(id)
   }
 
   /** Mutations */
@@ -52,14 +52,14 @@ export class DisciplineResolver {
     @Args('id', { type: () => Int }) id: Discipline['id'],
     @Args('disciplineInput') disciplineInput: DisciplineInput
   ) {
-    return this.disciplineService.update(id, disciplineInput)
+    return await this.disciplineService.update(id, disciplineInput)
   }
 
   @Mutation(() => DisciplinePayload)
   async disciplineDelete(
     @Args('id', { type: () => Int }) id: Discipline['id']
   ) {
-    return this.disciplineService.remove(id)
+    return await this.disciplineService.remove(id)
   }
 
   /**
@@ -72,9 +72,6 @@ export class DisciplineResolver {
     performerType: PerformerType
   ) {
     const { id } = discipline
-    return this.subdisciplineService.findAll(
-      id,
-      performerType
-    )
+    return await this.subdisciplineService.findAll(id, performerType)
   }
 }

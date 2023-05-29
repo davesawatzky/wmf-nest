@@ -8,11 +8,11 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   async findAll() {
-    return this.prisma.tbl_user.findMany()
+    return await this.prisma.tbl_user.findMany()
   }
 
   async findOne(userID: tbl_user['id']) {
-    return this.prisma.tbl_user.findUnique({
+    return await this.prisma.tbl_user.findUnique({
       where: { id: userID },
     })
   }
@@ -20,19 +20,19 @@ export class UserService {
   async update(userID: tbl_user['id'], userInput: UserInput) {
     return {
       userErrors: [],
-      user: this.prisma.tbl_user.update({
+      user: await this.prisma.tbl_user.update({
         where: { id: userID },
         data: { ...userInput },
-      })
+      }),
     }
   }
 
   async remove(id: tbl_user['id']) {
     return {
       userErrors: [],
-      user: this.prisma.tbl_user.delete({
+      user: await this.prisma.tbl_user.delete({
         where: { id },
-      })
+      }),
     }
   }
 }

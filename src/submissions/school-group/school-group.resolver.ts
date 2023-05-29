@@ -12,25 +12,27 @@ export class SchoolGroupResolver {
 
   @Query(() => [SchoolGroup])
   async schoolGroups(
-    @Args('schoolID', { type: () => Int }) schoolID: tbl_reg_schoolgroup['schoolID']
+    @Args('schoolID', { type: () => Int })
+    schoolID: tbl_reg_schoolgroup['schoolID']
   ) {
-    return this.schoolGroupService.findAll(schoolID)
+    return await this.schoolGroupService.findAll(schoolID)
   }
 
   @Query(() => SchoolGroup)
   async schoolGroup(
-    @Args('schoolGroupID', { type: () => Int }) schoolGroupID: tbl_reg_schoolgroup['id']
+    @Args('schoolGroupID', { type: () => Int })
+    schoolGroupID: tbl_reg_schoolgroup['id']
   ) {
-    return this.schoolGroupService.findOne(schoolGroupID)
+    return await this.schoolGroupService.findOne(schoolGroupID)
   }
 
   /** Mutations */
 
   @Mutation(() => SchoolGroupPayload)
   async schoolGroupCreate(
-    @Args('schoolID', { type: () => Int }) schoolID: tbl_reg_school['id'],
-    ) {
-    return this.schoolGroupService.create(schoolID)
+    @Args('schoolID', { type: () => Int }) schoolID: tbl_reg_school['id']
+  ) {
+    return await this.schoolGroupService.create(schoolID)
   }
 
   @Mutation(() => SchoolGroupPayload)
@@ -40,7 +42,7 @@ export class SchoolGroupResolver {
     @Args('schoolGroupInput', { type: () => SchoolGroupInput })
     schoolGroupInput: SchoolGroupInput
   ) {
-    return this.schoolGroupService.update(schoolGroupID, schoolGroupInput)
+    return await this.schoolGroupService.update(schoolGroupID, schoolGroupInput)
   }
 
   @Mutation(() => SchoolGroupPayload)
@@ -48,6 +50,6 @@ export class SchoolGroupResolver {
     @Args('schoolGroupID', { type: () => Int })
     schoolGroupID: SchoolGroup['id']
   ) {
-    return this.schoolGroupService.remove(schoolGroupID)
+    return await this.schoolGroupService.remove(schoolGroupID)
   }
 }

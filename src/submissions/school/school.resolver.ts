@@ -28,12 +28,12 @@ export class SchoolResolver {
 
   @Query(() => [School])
   async schools() {
-    return this.schoolService.findAll()
+    return await this.schoolService.findAll()
   }
 
   @Query(() => School)
   async school(@Args('schoolID', { type: () => Int }) schoolID: School['id']) {
-    return this.schoolService.findOne(null, schoolID)
+    return await this.schoolService.findOne(null, schoolID)
   }
 
   /** Mutations */
@@ -41,9 +41,9 @@ export class SchoolResolver {
   @Mutation(() => SchoolPayload)
   async schoolCreate(
     @Args('registrationID', { type: () => Int })
-    registrationID: tbl_registration['id'],
+    registrationID: tbl_registration['id']
   ) {
-    return this.schoolService.create(registrationID)
+    return await this.schoolService.create(registrationID)
   }
 
   @Mutation(() => SchoolPayload)
@@ -53,7 +53,7 @@ export class SchoolResolver {
     @Args('schoolInput', { type: () => SchoolInput })
     schoolInput: SchoolInput
   ) {
-    return this.schoolService.update(schoolID, schoolInput)
+    return await this.schoolService.update(schoolID, schoolInput)
   }
 
   @Mutation(() => SchoolPayload)
@@ -61,7 +61,7 @@ export class SchoolResolver {
     @Args('schoolID', { type: () => Int })
     schoolID: tbl_reg_school['id']
   ) {
-    return this.schoolService.remove(schoolID)
+    return await this.schoolService.remove(schoolID)
   }
 
   /** Field Resolver */
@@ -70,6 +70,6 @@ export class SchoolResolver {
   async schoolGroups(@Parent() school: tbl_reg_school) {
     const { id }: { id: School['id'] } = school
     const schoolID = id
-    return this.schoolGroupService.findAll(schoolID)
+    return await this.schoolGroupService.findAll(schoolID)
   }
 }

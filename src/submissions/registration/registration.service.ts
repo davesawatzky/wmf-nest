@@ -27,13 +27,13 @@ export class RegistrationService {
   }
 
   async findAll(userID?: tbl_user['id'], performerType?: PerformerType) {
-    return this.prisma.tbl_registration.findMany({
+    return await this.prisma.tbl_registration.findMany({
       where: { userID, performerType },
     })
   }
 
   async findOne(id: tbl_registration['id']) {
-    return this.prisma.tbl_registration.findUnique({
+    return await this.prisma.tbl_registration.findUnique({
       where: { id },
     })
   }
@@ -44,19 +44,19 @@ export class RegistrationService {
   ) {
     return {
       userErrors: [],
-      registration: this.prisma.tbl_registration.update({
+      registration: await this.prisma.tbl_registration.update({
         where: { id: registrationID },
         data: { ...registrationInput },
-      })
+      }),
     }
   }
 
   async remove(id: tbl_registration['id']) {
     return {
       userErrors: [],
-      registration: this.prisma.tbl_registration.delete({
+      registration: await this.prisma.tbl_registration.delete({
         where: { id },
-      })
+      }),
     }
   }
 }

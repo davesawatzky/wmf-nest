@@ -7,48 +7,46 @@ import { PerformerInput } from './dto/performer.input'
 export class PerformerService {
   constructor(private prisma: PrismaService) {}
 
-  create(
-    registrationID: tbl_registration['id'],
-  ) {
+  async create(registrationID: tbl_registration['id']) {
     return {
       userErrors: [],
-      performer: this.prisma.tbl_reg_performer.create({
+      performer: await this.prisma.tbl_reg_performer.create({
         data: { regID: registrationID },
       }),
     }
   }
 
-  findAll(registrationID?: tbl_registration['id']) {
-    return this.prisma.tbl_reg_performer.findMany({
+  async findAll(registrationID?: tbl_registration['id']) {
+    return await this.prisma.tbl_reg_performer.findMany({
       where: { regID: registrationID },
     })
   }
 
-  findOne(performerID: tbl_reg_performer['id']) {
-    return this.prisma.tbl_reg_performer.findUnique({
+  async findOne(performerID: tbl_reg_performer['id']) {
+    return await this.prisma.tbl_reg_performer.findUnique({
       where: { id: performerID },
     })
   }
 
-  update(
+  async update(
     performerID: tbl_reg_performer['id'],
     performerInput: Partial<PerformerInput>
   ) {
     return {
       userErrors: [],
-      performer: this.prisma.tbl_reg_performer.update({
+      performer: await this.prisma.tbl_reg_performer.update({
         where: { id: performerID },
         data: { ...performerInput },
-      })
+      }),
     }
   }
 
-  remove(performerID: tbl_reg_performer['id']) {
+  async remove(performerID: tbl_reg_performer['id']) {
     return {
       userErrors: [],
-      performer: this.prisma.tbl_reg_performer.delete({
+      performer: await this.prisma.tbl_reg_performer.delete({
         where: { id: performerID },
-      })
+      }),
     }
   }
 }

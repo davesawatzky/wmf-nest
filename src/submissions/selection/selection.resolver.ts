@@ -5,6 +5,7 @@ import { SelectionInput } from './dto/selection.input'
 import { tbl_reg_classes } from '@prisma/client'
 import { UseGuards } from '@nestjs/common/decorators'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
+import { RegisteredClass } from '../registered-class/entities/registered-class.entity'
 
 @Resolver(() => Selection)
 @UseGuards(JwtAuthGuard)
@@ -14,8 +15,11 @@ export class SelectionResolver {
   /** Queries */
 
   @Query(() => [Selection])
-  async selections() {
-    return this.selectionService.findAll()
+  async selections(
+    @Args('registeredClassID', { type: () => Int, nullable: true })
+    registeredClassID: RegisteredClass['id']
+  ) {
+    return await this.selectionService.findAll(registeredClassID)
   }
 
   @Query(() => Selection)
@@ -23,7 +27,7 @@ export class SelectionResolver {
     @Args('selectionID', { type: () => Int })
     selectionID: Selection['id']
   ) {
-    return this.selectionService.findOne(selectionID)
+    return await this.selectionService.findOne(selectionID)
   }
 
   /** Mutations */
@@ -31,11 +35,9 @@ export class SelectionResolver {
   @Mutation(() => SelectionPayload)
   async selectionCreate(
     @Args('registeredClassID', { type: () => Int })
-    registeredClassID: tbl_reg_classes['id'],
-    // @Args('selectionInput', { type: () => SelectionInput })
-    // selectionInput: Partial<SelectionInput>
+    registeredClassID: tbl_reg_classes['id']
   ) {
-    return this.selectionService.create(registeredClassID)
+    return await this.selectionService.create(registeredClassID)
   }
 
   @Mutation(() => SelectionPayload)
@@ -45,7 +47,7 @@ export class SelectionResolver {
     @Args('selectionInput', { type: () => SelectionInput })
     selectionInput: Partial<SelectionInput>
   ) {
-    return this.selectionService.update(selectionID, selectionInput)
+    return await this.selectionService.update(selectionID, selectionInput)
   }
 
   @Mutation(() => SelectionPayload)
@@ -53,6 +55,6 @@ export class SelectionResolver {
     @Args('selectionID', { type: () => Int })
     selectionID: Selection['id']
   ) {
-    return this.selectionService.remove(selectionID)
+    return await this.selectionService.remove(selectionID)
   }
 }

@@ -7,50 +7,48 @@ import { PrismaService } from 'src/prisma/prisma.service'
 export class SelectionService {
   constructor(private prisma: PrismaService) {}
 
-  create(
-    registeredClassID: tbl_reg_classes['id'],
-  ) {
+  async create(registeredClassID: tbl_reg_classes['id']) {
     return {
       userErrors: [],
-      selection: this.prisma.tbl_reg_selection.create({
+      selection: await this.prisma.tbl_reg_selection.create({
         data: {
           classpickID: registeredClassID,
         },
-      })
+      }),
     }
   }
 
-  findAll(registeredClassID?: tbl_reg_classes['id']) {
-    return this.prisma.tbl_reg_selection.findMany({
+  async findAll(registeredClassID?: tbl_reg_classes['id']) {
+    return await this.prisma.tbl_reg_selection.findMany({
       where: { classpickID: registeredClassID },
     })
   }
 
-  findOne(selectionID: tbl_reg_selection['id']) {
-    return this.prisma.tbl_reg_selection.findUnique({
+  async findOne(selectionID: tbl_reg_selection['id']) {
+    return await this.prisma.tbl_reg_selection.findUnique({
       where: { id: selectionID },
     })
   }
 
-  update(
+  async update(
     selectionID: tbl_reg_selection['id'],
     selectionInput: Partial<SelectionInput>
   ) {
     return {
       userErrors: [],
-      selection: this.prisma.tbl_reg_selection.update({
+      selection: await this.prisma.tbl_reg_selection.update({
         where: { id: selectionID },
         data: { ...selectionInput },
-      })
+      }),
     }
   }
 
-  remove(selectionID: tbl_reg_selection['id']) {
+  async remove(selectionID: tbl_reg_selection['id']) {
     return {
       userErrors: [],
-      selection: this.prisma.tbl_reg_selection.delete({
+      selection: await this.prisma.tbl_reg_selection.delete({
         where: { id: selectionID },
-      })
+      }),
     }
   }
 }

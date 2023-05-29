@@ -49,13 +49,7 @@ export class AuthService {
     }
   }
 
-  async signin(
-    user: Partial<User>
-  ): Promise<{
-    user: Partial<User>
-    diatonicToken: string
-    userErrors: UserError[]
-  }> {
+  async signin(user: Partial<User>): Promise<AuthPayload> {
     const payload = {
       username: user.email,
       sub: user.id,
@@ -82,7 +76,7 @@ export class AuthService {
     return null
   }
 
-  async findAuthenticatedUser(id): Promise<User> {
+  async findAuthenticatedUser(id: User['id']): Promise<User> {
     const user = await this.prisma.tbl_user.findUnique({
       where: { id },
     })

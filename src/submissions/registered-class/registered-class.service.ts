@@ -8,42 +8,23 @@ import { PrismaService } from 'src/prisma/prisma.service'
 export class RegisteredClassService {
   constructor(private prisma: PrismaService) {}
 
-  async create(
-    registrationID: Registration['id'],
-    // registeredClassInput: RegisteredClassInput
-  ) {
-    // const classExists = await this.prisma.tbl_reg_classes.count({
-    //   where: {
-    //     regID: registrationID,
-    //     classNumber: registeredClassInput.classNumber,
-    //   },
-    // })
-    // if (classExists > 0 && registeredClassInput.classNumber) {
-    //   return {
-    //     userErrors: [
-    //       {
-    //         message: `Registration form already includes class ${registeredClassInput.classNumber}.  Cannot add duplicate class.`,
-    //       },
-    //     ],
-    //     registeredClass: null,
-    //   }
-    // }
+  async create(registrationID: Registration['id']) {
     return {
       userErrors: [],
-      registeredClass: this.prisma.tbl_reg_classes.create({
-        data: { regID: registrationID  },
+      registeredClass: await this.prisma.tbl_reg_classes.create({
+        data: { regID: registrationID },
       }),
     }
   }
 
   async findAll(registrationID?: tbl_registration['id']) {
-    return this.prisma.tbl_reg_classes.findMany({
+    return await this.prisma.tbl_reg_classes.findMany({
       where: { regID: registrationID },
     })
   }
 
   async findOne(registeredClassID: tbl_reg_classes['id']) {
-    return this.prisma.tbl_reg_classes.findUnique({
+    return await this.prisma.tbl_reg_classes.findUnique({
       where: { id: registeredClassID },
     })
   }
@@ -70,10 +51,10 @@ export class RegisteredClassService {
     }
     return {
       userErrors: [],
-      registeredClass: this.prisma.tbl_reg_classes.update({
+      registeredClass: await this.prisma.tbl_reg_classes.update({
         where: { id: registeredClassID },
         data: { ...registeredClassInput },
-      })
+      }),
     }
   }
 
@@ -96,9 +77,9 @@ export class RegisteredClassService {
     }
     return {
       userErrors: [],
-      registeredClass: this.prisma.tbl_reg_classes.delete({
+      registeredClass: await this.prisma.tbl_reg_classes.delete({
         where: { id: registeredClassID },
-      })
+      }),
     }
   }
 }

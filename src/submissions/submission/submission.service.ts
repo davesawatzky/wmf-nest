@@ -16,19 +16,18 @@ export class SubmissionService {
   private requiredField = []
 
   async submissions(performerType?: PerformerType) {
-    return this.prisma.tbl_registration.findMany({
+    return await this.prisma.tbl_registration.findMany({
       where: {
         performerType,
       },
     })
   }
 
-  async submit(id: tbl_registration['id']): Promise<SubmissionPayload> {
+  async submit(id: tbl_registration['id']) {
     this.requiredField = await this.prisma.tbl_field_config.findMany()
 
-    const performerType = await (
-      await this.registrationService.findOne(id)
-    ).performerType
+    const performerType = (await this.registrationService.findOne(id))
+      .performerType
 
     let verified = true
     let registration = {}

@@ -33,23 +33,24 @@ export class LevelResolver {
 
   @Query(() => [Level])
   async levels(
-    @Args('categoryID', { type: () => Int, nullable: true }) categoryID: tbl_category['id'],
+    @Args('categoryID', { type: () => Int, nullable: true })
+    categoryID: tbl_category['id'],
     @Args('subdisciplineID', { type: () => Int, nullable: true })
     subdisciplineID: tbl_subdiscipline['id']
   ) {
-    return this.levelService.findAll(categoryID, subdisciplineID)
+    return await this.levelService.findAll(categoryID, subdisciplineID)
   }
 
   @Query(() => Level)
   async level(@Args('id', { type: () => Int }) id: Level['id']) {
-    return this.levelService.findOne(id)
+    return await this.levelService.findOne(id)
   }
 
   /** Mutations */
 
   @Mutation(() => LevelPayload)
   async levelCreate(@Args('levelInput') levelInput: LevelInput) {
-    return this.levelService.create(levelInput)
+    return await this.levelService.create(levelInput)
   }
 
   @Mutation(() => LevelPayload)
@@ -57,20 +58,20 @@ export class LevelResolver {
     @Args('levelID', { type: () => Int }) levelID: Level['id'],
     @Args('levelInput') levelInput: LevelInput
   ) {
-    return this.levelService.update(levelID, levelInput)
+    return await this.levelService.update(levelID, levelInput)
   }
 
   @Mutation(() => LevelPayload)
   async levelDelete(
     @Args('levelID', { type: () => Int }) levelID: Level['id']
   ) {
-    return this.levelService.remove(levelID)
+    return await this.levelService.remove(levelID)
   }
 
   /** Field Resolver */
 
   @ResolveField()
-  classes(
+  async classes(
     @Parent() { id }: tbl_level,
     @Args('performerType') performerType: PerformerType,
     @Args('subdisciplineID', { type: () => Int })
@@ -78,7 +79,7 @@ export class LevelResolver {
     @Args('categoryID', { type: () => Int }) categoryID: tbl_category['id']
   ) {
     const levelID = id
-    return this.festivalClassService.findAll(
+    return await this.festivalClassService.findAll(
       performerType,
       subdisciplineID,
       levelID,

@@ -16,12 +16,15 @@ export class GroupResolver {
 
   @Query(() => [Group])
   async groups() {
-    return this.groupService.findAll()
+    return await this.groupService.findAll()
   }
 
   @Query(() => Group)
-  async group(@Args('registrationID', { type: () => Int }) registrationID: tbl_registration['id']) {
-    return this.groupService.findOne(registrationID)
+  async group(
+    @Args('registrationID', { type: () => Int })
+    registrationID: tbl_registration['id']
+  ) {
+    return await this.groupService.findOne(registrationID)
   }
 
   /** Mutations */
@@ -29,9 +32,9 @@ export class GroupResolver {
   @Mutation(() => GroupPayload)
   async groupCreate(
     @Args('registrationID', { type: () => Int })
-    registrationID: tbl_registration['id'],
+    registrationID: tbl_registration['id']
   ) {
-    return this.groupService.create(registrationID)
+    return await this.groupService.create(registrationID)
   }
 
   @Mutation(() => GroupPayload)
@@ -40,13 +43,13 @@ export class GroupResolver {
     @Args('groupInput', { type: () => GroupInput })
     groupInput: Partial<GroupInput>
   ) {
-    return this.groupService.update(groupID, groupInput)
+    return await this.groupService.update(groupID, groupInput)
   }
 
   @Mutation(() => GroupPayload)
   async groupDelete(
     @Args('groupID', { type: () => Int }) groupID: Group['id']
   ) {
-    return this.groupService.remove(groupID)
+    return await this.groupService.remove(groupID)
   }
 }

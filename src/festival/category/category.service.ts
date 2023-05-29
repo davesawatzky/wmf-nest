@@ -13,7 +13,7 @@ export class CategoryService {
       userErrors: [],
       category: await this.prisma.tbl_category.create({
         data: { ...categoryInput },
-      })
+      }),
     }
   }
 
@@ -21,28 +21,22 @@ export class CategoryService {
     levelID?: tbl_level['id'],
     subdisciplineID?: tbl_subdiscipline['id']
   ) {
-    return {
-      userErrors: [],
-      categories: await this.prisma.tbl_category.findMany({
-        where: {
-          tbl_classlist: {
-            some: {
-              levelID,
-              subdisciplineID,
-            },
+    return await this.prisma.tbl_category.findMany({
+      where: {
+        tbl_classlist: {
+          some: {
+            levelID,
+            subdisciplineID,
           },
         },
-      })
-    }
+      },
+    })
   }
 
   async findOne(id: tbl_category['id']) {
-    return {
-      userErrors: [],
-      category: await this.prisma.tbl_category.findUnique({
-        where: { id },
-      })
-    }
+    return await this.prisma.tbl_category.findUnique({
+      where: { id },
+    })
   }
 
   // async findClasses(categoryID: tbl_category['id']) {
@@ -60,16 +54,16 @@ export class CategoryService {
       category: await this.prisma.tbl_category.update({
         where: { id },
         data: { ...categoryInput },
-      })
+      }),
     }
   }
 
   async remove(id: tbl_category['id']) {
     return {
       userErrors: [],
-        category: await this.prisma.tbl_category.delete({
+      category: await this.prisma.tbl_category.delete({
         where: { id },
-      })
+      }),
     }
   }
 }

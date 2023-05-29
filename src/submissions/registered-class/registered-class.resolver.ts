@@ -28,10 +28,10 @@ export class RegisteredClassResolver {
 
   @Query(() => [RegisteredClass])
   async registeredClasses(
-    @Args('registrationID', {type: () => Int })
+    @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id']
   ) {
-    return this.registeredClassService.findAll(registrationID)
+    return await this.registeredClassService.findAll(registrationID)
   }
 
   @Query(() => RegisteredClass)
@@ -39,7 +39,7 @@ export class RegisteredClassResolver {
     @Args('registeredClassID', { type: () => Int })
     registeredClassID: RegisteredClass['id']
   ) {
-    return this.registeredClassService.findOne(registeredClassID)
+    return await this.registeredClassService.findOne(registeredClassID)
   }
 
   /** Mutations */
@@ -47,9 +47,9 @@ export class RegisteredClassResolver {
   @Mutation(() => RegisteredClassPayload)
   async registeredClassCreate(
     @Args('registrationID', { type: () => Int })
-    registrationID: tbl_registration['id'],
+    registrationID: tbl_registration['id']
   ) {
-    return this.registeredClassService.create(registrationID)
+    return await this.registeredClassService.create(registrationID)
   }
 
   @Mutation(() => RegisteredClassPayload)
@@ -59,7 +59,7 @@ export class RegisteredClassResolver {
     @Args('registeredClassInput', { type: () => RegisteredClassInput })
     registeredClassInput: RegisteredClassInput
   ) {
-    return this.registeredClassService.update(
+    return await this.registeredClassService.update(
       registeredClassID,
       registeredClassInput
     )
@@ -70,7 +70,7 @@ export class RegisteredClassResolver {
     @Args('registeredClassID', { type: () => Int })
     registeredClassID: RegisteredClass['id']
   ) {
-    return this.registeredClassService.remove(registeredClassID)
+    return await this.registeredClassService.remove(registeredClassID)
   }
 
   /** Field Resolvers */
@@ -79,6 +79,6 @@ export class RegisteredClassResolver {
   async selections(@Parent() registeredClass: tbl_reg_classes) {
     const { id }: { id: RegisteredClass['id'] } = registeredClass
     const registeredClassID = id
-    return this.selectionService.findAll(registeredClassID)
+    return await this.selectionService.findAll(registeredClassID)
   }
 }

@@ -16,7 +16,7 @@ export class SubmissionResolver {
     @Args('performerType', { type: () => PerformerType })
     performerType?: Registration['performerType']
   ) {
-    return this.submissionService.submissions(performerType)
+    return await this.submissionService.submissions(performerType)
   }
 
   @Mutation(() => SubmissionPayload)
@@ -24,6 +24,6 @@ export class SubmissionResolver {
     @Args('registrationID', { type: () => Int })
     registrationID: Registration['id']
   ) {
-    return this.submissionService.submit(registrationID)
+    return await this.submissionService.submit(registrationID)
   }
 }

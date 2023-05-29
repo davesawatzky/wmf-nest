@@ -19,28 +19,22 @@ export class LevelService {
     categoryID?: tbl_category['id'],
     subdisciplineID?: tbl_subdiscipline['id']
   ) {
-    return {
-      userErrors: [],
-      levels: await this.prisma.tbl_level.findMany({
-        where: {
-          tbl_classlist: {
-            some: {
-              categoryID,
-              subdisciplineID,
-            },
+    return await this.prisma.tbl_level.findMany({
+      where: {
+        tbl_classlist: {
+          some: {
+            categoryID,
+            subdisciplineID,
           },
         },
-      })
-    }
+      },
+    })
   }
 
   async findOne(id: tbl_level['id']) {
-    return {
-      userErrors: [],
-      level: await this.prisma.tbl_level.findUnique({
-        where: { id },
-      })
-    }
+    return await this.prisma.tbl_level.findUnique({
+      where: { id },
+    })
   }
 
   // async findClasses(levelID: tbl_level['id']) {
@@ -58,7 +52,7 @@ export class LevelService {
       level: await this.prisma.tbl_level.update({
         where: { id },
         data: { ...levelInput },
-      })
+      }),
     }
   }
 
@@ -67,7 +61,7 @@ export class LevelService {
       userErrors: [],
       level: await this.prisma.tbl_level.delete({
         where: { id },
-      })
+      }),
     }
   }
 }

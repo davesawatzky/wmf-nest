@@ -29,23 +29,24 @@ export class CategoryResolver {
 
   @Query(() => [Category])
   async categories(
-    @Args('levelID', { type: () => Int, nullable: true }) levelID: tbl_level['id'],
+    @Args('levelID', { type: () => Int, nullable: true })
+    levelID: tbl_level['id'],
     @Args('subdisciplineID', { type: () => Int, nullable: true })
     subdisciplineID: tbl_subdiscipline['id']
   ) {
-    return this.categoryService.findAll(levelID, subdisciplineID)
+    return await this.categoryService.findAll(levelID, subdisciplineID)
   }
 
   @Query(() => Category)
   async category(@Args('id', { type: () => Int }) id: Category['id']) {
-    return this.categoryService.findOne(id)
+    return await this.categoryService.findOne(id)
   }
 
   /** Mutations */
 
   @Mutation(() => CategoryPayload)
   async categoryCreate(@Args('categoryInput') categoryInput: CategoryInput) {
-    return this.categoryService.create(categoryInput)
+    return await this.categoryService.create(categoryInput)
   }
 
   @Mutation(() => CategoryPayload)
@@ -54,12 +55,12 @@ export class CategoryResolver {
     categoryID: Category['id'],
     @Args('categoryInput') categoryInput: CategoryInput
   ) {
-    return this.categoryService.update(categoryID, categoryInput)
+    return await this.categoryService.update(categoryID, categoryInput)
   }
 
   @Mutation(() => CategoryPayload)
   async categoryDelete(@Args('id', { type: () => Int }) id: Category['id']) {
-    return this.categoryService.remove(id)
+    return await this.categoryService.remove(id)
   }
 
   /** Field Resolvers */
@@ -72,7 +73,7 @@ export class CategoryResolver {
     @Args('levelID', { type: () => Int }) levelID: tbl_level['id']
   ) {
     const categoryID = id
-    return this.festivalClassService.findAll(
+    return await this.festivalClassService.findAll(
       performerType,
       subdisciplineID,
       levelID,

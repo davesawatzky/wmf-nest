@@ -26,7 +26,7 @@ export class SubdisciplineService {
           disciplineID: disciplineID,
           ...subdisciplineInput,
         },
-      })
+      }),
     }
   }
 
@@ -34,33 +34,24 @@ export class SubdisciplineService {
     disciplineID?: tbl_discipline['id'],
     performerType?: PerformerType
   ) {
-    return {
-      userErrors: [],
-      subdisciplines: await this.prisma.tbl_subdiscipline.findMany({
-        where: {
-          performerType,
-          disciplineID,
-        },
-      })
-    }
+    return await this.prisma.tbl_subdiscipline.findMany({
+      where: {
+        performerType,
+        disciplineID,
+      },
+    })
   }
 
   async findOne(id: tbl_subdiscipline['id']) {
-    return {
-      userErrors: [],
-      subdiscipline: await this.prisma.tbl_subdiscipline.findUnique({
-        where: { id },
-      })
-    }
+    return await this.prisma.tbl_subdiscipline.findUnique({
+      where: { id },
+    })
   }
 
   async findSubByName(name: tbl_subdiscipline['name']) {
-    return {
-      userErrors: [],
-      subdiscipline: await this.prisma.tbl_subdiscipline.findMany({
-        where: { name },
-      })
-    }
+    return await this.prisma.tbl_subdiscipline.findMany({
+      where: { name },
+    })
   }
 
   // async findClasses(subdisciplineID: tbl_subdiscipline['id']) {
@@ -78,7 +69,7 @@ export class SubdisciplineService {
       subdiscipline: await this.prisma.tbl_subdiscipline.update({
         where: { id },
         data: { ...subdisciplineInput },
-      })
+      }),
     }
   }
 
@@ -87,7 +78,7 @@ export class SubdisciplineService {
       userErrors: [],
       subdiscipline: await this.prisma.tbl_subdiscipline.delete({
         where: { id },
-      })
+      }),
     }
   }
 }

@@ -12,39 +12,30 @@ export class TrophyService {
       userErrors: [],
       trophy: await this.prisma.tbl_trophy.create({
         data: { ...trophyInput },
-      })
+      }),
     }
   }
 
   async findAll() {
-    return {
-      userErrors: [],
-      trophies: await this.prisma.tbl_trophy.findMany()
-    }
+    return await this.prisma.tbl_trophy.findMany()
   }
 
   async findTrophyClasses(trophyID: tbl_trophy['id']) {
-    return {
-      userErrors: [],
-      trophyClasses: this.prisma.tbl_classlist.findMany({
-        where: {
-          tbl_class_trophy: {
-            some: {
-              trophyID: trophyID,
-            },
+    return await this.prisma.tbl_classlist.findMany({
+      where: {
+        tbl_class_trophy: {
+          some: {
+            trophyID: trophyID,
           },
         },
-      })
-    }
+      },
+    })
   }
 
   async findOne(id: tbl_trophy['id']) {
-    return {
-      userErrors: [],
-      trophy: await this.prisma.tbl_trophy.findUnique({
-        where: { id },
-      })
-    }
+    return await this.prisma.tbl_trophy.findUnique({
+      where: { id },
+    })
   }
 
   async update(id: tbl_trophy['id'], trophyInput: TrophyInput) {
@@ -53,7 +44,7 @@ export class TrophyService {
       trophy: await this.prisma.tbl_trophy.update({
         where: { id },
         data: { ...trophyInput },
-      })
+      }),
     }
   }
 
@@ -62,7 +53,7 @@ export class TrophyService {
       userErrors: [],
       trophy: await this.prisma.tbl_trophy.delete({
         where: { id },
-      })
+      }),
     }
   }
 }

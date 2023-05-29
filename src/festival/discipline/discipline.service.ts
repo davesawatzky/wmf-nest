@@ -13,36 +13,30 @@ export class DisciplineService {
       userErrors: [],
       discipline: await this.prisma.tbl_discipline.create({
         data: { ...disciplineInput },
-      })
+      }),
     }
   }
 
   async findAll(performerType?: PerformerType) {
-    return { 
-      userErrors: [],
-      disciplines: await this.prisma.tbl_discipline.findMany({
-        where: {
-          tbl_subdiscipline: {
-            some: {
-              tbl_classlist: {
-                some: {
-                  performerType,
-                },
+    return await this.prisma.tbl_discipline.findMany({
+      where: {
+        tbl_subdiscipline: {
+          some: {
+            tbl_classlist: {
+              some: {
+                performerType,
               },
             },
           },
         },
-      })
-    }
+      },
+    })
   }
 
   async findOne(id: tbl_discipline['id']) {
-    return {
-      userErrors: [],
-      disciplines: await this.prisma.tbl_discipline.findUnique({
-        where: { id },
-      })
-    }
+    return await this.prisma.tbl_discipline.findUnique({
+      where: { id },
+    })
   }
 
   async update(
@@ -54,7 +48,7 @@ export class DisciplineService {
       discipline: await this.prisma.tbl_discipline.update({
         where: { id },
         data: { ...DisciplineInput },
-      })
+      }),
     }
   }
 
@@ -63,7 +57,7 @@ export class DisciplineService {
       userErrors: [],
       discipline: await this.prisma.tbl_discipline.delete({
         where: { id },
-      })
+      }),
     }
   }
 }
