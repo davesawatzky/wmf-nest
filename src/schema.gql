@@ -470,7 +470,7 @@ type SelectionPayload {
 }
 
 type Subdiscipline {
-  description: String!
+  description: String
   discipline: Discipline
   festivalClasses(categoryID: Int, levelID: Int, performerType: PerformerType): [FestivalClass!]
   id: Int!

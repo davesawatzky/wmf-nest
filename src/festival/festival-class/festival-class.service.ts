@@ -61,16 +61,13 @@ export class FestivalClassService {
 
   async search(festivalClassSearch: FestivalClassSearchArgs) {
     const { subdisciplineID, levelID, categoryID } = festivalClassSearch
-    return {
-      userErrors: [],
-      festivalClasses: await this.prisma.tbl_classlist.findMany({
-        where: {
-          subdisciplineID,
-          levelID,
-          categoryID,
-        },
-      }),
-    }
+    return await this.prisma.tbl_classlist.findMany({
+      where: {
+        subdisciplineID,
+        levelID,
+        categoryID,
+      },
+    })
   }
 
   async findById(id: tbl_classlist['id']) {

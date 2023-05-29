@@ -16,7 +16,7 @@ export class Subdiscipline {
   @Field(() => Int)
   id: number
   name: string
-  description: string
+  description?: string
   maxPerformers: number
   minPerformers: number
 
