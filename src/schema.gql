@@ -205,7 +205,7 @@ type Mutation {
   performerCreate(registrationID: Int!): PerformerPayload!
   performerDelete(performerID: Int!): PerformerPayload!
   performerUpdate(performerID: Int!, performerInput: PerformerInput!): PerformerPayload!
-  registeredClassCreate(registrationID: Int!): RegisteredClassPayload!
+  registeredClassCreate(registeredClass: RegisteredClassInput!, registrationID: Int!): RegisteredClassPayload!
   registeredClassDelete(registeredClassID: Int!): RegisteredClassPayload!
   registeredClassUpdate(registeredClassID: Int!, registeredClassInput: RegisteredClassInput!): RegisteredClassPayload!
   registrationCreate(label: String!, performerType: PerformerType!): RegistrationPayload!
@@ -257,7 +257,7 @@ type Performer {
 input PerformerInput {
   age: Int
   apartment: String
-  city: String!
+  city: String
   email: String
   firstName: String
   instrument: String
@@ -266,7 +266,7 @@ input PerformerInput {
   otherClasses: String
   phone: String
   postalCode: String
-  province: String!
+  province: String
   streetName: String
   streetNumber: String
 }
@@ -301,6 +301,7 @@ type Query {
   instruments: [Instrument!]!
   level(id: Int!): Level!
   levels(categoryID: Int, subdisciplineID: Int): [Level!]!
+  logout: String!
   performer(performerID: Int!): Performer!
   performers(registrationID: Int!): [Performer!]!
   registeredClass(registeredClassID: Int!): RegisteredClass!
@@ -319,6 +320,7 @@ type Query {
   submissions(performerType: PerformerType!): [Registration!]!
   teacher(teacherID: Int!): Teacher!
   teachers: [Teacher!]!
+  tokenCheck: Boolean!
   trophies: [Trophy!]!
   trophy(id: Int!): Trophy!
   user(userID: Int!): User!
@@ -509,7 +511,7 @@ type SubmissionPayload {
 
 type Teacher {
   apartment: String
-  city: String!
+  city: String
   email: String
   firstName: String
   id: Int!
@@ -517,21 +519,21 @@ type Teacher {
   phone: String
   postalCode: String
   prefix: String
-  province: String!
+  province: String
   streetName: String
   streetNumber: String
 }
 
 input TeacherInput {
   apartment: String
-  city: String!
+  city: String
   email: String
   firstName: String
   lastName: String
   phone: String
   postalCode: String
   prefix: String
-  province: String!
+  province: String
   streetName: String
   streetNumber: String
 }

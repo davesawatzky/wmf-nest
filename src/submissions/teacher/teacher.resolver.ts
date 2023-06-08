@@ -5,6 +5,7 @@ import { TeacherInput } from './dto/teacher.input'
 import { Teacher, TeacherPayload } from './entities/teacher.entity'
 import { UseGuards } from '@nestjs/common/decorators'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
+import { Registration } from '../registration/entities/registration.entity'
 
 @Resolver(() => Teacher)
 @UseGuards(JwtAuthGuard)
@@ -20,7 +21,8 @@ export class TeacherResolver {
 
   @Query(() => Teacher)
   async teacher(
-    @Args('teacherID', { type: () => Int }) teacherID: Teacher['id']
+    @Args('teacherID', { type: () => Int })
+    teacherID: Teacher['id']
   ) {
     return await this.teacherService.findOne(teacherID)
   }

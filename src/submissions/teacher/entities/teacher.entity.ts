@@ -11,8 +11,8 @@ export class Teacher {
   apartment?: string
   streetNumber?: string
   streetName?: string
-  city: string
-  province: string
+  city?: string
+  province?: string
   postalCode?: string
   phone?: string
   email?: string

@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args, Context } from '@nestjs/graphql'
+import { Resolver, Mutation, Args, Context, Query } from '@nestjs/graphql'
 import { Response } from 'express'
 import { AuthService } from './auth.service'
 import { AuthPayload } from './dto/auth.entity'
@@ -39,5 +39,18 @@ export class AuthResolver {
       maxAge: 1000 * 60 * 60 * 1, // 1 hour
     })
     return { userErrors, diatonicToken, user }
+  }
+
+  @Query(() => Boolean)
+  @UseGuards(JwtAuthGuard)
+  async tokenCheck() {
+    return true
+  }
+
+  @Query(() => String)
+  @UseGuards(JwtAuthGuard)
+  async logout(@Context('res') res: Response) {
+    res.clearCookie('diatonicToken')
+    return 'signedOut'
   }
 }

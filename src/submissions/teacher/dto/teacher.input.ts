@@ -9,8 +9,8 @@ export class TeacherInput {
   apartment?: string
   streetNumber?: string
   streetName?: string
-  city: string
-  province: string
+  city?: string
+  province?: string
 
   @IsPostalCode('CA')
   postalCode?: string

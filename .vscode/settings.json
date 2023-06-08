@@ -1,6 +1,18 @@
 {
+  "prettier.enable": true,
   "prettier.requireConfig": true,
   "material-icon-theme.activeIconPack": "nest",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": false
+  },
+  "eslint.format.enable": false,
+  "eslint.codeActionsOnSave.mode": "problems",
+  "eslint.enable": true,
+  "eslint.lintTask.enable": false,
+  "eslint.quiet": true,
+  "eslint.packageManager": "pnpm",
+  "html.format.preserveNewLines": true,
 }

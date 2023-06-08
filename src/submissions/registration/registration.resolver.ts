@@ -134,7 +134,7 @@ export class RegistrationResolver {
   async teacher(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
-    return await this.teacherService.findOne(registrationID)
+    return await this.teacherService.findOne(null, registrationID)
   }
   @ResolveField()
   async school(@Parent() registration: tbl_registration) {
