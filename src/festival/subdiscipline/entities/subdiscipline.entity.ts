@@ -4,8 +4,8 @@ import { Type, Transform } from 'class-transformer'
 import { Decimal } from '@prisma/client/runtime/library'
 import { Discipline } from '../../discipline/entities/discipline.entity'
 import { FestivalClass } from '../../festival-class/entities/festival-class.entity'
-import { Level } from 'src/festival/level/entities/level.entity'
-import { PerformerType, UserError } from 'src/common.entity'
+import { Level } from '../../level/entities/level.entity'
+import { PerformerType, UserError } from '../../../common.entity'
 
 registerEnumType(PerformerType, {
   name: 'PerformerType',

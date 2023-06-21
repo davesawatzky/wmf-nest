@@ -5,7 +5,7 @@ import { CommunityInput } from './dto/community.input'
 import { Community } from './entities/community.entity'
 import { tbl_registration } from '@prisma/client'
 import { UseGuards } from '@nestjs/common'
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 
 @Resolver(() => Community)
 @UseGuards(JwtAuthGuard)

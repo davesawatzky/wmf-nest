@@ -8,7 +8,7 @@ import {
   Int,
 } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 import { TrophyService } from './trophy.service'
 import { Trophy, TrophyPayload } from './entities/trophy.entity'
 import { TrophyInput } from './dto/trophy.input'

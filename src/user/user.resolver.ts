@@ -13,12 +13,12 @@ import { User, UserPayload } from './entities/user.entity'
 import { UserInput } from './dto/user.input'
 import { RegistrationService } from '../submissions/registration/registration.service'
 import { ForbiddenException, UseGuards, UsePipes } from '@nestjs/common'
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
-import { TrimPipe } from 'src/pipes/trim.pipe'
-import { AbilityFactory, Action } from 'src/ability/ability.factory'
+import { JwtAuthGuard } from '../auth/jwt-auth.guard'
+import { TrimPipe } from '../pipes/trim.pipe'
+import { AbilityFactory, Action } from '../ability/ability.factory'
 import { ForbiddenError } from '@casl/ability'
-import { CheckAbilities } from 'src/ability/abilities.decorator'
-import { AbilitiesGuard } from 'src/ability/abilities.guard'
+import { CheckAbilities } from '../ability/abilities.decorator'
+import { AbilitiesGuard } from '../ability/abilities.guard'
 
 @Resolver(() => User)
 @UseGuards(JwtAuthGuard)

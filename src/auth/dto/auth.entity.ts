@@ -1,7 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql'
-import { UserError } from 'src/common.entity'
+import { UserError } from '../../common.entity'
 import { IsJWT } from 'class-validator'
-import { User } from 'src/user/entities/user.entity'
+import { User } from '../../user/entities/user.entity'
 
 @ObjectType()
 export class AuthPayload {

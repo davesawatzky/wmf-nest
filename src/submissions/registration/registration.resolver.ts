@@ -12,7 +12,7 @@ import { RegistrationService } from './registration.service'
 import { tbl_registration, tbl_user } from '@prisma/client'
 import { PerformerService } from '../performer/performer.service'
 import { RegisteredClassService } from '../registered-class/registered-class.service'
-import { UserService } from 'src/user/user.service'
+import { UserService } from '../../user/user.service'
 import { GroupService } from '../group/group.service'
 import { TeacherService } from '../teacher/teacher.service'
 import { CommunityService } from '../community/community.service'
@@ -22,10 +22,10 @@ import {
   RegistrationPayload,
 } from './entities/registration.entity'
 import { RegistrationInput } from './dto/registration.input'
-import { PerformerType } from 'src/common.entity'
+import { PerformerType } from '../../common.entity'
 import { UseGuards } from '@nestjs/common/decorators'
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
-import { User } from 'src/user/entities/user.entity'
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
+import { User } from '../../user/entities/user.entity'
 
 @Resolver(() => Registration)
 @UseGuards(JwtAuthGuard)

@@ -8,7 +8,7 @@ import {
   Int,
 } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 import { FestivalClassService } from './festival-class.service'
 import { FestivalClassInput } from './dto/festival-class.input'
 import { FestivalClassSearchArgs } from './dto/festival-class.input'
@@ -17,7 +17,7 @@ import {
   FestivalClassPayload,
 } from './entities/festival-class.entity'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { PerformerType } from 'src/common.entity'
+import { PerformerType } from '../../common.entity'
 import { SubdisciplineService } from '../subdiscipline/subdiscipline.service'
 import { LevelService } from '../level/level.service'
 import { CategoryService } from '../category/category.service'

@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 import { Instrument, InstrumentPayload } from './entities/instrument.entity'
 import { InstrumentInput } from './dto/instrument.input'
 import { InstrumentService } from './instrument.service'

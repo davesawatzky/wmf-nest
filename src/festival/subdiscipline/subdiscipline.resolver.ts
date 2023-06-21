@@ -8,10 +8,10 @@ import {
   Int,
 } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 import { SubdisciplineService } from './subdiscipline.service'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { PerformerType } from 'src/common.entity'
+import { PerformerType } from '../../common.entity'
 import {
   tbl_discipline,
   tbl_category,

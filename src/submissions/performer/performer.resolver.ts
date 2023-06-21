@@ -5,7 +5,7 @@ import { PerformerPayload } from './entities/performer.entity'
 import { tbl_registration } from '@prisma/client'
 import { Performer } from './entities/performer.entity'
 import { UseGuards } from '@nestjs/common/decorators'
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 
 @Resolver(() => Performer)
 @UseGuards(JwtAuthGuard)

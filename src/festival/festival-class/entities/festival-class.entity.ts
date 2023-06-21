@@ -1,6 +1,6 @@
 import { Field, ObjectType, Int, registerEnumType } from '@nestjs/graphql'
 import { Decimal } from '@prisma/client/runtime/library'
-import { PerformerType, UserError } from 'src/common.entity'
+import { PerformerType, UserError } from '../../../common.entity'
 import { Subdiscipline } from '../../subdiscipline/entities/subdiscipline.entity'
 import { Level } from '../../level/entities/level.entity'
 import { Category } from '../../category/entities/category.entity'

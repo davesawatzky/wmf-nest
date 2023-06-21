@@ -6,8 +6,8 @@ import {
   tbl_discipline,
 } from '@prisma/client'
 import { SubdisciplineInput } from './dto/subdiscipline.input'
-import { PrismaService } from 'src/prisma/prisma.service'
-import { PerformerType } from 'src/common.entity'
+import { PrismaService } from '../../prisma/prisma.service'
+import { PerformerType } from '../../common.entity'
 // import { CreateSubdisciplineInput } from './dto/create-subdiscipline.input'
 // import { UpdateSubdisciplineInput } from './dto/update-subdiscipline.input'
 

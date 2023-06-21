@@ -4,7 +4,7 @@ import { Selection, SelectionPayload } from './entities/selection.entity'
 import { SelectionInput } from './dto/selection.input'
 import { tbl_reg_classes } from '@prisma/client'
 import { UseGuards } from '@nestjs/common/decorators'
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 import { RegisteredClass } from '../registered-class/entities/registered-class.entity'
 
 @Resolver(() => Selection)

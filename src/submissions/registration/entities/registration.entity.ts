@@ -1,6 +1,6 @@
 import { Field, ObjectType, Int, registerEnumType } from '@nestjs/graphql'
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
-import { UserError, PerformerType } from 'src/common.entity'
+import { UserError, PerformerType } from '../../../common.entity'
 import { Performer } from '../../performer/entities/performer.entity'
 import { User } from '../../../user/entities/user.entity'
 import { RegisteredClass } from '../../registered-class/entities/registered-class.entity'

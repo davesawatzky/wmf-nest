@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
 import { Category } from './entities/category.entity'
 import { CategoryInput } from './dto/category.input'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 
 @Injectable()
 export class CategoryService {

@@ -9,13 +9,13 @@ import {
   registerEnumType,
 } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 import { LevelService } from './level.service'
 import { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
 import { Level, LevelPayload } from './entities/level.entity'
 import { LevelInput } from './dto/level.input'
 import { FestivalClassService } from '../festival-class/festival-class.service'
-import { PerformerType } from 'src/common.entity'
+import { PerformerType } from '../../common.entity'
 
 registerEnumType(PerformerType, {
   name: 'PerformerType',

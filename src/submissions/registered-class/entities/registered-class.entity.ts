@@ -2,7 +2,7 @@ import { Field, ObjectType, Int } from '@nestjs/graphql'
 import { Decimal } from '@prisma/client/runtime/library'
 import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
 import { Type, Transform } from 'class-transformer'
-import { UserError } from 'src/common.entity'
+import { UserError } from '../../../common.entity'
 import { Selection } from '../../selection/entities/selection.entity'
 
 @ObjectType()

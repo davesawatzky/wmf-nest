@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { UserError } from 'src/common.entity'
+import { UserError } from '../../../common.entity'
 import { FestivalClass } from '../../festival-class/entities/festival-class.entity'
 
 @ObjectType()

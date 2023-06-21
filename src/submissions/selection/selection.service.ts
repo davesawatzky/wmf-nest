@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { tbl_reg_classes, tbl_reg_selection } from '@prisma/client'
 import { SelectionInput } from './dto/selection.input'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 
 @Injectable()
 export class SelectionService {

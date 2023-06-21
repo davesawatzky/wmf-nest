@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 import { DisciplineInput } from './dto/discipline.input'
 import { tbl_discipline } from '@prisma/client'
-import { PerformerType } from 'src/common.entity'
+import { PerformerType } from '../../common.entity'
 
 @Injectable()
 export class DisciplineService {

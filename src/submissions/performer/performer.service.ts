@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { tbl_registration, tbl_reg_performer } from '@prisma/client'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 import { PerformerInput } from './dto/performer.input'
 
 @Injectable()

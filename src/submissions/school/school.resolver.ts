@@ -14,7 +14,7 @@ import { School } from './entities/school.entity'
 import { tbl_registration, tbl_reg_school } from '@prisma/client'
 import { SchoolGroupService } from '../school-group/school-group.service'
 import { UseGuards } from '@nestjs/common/decorators'
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 
 @Resolver(() => School)
 @UseGuards(JwtAuthGuard)

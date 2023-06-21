@@ -3,7 +3,7 @@ import { Request as RequestType } from 'express'
 import { PassportStrategy } from '@nestjs/passport'
 import { Injectable } from '@nestjs/common'
 import { AuthService } from './auth.service'
-import { User } from 'src/user/entities/user.entity'
+import { User } from '../user/entities/user.entity'
 import { JwtSecretRequestType } from '@nestjs/jwt'
 
 @Injectable()

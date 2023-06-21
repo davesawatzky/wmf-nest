@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 import { FestivalClassSearchArgs } from './dto/festival-class.input'
 import { FestivalClassInput } from './dto/festival-class.input'
 
@@ -10,7 +10,7 @@ import {
   tbl_classlist,
   tbl_class_trophy,
 } from '@prisma/client'
-import { PerformerType } from 'src/common.entity'
+import { PerformerType } from '../../common.entity'
 
 @Injectable()
 export class FestivalClassService {

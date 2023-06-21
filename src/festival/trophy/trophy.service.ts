@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { tbl_trophy } from '@prisma/client'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 import { TrophyInput } from './dto/trophy.input'
 
 @Injectable()

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { tbl_registration, tbl_reg_classes } from '@prisma/client'
 import { RegisteredClassInput } from './dto/registered-class.input'
 import { Registration } from '../registration/entities/registration.entity'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 
 @Injectable()
 export class RegisteredClassService {

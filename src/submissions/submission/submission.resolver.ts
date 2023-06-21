@@ -1,10 +1,10 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 import { Registration } from '../registration/entities/registration.entity'
 import { UseGuards } from '@nestjs/common'
 import { SubmissionService } from '../submission/submission.service'
 import { SubmissionPayload } from './entities/submission.entity'
-import { PerformerType } from 'src/common.entity'
+import { PerformerType } from '../../common.entity'
 
 @Resolver(() => Registration)
 @UseGuards(JwtAuthGuard)

@@ -3,7 +3,7 @@ import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
 import { Decimal } from '@prisma/client/runtime/library'
 import { IsInt, IsNumber } from 'class-validator'
 import { Transform, Type } from 'class-transformer'
-import { SelectionInput } from 'src/submissions/selection/dto/selection.input'
+import { SelectionInput } from '../../../submissions/selection/dto/selection.input'
 
 @InputType()
 export class RegisteredClassInput {

@@ -4,9 +4,9 @@ import { CredentialsSignup } from './dto/credentials-signup.input'
 import { CredentialsSignin } from './dto/credentials-signin.input'
 import { User } from '../user/entities/user.entity'
 import { JwtService } from '@nestjs/jwt'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../prisma/prisma.service'
 import * as bcrypt from 'bcrypt'
-import { UserError } from 'src/common.entity'
+import { UserError } from '../common.entity'
 
 @Injectable()
 export class AuthService {

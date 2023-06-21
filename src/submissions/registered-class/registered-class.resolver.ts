@@ -14,7 +14,7 @@ import { RegisteredClassPayload } from './entities/registered-class.entity'
 import { SelectionService } from '../selection/selection.service'
 import { RegisteredClass } from './entities/registered-class.entity'
 import { UseGuards } from '@nestjs/common/decorators'
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 
 @Resolver(() => RegisteredClass)
 @UseGuards(JwtAuthGuard)
