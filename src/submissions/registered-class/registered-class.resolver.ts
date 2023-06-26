@@ -47,14 +47,9 @@ export class RegisteredClassResolver {
   @Mutation(() => RegisteredClassPayload)
   async registeredClassCreate(
     @Args('registrationID', { type: () => Int })
-    registrationID: tbl_registration['id'],
-    @Args('registeredClass', { type: () => RegisteredClassInput })
-    registeredClass: RegisteredClassInput
+    registrationID: tbl_registration['id']
   ) {
-    return await this.registeredClassService.create(
-      registrationID,
-      registeredClass
-    )
+    return await this.registeredClassService.create(registrationID)
   }
 
   @Mutation(() => RegisteredClassPayload)

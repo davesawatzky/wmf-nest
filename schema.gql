@@ -205,7 +205,7 @@ type Mutation {
   performerCreate(registrationID: Int!): PerformerPayload!
   performerDelete(performerID: Int!): PerformerPayload!
   performerUpdate(performerID: Int!, performerInput: PerformerInput!): PerformerPayload!
-  registeredClassCreate(registeredClass: RegisteredClassInput!, registrationID: Int!): RegisteredClassPayload!
+  registeredClassCreate(registrationID: Int!): RegisteredClassPayload!
   registeredClassDelete(registeredClassID: Int!): RegisteredClassPayload!
   registeredClassUpdate(registeredClassID: Int!, registeredClassInput: RegisteredClassInput!): RegisteredClassPayload!
   registrationCreate(label: String!, performerType: PerformerType!): RegistrationPayload!
@@ -477,8 +477,8 @@ type Subdiscipline {
   festivalClasses(categoryID: Int, levelID: Int, performerType: PerformerType): [FestivalClass!]
   id: Int!
   levels: [Level!]
-  maxPerformers: Int!
-  minPerformers: Int!
+  maxPerformers: Int
+  minPerformers: Int
   name: String!
   performerType: PerformerType!
   price: Decimal

@@ -17,8 +17,8 @@ export class Subdiscipline {
   id: number
   name: string
   description?: string
-  maxPerformers: number
-  minPerformers: number
+  maxPerformers?: number
+  minPerformers?: number
 
   @Field(() => PerformerType)
   performerType: PerformerType

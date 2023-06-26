@@ -36,7 +36,7 @@ export class AuthResolver {
       // secure: true,
       path: '/',
       domain: 'localhost',
-      maxAge: 1000 * 60 * 60 * 1, // 1 hour
+      maxAge: 1000 * 60 * 60 * 24, // 1 hour
     })
     return { userErrors, diatonicToken, user }
   }

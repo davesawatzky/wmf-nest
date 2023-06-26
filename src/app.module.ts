@@ -38,7 +38,7 @@ import { SchoolGroupModule } from './submissions/school-group/school-group.modul
         numberScalarMode: 'integer',
       },
       driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), './schema.gql'),
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
