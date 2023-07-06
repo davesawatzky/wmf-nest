@@ -33,7 +33,7 @@ export class SchoolResolver {
 
   @Query(() => School)
   async school(@Args('schoolID', { type: () => Int }) schoolID: School['id']) {
-    return await this.schoolService.findOne(null, schoolID)
+    return await this.schoolService.findOne(undefined, schoolID)
   }
 
   /** Mutations */

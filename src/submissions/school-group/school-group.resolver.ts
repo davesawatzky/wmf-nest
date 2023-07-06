@@ -3,8 +3,11 @@ import { SchoolGroupService } from './school-group.service'
 import { SchoolGroup, SchoolGroupPayload } from './entities/school-group.entity'
 import { SchoolGroupInput } from './dto/school-group.input'
 import { tbl_reg_schoolgroup, tbl_reg_school } from '@prisma/client'
+import { UseGuards } from '@nestjs/common/decorators'
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 
 @Resolver(() => SchoolGroup)
+@UseGuards(JwtAuthGuard)
 export class SchoolGroupResolver {
   constructor(private readonly schoolGroupService: SchoolGroupService) {}
 
@@ -40,7 +43,7 @@ export class SchoolGroupResolver {
     @Args('schoolGroupID', { type: () => Int })
     schoolGroupID: SchoolGroup['id'],
     @Args('schoolGroupInput', { type: () => SchoolGroupInput })
-    schoolGroupInput: SchoolGroupInput
+    schoolGroupInput: Partial<SchoolGroupInput>
   ) {
     return await this.schoolGroupService.update(schoolGroupID, schoolGroupInput)
   }

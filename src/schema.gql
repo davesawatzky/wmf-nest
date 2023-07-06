@@ -412,7 +412,7 @@ type SchoolGroup {
   groupSize: Int
   id: Int!
   latestTime: String
-  name: String!
+  name: String
   unavailable: String
   wheelchairs: Int
 }
@@ -423,7 +423,7 @@ input SchoolGroupInput {
   earliestTime: String
   groupSize: Int
   latestTime: String
-  name: String!
+  name: String
   unavailable: String
   wheelchairs: Int
 }

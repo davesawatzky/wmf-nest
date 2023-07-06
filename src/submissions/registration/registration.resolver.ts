@@ -70,7 +70,6 @@ export class RegistrationResolver {
     label: Registration['label'],
     @Context() context
   ) {
-    console.log('UserID-----: ', context.req.user.id)
     return await this.registrationService.create(
       context.req.user.id,
       performerType,

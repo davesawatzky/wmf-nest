@@ -3,7 +3,7 @@ import { IsInt } from 'class-validator'
 
 @InputType()
 export class SchoolGroupInput {
-  name: string
+  name?: string
   conflictPerformers?: string
 
   @IsInt()

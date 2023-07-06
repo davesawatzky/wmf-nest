@@ -30,7 +30,7 @@ export class SchoolGroupService {
 
   async update(
     schoolGroupID: tbl_reg_schoolgroup['id'],
-    schoolGroupInput: SchoolGroupInput
+    schoolGroupInput: Partial<SchoolGroupInput>
   ) {
     return {
       userErrors: [],
