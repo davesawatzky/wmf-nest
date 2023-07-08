@@ -5,7 +5,7 @@ import { UserError } from '../../../common.entity'
 export class Community {
   @Field(() => Int)
   id: number
-  name: string
+  name?: string
   conflictPerformers?: string
 
   @Field(() => Int)
