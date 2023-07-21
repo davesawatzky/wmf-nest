@@ -382,14 +382,12 @@ type Registration {
 
 input RegistrationInput {
   confirmation: String
-  createdAt: DateTime
   label: String
   payedAmt: Decimal
   performerType: PerformerType!
   submittedAt: DateTime
   totalAmt: Decimal
   transactionInfo: String
-  updatedAt: DateTime
 }
 
 type RegistrationPayload {

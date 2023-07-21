@@ -121,7 +121,7 @@ export class RegistrationResolver {
   async group(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
-    return await this.groupService.findAll(registrationID)
+    return await this.groupService.findOne(registrationID)
   }
   @ResolveField()
   async community(@Parent() registration: tbl_registration) {

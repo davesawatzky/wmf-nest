@@ -60,8 +60,6 @@ export class FestivalClassService {
   }
 
   async search(festivalClassSearch: FestivalClassSearchArgs) {
-    console.log(festivalClassSearch)
-
     const { subdisciplineID, levelID, categoryID } = festivalClassSearch
     return await this.prisma.tbl_classlist.findMany({
       where: {
