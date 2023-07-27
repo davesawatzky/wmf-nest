@@ -384,7 +384,7 @@ input RegistrationInput {
   confirmation: String
   label: String
   payedAmt: Decimal
-  performerType: PerformerType!
+  performerType: PerformerType
   submittedAt: DateTime
   totalAmt: Decimal
   transactionInfo: String

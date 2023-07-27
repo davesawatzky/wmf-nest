@@ -82,7 +82,7 @@ export class RegistrationResolver {
     @Args('registrationID', { type: () => Int })
     registrationID: Registration['id'],
     @Args('registrationInput', { type: () => RegistrationInput })
-    registrationInput: RegistrationInput
+    registrationInput: Partial<RegistrationInput>
   ) {
     return await this.registrationService.update(
       registrationID,
@@ -127,7 +127,7 @@ export class RegistrationResolver {
   async community(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
-    return await this.communityService.findAll(registrationID)
+    return await this.communityService.findOne(registrationID)
   }
   @ResolveField()
   async teacher(@Parent() registration: tbl_registration) {

@@ -8,7 +8,7 @@ export class RegistrationInput {
   label?: string
 
   @Field(() => PerformerType)
-  performerType: PerformerType
+  performerType?: PerformerType
 
   @Field(() => GraphQLDecimal)
   payedAmt?: number
