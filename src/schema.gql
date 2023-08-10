@@ -140,7 +140,7 @@ input GroupInput {
   age: Int
   groupType: String
   instruments: String
-  name: String!
+  name: String
   numberOfPerformers: Int
 }
 
