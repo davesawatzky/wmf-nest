@@ -25,6 +25,7 @@ import { ConfigModule } from '@nestjs/config'
 import { AbilityModule } from './ability/ability.module'
 import { SubmissionModule } from './submissions/submission/submission.module'
 import { SchoolGroupModule } from './submissions/school-group/school-group.module'
+import { FieldConfigModule } from './submissions/field-config/field-config.module'
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { SchoolGroupModule } from './submissions/school-group/school-group.modul
     AbilityModule,
     SubmissionModule,
     SchoolGroupModule,
+    FieldConfigModule,
   ],
 })
 export class AppModule {}

@@ -63,6 +63,8 @@ model tbl_field_config {
   submissionRequired Boolean  @map("submission_required") @db.Boolean
   customField        Boolean? @map("custom_field") @db.Boolean
   customFieldType    String?  @map("custom_field_type") @db.Text
+
+  @@unique([tableName, fieldName], name: "single_field")
 }
 
 model tbl_level {

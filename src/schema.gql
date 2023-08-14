@@ -127,6 +127,15 @@ input FestivalClassSearchArgs {
   subdisciplineID: Int
 }
 
+type FieldConfig {
+  customField: Boolean
+  customFieldType: String
+  fieldName: String
+  id: Int!
+  submissionRequired: Boolean
+  tableName: String
+}
+
 type Group {
   age: Int
   groupType: String
@@ -295,6 +304,8 @@ type Query {
   festivalClassByNumber(festivalClassNumber: String!): FestivalClass!
   festivalClassSearch(festivalClassSearch: FestivalClassSearchArgs!): [FestivalClass!]!
   festivalClasses(festivalClassSearch: FestivalClassSearchArgs, performerType: PerformerType): [FestivalClass!]!
+  fieldConfige(fieldName: String!, tableName: String!): FieldConfig!
+  fieldConfigs: [FieldConfig!]!
   group(registrationID: Int!): Group!
   groups: [Group!]!
   instrument(id: Int!): Instrument!
