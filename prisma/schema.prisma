@@ -61,7 +61,11 @@ model tbl_field_config {
   tableName          String   @map("table_name") @db.Text
   fieldName          String   @map("field_name") @db.Text
   submissionRequired Boolean  @map("submission_required") @db.Boolean
-  customField        Boolean? @map("custom_field") @db.Boolean
+  soloRequired       Boolean  @map("solo_required") @db.Boolean
+  groupRequired      Boolean  @map("group_required") @db.Boolean
+  schoolRequired     Boolean  @map("school_required") @db.Boolean
+  communityRequired  Boolean  @map("community_required") @db.Boolean
+  customField        Boolean @map("custom_field") @db.Boolean
   customFieldType    String?  @map("custom_field_type") @db.Text
 
   @@unique([tableName, fieldName], name: "single_field")
@@ -93,6 +97,28 @@ model tbl_reg_classes {
   tbl_registration    tbl_registration     @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
   tbl_reg_schoolgroup tbl_reg_schoolgroup? @relation(fields: [schoolGroupID], references: [id], onDelete: Cascade, onUpdate: Restrict)
   tbl_reg_selection   tbl_reg_selection[]
+
+  @@index([regID])
+}
+
+model tbl_reg_errors {
+  id                      Int       @id @default(autoincrement())
+  regID                   Int       @unique
+  classErrors             Int?      @db.SmallInt @map("class_errors")
+  groupInfoErrors         Int?      @db.SmallInt @map("group_info_errors")
+  groupPerformersErrors   Int?      @db.SmallInt @map("group_performers_errors")
+  groupTeacherErrors      Int?      @db.SmallInt @map("group_teacher_errors")
+  soloPerformerErrors     Int?      @db.SmallInt @map("solo_performer_errors")
+  soloTeacherErrors       Int?      @db.SmallInt @map("solo_teacher_errors")
+  schoolInfoErrors        Int?      @db.SmallInt @map("school_info_errors")
+  schoolTeacherErrors     Int?      @db.SmallInt @map("school_teacher_errors")
+  schoolGroupErrors       Int?      @db.SmallInt @map("school_group_errors")
+  schoolGroupsErrors      Int?      @db.SmallInt @map("school_groups_errors")
+  communityInfoErrors     Int?      @db.SmallInt @map("community_info_errors")
+  communityTeacherErrors  Int?      @db.SmallInt @map("community_teacher_errors")
+  createdAt               DateTime  @default(now()) @map("created_at") @db.Timestamp()
+  updatedAt               DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
+  tbl_registration    tbl_registration      @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
   @@index([regID])
 }
@@ -242,6 +268,7 @@ model tbl_registration {
   tbl_reg_performer tbl_reg_performer[]
   tbl_reg_school    tbl_reg_school?
   tbl_reg_teacher   tbl_reg_teacher?
+  tbl_errors        tbl_reg_errors?
 
   @@index([userID])
 }

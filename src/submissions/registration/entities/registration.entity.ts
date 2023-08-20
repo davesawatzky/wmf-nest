@@ -8,6 +8,7 @@ import { Group } from '../../group/entities/group.entity'
 import { Community } from '../../community/entities/community.entity'
 import { Teacher } from '../../teacher/entities/teacher.entity'
 import { School } from '../../school/entities/school.entity'
+import { FormError } from '../../form-errors/entities/form-error.entity'
 
 registerEnumType(PerformerType, {
   name: 'PerformerType',
@@ -25,6 +26,7 @@ export class Registration {
   community?: Community
   teacher?: Teacher
   school?: School
+  formError?: FormError
 
   @Field(() => PerformerType)
   performerType: PerformerType

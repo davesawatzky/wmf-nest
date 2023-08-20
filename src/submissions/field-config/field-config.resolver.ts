@@ -22,7 +22,7 @@ export class FieldConfigResolver {
   }
 
   @Query(() => FieldConfig)
-  async fieldConfige(
+  async fieldConfig(
     @Args('tableName', { type: () => String })
     tableName: tbl_field_config['tableName'],
     @Args('fieldName', { type: () => String })

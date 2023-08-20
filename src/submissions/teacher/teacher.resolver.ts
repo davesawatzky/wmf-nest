@@ -5,7 +5,6 @@ import { TeacherInput } from './dto/teacher.input'
 import { Teacher, TeacherPayload } from './entities/teacher.entity'
 import { UseGuards } from '@nestjs/common/decorators'
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
-import { Registration } from '../registration/entities/registration.entity'
 
 @Resolver(() => Teacher)
 @UseGuards(JwtAuthGuard)

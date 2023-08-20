@@ -26,6 +26,7 @@ import { AbilityModule } from './ability/ability.module'
 import { SubmissionModule } from './submissions/submission/submission.module'
 import { SchoolGroupModule } from './submissions/school-group/school-group.module'
 import { FieldConfigModule } from './submissions/field-config/field-config.module'
+import { FormErrorsModule } from './submissions/form-errors/form-errors.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { FieldConfigModule } from './submissions/field-config/field-config.modul
     SubmissionModule,
     SchoolGroupModule,
     FieldConfigModule,
+    FormErrorsModule,
   ],
 })
 export class AppModule {}

@@ -5,10 +5,14 @@ import { UserError } from '../../../common.entity'
 export class FieldConfig {
   @Field(() => Int)
   id: number
-  tableName?: string
-  fieldName?: string
-  submissionRequired?: boolean
-  customField?: boolean
+  tableName: string
+  fieldName: string
+  submissionRequired: boolean
+  communityRequired: boolean
+  groupRequired: boolean
+  schoolRequired: boolean
+  soloRequired: boolean
+  customField: boolean
   customFieldType?: string
 }
 
