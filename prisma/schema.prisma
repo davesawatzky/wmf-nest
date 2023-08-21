@@ -101,28 +101,6 @@ model tbl_reg_classes {
   @@index([regID])
 }
 
-model tbl_reg_errors {
-  id                      Int       @id @default(autoincrement())
-  regID                   Int       @unique
-  classErrors             Int?      @db.SmallInt @map("class_errors")
-  groupInfoErrors         Int?      @db.SmallInt @map("group_info_errors")
-  groupPerformersErrors   Int?      @db.SmallInt @map("group_performers_errors")
-  groupTeacherErrors      Int?      @db.SmallInt @map("group_teacher_errors")
-  soloPerformerErrors     Int?      @db.SmallInt @map("solo_performer_errors")
-  soloTeacherErrors       Int?      @db.SmallInt @map("solo_teacher_errors")
-  schoolInfoErrors        Int?      @db.SmallInt @map("school_info_errors")
-  schoolTeacherErrors     Int?      @db.SmallInt @map("school_teacher_errors")
-  schoolGroupErrors       Int?      @db.SmallInt @map("school_group_errors")
-  schoolGroupsErrors      Int?      @db.SmallInt @map("school_groups_errors")
-  communityInfoErrors     Int?      @db.SmallInt @map("community_info_errors")
-  communityTeacherErrors  Int?      @db.SmallInt @map("community_teacher_errors")
-  createdAt               DateTime  @default(now()) @map("created_at") @db.Timestamp()
-  updatedAt               DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
-  tbl_registration    tbl_registration      @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
-
-  @@index([regID])
-}
-
 model tbl_reg_group {
   id                  Int                   @id @default(autoincrement())
   regID               Int                   @unique
@@ -268,7 +246,6 @@ model tbl_registration {
   tbl_reg_performer tbl_reg_performer[]
   tbl_reg_school    tbl_reg_school?
   tbl_reg_teacher   tbl_reg_teacher?
-  tbl_errors        tbl_reg_errors?
 
   @@index([userID])
 }

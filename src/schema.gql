@@ -140,37 +140,6 @@ type FieldConfig {
   tableName: String!
 }
 
-type FormError {
-  classErrors: Int!
-  communityInfoErrors: Int!
-  communityTeacherErrors: Int!
-  groupInfoErrors: Int!
-  groupPerformersErrors: Int!
-  groupTeacherErrors: Int!
-  id: Int!
-  schoolGroupErrors: Int!
-  schoolGroupsErrors: Int!
-  schoolInfoErrors: Int!
-  schoolTeacherErrors: Int!
-  soloPerformerErrors: Int!
-  soloTeacherErrors: Int!
-}
-
-input FormErrorInput {
-  classErrors: Int!
-  communityInfoErrors: Int!
-  communityTeacherErrors: Int!
-  groupInfoErrors: Int!
-  groupPerformersErrors: Int!
-  groupTeacherErrors: Int!
-  schoolGroupErrors: Int!
-  schoolGroupsErrors: Int!
-  schoolInfoErrors: Int!
-  schoolTeacherErrors: Int!
-  soloPerformerErrors: Int!
-  soloTeacherErrors: Int!
-}
-
 type Group {
   age: Int
   groupType: String
@@ -237,9 +206,6 @@ type Mutation {
   festivalClassCreate(festivalClass: FestivalClassInput!, performerType: String!): FestivalClassPayload!
   festivalClassDelete(festivalClassID: Int!): FestivalClassPayload!
   festivalClassUpdate(festivalClass: FestivalClassInput!, festivalClassID: Int!): FestivalClassPayload!
-  formErrorCreate(formErrorInput: FormErrorInput!, registrationID: Int!): FormError!
-  formErrorDelete(formErrorID: Int!): FormError!
-  formErrorUpdate(formErrorID: Int!, formErrorInput: FormErrorInput!): FormError!
   groupCreate(registrationID: Int!): GroupPayload!
   groupDelete(groupID: Int!): GroupPayload!
   groupUpdate(groupID: Int!, groupInput: GroupInput!): GroupPayload!
@@ -344,8 +310,6 @@ type Query {
   festivalClasses(festivalClassSearch: FestivalClassSearchArgs, performerType: PerformerType): [FestivalClass!]!
   fieldConfig(fieldName: String!, tableName: String!): FieldConfig!
   fieldConfigs: [FieldConfig!]!
-  formError(formErrorID: Int, registrationID: Int): FormError!
-  formErrors(registrationID: Int!): [FormError!]!
   group(registrationID: Int!): Group!
   groups: [Group!]!
   instrument(id: Int!): Instrument!
@@ -415,7 +379,6 @@ type Registration {
   community: Community
   confirmation: String
   createdAt: DateTime
-  formError: FormError
   group: Group
   id: Int!
   label: String
