@@ -35,9 +35,11 @@ export class PerformerResolver {
   @Mutation(() => PerformerPayload)
   async performerCreate(
     @Args('registrationID', { type: () => Int })
-    registrationID: tbl_registration['id']
+    registrationID: tbl_registration['id'],
+    @Args('performerInput', { type: () => PerformerInput, nullable: true })
+    performerInput: Partial<PerformerInput>
   ) {
-    return await this.performerService.create(registrationID)
+    return await this.performerService.create(registrationID, performerInput)
   }
 
   @Mutation(() => PerformerPayload)

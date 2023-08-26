@@ -18,6 +18,6 @@ export class FieldConfig {
 
 @ObjectType()
 export class FieldConfigPayload {
-  userErrors?: UserError[]
-  fieldConfig?: FieldConfig
+  userErrors: UserError[]
+  fieldConfig: FieldConfig
 }

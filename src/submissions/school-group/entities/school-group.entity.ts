@@ -24,5 +24,5 @@ export class SchoolGroup {
 @ObjectType()
 export class SchoolGroupPayload {
   userErrors: UserError[]
-  schoolGroup?: SchoolGroup
+  schoolGroup: SchoolGroup
 }

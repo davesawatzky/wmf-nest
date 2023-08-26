@@ -41,9 +41,11 @@ export class SchoolResolver {
   @Mutation(() => SchoolPayload)
   async schoolCreate(
     @Args('registrationID', { type: () => Int })
-    registrationID: tbl_registration['id']
+    registrationID: tbl_registration['id'],
+    @Args('schoolInput', { type: () => SchoolInput, nullable: true })
+    schoolInput: Partial<SchoolInput>
   ) {
-    return await this.schoolService.create(registrationID)
+    return await this.schoolService.create(registrationID, schoolInput)
   }
 
   @Mutation(() => SchoolPayload)
@@ -51,7 +53,7 @@ export class SchoolResolver {
     @Args('schoolID', { type: () => Int })
     schoolID: tbl_reg_school['id'],
     @Args('schoolInput', { type: () => SchoolInput })
-    schoolInput: SchoolInput
+    schoolInput: Partial<SchoolInput>
   ) {
     return await this.schoolService.update(schoolID, schoolInput)
   }

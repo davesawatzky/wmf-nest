@@ -15,5 +15,5 @@ export class Selection {
 @ObjectType()
 export class SelectionPayload {
   userErrors: UserError[]
-  selection?: Selection
+  selection: Selection
 }

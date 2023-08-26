@@ -18,6 +18,6 @@ export class Group {
 
 @ObjectType()
 export class GroupPayload {
-  userErrors?: UserError[]
-  group?: Group
+  userErrors: UserError[]
+  group: Group
 }

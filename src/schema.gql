@@ -51,7 +51,7 @@ input CommunityInput {
 }
 
 type CommunityPayload {
-  community: Community
+  community: Community!
   userErrors: [UserError!]!
 }
 
@@ -158,8 +158,8 @@ input GroupInput {
 }
 
 type GroupPayload {
-  group: Group
-  userErrors: [UserError!]
+  group: Group!
+  userErrors: [UserError!]!
 }
 
 type Instrument {
@@ -215,16 +215,16 @@ type Mutation {
   levelCreate(levelInput: LevelInput!): LevelPayload!
   levelDelete(levelID: Int!): LevelPayload!
   levelUpdate(levelID: Int!, levelInput: LevelInput!): LevelPayload!
-  performerCreate(registrationID: Int!): PerformerPayload!
+  performerCreate(performerInput: PerformerInput, registrationID: Int!): PerformerPayload!
   performerDelete(performerID: Int!): PerformerPayload!
   performerUpdate(performerID: Int!, performerInput: PerformerInput!): PerformerPayload!
-  registeredClassCreate(registrationID: Int!): RegisteredClassPayload!
+  registeredClassCreate(registeredClass: RegisteredClassInput, registrationID: Int!): RegisteredClassPayload!
   registeredClassDelete(registeredClassID: Int!): RegisteredClassPayload!
   registeredClassUpdate(registeredClassID: Int!, registeredClassInput: RegisteredClassInput!): RegisteredClassPayload!
   registrationCreate(label: String!, performerType: PerformerType!): RegistrationPayload!
   registrationDelete(registrationID: Int!): RegistrationPayload!
   registrationUpdate(registrationID: Int!, registrationInput: RegistrationInput!): RegistrationPayload!
-  schoolCreate(registrationID: Int!): SchoolPayload!
+  schoolCreate(registrationID: Int!, schoolInput: SchoolInput): SchoolPayload!
   schoolDelete(schoolID: Int!): SchoolPayload!
   schoolGroupCreate(schoolID: Int!): SchoolGroupPayload!
   schoolGroupDelete(schoolGroupID: Int!): SchoolGroupPayload!
@@ -285,7 +285,7 @@ input PerformerInput {
 }
 
 type PerformerPayload {
-  performer: Performer
+  performer: Performer!
   userErrors: [UserError!]!
 }
 
@@ -371,7 +371,7 @@ input RegisteredClassInput {
 }
 
 type RegisteredClassPayload {
-  registeredClass: RegisteredClass
+  registeredClass: RegisteredClass!
   userErrors: [UserError!]!
 }
 
@@ -406,8 +406,8 @@ input RegistrationInput {
 }
 
 type RegistrationPayload {
-  registration: Registration
-  userErrors: [UserError!]
+  registration: Registration!
+  userErrors: [UserError!]!
 }
 
 type School {
@@ -447,7 +447,7 @@ input SchoolGroupInput {
 }
 
 type SchoolGroupPayload {
-  schoolGroup: SchoolGroup
+  schoolGroup: SchoolGroup!
   userErrors: [UserError!]!
 }
 
@@ -463,7 +463,7 @@ input SchoolInput {
 }
 
 type SchoolPayload {
-  school: School
+  school: School!
   userErrors: [UserError!]!
 }
 
@@ -485,7 +485,7 @@ input SelectionInput {
 }
 
 type SelectionPayload {
-  selection: Selection
+  selection: Selection!
   userErrors: [UserError!]!
 }
 
@@ -523,8 +523,8 @@ type Submission {
 }
 
 type SubmissionPayload {
-  submission: Submission
-  userErrors: [UserError!]
+  submission: Submission!
+  userErrors: [UserError!]!
 }
 
 type Teacher {
@@ -557,7 +557,7 @@ input TeacherInput {
 }
 
 type TeacherPayload {
-  teacher: Teacher
+  teacher: Teacher!
   userErrors: [UserError!]!
 }
 
@@ -601,6 +601,6 @@ type UserError {
 }
 
 type UserPayload {
-  user: User
+  user: User!
   userErrors: [UserError!]!
 }

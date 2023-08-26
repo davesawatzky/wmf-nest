@@ -33,5 +33,5 @@ export class RegisteredClass {
 @ObjectType()
 export class RegisteredClassPayload {
   userErrors: UserError[]
-  registeredClass?: RegisteredClass
+  registeredClass: RegisteredClass
 }

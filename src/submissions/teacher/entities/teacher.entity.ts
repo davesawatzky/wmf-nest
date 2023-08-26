@@ -21,5 +21,5 @@ export class Teacher {
 @ObjectType()
 export class TeacherPayload {
   userErrors: UserError[]
-  teacher?: Teacher
+  teacher: Teacher
 }

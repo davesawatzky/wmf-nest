@@ -7,12 +7,16 @@ import { PrismaService } from '../../prisma/prisma.service'
 export class SchoolService {
   constructor(private prisma: PrismaService) {}
 
-  async create(registrationID: tbl_registration['id']) {
+  async create(
+    registrationID: tbl_registration['id'],
+    schoolInput?: Partial<SchoolInput>
+  ) {
     return {
       userErrors: [],
       school: await this.prisma.tbl_reg_school.create({
         data: {
           regID: registrationID,
+          ...schoolInput,
         },
       }),
     }

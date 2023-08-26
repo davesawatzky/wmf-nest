@@ -43,6 +43,6 @@ export class Registration {
 
 @ObjectType()
 export class RegistrationPayload {
-  userErrors?: UserError[]
-  registration?: Registration
+  userErrors: UserError[]
+  registration: Registration
 }

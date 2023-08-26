@@ -8,11 +8,14 @@ import { PrismaService } from '../../prisma/prisma.service'
 export class RegisteredClassService {
   constructor(private prisma: PrismaService) {}
 
-  async create(registrationID: Registration['id']) {
+  async create(
+    registrationID: Registration['id'],
+    registeredClass: Partial<RegisteredClassInput>
+  ) {
     return {
       userErrors: [],
       registeredClass: await this.prisma.tbl_reg_classes.create({
-        data: { regID: registrationID },
+        data: { regID: registrationID, ...registeredClass },
       }),
     }
   }

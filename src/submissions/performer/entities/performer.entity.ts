@@ -26,5 +26,5 @@ export class Performer {
 @ObjectType()
 export class PerformerPayload {
   userErrors: UserError[]
-  performer?: Performer
+  performer: Performer
 }

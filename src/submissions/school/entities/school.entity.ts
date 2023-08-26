@@ -20,5 +20,5 @@ export class School {
 @ObjectType()
 export class SchoolPayload {
   userErrors: UserError[]
-  school?: School
+  school: School
 }

@@ -7,11 +7,14 @@ import { PerformerInput } from './dto/performer.input'
 export class PerformerService {
   constructor(private prisma: PrismaService) {}
 
-  async create(registrationID: tbl_registration['id']) {
+  async create(
+    registrationID: tbl_registration['id'],
+    performerInput?: Partial<PerformerInput>
+  ) {
     return {
       userErrors: [],
       performer: await this.prisma.tbl_reg_performer.create({
-        data: { regID: registrationID },
+        data: { regID: registrationID, ...performerInput },
       }),
     }
   }
