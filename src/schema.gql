@@ -23,7 +23,7 @@ input CategoryInput {
 }
 
 type CategoryPayload {
-  category: Category
+  category: Category!
   userErrors: [UserError!]!
 }
 
@@ -76,8 +76,8 @@ scalar DateTime
 scalar Decimal
 
 type Discipline {
-  id: Int
-  name: String
+  id: Int!
+  name: String!
   subdisciplines(performerType: PerformerType): [Subdiscipline!]
 }
 
@@ -86,7 +86,7 @@ input DisciplineInput {
 }
 
 type DisciplinePayload {
-  discipline: Discipline
+  discipline: Discipline!
   userErrors: [UserError!]!
 }
 

@@ -15,5 +15,5 @@ export class Category {
 @ObjectType()
 export class CategoryPayload {
   userErrors: UserError[]
-  category?: Category
+  category: Category
 }
