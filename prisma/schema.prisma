@@ -186,7 +186,7 @@ model tbl_reg_selection {
   largerWork      String?         @map("larger_work") @db.Text
   movement        String?         @db.Text
   composer        String?         @db.Text
-  duration        String          @default("0:00") @db.Text
+  duration        String?         @db.Text
   createdAt       DateTime        @default(now()) @map("created_at") @db.Timestamp()
   updatedAt       DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
   tbl_reg_classes tbl_reg_classes @relation(fields: [classpickID], references: [id], onDelete: Cascade, onUpdate: Restrict)
