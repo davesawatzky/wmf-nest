@@ -231,6 +231,7 @@ model tbl_reg_unavailable {
 model tbl_registration {
   id                Int                 @id @default(autoincrement())
   userID            Int?                @default(0)
+  teacherID         Int?
   label             String              @default("Registration Form") @db.Text
   performerType     tbl_performer_type  @default(SOLO) @map("performer_type")
   submittedAt       DateTime?           @map("submitted_at") @db.Timestamp()
@@ -241,6 +242,7 @@ model tbl_registration {
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp()
   updatedAt         DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
   tbl_user          tbl_user?           @relation(fields: [userID], references: [id], onUpdate: Restrict)
+  tbl_teachers      tbl_teachers?       @relation(fields: [teacherID], references: [id], onUpdate: Restrict)
   tbl_reg_classes   tbl_reg_classes[]
   tbl_reg_community tbl_reg_community?
   tbl_reg_group     tbl_reg_group?
@@ -289,6 +291,8 @@ model tbl_teachers {
   email            String?          @db.Text
   createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamp()
   updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
+  
+  tbl_registration tbl_registration[]
 }
 
 model tbl_trophy {
