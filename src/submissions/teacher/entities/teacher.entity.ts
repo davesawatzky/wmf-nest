@@ -16,6 +16,7 @@ export class Teacher {
   postalCode?: string
   phone?: string
   email?: string
+  instrument?: string
 }
 
 @ObjectType()

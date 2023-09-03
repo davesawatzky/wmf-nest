@@ -533,6 +533,7 @@ type Teacher {
   email: String
   firstName: String
   id: Int!
+  instrument: String
   lastName: String
   phone: String
   postalCode: String
@@ -547,6 +548,7 @@ input TeacherInput {
   city: String
   email: String
   firstName: String
+  instrument: String
   lastName: String
   phone: String
   postalCode: String

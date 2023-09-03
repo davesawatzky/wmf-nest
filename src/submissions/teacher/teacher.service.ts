@@ -23,7 +23,10 @@ export class TeacherService {
   }
 
   async findAll() {
-    return await this.prisma.tbl_reg_teacher.findMany()
+    return await this.prisma.tbl_reg_teacher.findMany({
+      distinct: ['firstName', 'lastName', 'instrument'],
+      orderBy: { lastName: 'asc'}
+    })
   }
 
   async findOne(

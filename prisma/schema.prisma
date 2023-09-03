@@ -202,12 +202,13 @@ model tbl_reg_teacher {
   firstName        String?          @map("first_name") @db.Text
   apartment        String?          @db.Text
   streetNumber     String?          @map("street_number") @db.Text
-  streetName       String?          @map("steet_name") @db.Text
+  streetName       String?          @map("street_name") @db.Text
   city             String           @default("Winnipeg") @db.Text
   province         String           @default("MB") @db.Text
   postalCode       String?          @map("postal_code") @db.Text
   phone            String?          @db.Text
   email            String?          @db.Text
+  instrument       String?          @db.Text
   createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamp()
   updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
   tbl_registration tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
@@ -270,6 +271,24 @@ model tbl_subdiscipline {
   tbl_classlist  tbl_classlist[]
 
   @@index([disciplineID])
+}
+
+model tbl_teachers {
+  id               Int              @id @default(autoincrement())
+  prefix           String?          @db.Text
+  lastName         String?          @map("last_name") @db.Text
+  firstName        String?          @map("first_name") @db.Text
+  instrument       String?          @db.Text
+  apartment        String?          @db.Text
+  streetNumber     String?          @map("street_number") @db.Text
+  streetName       String?          @map("street_name") @db.Text
+  city             String?          @db.Text
+  province         String?          @db.Text
+  postalCode       String?          @map("postal_code") @db.Text
+  phone            String?          @db.Text
+  email            String?          @db.Text
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamp()
+  updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
 }
 
 model tbl_trophy {

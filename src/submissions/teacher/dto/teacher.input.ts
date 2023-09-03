@@ -20,4 +20,6 @@ export class TeacherInput {
 
   @IsEmail()
   email?: string
+
+  instrument?: string
 }
