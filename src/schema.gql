@@ -239,7 +239,7 @@ type Mutation {
   subdisciplineDelete(subdisciplineID: Int!): SubdisciplinePayload!
   subdisciplineUpdate(subdisciplineID: Int!, subdisciplineInput: SubdisciplineInput!): SubdisciplinePayload!
   submitRegistration(registrationID: Int!): SubmissionPayload!
-  teacherCreate(registrationID: Int!, teacherInput: TeacherInput!): TeacherPayload!
+  teacherCreate(teacherInput: TeacherInput!): TeacherPayload!
   teacherDelete(teacherID: Int!): TeacherPayload!
   teacherUpdate(teacherID: Int!, teacherInput: TeacherInput!): TeacherPayload!
   trophyCreate(trophyInput: TrophyInput!): TrophyPayload!
@@ -401,6 +401,7 @@ input RegistrationInput {
   payedAmt: Decimal
   performerType: PerformerType
   submittedAt: DateTime
+  teacherID: Int
   totalAmt: Decimal
   transactionInfo: String
 }
@@ -539,6 +540,7 @@ type Teacher {
   postalCode: String
   prefix: String
   province: String
+  registrations: [Registration!]
   streetName: String
   streetNumber: String
 }

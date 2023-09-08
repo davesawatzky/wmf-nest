@@ -9,7 +9,7 @@ import {
   Context,
 } from '@nestjs/graphql'
 import { RegistrationService } from './registration.service'
-import { tbl_registration, tbl_user } from '@prisma/client'
+import { tbl_registration } from '@prisma/client'
 import { PerformerService } from '../performer/performer.service'
 import { RegisteredClassService } from '../registered-class/registered-class.service'
 import { UserService } from '../../user/user.service'
@@ -21,11 +21,12 @@ import {
   Registration,
   RegistrationPayload,
 } from './entities/registration.entity'
+import { Teacher } from '../teacher/entities/teacher.entity'
 import { RegistrationInput } from './dto/registration.input'
 import { PerformerType } from '../../common.entity'
 import { UseGuards } from '@nestjs/common/decorators'
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
-import { User } from '../../user/entities/user.entity'
+//import { User } from '../../user/entities/user.entity'
 
 @Resolver(() => Registration)
 @UseGuards(JwtAuthGuard)
@@ -131,9 +132,8 @@ export class RegistrationResolver {
   }
   @ResolveField()
   async teacher(@Parent() registration: tbl_registration) {
-    const { id }: { id: Registration['id'] } = registration
-    const registrationID = id
-    return await this.teacherService.findOne(null, registrationID)
+    const { teacherID }: { teacherID: Teacher['id'] } = registration
+    return await this.teacherService.findOne(teacherID)
   }
   @ResolveField()
   async school(@Parent() registration: tbl_registration) {

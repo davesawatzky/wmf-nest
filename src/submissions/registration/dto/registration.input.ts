@@ -1,6 +1,6 @@
-import { InputType, Field } from '@nestjs/graphql'
+import { InputType, Field, Int } from '@nestjs/graphql'
 import { PerformerType } from '../../../common.entity'
-import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
+import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
 
 @InputType()
 export class RegistrationInput {
@@ -12,6 +12,9 @@ export class RegistrationInput {
 
   @Field(() => GraphQLDecimal)
   payedAmt?: number
+
+  @Field(() => Int)
+  teacherID?: number
 
   @Field(() => GraphQLDecimal)
   totalAmt?: number

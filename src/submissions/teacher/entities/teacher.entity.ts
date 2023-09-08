@@ -1,5 +1,6 @@
 import { Field, ObjectType, Int } from '@nestjs/graphql'
 import { UserError } from '../../../common.entity'
+import { Registration } from 'src/submissions/registration/entities/registration.entity'
 
 @ObjectType()
 export class Teacher {
@@ -17,6 +18,7 @@ export class Teacher {
   phone?: string
   email?: string
   instrument?: string
+  registrations?: Registration[]
 }
 
 @ObjectType()

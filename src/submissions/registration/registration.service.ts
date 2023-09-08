@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { RegistrationInput } from './dto/registration.input'
 import { PrismaService } from '../../prisma/prisma.service'
 import { PerformerType } from '../../common.entity'
-import { tbl_user, tbl_registration } from '@prisma/client'
+import { tbl_user, tbl_registration, tbl_teachers } from '@prisma/client'
 
 @Injectable()
 export class RegistrationService {
@@ -26,9 +26,13 @@ export class RegistrationService {
     }
   }
 
-  async findAll(userID?: tbl_user['id'], performerType?: PerformerType) {
+  async findAll(
+    userID?: tbl_user['id'],
+    performerType?: PerformerType,
+    teacherID?: tbl_teachers['id']
+  ) {
     return await this.prisma.tbl_registration.findMany({
-      where: { userID, performerType },
+      where: { userID, teacherID, performerType },
     })
   }
 

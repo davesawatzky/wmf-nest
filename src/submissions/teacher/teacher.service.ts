@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { tbl_registration, tbl_reg_teacher } from '@prisma/client'
+import { tbl_teachers } from '@prisma/client'
 import { TeacherInput } from './dto/teacher.input'
 import { PrismaService } from '../../prisma/prisma.service'
 
@@ -8,14 +8,14 @@ export class TeacherService {
   constructor(private prisma: PrismaService) {}
 
   async create(
-    registrationID: tbl_registration['id'],
+    //registrationID: tbl_registration['id'],
     teacherInput: Partial<TeacherInput>
   ) {
     return {
       userErrors: [],
-      teacher: await this.prisma.tbl_reg_teacher.create({
+      teacher: await this.prisma.tbl_teachers.create({
         data: {
-          regID: registrationID,
+          //regID: registrationID,
           ...teacherInput,
         },
       }),
@@ -23,46 +23,47 @@ export class TeacherService {
   }
 
   async findAll() {
-    return await this.prisma.tbl_reg_teacher.findMany({
+    return await this.prisma.tbl_teachers.findMany({
       distinct: ['firstName', 'lastName', 'instrument'],
-      orderBy: { lastName: 'asc'}
+      orderBy: { lastName: 'asc' },
     })
   }
 
-  async findOne(
-    teacherID?: tbl_reg_teacher['id'],
-    registrationID?: tbl_registration['id']
-  ) {
+  async findOne(teacherID: tbl_teachers['id']) {
     if (teacherID) {
-      return await this.prisma.tbl_reg_teacher.findUnique({
+      return await this.prisma.tbl_teachers.findUnique({
         where: { id: teacherID },
-      })
-    } else if (registrationID) {
-      return await this.prisma.tbl_reg_teacher.findUnique({
-        where: { regID: registrationID },
       })
     }
   }
 
   async update(
-    teacherID: tbl_reg_teacher['id'],
+    teacherID: tbl_teachers['id'],
     teacherInput: Partial<TeacherInput>
   ) {
-    return {
-      userErrors: [],
-      teacher: await this.prisma.tbl_reg_teacher.update({
-        where: { id: teacherID },
-        data: { ...teacherInput },
-      }),
+    try {
+      return {
+        userErrors: [],
+        teacher: await this.prisma.tbl_teachers.update({
+          where: { id: teacherID },
+          data: { ...teacherInput },
+        }),
+      }
+    } catch (err) {
+      console.log(err)
     }
   }
 
-  async remove(teacherID: tbl_reg_teacher['id']) {
-    return {
-      userErrors: [],
-      teacher: await this.prisma.tbl_reg_teacher.delete({
-        where: { id: teacherID },
-      }),
+  async remove(teacherID: tbl_teachers['id']) {
+    try {
+      return {
+        userErrors: [],
+        teacher: await this.prisma.tbl_teachers.delete({
+          where: { id: teacherID },
+        }),
+      }
+    } catch (err) {
+      console.log(err)
     }
   }
 }
