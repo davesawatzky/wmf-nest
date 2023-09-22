@@ -26,6 +26,8 @@ import { AbilityModule } from './ability/ability.module'
 import { SubmissionModule } from './submissions/submission/submission.module'
 import { SchoolGroupModule } from './submissions/school-group/school-group.module'
 import { FieldConfigModule } from './submissions/field-config/field-config.module'
+import { StripeModule } from './stripe/stripe.module'
+import { CustomersModule } from './customers/customers.module';
 
 @Module({
   imports: [
@@ -66,6 +68,10 @@ import { FieldConfigModule } from './submissions/field-config/field-config.modul
     SubmissionModule,
     SchoolGroupModule,
     FieldConfigModule,
+    StripeModule.forRoot(process.env.STRIPE_SERVER_KEY, {
+      apiVersion: '2023-08-16',
+    }),
+    CustomersModule,
   ],
 })
 export class AppModule {}

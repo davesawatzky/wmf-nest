@@ -8,9 +8,7 @@ import {
   Parent,
 } from '@nestjs/graphql'
 import { TeacherService } from './teacher.service'
-import { tbl_teachers } from '@prisma/client'
 import { RegistrationService } from '../registration/registration.service'
-//import { tbl_registration } from '@prisma/client'
 import { TeacherInput } from './dto/teacher.input'
 import { Teacher, TeacherPayload } from './entities/teacher.entity'
 import { UseGuards } from '@nestjs/common/decorators'
