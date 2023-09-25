@@ -27,6 +27,8 @@ export class RegisteredClass {
   @Type(() => Object)
   @Transform(transformToDecimal)
   price?: Decimal
+
+  @Field(() => Int)
   schoolGroupID?: number
 }
 

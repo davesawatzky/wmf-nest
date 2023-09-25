@@ -3,6 +3,7 @@ import { Decimal } from '@prisma/client/runtime/library'
 import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
 import { Type, Transform } from 'class-transformer'
 import { PerformerType } from '../../../common.entity'
+import { IsInt, IsNumber } from 'class-validator'
 
 registerEnumType(PerformerType, {
   name: 'PerformerType',
@@ -13,18 +14,23 @@ registerEnumType(PerformerType, {
 export class FestivalClassInput {
   classNumber: string
 
+  @IsInt()
   @Field(() => Int)
   subdisciplineID: number
 
+  @IsInt()
   @Field(() => Int)
   levelID: number
 
+  @IsInt()
   @Field(() => Int)
   categoryID: number
 
+  @IsInt()
   @Field(() => Int)
   maxSelections: number
 
+  @IsInt()
   @Field(() => Int)
   minSelections: number
   requiredSelection?: string
@@ -32,6 +38,7 @@ export class FestivalClassInput {
   @Field(() => PerformerType)
   performerType: PerformerType
 
+  @IsNumber()
   @Field(() => GraphQLDecimal)
   @Type(() => Object)
   @Transform(transformToDecimal)
@@ -40,12 +47,15 @@ export class FestivalClassInput {
 
 @InputType()
 export class FestivalClassSearchArgs {
+  @IsInt()
   @Field(() => Int)
   subdisciplineID?: number
 
+  @IsInt()
   @Field(() => Int)
   levelID?: number
 
+  @IsInt()
   @Field(() => Int)
   categoryID?: number
 }
