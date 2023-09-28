@@ -27,7 +27,11 @@ import { SubmissionModule } from './submissions/submission/submission.module'
 import { SchoolGroupModule } from './submissions/school-group/school-group.module'
 import { FieldConfigModule } from './submissions/field-config/field-config.module'
 import { StripeModule } from './stripe/stripe.module'
-import { CustomersModule } from './customers/customers.module';
+import { CustomersModule } from './customers/customers.module'
+import { EmailModule } from './email/email.module'
+import { EmailConfirmationService } from './email-confirmation/email-confirmation.service'
+import { EmailConfirmationController } from './email-confirmation/email-confirmation.controller'
+import { EmailConfirmationModule } from './email-confirmation/email-confirmation.module'
 
 @Module({
   imports: [
@@ -72,6 +76,10 @@ import { CustomersModule } from './customers/customers.module';
       apiVersion: '2023-08-16',
     }),
     CustomersModule,
+    EmailModule,
+    EmailConfirmationModule,
   ],
+  // providers: [EmailConfirmationService],
+  // controllers: [EmailConfirmationController],
 })
 export class AppModule {}

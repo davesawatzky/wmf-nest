@@ -7,6 +7,9 @@ export class UserInput {
   staff?: boolean
 
   @IsBoolean()
+  emailConfirmed?: boolean
+
+  @IsBoolean()
   admin?: boolean
   firstName?: string
   lastName?: string

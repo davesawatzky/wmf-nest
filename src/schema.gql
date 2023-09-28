@@ -587,6 +587,7 @@ type User {
   apartment: String
   city: String
   email: String!
+  emailConfirmed: Boolean
   firstName: String
   id: Int!
   lastName: String

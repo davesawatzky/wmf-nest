@@ -7,6 +7,7 @@ export class User {
   @Field(() => Int)
   id: number
   email: string
+  emailConfirmed?: boolean
   staff: boolean
   admin: boolean
   firstName?: string

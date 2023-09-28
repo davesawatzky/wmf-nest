@@ -306,6 +306,7 @@ model tbl_user {
   id               Int                @id @default(autoincrement())
   email            String             @unique @db.Text
   password         String             @db.Text
+  emailConfirmed   Boolean?           @map("email_confirmed") @db.Boolean @default(false)
   staff            Boolean            @default(false)
   admin            Boolean            @default(false)
   firstName        String?            @map("first_name") @db.Text

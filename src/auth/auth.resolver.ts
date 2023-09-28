@@ -8,16 +8,23 @@ import { User } from '../user/entities/user.entity'
 import { UseGuards, Res } from '@nestjs/common'
 import { GqlAuthGuard } from './gql-auth.guard'
 import { JwtAuthGuard } from './jwt-auth.guard'
+import { EmailConfirmationService } from '../email-confirmation/email-confirmation.service'
 
 @Resolver(() => User)
 export class AuthResolver {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly emailConfirmationService: EmailConfirmationService
+  ) {}
 
   @Mutation(() => AuthPayload)
   async signup(
-    @Args('credentials') credentials: CredentialsSignup
+    @Args('credentials') credentials: CredentialsSignup,
+    @Context('res') res: Response
   ): Promise<AuthPayload> {
-    return await this.authService.signup(credentials)
+    const { userErrors, user } = await this.authService.signup(credentials)
+    await this.emailConfirmationService.sendVerificationLink(credentials.email)
+    return { userErrors, user }
   }
 
   @Mutation(() => AuthPayload)
@@ -26,7 +33,7 @@ export class AuthResolver {
     @Args('credentials') credentials: CredentialsSignin,
     @Context('res') res: Response,
     @Context() context
-  ) {
+  ): Promise<AuthPayload> {
     const { userErrors, diatonicToken, user } = await this.authService.signin(
       context.user
     )
@@ -36,7 +43,7 @@ export class AuthResolver {
       // secure: true,
       path: '/',
       domain: 'localhost',
-      maxAge: 1000 * 60 * 60 * 24, // 1 hour
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
     })
     return { userErrors, diatonicToken, user }
   }

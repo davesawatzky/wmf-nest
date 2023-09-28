@@ -5,6 +5,7 @@ import { UseGuards } from '@nestjs/common'
 import { SubmissionService } from '../submission/submission.service'
 import { SubmissionPayload } from './entities/submission.entity'
 import { PerformerType } from '../../common.entity'
+import { EmailConfirmationGuard } from 'src/email-confirmation/email-confirmation.guard'
 
 @Resolver(() => Registration)
 @UseGuards(JwtAuthGuard)
@@ -20,6 +21,7 @@ export class SubmissionResolver {
   }
 
   @Mutation(() => SubmissionPayload)
+  @UseGuards(EmailConfirmationGuard)
   async submitRegistration(
     @Args('registrationID', { type: () => Int })
     registrationID: Registration['id']

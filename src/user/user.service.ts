@@ -11,10 +11,16 @@ export class UserService {
     return await this.prisma.tbl_user.findMany()
   }
 
-  async findOne(userID: tbl_user['id']) {
-    return await this.prisma.tbl_user.findUnique({
-      where: { id: userID },
-    })
+  async findOne(userID?: tbl_user['id'], email?: tbl_user['email']) {
+    if (userID) {
+      return await this.prisma.tbl_user.findUnique({
+        where: { id: userID },
+      })
+    } else if (email) {
+      return await this.prisma.tbl_user.findUnique({
+        where: { email },
+      })
+    }
   }
 
   async update(userID: tbl_user['id'], userInput: UserInput) {
