@@ -50,6 +50,10 @@ export class UserResolver {
     //   }
     // }
   }
+  @Query(() => User)
+  async myUser(@Context() context) {
+    return await this.userService.findOne(context.req.user.id)
+  }
 
   @Query(() => User)
   async user(

@@ -23,7 +23,11 @@ export class AuthResolver {
     @Context('res') res: Response
   ): Promise<AuthPayload> {
     const { userErrors, user } = await this.authService.signup(credentials)
-    await this.emailConfirmationService.sendVerificationLink(credentials.email)
+    const userName = `${user.firstName} ${user.lastName}`
+    await this.emailConfirmationService.sendVerificationLink(
+      userName,
+      user.email
+    )
     return { userErrors, user }
   }
 

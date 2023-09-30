@@ -14,7 +14,7 @@ export class EmailConfirmationService {
     private readonly userService: UserService
   ) {}
 
-  public sendVerificationLink(email: string) {
+  public sendVerificationLink(userName: string, email: string) {
     const payload: VerificationTokenPayload = { email }
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
@@ -27,13 +27,17 @@ export class EmailConfirmationService {
       'EMAIL_CONFIRMATION_URL'
     )}?token=${token}`
 
-    const text = `Welcome to the Winnipeg Music Festival Registration application.  To confirm your email address, click here: ${url}`
+    // const text = `Welcome to the Winnipeg Music Festival Registration application.  To confirm your email address, click here: ${url}`
 
     return this.emailService.sendMail({
       from: this.configService.get('EMAIL_USER') || 'info@davesawatzky.com',
       to: email,
-      subject: 'WMF Email confirmation',
-      text,
+      subject: 'WMF account verification',
+      template: './confirmation-email',
+      context: {
+        name: userName,
+        confirmationLink: url,
+      },
     })
   }
 
@@ -62,11 +66,11 @@ export class EmailConfirmationService {
     }
   }
 
-  public async resendConfirmationLink(userId: number) {
-    const user = await this.userService.findOne(userId)
+  public async resendConfirmationLink(userName: string, userEmail: string) {
+    const user = await this.userService.findOne(null, userEmail)
     if (user.emailConfirmed) {
       throw new BadRequestException('Email already confirmed')
     }
-    await this.sendVerificationLink(user.email)
+    await this.sendVerificationLink(userName, userEmail)
   }
 }
