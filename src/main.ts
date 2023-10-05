@@ -32,7 +32,7 @@ async function bootstrap() {
   app.use(cookieParser())
 
   app.enableCors({
-    origin: ['http://localhost:3001'],
+    origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     optionsSuccessStatus: 200,
     credentials: true,
@@ -42,5 +42,6 @@ async function bootstrap() {
 
   const PORT = process.env.PORT || 3000
   await app.listen(PORT)
+  console.log(`Server listening on PORT: ${PORT}`)
 }
 bootstrap()
