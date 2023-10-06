@@ -6,7 +6,6 @@ import { User } from '../../../user/entities/user.entity'
 import { RegisteredClass } from '../../registered-class/entities/registered-class.entity'
 import { Group } from '../../group/entities/group.entity'
 import { Community } from '../../community/entities/community.entity'
-import { Teacher } from '../../teacher/entities/teacher.entity'
 import { School } from '../../school/entities/school.entity'
 
 registerEnumType(PerformerType, {
@@ -23,7 +22,7 @@ export class Registration {
   registeredClasses?: RegisteredClass[]
   group?: Group
   community?: Community
-  teacher?: Teacher
+  teacher?: User
   school?: School
 
   @Field(() => PerformerType)

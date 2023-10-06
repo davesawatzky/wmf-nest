@@ -10,11 +10,11 @@ import {
 import { TeacherService } from './teacher.service'
 import { RegistrationService } from '../registration/registration.service'
 import { TeacherInput } from './dto/teacher.input'
-import { Teacher, TeacherPayload } from './entities/teacher.entity'
 import { UseGuards } from '@nestjs/common/decorators'
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
+import { User, UserPayload } from 'src/user/entities/user.entity'
 
-@Resolver(() => Teacher)
+@Resolver(() => User)
 @UseGuards(JwtAuthGuard)
 export class TeacherResolver {
   constructor(
@@ -24,51 +24,54 @@ export class TeacherResolver {
 
   /** Queries */
 
-  @Query(() => [Teacher])
-  async teachers() {
-    return await this.teacherService.findAll()
+  @Query(() => [User])
+  async teachers(
+    @Args('privateTeacher', { type: () => Boolean })
+    privateTeacher: User['privateTeacher'],
+    @Args('schoolTeacher', { type: () => Boolean })
+    schoolTeacher: User['schoolTeacher']
+  ) {
+    return await this.teacherService.findAll(privateTeacher, schoolTeacher)
   }
 
-  @Query(() => Teacher)
+  @Query(() => User)
   async teacher(
     @Args('teacherID', { type: () => Int })
-    teacherID: Teacher['id']
+    teacherID: User['id']
   ) {
     return await this.teacherService.findOne(teacherID)
   }
 
   /** Mutations */
 
-  @Mutation(() => TeacherPayload)
+  @Mutation(() => UserPayload)
   async teacherCreate(
-    // @Args('registrationID', { type: () => Int })
-    // registrationID: tbl_registration['id'],
     @Args('teacherInput', { type: () => TeacherInput })
     teacherInput: Partial<TeacherInput>
   ) {
     return await this.teacherService.create(teacherInput) // registrationID
   }
 
-  @Mutation(() => TeacherPayload)
+  @Mutation(() => UserPayload)
   async teacherUpdate(
-    @Args('teacherID', { type: () => Int }) teacherID: Teacher['id'],
+    @Args('teacherID', { type: () => Int }) teacherID: User['id'],
     @Args('teacherInput', { type: () => TeacherInput })
     teacherInput: Partial<TeacherInput>
   ) {
     return await this.teacherService.update(teacherID, teacherInput)
   }
 
-  @Mutation(() => TeacherPayload)
+  @Mutation(() => UserPayload)
   async teacherDelete(
-    @Args('teacherID', { type: () => Int }) teacherID: Teacher['id']
+    @Args('teacherID', { type: () => Int }) teacherID: User['id']
   ) {
     return await this.teacherService.remove(teacherID)
   }
 
   /** Field Resolver */
   @ResolveField()
-  async registrations(@Parent() teacher: Teacher) {
-    const { id }: { id: Teacher['id'] } = teacher
+  async registrations(@Parent() teacher: User) {
+    const { id }: { id: User['id'] } = teacher
     const teacherID = id
     return await this.registrationService.findAll(null, null, teacherID)
   }

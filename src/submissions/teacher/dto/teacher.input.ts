@@ -1,9 +1,13 @@
 import { InputType } from '@nestjs/graphql'
-import { IsPostalCode, IsEmail, IsPhoneNumber } from 'class-validator'
+import {
+  IsPostalCode,
+  IsEmail,
+  IsPhoneNumber,
+  IsBoolean,
+} from 'class-validator'
 
 @InputType()
 export class TeacherInput {
-  prefix?: string
   firstName?: string
   lastName?: string
   apartment?: string
@@ -11,6 +15,12 @@ export class TeacherInput {
   streetName?: string
   city?: string
   province?: string
+
+  @IsBoolean()
+  privateTeacher?: boolean
+
+  @IsBoolean()
+  schoolTeacher?: boolean
 
   @IsPostalCode('CA')
   postalCode?: string

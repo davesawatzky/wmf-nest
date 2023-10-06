@@ -238,10 +238,9 @@ type Mutation {
   subdisciplineCreate(disciplineID: Int!, subdisciplineInput: SubdisciplineInput!): SubdisciplinePayload!
   subdisciplineDelete(subdisciplineID: Int!): SubdisciplinePayload!
   subdisciplineUpdate(subdisciplineID: Int!, subdisciplineInput: SubdisciplineInput!): SubdisciplinePayload!
-  submitRegistration(registrationID: Int!): SubmissionPayload!
-  teacherCreate(teacherInput: TeacherInput!): TeacherPayload!
-  teacherDelete(teacherID: Int!): TeacherPayload!
-  teacherUpdate(teacherID: Int!, teacherInput: TeacherInput!): TeacherPayload!
+  teacherCreate(teacherInput: TeacherInput!): UserPayload!
+  teacherDelete(teacherID: Int!): UserPayload!
+  teacherUpdate(teacherID: Int!, teacherInput: TeacherInput!): UserPayload!
   trophyCreate(trophyInput: TrophyInput!): TrophyPayload!
   trophyDelete(id: Int!): TrophyPayload!
   trophyUpdate(trophyID: Int!, trophyInput: TrophyInput!): TrophyPayload!
@@ -333,9 +332,8 @@ type Query {
   subdiscipline(subdisciplineID: Int!): Subdiscipline!
   subdisciplines(disciplineID: Int, performerType: PerformerType): [Subdiscipline!]!
   subdisciplinesByName(name: String!): [Subdiscipline!]!
-  submissions(performerType: PerformerType!): [Registration!]!
-  teacher(teacherID: Int!): Teacher!
-  teachers: [Teacher!]!
+  teacher(teacherID: Int!): User!
+  teachers(privateTeacher: Boolean!, schoolTeacher: Boolean!): [User!]!
   tokenCheck: Boolean!
   trophies: [Trophy!]!
   trophy(id: Int!): Trophy!
@@ -389,7 +387,7 @@ type Registration {
   registeredClasses: [RegisteredClass!]
   school: School
   submittedAt: DateTime
-  teacher: Teacher
+  teacher: User
   totalAmt: Decimal
   transactionInfo: String
   updatedAt: DateTime
@@ -518,34 +516,6 @@ type SubdisciplinePayload {
   userErrors: [UserError!]!
 }
 
-type Submission {
-  confirmation: String!
-  payedAmt: Decimal
-  submittedAt: DateTime!
-}
-
-type SubmissionPayload {
-  submission: Submission!
-  userErrors: [UserError!]!
-}
-
-type Teacher {
-  apartment: String
-  city: String
-  email: String
-  firstName: String
-  id: Int!
-  instrument: String
-  lastName: String
-  phone: String
-  postalCode: String
-  prefix: String
-  province: String
-  registrations: [Registration!]
-  streetName: String
-  streetNumber: String
-}
-
 input TeacherInput {
   apartment: String
   city: String
@@ -555,15 +525,11 @@ input TeacherInput {
   lastName: String
   phone: String
   postalCode: String
-  prefix: String
+  privateTeacher: Boolean
   province: String
+  schoolTeacher: Boolean
   streetName: String
   streetNumber: String
-}
-
-type TeacherPayload {
-  teacher: Teacher!
-  userErrors: [UserError!]!
 }
 
 type Trophy {
@@ -587,15 +553,18 @@ type User {
   admin: Boolean!
   apartment: String
   city: String
-  email: String!
+  email: String
   emailConfirmed: Boolean
   firstName: String
   id: Int!
+  instrument: String
   lastName: String
   phone: String
   postalCode: String
+  privateTeacher: Boolean!
   province: String
   registrations: [Registration!]
+  schoolTeacher: Boolean!
   staff: Boolean!
   streetName: String
   streetNumber: String

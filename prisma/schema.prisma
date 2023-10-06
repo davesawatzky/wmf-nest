@@ -194,28 +194,6 @@ model tbl_reg_selection {
   @@index([classpickID])
 }
 
-model tbl_reg_teacher {
-  id               Int              @id @default(autoincrement())
-  regID            Int              @unique
-  prefix           String?          @db.Text
-  lastName         String?          @map("last_name") @db.Text
-  firstName        String?          @map("first_name") @db.Text
-  apartment        String?          @db.Text
-  streetNumber     String?          @map("street_number") @db.Text
-  streetName       String?          @map("street_name") @db.Text
-  city             String?          @default("Winnipeg") @db.Text
-  province         String?          @default("MB") @db.Text
-  postalCode       String?          @map("postal_code") @db.Text
-  phone            String?          @db.Text
-  email            String?          @db.Text
-  instrument       String?          @db.Text
-  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamp()
-  updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
-  tbl_registration tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
-
-  @@index([regID])
-}
-
 model tbl_reg_unavailable {
   id            Int           @id @default(autoincrement())
   groupID       Int
@@ -241,16 +219,16 @@ model tbl_registration {
   confirmation      String?             @unique @db.Text
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp()
   updatedAt         DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
-  tbl_user          tbl_user?           @relation(fields: [userID], references: [id], onUpdate: Restrict)
-  tbl_teachers      tbl_teachers?       @relation(fields: [teacherID], references: [id], onUpdate: Restrict)
+  User              tbl_user?           @relation("UserRelation", fields: [userID], references: [id], onUpdate: Restrict)
+  Teacher           tbl_user?           @relation("TeacherRelation", fields: [teacherID], references: [id], onUpdate: Restrict)
   tbl_reg_classes   tbl_reg_classes[]
   tbl_reg_community tbl_reg_community?
   tbl_reg_group     tbl_reg_group?
   tbl_reg_performer tbl_reg_performer[]
   tbl_reg_school    tbl_reg_school?
-  tbl_reg_teacher   tbl_reg_teacher?
 
   @@index([userID])
+  @@index([teacherID])
 }
 
 model tbl_sacred {
@@ -275,26 +253,6 @@ model tbl_subdiscipline {
   @@index([disciplineID])
 }
 
-model tbl_teachers {
-  id               Int              @id @default(autoincrement())
-  prefix           String?          @db.Text
-  lastName         String?          @map("last_name") @db.Text
-  firstName        String?          @map("first_name") @db.Text
-  instrument       String?          @db.Text
-  apartment        String?          @db.Text
-  streetNumber     String?          @map("street_number") @db.Text
-  streetName       String?          @map("street_name") @db.Text
-  city             String?          @db.Text
-  province         String?          @db.Text
-  postalCode       String?          @map("postal_code") @db.Text
-  phone            String?          @db.Text
-  email            String?          @db.Text
-  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamp()
-  updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
-  
-  tbl_registration tbl_registration[]
-}
-
 model tbl_trophy {
   id               Int                @id @default(autoincrement())
   name             String             @db.Text
@@ -304,11 +262,13 @@ model tbl_trophy {
 
 model tbl_user {
   id               Int                @id @default(autoincrement())
-  email            String             @unique @db.Text
-  password         String             @db.Text
+  email            String?            @unique @db.Text
+  password         String?            @db.Text
   emailConfirmed   Boolean?           @map("email_confirmed") @db.Boolean @default(false)
   staff            Boolean            @default(false)
   admin            Boolean            @default(false)
+  privateTeacher   Boolean            @map("private_teacher") @default(false)
+  schoolTeacher    Boolean            @map("school_teacher") @default(false)
   firstName        String?            @map("first_name") @db.Text
   lastName         String?            @map("last_name") @db.Text
   apartment        String?            @db.Text
@@ -318,9 +278,11 @@ model tbl_user {
   province         String?            @db.Text
   postalCode       String?            @map("postal_code") @db.Text
   phone            String?            @db.Text
+  instrument       String?            @db.Text
   updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
   createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamp()
-  tbl_registration tbl_registration[]
+  RegistrationUser  tbl_registration[] @relation("UserRelation")
+  RegistrationTeacher  tbl_registration[] @relation("TeacherRelation")
 }
 
 model tbl_reg_community {

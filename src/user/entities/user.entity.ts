@@ -6,10 +6,13 @@ import { Registration } from '../../submissions/registration/entities/registrati
 export class User {
   @Field(() => Int)
   id: number
-  email: string
+  email?: string
   emailConfirmed?: boolean
   staff: boolean
   admin: boolean
+  privateTeacher: boolean
+  schoolTeacher: boolean
+  instrument?: string
   firstName?: string
   lastName?: string
   apartment?: string

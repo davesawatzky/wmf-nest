@@ -23,7 +23,7 @@ import { SelectionModule } from './submissions/selection/selection.module'
 import { AuthModule } from './auth/auth.module'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { AbilityModule } from './ability/ability.module'
-import { SubmissionModule } from './submissions/submission/submission.module'
+// import { SubmissionModule } from './submissions/submission/submission.module'
 import { SchoolGroupModule } from './submissions/school-group/school-group.module'
 import { FieldConfigModule } from './submissions/field-config/field-config.module'
 import { StripeModule } from './stripe/stripe.module'
@@ -67,7 +67,7 @@ import { EmailConfirmationModule } from './email-confirmation/email-confirmation
     SelectionModule,
     AuthModule,
     AbilityModule,
-    SubmissionModule,
+    // SubmissionModule,
     SchoolGroupModule,
     FieldConfigModule,
     StripeModule.forRoot(process.env.STRIPE_SERVER_KEY, {

@@ -21,12 +21,11 @@ import {
   Registration,
   RegistrationPayload,
 } from './entities/registration.entity'
-import { Teacher } from '../teacher/entities/teacher.entity'
 import { RegistrationInput } from './dto/registration.input'
 import { PerformerType } from '../../common.entity'
 import { UseGuards } from '@nestjs/common/decorators'
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
-//import { User } from '../../user/entities/user.entity'
+import { User } from '../../user/entities/user.entity'
 
 @Resolver(() => Registration)
 @UseGuards(JwtAuthGuard)
@@ -132,7 +131,7 @@ export class RegistrationResolver {
   }
   @ResolveField()
   async teacher(@Parent() registration: tbl_registration) {
-    const { teacherID }: { teacherID: Teacher['id'] } = registration
+    const { teacherID }: { teacherID: User['id'] } = registration
     return await this.teacherService.findOne(teacherID)
   }
   @ResolveField()

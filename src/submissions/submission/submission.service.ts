@@ -38,7 +38,7 @@ export class SubmissionService {
           where: { id },
           include: {
             tbl_reg_performer: true,
-            tbl_reg_teacher: true,
+            // tbl_reg_teacher: true,
             tbl_reg_classes: {
               include: {
                 tbl_reg_selection: true,
@@ -54,7 +54,7 @@ export class SubmissionService {
           include: {
             tbl_reg_group: true,
             tbl_reg_performer: true,
-            tbl_reg_teacher: true,
+            // tbl_reg_teacher: true,
             tbl_reg_classes: {
               include: {
                 tbl_reg_selection: true,
@@ -72,7 +72,7 @@ export class SubmissionService {
           },
           include: {
             tbl_reg_community: true,
-            tbl_reg_teacher: true,
+            // tbl_reg_teacher: true,
             tbl_reg_classes: {
               include: {
                 tbl_reg_selection: true,
@@ -92,7 +92,7 @@ export class SubmissionService {
                 tbl_reg_schoolgroup: true,
               },
             },
-            tbl_reg_teacher: true,
+            // tbl_reg_teacher: true,
             tbl_reg_classes: {
               include: {
                 tbl_reg_selection: true,
