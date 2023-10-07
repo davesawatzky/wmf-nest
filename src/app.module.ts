@@ -30,6 +30,7 @@ import { StripeModule } from './stripe/stripe.module'
 import { CustomersModule } from './customers/customers.module'
 import { EmailModule } from './email/email.module'
 import { EmailConfirmationModule } from './email-confirmation/email-confirmation.module'
+import metadata from './metadata'
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { EmailConfirmationModule } from './email-confirmation/email-confirmation
       buildSchemaOptions: {
         numberScalarMode: 'integer',
       },
+      metadata,
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,

@@ -24,6 +24,7 @@ import {
   SubdisciplinePayload,
 } from './entities/subdiscipline.entity'
 import { SubdisciplineInput } from './dto/subdiscipline.input'
+import { FestivalClass } from '../festival-class/entities/festival-class.entity'
 
 @Resolver(() => Subdiscipline)
 @UseGuards(JwtAuthGuard)
@@ -99,7 +100,7 @@ export class SubdisciplineResolver {
 
   /** Field Resolvers */
 
-  @ResolveField()
+  @ResolveField(() => [FestivalClass])
   async festivalClasses(
     @Parent() Subdiscipline: tbl_subdiscipline,
     @Args('performerType', { type: () => PerformerType, nullable: true })

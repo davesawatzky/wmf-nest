@@ -10,7 +10,7 @@ type AuthPayload {
 
 type Category {
   description: String
-  festivalClasses(levelID: Int!, performerType: String!, subdisciplineID: Int!): [FestivalClass!]
+  festivalClasses(levelID: Int!, performerType: PerformerType!, subdisciplineID: Int!): [FestivalClass!]
   id: Int!
   name: String!
   requiredComposer: String
@@ -177,7 +177,7 @@ type InstrumentPayload {
 }
 
 type Level {
-  classes(categoryID: Int!, performerType: String!, subdisciplineID: Int!): [FestivalClass!]
+  classes(categoryID: Int!, performerType: PerformerType!, subdisciplineID: Int!): [FestivalClass!]
   description: String
   id: Int!
   name: String!
@@ -203,7 +203,7 @@ type Mutation {
   disciplineCreate(disciplineInput: DisciplineInput!): DisciplinePayload!
   disciplineDelete(id: Int!): DisciplinePayload!
   disciplineUpdate(disciplineInput: DisciplineInput!, id: Int!): DisciplinePayload!
-  festivalClassCreate(festivalClass: FestivalClassInput!, performerType: String!): FestivalClassPayload!
+  festivalClassCreate(festivalClass: FestivalClassInput!, performerType: PerformerType!): FestivalClassPayload!
   festivalClassDelete(festivalClassID: Int!): FestivalClassPayload!
   festivalClassUpdate(festivalClass: FestivalClassInput!, festivalClassID: Int!): FestivalClassPayload!
   groupCreate(registrationID: Int!): GroupPayload!
@@ -238,14 +238,14 @@ type Mutation {
   subdisciplineCreate(disciplineID: Int!, subdisciplineInput: SubdisciplineInput!): SubdisciplinePayload!
   subdisciplineDelete(subdisciplineID: Int!): SubdisciplinePayload!
   subdisciplineUpdate(subdisciplineID: Int!, subdisciplineInput: SubdisciplineInput!): SubdisciplinePayload!
-  teacherCreate(teacherInput: TeacherInput!): UserPayload!
-  teacherDelete(teacherID: Int!): UserPayload!
-  teacherUpdate(teacherID: Int!, teacherInput: TeacherInput!): UserPayload!
+  teacherCreate(privateTeacher: Boolean!, schoolTeacher: Boolean!, teacherInput: TeacherInput!): TeacherPayload!
+  teacherDelete(teacherID: Int!): TeacherPayload!
+  teacherUpdate(teacherID: Int!, teacherInput: TeacherInput!): TeacherPayload!
   trophyCreate(trophyInput: TrophyInput!): TrophyPayload!
   trophyDelete(id: Int!): TrophyPayload!
   trophyUpdate(trophyID: Int!, trophyInput: TrophyInput!): TrophyPayload!
   userDelete(id: Int!): UserPayload!
-  userUpdate(userID: Int!, userInput: Int!): UserPayload!
+  userUpdate(userID: Int!, userInput: UserInput!): UserPayload!
 }
 
 type Performer {
@@ -516,6 +516,12 @@ type SubdisciplinePayload {
   userErrors: [UserError!]!
 }
 
+type Submission {
+  confirmation: String!
+  payedAmt: Decimal
+  submittedAt: DateTime!
+}
+
 input TeacherInput {
   apartment: String
   city: String
@@ -530,6 +536,11 @@ input TeacherInput {
   schoolTeacher: Boolean
   streetName: String
   streetNumber: String
+}
+
+type TeacherPayload {
+  teacher: User!
+  userErrors: [UserError!]!
 }
 
 type Trophy {
@@ -550,7 +561,7 @@ type TrophyPayload {
 }
 
 type User {
-  admin: Boolean!
+  admin: Boolean
   apartment: String
   city: String
   email: String
@@ -561,11 +572,11 @@ type User {
   lastName: String
   phone: String
   postalCode: String
-  privateTeacher: Boolean!
+  privateTeacher: Boolean
   province: String
   registrations: [Registration!]
-  schoolTeacher: Boolean!
-  staff: Boolean!
+  schoolTeacher: Boolean
+  staff: Boolean
   streetName: String
   streetNumber: String
 }
@@ -573,6 +584,23 @@ type User {
 type UserError {
   field: [String!]!
   message: String!
+}
+
+input UserInput {
+  admin: Boolean
+  apartment: String
+  city: String
+  emailConfirmed: Boolean
+  firstName: String
+  lastName: String
+  phone: String
+  postalCode: String
+  privateTeacher: Boolean
+  province: String
+  schoolTeacher: Boolean
+  staff: Boolean
+  streetName: String
+  streetNumber: String
 }
 
 type UserPayload {

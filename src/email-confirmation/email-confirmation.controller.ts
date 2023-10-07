@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common'
 import ConfirmEmailDto from './dto/confirm-email.dto'
 import { EmailConfirmationService } from './email-confirmation.service'
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
+import { JwtAuthGuard } from '../auth/jwt-auth.guard'
 import RequestWithUser from '../auth/requestWithUser.interface'
 
 @Controller('email-confirmation')

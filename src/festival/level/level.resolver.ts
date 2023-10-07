@@ -16,6 +16,7 @@ import { Level, LevelPayload } from './entities/level.entity'
 import { LevelInput } from './dto/level.input'
 import { FestivalClassService } from '../festival-class/festival-class.service'
 import { PerformerType } from '../../common.entity'
+import { FestivalClass } from '../festival-class/entities/festival-class.entity'
 
 registerEnumType(PerformerType, {
   name: 'PerformerType',
@@ -70,7 +71,7 @@ export class LevelResolver {
 
   /** Field Resolver */
 
-  @ResolveField()
+  @ResolveField(() => [FestivalClass])
   async classes(
     @Parent() { id }: tbl_level,
     @Args('performerType') performerType: PerformerType,

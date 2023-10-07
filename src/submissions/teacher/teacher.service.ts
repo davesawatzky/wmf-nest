@@ -7,12 +7,13 @@ import { PrismaService } from '../../prisma/prisma.service'
 export class TeacherService {
   constructor(private prisma: PrismaService) {}
 
-  async create(teacherInput: Partial<TeacherInput>) {
+  async create(
+    privateTeacher: boolean,
+    schoolTeacher: boolean,
+    teacherInput: Partial<TeacherInput>
+  ) {
     try {
-      if (
-        teacherInput.privateTeacher === true ||
-        teacherInput.schoolTeacher === true
-      ) {
+      if (privateTeacher === true || schoolTeacher === true) {
         return {
           userErrors: [],
           teacher: await this.prisma.tbl_user.create({
@@ -23,7 +24,8 @@ export class TeacherService {
         }
       } else {
         return {
-          userErrors: [{ message: 'Not a teacher', teacher: null }],
+          userErrors: [{ message: 'Not a teacher' }],
+          teacher: null,
         }
       }
     } catch (err) {
@@ -32,19 +34,14 @@ export class TeacherService {
     }
   }
 
-  async findAll(privateTeacher?: boolean, schoolTeacher?: boolean) {
+  async findAll(privateTeacher: boolean, schoolTeacher: boolean) {
     try {
-      if (privateTeacher === null || schoolTeacher === null) {
-        privateTeacher === true
-        schoolTeacher === true
-      }
       if (privateTeacher === true || schoolTeacher === true) {
-        const teachers = await this.prisma.tbl_user.findMany({
-          distinct: ['firstName', 'lastName', 'instrument'],
+        const teachersData = await this.prisma.tbl_user.findMany({
           where: { privateTeacher, schoolTeacher },
           orderBy: { lastName: 'asc' },
         })
-        const teachersFiltered = teachers.map((obj) => {
+        const teachersFiltered = teachersData.map((obj) => {
           const {
             password,
             staff,
@@ -53,8 +50,9 @@ export class TeacherService {
             schoolTeacher,
             ...teacherProps
           } = obj
-          return { teacherProps }
+          return teacherProps
         })
+        console.log(teachersFiltered)
         return teachersFiltered
       } else {
         return { userErrors: [{ message: 'Not teachers' }] }
@@ -75,19 +73,9 @@ export class TeacherService {
         })
         if (teacher.privateTeacher === true || teacher.schoolTeacher === true) {
           const { password, staff, admin, ...teacherProps } = teacher
-          return {
-            userErrors: [],
-            teacherProps,
-          }
+          return teacherProps
         } else {
-          return {
-            userErrors: [
-              {
-                message: 'Teacher not found',
-              },
-            ],
-            teacher: null,
-          }
+          return { teacher: null }
         }
       }
     } catch (err) {

@@ -1,4 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing'
+import {
+  describe,
+  beforeAll,
+  beforeEach,
+  afterAll,
+  test,
+  it,
+  expect,
+} from 'vitest'
 import { RegisteredClassService } from './registered-class.service'
 
 describe('RegisteredClassService', () => {

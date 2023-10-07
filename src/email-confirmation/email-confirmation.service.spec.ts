@@ -1,18 +1,27 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { EmailConfirmationService } from './email-confirmation.service';
+import { Test, TestingModule } from '@nestjs/testing'
+import {
+  describe,
+  beforeAll,
+  beforeEach,
+  afterAll,
+  test,
+  it,
+  expect,
+} from 'vitest'
+import { EmailConfirmationService } from './email-confirmation.service'
 
 describe('EmailConfirmationService', () => {
-  let service: EmailConfirmationService;
+  let service: EmailConfirmationService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [EmailConfirmationService],
-    }).compile();
+    }).compile()
 
-    service = module.get<EmailConfirmationService>(EmailConfirmationService);
-  });
+    service = module.get<EmailConfirmationService>(EmailConfirmationService)
+  })
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-});
+    expect(service).toBeDefined()
+  })
+})

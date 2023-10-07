@@ -5,7 +5,7 @@ import { UseGuards } from '@nestjs/common'
 import { SubmissionService } from '../submission/submission.service'
 import { SubmissionPayload } from './entities/submission.entity'
 import { PerformerType } from '../../common.entity'
-import { EmailConfirmationGuard } from 'src/email-confirmation/email-confirmation.guard'
+import { EmailConfirmationGuard } from '../../email-confirmation/email-confirmation.guard'
 
 @Resolver(() => Registration)
 @UseGuards(JwtAuthGuard)

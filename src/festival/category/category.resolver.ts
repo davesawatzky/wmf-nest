@@ -16,6 +16,7 @@ import { PerformerType } from '../../common.entity'
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 import { UseGuards } from '@nestjs/common'
 import { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
+import { FestivalClass } from '../festival-class/entities/festival-class.entity'
 
 @Resolver(() => Category)
 @UseGuards(JwtAuthGuard)
@@ -64,7 +65,7 @@ export class CategoryResolver {
   }
 
   /** Field Resolvers */
-  @ResolveField()
+  @ResolveField(() => [FestivalClass])
   async festivalClasses(
     @Parent() { id }: tbl_category,
     @Args('performerType') performerType: PerformerType,

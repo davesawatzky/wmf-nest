@@ -6,7 +6,7 @@ import { UserModule } from '../user/user.module'
 import { PassportModule } from '@nestjs/passport/dist'
 import { JwtModule } from '@nestjs/jwt/dist'
 import { JwtStrategy } from './jwt.strategy'
-import { EmailConfirmationModule } from 'src/email-confirmation/email-confirmation.module'
+import { EmailConfirmationModule } from '../email-confirmation/email-confirmation.module'
 
 @Module({
   providers: [AuthResolver, AuthService, LocalStrategy, JwtStrategy],

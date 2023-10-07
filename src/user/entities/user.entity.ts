@@ -8,10 +8,10 @@ export class User {
   id: number
   email?: string
   emailConfirmed?: boolean
-  staff: boolean
-  admin: boolean
-  privateTeacher: boolean
-  schoolTeacher: boolean
+  staff?: boolean
+  admin?: boolean
+  privateTeacher?: boolean
+  schoolTeacher?: boolean
   instrument?: string
   firstName?: string
   lastName?: string

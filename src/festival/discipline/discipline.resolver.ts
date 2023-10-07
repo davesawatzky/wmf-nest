@@ -14,6 +14,7 @@ import { Discipline, DisciplinePayload } from './entities/discipline.entity'
 import { SubdisciplineService } from '../subdiscipline/subdiscipline.service'
 import { DisciplineInput } from './dto/discipline.input'
 import { PerformerType } from '../../common.entity'
+import { Subdiscipline } from '../subdiscipline/entities/subdiscipline.entity'
 
 @Resolver(() => Discipline)
 @UseGuards(JwtAuthGuard)
@@ -65,7 +66,7 @@ export class DisciplineResolver {
   /**
    * Field Resolvers
    */
-  @ResolveField()
+  @ResolveField(() => [Subdiscipline])
   async subdisciplines(
     @Parent() discipline: Discipline,
     @Args('performerType', { type: () => PerformerType, nullable: true })

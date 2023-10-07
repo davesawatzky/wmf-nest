@@ -1,18 +1,29 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { EmailConfirmationController } from './email-confirmation.controller';
+import { Test, TestingModule } from '@nestjs/testing'
+import {
+  describe,
+  beforeAll,
+  beforeEach,
+  afterAll,
+  test,
+  it,
+  expect,
+} from 'vitest'
+import { EmailConfirmationController } from './email-confirmation.controller'
 
 describe('EmailConfirmationController', () => {
-  let controller: EmailConfirmationController;
+  let controller: EmailConfirmationController
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [EmailConfirmationController],
-    }).compile();
+    }).compile()
 
-    controller = module.get<EmailConfirmationController>(EmailConfirmationController);
-  });
+    controller = module.get<EmailConfirmationController>(
+      EmailConfirmationController
+    )
+  })
 
   it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-});
+    expect(controller).toBeDefined()
+  })
+})

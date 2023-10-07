@@ -15,6 +15,7 @@ import { SelectionService } from '../selection/selection.service'
 import { RegisteredClass } from './entities/registered-class.entity'
 import { UseGuards } from '@nestjs/common/decorators'
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
+import { Selection } from '../selection/entities/selection.entity'
 
 @Resolver(() => RegisteredClass)
 @UseGuards(JwtAuthGuard)
@@ -83,7 +84,7 @@ export class RegisteredClassResolver {
 
   /** Field Resolvers */
 
-  @ResolveField()
+  @ResolveField(() => [Selection])
   async selections(@Parent() registeredClass: tbl_reg_classes) {
     const { id }: { id: RegisteredClass['id'] } = registeredClass
     const registeredClassID = id

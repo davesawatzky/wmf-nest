@@ -22,6 +22,10 @@ import { SubdisciplineService } from '../subdiscipline/subdiscipline.service'
 import { LevelService } from '../level/level.service'
 import { CategoryService } from '../category/category.service'
 import { tbl_classlist } from '@prisma/client'
+import { Trophy } from '../trophy/entities/trophy.entity'
+import { Level } from '../level/entities/level.entity'
+import { Subdiscipline } from '../subdiscipline/entities/subdiscipline.entity'
+import { Category } from '../category/entities/category.entity'
 
 @Resolver(() => FestivalClass)
 @UseGuards(JwtAuthGuard)
@@ -111,25 +115,25 @@ export class FestivalClassResolver {
 
   /** Field Resolvers */
 
-  @ResolveField()
+  @ResolveField(() => [Trophy])
   async trophies(@Parent() festivalClass: FestivalClass) {
     const { id }: { id: FestivalClass['id'] } = festivalClass
     return await this.festivalClassService.findClassTrophies(id)
   }
 
-  @ResolveField()
+  @ResolveField(() => Level)
   async level(@Parent() festivalClass: tbl_classlist) {
     const { levelID }: { levelID: tbl_classlist['levelID'] } = festivalClass
     return await this.levelService.findOne(levelID)
   }
-  @ResolveField()
+  @ResolveField(() => Subdiscipline)
   async subdiscipline(@Parent() festivalClass: tbl_classlist) {
     const {
       subdisciplineID,
     }: { subdisciplineID: tbl_classlist['subdisciplineID'] } = festivalClass
     return await this.subdisciplineService.findOne(subdisciplineID)
   }
-  @ResolveField()
+  @ResolveField(() => Category)
   async category(@Parent() festivalClass: tbl_classlist) {
     const { categoryID }: { categoryID: tbl_classlist['categoryID'] } =
       festivalClass

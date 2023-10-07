@@ -1,4 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing'
+import {
+  describe,
+  beforeAll,
+  beforeEach,
+  afterAll,
+  test,
+  it,
+  expect,
+} from 'vitest'
 import { GroupResolver } from './group.resolver'
 import { GroupService } from './group.service'
 

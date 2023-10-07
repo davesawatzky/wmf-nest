@@ -12,6 +12,7 @@ import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 import { TrophyService } from './trophy.service'
 import { Trophy, TrophyPayload } from './entities/trophy.entity'
 import { TrophyInput } from './dto/trophy.input'
+import { FestivalClass } from '../festival-class/entities/festival-class.entity'
 
 @Resolver(() => Trophy)
 @UseGuards(JwtAuthGuard)
@@ -52,7 +53,7 @@ export class TrophyResolver {
 
   /** Field Resolvers */
 
-  @ResolveField()
+  @ResolveField(() => [FestivalClass])
   async festivalClasses(@Parent() trophy: Trophy) {
     const { id }: { id: Trophy['id'] } = trophy
     return await this.trophyService.findTrophyClasses(id)

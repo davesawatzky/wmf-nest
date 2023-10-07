@@ -1,4 +1,0 @@
-INSERT INTO tbl_user (id, email, password, email_confirmed, staff, admin, first_name, last_name, apartment, street_number, street_name, city, province, postal_code, phone, updated_at, created_at) VALUES
-	(30, 'david@diatonic.com', '$2a$15$kVfcQIB1YxDv5G5fOEYG/OR2SxZByPwbA4nMK6QEmbFEJVzaoFMCe', true, false, false, 'David', 'Sawatzky', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2023-02-07 00:37:31', '2022-09-23 20:13:02'),
-	(31, 'davntrac@gmail.com', '$2b$15$6vzpWlOxctVmniJ4xCjmDu9vLOQUGlF4Xg5oDtg/oz8ApbP.LtRT.', true, false, false, 'David', 'Sawatzky', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2023-02-19 05:07:14', '2023-02-19 05:07:14'),
-	(49, 'hello@hello.com', '$2b$15$eTfmblZjszxEOoegF5TxE.cI7I.FK7dzBPLm3v7LgScfb1UIC8qjy', true, false, false, 'David', 'Sawatzky', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2023-03-14 13:41:51', '2023-03-14 16:57:18');

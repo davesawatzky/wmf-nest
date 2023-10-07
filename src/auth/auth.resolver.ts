@@ -1,6 +1,6 @@
 import { Resolver, Mutation, Args, Context, Query } from '@nestjs/graphql'
-import { Response } from 'express'
 import { AuthService } from './auth.service'
+import { Response } from 'express'
 import { AuthPayload } from './dto/auth.entity'
 import { CredentialsSignup } from './dto/credentials-signup.input'
 import { CredentialsSignin } from './dto/credentials-signin.input'
@@ -23,11 +23,11 @@ export class AuthResolver {
     @Context('res') res: Response
   ): Promise<AuthPayload> {
     const { userErrors, user } = await this.authService.signup(credentials)
-    const userName = `${user.firstName} ${user.lastName}`
-    await this.emailConfirmationService.sendVerificationLink(
-      userName,
-      user.email
-    )
+    // const userName = `${user.firstName} ${user.lastName}`
+    // await this.emailConfirmationService.sendVerificationLink(
+    //   userName,
+    //   user.email
+    // )
     return { userErrors, user }
   }
 

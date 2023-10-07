@@ -27,7 +27,6 @@ export class UserInput {
   streetName?: string
   city?: string
   province?: string
-  instrumnet?: string
 
   @IsPostalCode('CA')
   postalCode?: string

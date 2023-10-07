@@ -12,7 +12,9 @@ import { RegistrationService } from '../registration/registration.service'
 import { TeacherInput } from './dto/teacher.input'
 import { UseGuards } from '@nestjs/common/decorators'
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
-import { User, UserPayload } from 'src/user/entities/user.entity'
+import { User, UserPayload } from '../../user/entities/user.entity'
+import { TeacherPayload } from './dto/teacher.input'
+import { Registration } from '../registration/entities/registration.entity'
 
 @Resolver(() => User)
 @UseGuards(JwtAuthGuard)
@@ -44,15 +46,23 @@ export class TeacherResolver {
 
   /** Mutations */
 
-  @Mutation(() => UserPayload)
+  @Mutation(() => TeacherPayload)
   async teacherCreate(
+    @Args('privateTeacher', { type: () => Boolean })
+    privateTeacher: TeacherInput['privateTeacher'],
+    @Args('schoolTeacher', { type: () => Boolean })
+    schoolTeacher: TeacherInput['schoolTeacher'],
     @Args('teacherInput', { type: () => TeacherInput })
     teacherInput: Partial<TeacherInput>
   ) {
-    return await this.teacherService.create(teacherInput) // registrationID
+    return await this.teacherService.create(
+      privateTeacher,
+      schoolTeacher,
+      teacherInput
+    ) // registrationID
   }
 
-  @Mutation(() => UserPayload)
+  @Mutation(() => TeacherPayload)
   async teacherUpdate(
     @Args('teacherID', { type: () => Int }) teacherID: User['id'],
     @Args('teacherInput', { type: () => TeacherInput })
@@ -61,7 +71,7 @@ export class TeacherResolver {
     return await this.teacherService.update(teacherID, teacherInput)
   }
 
-  @Mutation(() => UserPayload)
+  @Mutation(() => TeacherPayload)
   async teacherDelete(
     @Args('teacherID', { type: () => Int }) teacherID: User['id']
   ) {
@@ -69,7 +79,7 @@ export class TeacherResolver {
   }
 
   /** Field Resolver */
-  @ResolveField()
+  @ResolveField(() => [Registration])
   async registrations(@Parent() teacher: User) {
     const { id }: { id: User['id'] } = teacher
     const teacherID = id

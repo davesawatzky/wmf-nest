@@ -1,4 +1,6 @@
-import { InputType } from '@nestjs/graphql'
+import { InputType, ObjectType } from '@nestjs/graphql'
+import { UserError } from '../../../common.entity'
+import { User } from '../../../user/entities/user.entity'
 import {
   IsPostalCode,
   IsEmail,
@@ -32,4 +34,10 @@ export class TeacherInput {
   email?: string
 
   instrument?: string
+}
+
+@ObjectType()
+export class TeacherPayload {
+  userErrors: UserError[]
+  teacher: User
 }

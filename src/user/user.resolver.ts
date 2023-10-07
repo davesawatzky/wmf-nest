@@ -11,6 +11,7 @@ import {
 import { UserService } from './user.service'
 import { User, UserPayload } from './entities/user.entity'
 import { UserInput } from './dto/user.input'
+import { Registration } from '../submissions/registration/entities/registration.entity'
 import { RegistrationService } from '../submissions/registration/registration.service'
 import { ForbiddenException, UseGuards, UsePipes } from '@nestjs/common'
 import { JwtAuthGuard } from '../auth/jwt-auth.guard'
@@ -69,7 +70,7 @@ export class UserResolver {
   @UsePipes(TrimPipe)
   async userUpdate(
     @Args('userID', { type: () => Int }) userID: User['id'],
-    @Args('userInput', { type: () => Int }) userInput: UserInput
+    @Args('userInput', { type: () => UserInput }) userInput: Partial<UserInput>
   ) {
     return await this.userService.update(userID, userInput)
   }
@@ -82,7 +83,7 @@ export class UserResolver {
 
   /** Field Resolvers */
 
-  @ResolveField()
+  @ResolveField(() => [Registration])
   async registrations(@Parent() user: User) {
     const { id }: { id: User['id'] } = user
     return await this.registrationService.findAll(id)

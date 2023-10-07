@@ -1,4 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing'
+import {
+  describe,
+  beforeAll,
+  beforeEach,
+  afterAll,
+  test,
+  it,
+  expect,
+} from 'vitest'
 import { RegistrationResolver } from './registration.resolver'
 import { RegistrationService } from './registration.service'
 

@@ -265,10 +265,10 @@ model tbl_user {
   email            String?            @unique @db.Text
   password         String?            @db.Text
   emailConfirmed   Boolean?           @map("email_confirmed") @db.Boolean @default(false)
-  staff            Boolean            @default(false)
-  admin            Boolean            @default(false)
-  privateTeacher   Boolean            @map("private_teacher") @default(false)
-  schoolTeacher    Boolean            @map("school_teacher") @default(false)
+  staff            Boolean?           @default(false)
+  admin            Boolean?           @default(false)
+  privateTeacher   Boolean?           @map("private_teacher") @default(false)
+  schoolTeacher    Boolean?           @map("school_teacher") @default(false)
   firstName        String?            @map("first_name") @db.Text
   lastName         String?            @map("last_name") @db.Text
   apartment        String?            @db.Text

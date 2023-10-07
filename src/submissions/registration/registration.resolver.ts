@@ -26,6 +26,11 @@ import { PerformerType } from '../../common.entity'
 import { UseGuards } from '@nestjs/common/decorators'
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 import { User } from '../../user/entities/user.entity'
+import { Performer } from '../performer/entities/performer.entity'
+import { RegisteredClass } from '../registered-class/entities/registered-class.entity'
+import { Group } from '../group/entities/group.entity'
+import { Community } from '../community/entities/community.entity'
+import { School } from '../school/entities/school.entity'
 
 @Resolver(() => Registration)
 @UseGuards(JwtAuthGuard)
@@ -100,41 +105,41 @@ export class RegistrationResolver {
 
   /** Field Resolvers */
 
-  @ResolveField()
+  @ResolveField(() => User)
   async user(@Parent() registration: tbl_registration) {
     const { userID }: { userID: tbl_registration['userID'] } = registration
     return await this.userService.findOne(userID)
   }
-  @ResolveField()
+  @ResolveField(() => [Performer])
   async performers(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return await this.performerService.findAll(registrationID)
   }
-  @ResolveField()
+  @ResolveField(() => [RegisteredClass])
   async registeredClasses(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return await this.registeredClassService.findAll(registrationID)
   }
-  @ResolveField()
+  @ResolveField(() => Group)
   async group(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return await this.groupService.findOne(registrationID)
   }
-  @ResolveField()
+  @ResolveField(() => Community)
   async community(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return await this.communityService.findOne(registrationID)
   }
-  @ResolveField()
+  @ResolveField(() => User)
   async teacher(@Parent() registration: tbl_registration) {
     const { teacherID }: { teacherID: User['id'] } = registration
     return await this.teacherService.findOne(teacherID)
   }
-  @ResolveField()
+  @ResolveField(() => School)
   async school(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id

@@ -15,6 +15,7 @@ import { tbl_registration, tbl_reg_school } from '@prisma/client'
 import { SchoolGroupService } from '../school-group/school-group.service'
 import { UseGuards } from '@nestjs/common/decorators'
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
+import { SchoolGroup } from '../school-group/entities/school-group.entity'
 
 @Resolver(() => School)
 @UseGuards(JwtAuthGuard)
@@ -68,7 +69,7 @@ export class SchoolResolver {
 
   /** Field Resolver */
 
-  @ResolveField()
+  @ResolveField(() => [SchoolGroup])
   async schoolGroups(@Parent() school: tbl_reg_school) {
     const { id }: { id: School['id'] } = school
     const schoolID = id
