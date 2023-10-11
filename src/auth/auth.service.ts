@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common'
-import { AuthPayload } from './dto/auth.entity'
+import { Injectable, BadRequestException } from '@nestjs/common'
+import { AuthPayload } from './entities/auth.entity'
 import { CredentialsSignup } from './dto/credentials-signup.input'
 import { CredentialsSignin } from './dto/credentials-signin.input'
 import { User } from '../user/entities/user.entity'
@@ -10,42 +10,69 @@ import { UserError } from '../common.entity'
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService, private jwtService: JwtService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService
+  ) {}
 
   async signup(credentialsSignup: CredentialsSignup): Promise<AuthPayload> {
     const user = await this.prisma.tbl_user.findUnique({
       where: { email: credentialsSignup.email.trim().toLowerCase() },
     })
-    if (user) {
+    if (user && user.password !== null) {
+      console.log('Denied')
       return {
         userErrors: [
           {
             message: 'User already exists',
-            field: null,
+            field: [],
           },
         ],
         diatonicToken: null,
         user: null,
       }
-    } else {
+    } else if (
+      !user ||
+      credentialsSignup.privateTeacher ||
+      credentialsSignup.schoolTeacher
+    ) {
       const hashedPassword = await bcrypt.hash(
         credentialsSignup.password.trim(),
         15
       )
-      const { firstName, lastName, email } = credentialsSignup
-      const newUser = await this.prisma.tbl_user.create({
-        data: {
+      const { firstName, lastName, email, privateTeacher, schoolTeacher } =
+        credentialsSignup
+      const newUser = await this.prisma.tbl_user.upsert({
+        where: { email: credentialsSignup.email },
+        create: {
           firstName: firstName.trim(),
           lastName: lastName.trim(),
           email: email.trim().toLowerCase(),
           password: hashedPassword,
           staff: false,
           admin: false,
+          privateTeacher,
+          schoolTeacher,
+        },
+        update: {
+          firstName: firstName.trim(),
+          lastName: lastName.trimEnd(),
+          password: hashedPassword,
+          staff: false,
+          admin: false,
+          privateTeacher,
+          schoolTeacher,
         },
       })
+      console.log('New User: ', newUser)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = newUser
-      return this.signin(result)
+      const result = this.stripProperties(newUser)
+      // return this.signin(result)
+      return {
+        userErrors: [],
+        // diatonicToken: null,
+        user: result,
+      }
     }
   }
 
@@ -53,11 +80,51 @@ export class AuthService {
     const payload = {
       username: user.email,
       sub: user.id,
+      privateTeacher: user.privateTeacher,
+      schoolTeacher: user.schoolTeacher,
     }
     return {
       userErrors: [],
       diatonicToken: this.jwtService.sign(payload),
       user: user,
+    }
+  }
+
+  async findOne(email: User['email']) {
+    try {
+      if (email) {
+        const user = await this.prisma.tbl_user.findUnique({
+          where: { email },
+        })
+        if (!!user) {
+          if (user.password !== null) {
+            const pass = true
+            const { password, ...userProps } = user
+            return userProps
+          } else {
+            const pass = false
+            return user
+          }
+        } else {
+          console.log('User is null', user)
+          return { user: null }
+        }
+      }
+    } catch (err) {
+      console.log(err)
+      throw new BadRequestException('No one found with those details')
+    }
+  }
+
+  async checkIfPasswordExists(id: User['id']) {
+    try {
+      const user = await this.prisma.tbl_user.findUnique({
+        where: { id },
+      })
+      const pass = !!user.password
+      return { id, pass }
+    } catch (err) {
+      console.log(err)
     }
   }
 

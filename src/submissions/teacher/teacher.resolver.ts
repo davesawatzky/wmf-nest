@@ -12,11 +12,10 @@ import { RegistrationService } from '../registration/registration.service'
 import { TeacherInput } from './dto/teacher.input'
 import { UseGuards } from '@nestjs/common/decorators'
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
-import { User, UserPayload } from '../../user/entities/user.entity'
-import { TeacherPayload } from './dto/teacher.input'
+import { Teacher, TeacherPayload } from '../teacher/entities/teacher.entity'
 import { Registration } from '../registration/entities/registration.entity'
 
-@Resolver(() => User)
+@Resolver(() => Teacher)
 @UseGuards(JwtAuthGuard)
 export class TeacherResolver {
   constructor(
@@ -26,20 +25,20 @@ export class TeacherResolver {
 
   /** Queries */
 
-  @Query(() => [User])
+  @Query(() => [Teacher])
   async teachers(
     @Args('privateTeacher', { type: () => Boolean })
-    privateTeacher: User['privateTeacher'],
+    privateTeacher: Teacher['privateTeacher'],
     @Args('schoolTeacher', { type: () => Boolean })
-    schoolTeacher: User['schoolTeacher']
+    schoolTeacher: Teacher['schoolTeacher']
   ) {
     return await this.teacherService.findAll(privateTeacher, schoolTeacher)
   }
 
-  @Query(() => User)
+  @Query(() => Teacher)
   async teacher(
     @Args('teacherID', { type: () => Int })
-    teacherID: User['id']
+    teacherID: Teacher['id']
   ) {
     return await this.teacherService.findOne(teacherID)
   }
@@ -64,7 +63,7 @@ export class TeacherResolver {
 
   @Mutation(() => TeacherPayload)
   async teacherUpdate(
-    @Args('teacherID', { type: () => Int }) teacherID: User['id'],
+    @Args('teacherID', { type: () => Int }) teacherID: Teacher['id'],
     @Args('teacherInput', { type: () => TeacherInput })
     teacherInput: Partial<TeacherInput>
   ) {
@@ -73,15 +72,15 @@ export class TeacherResolver {
 
   @Mutation(() => TeacherPayload)
   async teacherDelete(
-    @Args('teacherID', { type: () => Int }) teacherID: User['id']
+    @Args('teacherID', { type: () => Int }) teacherID: Teacher['id']
   ) {
     return await this.teacherService.remove(teacherID)
   }
 
   /** Field Resolver */
   @ResolveField(() => [Registration])
-  async registrations(@Parent() teacher: User) {
-    const { id }: { id: User['id'] } = teacher
+  async registrations(@Parent() teacher: Teacher) {
+    const { id }: { id: Teacher['id'] } = teacher
     const teacherID = id
     return await this.registrationService.findAll(null, null, teacherID)
   }

@@ -12,7 +12,6 @@ export class User {
   admin?: boolean
   privateTeacher?: boolean
   schoolTeacher?: boolean
-  instrument?: string
   firstName?: string
   lastName?: string
   apartment?: string

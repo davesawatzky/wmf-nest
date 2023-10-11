@@ -51,16 +51,14 @@ export class UserResolver {
     //   }
     // }
   }
+
   @Query(() => User)
   async myUser(@Context() context) {
     return await this.userService.findOne(context.req.user.id)
   }
 
-  @Query(() => User)
-  async user(
-    @Args('userID', { type: () => Int })
-    userID: User['id']
-  ) {
+  @Query(() => User || null)
+  async user(@Args('userID', { type: () => Int }) userID: User['id']) {
     return await this.userService.findOne(userID)
   }
 

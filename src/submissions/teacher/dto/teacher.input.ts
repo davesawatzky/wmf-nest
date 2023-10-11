@@ -35,9 +35,3 @@ export class TeacherInput {
 
   instrument?: string
 }
-
-@ObjectType()
-export class TeacherPayload {
-  userErrors: UserError[]
-  teacher: User
-}

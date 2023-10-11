@@ -1,7 +1,15 @@
-import { Resolver, Mutation, Args, Context, Query } from '@nestjs/graphql'
+import {
+  Resolver,
+  Mutation,
+  Args,
+  Int,
+  Context,
+  Query,
+  GqlExecutionContext,
+  GqlContextType,
+} from '@nestjs/graphql'
 import { AuthService } from './auth.service'
-import { Response } from 'express'
-import { AuthPayload } from './dto/auth.entity'
+import { AuthPayload, PasswordExists } from './entities/auth.entity'
 import { CredentialsSignup } from './dto/credentials-signup.input'
 import { CredentialsSignin } from './dto/credentials-signin.input'
 import { User } from '../user/entities/user.entity'
@@ -19,8 +27,8 @@ export class AuthResolver {
 
   @Mutation(() => AuthPayload)
   async signup(
-    @Args('credentials') credentials: CredentialsSignup,
-    @Context('res') res: Response
+    @Args('credentials') credentials: CredentialsSignup
+    // @Context('res') res: Response
   ): Promise<AuthPayload> {
     const { userErrors, user } = await this.authService.signup(credentials)
     // const userName = `${user.firstName} ${user.lastName}`
@@ -31,17 +39,26 @@ export class AuthResolver {
     return { userErrors, user }
   }
 
+  @Query(() => User || null)
+  async checkUser(@Args('email', { type: () => String }) email: User['email']) {
+    return await this.authService.findOne(email)
+  }
+
+  @Query(() => PasswordExists)
+  async checkIfPasswordExists(@Args('id', { type: () => Int }) id: User['id']) {
+    return await this.authService.checkIfPasswordExists(id)
+  }
+
   @Mutation(() => AuthPayload)
   @UseGuards(GqlAuthGuard)
   async signin(
     @Args('credentials') credentials: CredentialsSignin,
-    @Context('res') res: Response,
     @Context() context
   ): Promise<AuthPayload> {
     const { userErrors, diatonicToken, user } = await this.authService.signin(
       context.user
     )
-    res.cookie('diatonicToken', diatonicToken, {
+    context.res.cookie('diatonicToken', diatonicToken, {
       httpOnly: true,
       sameSite: 'lax',
       // secure: true,
@@ -60,8 +77,8 @@ export class AuthResolver {
 
   @Query(() => String)
   @UseGuards(JwtAuthGuard)
-  async logout(@Context('res') res: Response) {
-    res.clearCookie('diatonicToken')
+  async logout(@Context() context) {
+    context.res.clearCookie('diatonicToken')
     return 'signedOut'
   }
 }

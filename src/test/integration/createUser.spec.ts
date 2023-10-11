@@ -2,7 +2,7 @@ import request from 'supertest-graphql'
 import { describe, beforeAll, afterAll, test, expect } from 'vitest'
 import gql from 'graphql-tag'
 import { IntegrationTestManager } from '../IntegrationTestManager'
-import { AuthPayload } from '../../auth/dto/auth.entity'
+import { AuthPayload } from '../../auth/entities/auth.entity'
 import { PrismaService } from '../../prisma/prisma.service'
 import { userStub } from '../../user/test/stubs/user.stub'
 
@@ -49,7 +49,6 @@ describe('Create a new User', () => {
           })
         // .expectNoErrors()
         createdUser = response.data.signup
-        console.log(createdUser)
       })
 
       test('the response should be the AuthPayload ', () => {

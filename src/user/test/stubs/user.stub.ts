@@ -19,7 +19,6 @@ export const userStub: User & CredentialsSignup = {
   postalCode: 'R3T 1H6',
   phone: '(204) 599-3521',
   emailConfirmed: false,
-  instrument: 'piano',
   registrations: null,
 }
 
@@ -28,4 +27,6 @@ export const testUser: CredentialsSignup = {
   lastName: 'Sawatzky',
   email: 'david@diatonic.io',
   password: 'David123!',
+  privateTeacher: false,
+  schoolTeacher: false,
 }

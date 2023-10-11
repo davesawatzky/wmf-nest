@@ -4,6 +4,7 @@ import {
   IsStrongPassword,
   IsString,
   IsNotEmpty,
+  IsBoolean,
 } from 'class-validator'
 
 @InputType()
@@ -23,4 +24,10 @@ export class CredentialsSignup {
   @IsStrongPassword()
   @IsNotEmpty()
   password: string
+
+  @IsBoolean()
+  privateTeacher: boolean
+
+  @IsBoolean()
+  schoolTeacher: boolean
 }
