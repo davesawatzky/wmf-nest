@@ -6,6 +6,7 @@ import {
   Int,
   ResolveField,
   Parent,
+  Context,
 } from '@nestjs/graphql'
 import { TeacherService } from './teacher.service'
 import { RegistrationService } from '../registration/registration.service'
@@ -37,10 +38,15 @@ export class TeacherResolver {
 
   @Query(() => Teacher)
   async teacher(
-    @Args('teacherID', { type: () => Int })
-    teacherID: Teacher['id']
+    @Args('teacherID', { type: () => Int, nullable: true })
+    teacherID: Teacher['id'],
+    @Context() context
   ) {
-    return await this.teacherService.findOne(teacherID)
+    const id =
+      context.req.user.privateTeacher || context.req.user.schoolTeacher
+        ? context.req.user.id
+        : teacherID // TODO: May have to edit this with roles
+    return await this.teacherService.findOne(id)
   }
 
   /** Mutations */
@@ -82,6 +88,10 @@ export class TeacherResolver {
   async registrations(@Parent() teacher: Teacher) {
     const { id }: { id: Teacher['id'] } = teacher
     const teacherID = id
-    return await this.registrationService.findAll(null, null, teacherID)
+    return await this.registrationService.findAll(
+      undefined,
+      undefined,
+      teacherID
+    )
   }
 }

@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException } from '@nestjs/common'
+import {
+  Injectable,
+  BadRequestException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { AuthPayload } from './entities/auth.entity'
 import { CredentialsSignup } from './dto/credentials-signup.input'
 import { CredentialsSignin } from './dto/credentials-signin.input'
@@ -28,7 +32,6 @@ export class AuthService {
             field: [],
           },
         ],
-        diatonicToken: null,
         user: null,
       }
     } else if (
@@ -56,7 +59,7 @@ export class AuthService {
         },
         update: {
           firstName: firstName.trim(),
-          lastName: lastName.trimEnd(),
+          lastName: lastName.trim(),
           password: hashedPassword,
           staff: false,
           admin: false,
@@ -64,10 +67,8 @@ export class AuthService {
           schoolTeacher,
         },
       })
-      console.log('New User: ', newUser)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const result = this.stripProperties(newUser)
-      // return this.signin(result)
       return {
         userErrors: [],
         // diatonicToken: null,
@@ -83,10 +84,32 @@ export class AuthService {
       privateTeacher: user.privateTeacher,
       schoolTeacher: user.schoolTeacher,
     }
-    return {
-      userErrors: [],
-      diatonicToken: this.jwtService.sign(payload),
-      user: user,
+    const confirmed = await this.prisma.tbl_user.findUnique({
+      where: { id: user.id },
+    })
+    if (!confirmed.emailConfirmed) {
+      console.log('Not confirmed')
+      return {
+        userErrors: [
+          {
+            message:
+              'Account not confirmed.  Check email account for verification link',
+            field: [],
+          },
+        ],
+        diatonicToken: null,
+        user: {
+          email: confirmed.email,
+          firstName: confirmed.firstName,
+          lastName: confirmed.lastName,
+        },
+      }
+    } else {
+      return {
+        userErrors: [],
+        diatonicToken: this.jwtService.sign(payload),
+        user: this.stripProperties(user),
+      }
     }
   }
 

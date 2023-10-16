@@ -47,12 +47,12 @@
         <mj-column width="100%">
           <mj-spacer height="10px" />
           <mj-text align="center" font-weight="bold" font-size="20px">
-            New Account Confirmation
+            New Account Verification
           </mj-text>
           <mj-text font-size="16px"> Hi {{ name }},</mj-text>
           <mj-text font-size="16px">
-            Please confirm your account by click the button below. This will
-            open a new webpage which will show your account confirmation status.
+            Please verify your account by click the button below. This will open
+            a new webpage which will show your account verification status.
           </mj-text>
           <mj-spacer height="30px" />
           <mj-button
@@ -64,7 +64,7 @@
             href="{{ confirmationLink }}"
             width="300px"
           >
-            Confirm Account
+            Verify Account
           </mj-button>
         </mj-column>
       </mj-section>
@@ -78,8 +78,7 @@
         <mj-column width="500px">
           <mj-text font-size="16px">
             If a web browser does not open, or the button does not appear to
-            work, then copy the following text and paste it into the address bar
-            of your web browser:
+            work, then click on the following link:
           </mj-text>
           <mj-text font-size="12px" line-height="13px">
             {{ confirmationLink }}

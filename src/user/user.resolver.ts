@@ -15,7 +15,6 @@ import { Registration } from '../submissions/registration/entities/registration.
 import { RegistrationService } from '../submissions/registration/registration.service'
 import { ForbiddenException, UseGuards, UsePipes } from '@nestjs/common'
 import { JwtAuthGuard } from '../auth/jwt-auth.guard'
-import { TrimPipe } from '../pipes/trim.pipe'
 import { AbilityFactory, Action } from '../ability/ability.factory'
 import { ForbiddenError } from '@casl/ability'
 import { CheckAbilities } from '../ability/abilities.decorator'
@@ -65,7 +64,6 @@ export class UserResolver {
   /** Mutations */
 
   @Mutation(() => UserPayload)
-  @UsePipes(TrimPipe)
   async userUpdate(
     @Args('userID', { type: () => Int }) userID: User['id'],
     @Args('userInput', { type: () => UserInput }) userInput: Partial<UserInput>
@@ -74,7 +72,6 @@ export class UserResolver {
   }
 
   @Mutation(() => UserPayload)
-  @UsePipes(TrimPipe)
   async userDelete(@Args('id', { type: () => Int }) id: User['id']) {
     return await this.userService.remove(id)
   }

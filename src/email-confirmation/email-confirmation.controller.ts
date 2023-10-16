@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common'
 import ConfirmEmailDto from './dto/confirm-email.dto'
 import { EmailConfirmationService } from './email-confirmation.service'
-import { JwtAuthGuard } from '../auth/jwt-auth.guard'
+import { RestJwtAuthGuard } from '../auth/jwt-auth.guard'
 import RequestWithUser from '../auth/requestWithUser.interface'
 
 @Controller('email-confirmation')
@@ -28,7 +28,7 @@ export class EmailConfirmationController {
   }
 
   @Post('resend-confirmation-link')
-  // @UseGuards(JwtAuthGuard)
+  // @UseGuards(RestJwtAuthGuard)
   async resendConfirmationLink(@Body() request: RequestWithUser) {
     const userName = `${request.user.firstName} ${request.user.lastName}`
     await this.emailConfirmationService.resendConfirmationLink(

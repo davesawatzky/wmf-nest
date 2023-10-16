@@ -32,7 +32,7 @@ export class RegistrationService {
     teacherID?: tbl_user['id']
   ) {
     return await this.prisma.tbl_registration.findMany({
-      where: { userID, teacherID, performerType },
+      where: { userID, performerType, teacherID },
     })
   }
 

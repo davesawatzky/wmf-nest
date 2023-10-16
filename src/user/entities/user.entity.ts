@@ -10,6 +10,7 @@ export class User {
   emailConfirmed?: boolean
   staff?: boolean
   admin?: boolean
+  instrument?: string
   privateTeacher?: boolean
   schoolTeacher?: boolean
   firstName?: string

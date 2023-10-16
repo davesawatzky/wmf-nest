@@ -52,7 +52,6 @@ export class TeacherService {
           } = obj
           return teacherProps
         })
-        console.log(teachersFiltered)
         return teachersFiltered
       } else {
         return { userErrors: [{ message: 'Not teachers' }] }

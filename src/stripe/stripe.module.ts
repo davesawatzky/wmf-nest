@@ -1,21 +1,11 @@
-import { Module, DynamicModule, Provider } from '@nestjs/common'
-import { Stripe } from 'stripe'
-import { STRIPE_CLIENT } from './constants'
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { ConfigurableModuleClass } from './stripe.module-definition'
+import { StripeService } from './stripe.service'
 
-@Module({})
-export class StripeModule {
-  static forRoot(apiKey: string, config: Stripe.StripeConfig): DynamicModule {
-    const stripe = new Stripe(apiKey, config)
-
-    const stripeProvider: Provider = {
-      provide: STRIPE_CLIENT,
-      useValue: stripe,
-    }
-    return {
-      module: StripeModule,
-      providers: [stripeProvider],
-      exports: [stripeProvider],
-      global: true,
-    }
-  }
-}
+@Module({
+  imports: [ConfigModule],
+  providers: [StripeModule, StripeService],
+  exports: [StripeService],
+})
+export class StripeModule extends ConfigurableModuleClass {}

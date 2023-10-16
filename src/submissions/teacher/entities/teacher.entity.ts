@@ -10,7 +10,7 @@ export class Teacher {
   email?: User['email']
   privateTeacher?: User['privateTeacher']
   schoolTeacher?: User['schoolTeacher']
-  instrument?: string
+  instrument?: User['instrument']
   firstName?: User['firstName']
   lastName?: User['lastName']
   apartment?: User['apartment']

@@ -27,15 +27,15 @@ export class AuthResolver {
 
   @Mutation(() => AuthPayload)
   async signup(
-    @Args('credentials') credentials: CredentialsSignup
-    // @Context('res') res: Response
+    @Args('credentials') credentials: CredentialsSignup,
+    @Context('res') res: Response
   ): Promise<AuthPayload> {
     const { userErrors, user } = await this.authService.signup(credentials)
-    // const userName = `${user.firstName} ${user.lastName}`
-    // await this.emailConfirmationService.sendVerificationLink(
-    //   userName,
-    //   user.email
-    // )
+    const userName = `${user.firstName} ${user.lastName}`
+    await this.emailConfirmationService.sendVerificationLink(
+      userName,
+      user.email
+    )
     return { userErrors, user }
   }
 
@@ -58,14 +58,16 @@ export class AuthResolver {
     const { userErrors, diatonicToken, user } = await this.authService.signin(
       context.user
     )
-    context.res.cookie('diatonicToken', diatonicToken, {
-      httpOnly: true,
-      sameSite: 'lax',
-      // secure: true,
-      path: '/',
-      domain: 'localhost',
-      maxAge: 1000 * 60 * 60 * 24, // 1 day
-    })
+    if (!!diatonicToken) {
+      context.res.cookie('diatonicToken', diatonicToken, {
+        httpOnly: true,
+        sameSite: 'lax',
+        // secure: true,
+        path: '/',
+        domain: 'localhost',
+        maxAge: 1000 * 60 * 60 * 24, // 1 day
+      })
+    }
     return { userErrors, diatonicToken, user }
   }
 

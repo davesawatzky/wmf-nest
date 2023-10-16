@@ -7,7 +7,9 @@ import { join } from 'path'
 import cookieParser from 'cookie-parser'
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule)
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    rawBody: true,
+  })
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
