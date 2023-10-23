@@ -6,6 +6,7 @@ import { Transform, Type } from 'class-transformer'
 
 @InputType()
 export class RegisteredClassInput {
+  classType?: string
   classNumber?: string
   discipline?: string
   subdiscipline?: string

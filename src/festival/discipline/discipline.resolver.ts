@@ -14,14 +14,18 @@ import { Discipline, DisciplinePayload } from './entities/discipline.entity'
 import { SubdisciplineService } from '../subdiscipline/subdiscipline.service'
 import { DisciplineInput } from './dto/discipline.input'
 import { PerformerType } from '../../common.entity'
+import { InstrumentService } from '../instrument/instrument.service'
+import { Instrument } from '../instrument/entities/instrument.entity'
 import { Subdiscipline } from '../subdiscipline/entities/subdiscipline.entity'
+import { tbl_discipline } from '@prisma/client'
 
 @Resolver(() => Discipline)
 @UseGuards(JwtAuthGuard)
 export class DisciplineResolver {
   constructor(
     private readonly disciplineService: DisciplineService,
-    private readonly subdisciplineService: SubdisciplineService
+    private readonly subdisciplineService: SubdisciplineService,
+    private readonly instrumentService: InstrumentService
   ) {}
 
   /** Queries */
@@ -29,9 +33,11 @@ export class DisciplineResolver {
   @Query(() => [Discipline])
   async disciplines(
     @Args('performerType', { type: () => PerformerType, nullable: true })
-    performerType: PerformerType
+    performerType: PerformerType,
+    @Args('instrument', { type: () => String, nullable: true })
+    instrument: Instrument['name']
   ) {
-    return await this.disciplineService.findAll(performerType)
+    return await this.disciplineService.findAll(performerType, instrument)
   }
 
   @Query(() => Discipline)
@@ -74,5 +80,11 @@ export class DisciplineResolver {
   ) {
     const { id } = discipline
     return await this.subdisciplineService.findAll(id, performerType)
+  }
+
+  @ResolveField(() => [Instrument])
+  async instruments(@Parent() { id }: tbl_discipline) {
+    const disciplineID = id
+    return await this.instrumentService.findAll(disciplineID)
   }
 }

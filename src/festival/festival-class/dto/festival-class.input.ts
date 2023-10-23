@@ -12,6 +12,9 @@ registerEnumType(PerformerType, {
 
 @InputType()
 export class FestivalClassInput {
+  @IsInt()
+  @Field(() => Int)
+  classTypeID: number
   classNumber: string
 
   @IsInt()
@@ -43,6 +46,7 @@ export class FestivalClassInput {
   @Type(() => Object)
   @Transform(transformToDecimal)
   price?: Decimal
+  description?: string
 }
 
 @InputType()

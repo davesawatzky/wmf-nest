@@ -17,14 +17,35 @@ export class InstrumentService {
     }
   }
 
-  async findAll() {
-    return await this.prisma.tbl_instruments.findMany()
+  async findAll(disciplineID?: number) {
+    if (!!disciplineID) {
+      return await this.prisma.tbl_instruments.findMany({
+        where: {
+          disciplineID,
+        },
+        orderBy: {
+          name: 'asc',
+        },
+      })
+    } else {
+      return await this.prisma.tbl_instruments.findMany({
+        orderBy: {
+          name: 'asc',
+        },
+      })
+    }
   }
 
-  async findOne(id: tbl_instruments['id']) {
-    return await this.prisma.tbl_instruments.findUnique({
-      where: { id },
-    })
+  async findOne(id?: tbl_instruments['id'], name?: tbl_instruments['name']) {
+    if (id) {
+      return await this.prisma.tbl_instruments.findUnique({
+        where: { id },
+      })
+    } else if (name) {
+      return await this.prisma.tbl_instruments.findFirst({
+        where: { name },
+      })
+    }
   }
 
   async update(

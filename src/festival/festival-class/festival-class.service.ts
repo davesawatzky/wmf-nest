@@ -16,20 +16,20 @@ import { PerformerType } from '../../common.entity'
 export class FestivalClassService {
   constructor(private prisma: PrismaService) {}
 
-  async create(
-    performerType: PerformerType,
-    festivalClass: FestivalClassInput
-  ) {
-    return {
-      userErrors: [],
-      festivalClass: await this.prisma.tbl_classlist.create({
-        data: {
-          performerType,
-          ...festivalClass,
-        },
-      }),
-    }
-  }
+  // async create(
+  //   performerType: PerformerType,
+  //   festivalClass: FestivalClassInput
+  // ) {
+  //   return {
+  //     userErrors: [],
+  //     festivalClass: await this.prisma.tbl_classlist.create({
+  //       data: {
+  //         performerType,
+  //         ...festivalClass,
+  //       },
+  //     }),
+  //   }
+  // }
 
   async findAll(
     performerType?: PerformerType,
@@ -47,12 +47,14 @@ export class FestivalClassService {
     })
   }
 
-  async findClassTrophies(festivalClassID: tbl_class_trophy['classID']) {
+  async findClassTrophies(
+    festivalClassNumber: tbl_class_trophy['classNumber']
+  ) {
     return await this.prisma.tbl_trophy.findMany({
       where: {
         tbl_class_trophy: {
           some: {
-            classID: festivalClassID,
+            classNumber: festivalClassNumber,
           },
         },
       },

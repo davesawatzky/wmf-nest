@@ -18,10 +18,12 @@ import {
 } from './entities/festival-class.entity'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PerformerType } from '../../common.entity'
+import { ClassType } from '../class-type/entities/class-type.entity'
 import { SubdisciplineService } from '../subdiscipline/subdiscipline.service'
 import { LevelService } from '../level/level.service'
+import { ClassTypeService } from '../class-type/class-type.service'
 import { CategoryService } from '../category/category.service'
-import { tbl_classlist } from '@prisma/client'
+import { tbl_class_type, tbl_classlist } from '@prisma/client'
 import { Trophy } from '../trophy/entities/trophy.entity'
 import { Level } from '../level/entities/level.entity'
 import { Subdiscipline } from '../subdiscipline/entities/subdiscipline.entity'
@@ -34,7 +36,8 @@ export class FestivalClassResolver {
     private festivalClassService: FestivalClassService,
     private subdisciplineService: SubdisciplineService,
     private levelService: LevelService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private classTypeService: ClassTypeService
   ) {}
 
   /** Queries */
@@ -83,14 +86,14 @@ export class FestivalClassResolver {
 
   /** Mutations */
 
-  @Mutation(() => FestivalClassPayload)
-  async festivalClassCreate(
-    @Args('performerType') performerType: PerformerType,
-    @Args('festivalClass')
-    festivalClass: FestivalClassInput
-  ) {
-    return await this.festivalClassService.create(performerType, festivalClass)
-  }
+  // @Mutation(() => FestivalClassPayload)
+  // async festivalClassCreate(
+  //   @Args('performerType') performerType: PerformerType,
+  //   @Args('festivalClass')
+  //   festivalClass: FestivalClassInput
+  // ) {
+  //   return await this.festivalClassService.create(performerType, festivalClass)
+  // }
 
   @Mutation(() => FestivalClassPayload)
   async festivalClassUpdate(
@@ -117,8 +120,9 @@ export class FestivalClassResolver {
 
   @ResolveField(() => [Trophy])
   async trophies(@Parent() festivalClass: FestivalClass) {
-    const { id }: { id: FestivalClass['id'] } = festivalClass
-    return await this.festivalClassService.findClassTrophies(id)
+    const { classNumber }: { classNumber: FestivalClass['classNumber'] } =
+      festivalClass
+    return await this.festivalClassService.findClassTrophies(classNumber)
   }
 
   @ResolveField(() => Level)
@@ -138,5 +142,10 @@ export class FestivalClassResolver {
     const { categoryID }: { categoryID: tbl_classlist['categoryID'] } =
       festivalClass
     return await this.categoryService.findOne(categoryID)
+  }
+  @ResolveField(() => ClassType)
+  async classType(@Parent() festivalClass: tbl_classlist) {
+    const { classTypeID }: { classTypeID: tbl_class_type['id'] } = festivalClass
+    return await this.classTypeService.findOne(classTypeID)
   }
 }

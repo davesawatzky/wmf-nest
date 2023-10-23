@@ -5,6 +5,7 @@ import { Subdiscipline } from '../../subdiscipline/entities/subdiscipline.entity
 import { Level } from '../../level/entities/level.entity'
 import { Category } from '../../category/entities/category.entity'
 import { Trophy } from '../../trophy/entities/trophy.entity'
+import { ClassType } from '../../class-type/entities/class-type.entity'
 import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
 import { Type, Transform } from 'class-transformer'
 
@@ -17,6 +18,8 @@ registerEnumType(PerformerType, {
 export class FestivalClass {
   @Field(() => Int)
   id: number
+
+  classType: ClassType
   classNumber: string
   subdiscipline: Subdiscipline
   level: Level
@@ -36,6 +39,7 @@ export class FestivalClass {
   @Type(() => Object)
   @Transform(transformToDecimal)
   price?: Decimal
+  description?: string
   trophies?: Trophy[]
 }
 

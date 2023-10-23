@@ -6,7 +6,10 @@ import { FestivalClassModule } from '../festival-class/festival-class.module'
 
 @Module({
   providers: [SubdisciplineResolver, SubdisciplineService],
-  imports: [DisciplineModule, forwardRef(() => FestivalClassModule)],
+  imports: [
+    forwardRef(() => DisciplineModule),
+    forwardRef(() => FestivalClassModule),
+  ],
   exports: [SubdisciplineService],
 })
 export class SubdisciplineModule {}

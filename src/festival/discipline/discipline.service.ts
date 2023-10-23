@@ -3,6 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service'
 import { DisciplineInput } from './dto/discipline.input'
 import { tbl_discipline } from '@prisma/client'
 import { PerformerType } from '../../common.entity'
+import { Instrument } from '../instrument/entities/instrument.entity'
 
 @Injectable()
 export class DisciplineService {
@@ -17,20 +18,41 @@ export class DisciplineService {
     }
   }
 
-  async findAll(performerType?: PerformerType) {
-    return await this.prisma.tbl_discipline.findMany({
-      where: {
-        tbl_subdiscipline: {
-          some: {
-            tbl_classlist: {
-              some: {
-                performerType,
+  async findAll(
+    performerType?: PerformerType,
+    instrument?: Instrument['name']
+  ) {
+    if (!!performerType) {
+      return await this.prisma.tbl_discipline.findMany({
+        where: {
+          tbl_subdiscipline: {
+            some: {
+              tbl_classlist: {
+                some: {
+                  performerType,
+                },
               },
             },
           },
         },
-      },
-    })
+        orderBy: {
+          name: 'asc',
+        },
+      })
+    } else if (!!instrument) {
+      return await this.prisma.tbl_discipline.findMany({
+        where: {
+          tbl_instruments: {
+            some: {
+              name: instrument,
+            },
+          },
+        },
+        orderBy: {
+          name: 'asc',
+        },
+      })
+    }
   }
 
   async findOne(id: tbl_discipline['id']) {

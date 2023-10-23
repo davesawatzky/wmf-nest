@@ -20,17 +20,18 @@ model tbl_category {
 }
 
 model tbl_class_trophy {
-  classID       Int
+  classNumber   String        @db.Text @map("class_number")
   trophyID      Int
-  tbl_classlist tbl_classlist @relation(fields: [classID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  tbl_classlist tbl_classlist @relation(fields: [classNumber], references: [classNumber], onDelete: Cascade, onUpdate: Restrict)
   tbl_trophy    tbl_trophy    @relation(fields: [trophyID], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
-  @@id([classID, trophyID])
+  @@id([classNumber, trophyID])
   @@index([trophyID])
 }
 
 model tbl_classlist {
   id                Int                @id @default(autoincrement())
+  classTypeID       Int                @map("class_typeID") 
   classNumber       String             @map("class_number") @unique @db.Text 
   subdisciplineID   Int
   categoryID        Int
@@ -40,20 +41,31 @@ model tbl_classlist {
   requiredSelection String?            @map("required_selection") @db.Text
   performerType     tbl_performer_type @default(SOLO) @map("performer_type")
   price             Decimal?           @db.Decimal(7, 2)
+  description       String             @db.Text
+  tbl_class_type    tbl_class_type     @relation(fields: [classTypeID], references: [id], onUpdate: Restrict)
   tbl_category      tbl_category       @relation(fields: [categoryID], references: [id], onUpdate: Restrict)
   tbl_level         tbl_level          @relation(fields: [levelID], references: [id], onUpdate: Restrict)
   tbl_subdiscipline tbl_subdiscipline  @relation(fields: [subdisciplineID], references: [id], onUpdate: Restrict)
   tbl_class_trophy  tbl_class_trophy[]
 
+  @@index([classTypeID])
   @@index([categoryID])
   @@index([levelID])
   @@index([subdisciplineID])
 }
 
+model tbl_class_type {
+  id            Int     @id @default(autoincrement())
+  name          String  @db.Text
+  description   String? @db.Text
+  tbl_classlist tbl_classlist[]
+}
+
 model tbl_discipline {
-  id                Int                 @id @default(autoincrement())
-  name              String              @db.Text
-  tbl_subdiscipline tbl_subdiscipline[]
+  id                  Int                 @id @default(autoincrement())
+  name                String              @db.Text
+  tbl_subdiscipline   tbl_subdiscipline[]
+  tbl_instruments     tbl_instruments[]
 }
 
 model tbl_field_config {
@@ -65,7 +77,7 @@ model tbl_field_config {
   groupRequired      Boolean  @map("group_required") @db.Boolean
   schoolRequired     Boolean  @map("school_required") @db.Boolean
   communityRequired  Boolean  @map("community_required") @db.Boolean
-  customField        Boolean @map("custom_field") @db.Boolean
+  customField        Boolean  @map("custom_field") @db.Boolean
   customFieldType    String?  @map("custom_field_type") @db.Text
 
   @@unique([tableName, fieldName], name: "single_field")
@@ -82,6 +94,7 @@ model tbl_level {
 model tbl_reg_classes {
   id                  Int                  @id @default(autoincrement())
   regID               Int
+  classType           String?              @db.Text @map("class_type")
   classNumber         String?              @map("class_number") @db.Text
   discipline          String?              @db.Text
   subdiscipline       String?              @db.Text
@@ -304,8 +317,11 @@ model tbl_reg_community {
 }
 
 model tbl_instruments {
-  id   Int    @id @default(autoincrement())
-  name String @default("0") @db.Text
+  id              Int             @id @default(autoincrement())
+  name            String          @default("0") @db.Text
+  mozart          Boolean?        @default(false)
+  disciplineID    Int?       
+  tbl_discipline  tbl_discipline? @relation(fields: [disciplineID], references:[id], onDelete: Restrict, onUpdate: Restrict)
 }
 
 enum tbl_performer_type {

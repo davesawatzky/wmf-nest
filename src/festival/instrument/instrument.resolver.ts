@@ -1,14 +1,28 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 import { Instrument, InstrumentPayload } from './entities/instrument.entity'
 import { InstrumentInput } from './dto/instrument.input'
 import { InstrumentService } from './instrument.service'
+import { Discipline } from '../discipline/entities/discipline.entity'
+import { DisciplineService } from '../discipline/discipline.service'
+import { tbl_instruments } from '@prisma/client'
 
 @Resolver(() => Instrument)
 @UseGuards(JwtAuthGuard)
 export class InstrumentResolver {
-  constructor(private readonly instrumentService: InstrumentService) {}
+  constructor(
+    private readonly instrumentService: InstrumentService,
+    private readonly disciplineService: DisciplineService
+  ) {}
 
   /** Queries */
 
@@ -18,8 +32,12 @@ export class InstrumentResolver {
   }
 
   @Query(() => Instrument)
-  async instrument(@Args('id', { type: () => Int }) id: Instrument['id']) {
-    return await this.instrumentService.findOne(id)
+  async instrument(
+    @Args('id', { type: () => Int, nullable: true }) id: Instrument['id'],
+    @Args('name', { type: () => String, nullable: true })
+    name: Instrument['name']
+  ) {
+    return await this.instrumentService.findOne(id, name)
   }
 
   /** Mutations */
@@ -43,5 +61,14 @@ export class InstrumentResolver {
     @Args('id', { type: () => Int }) id: Instrument['id']
   ) {
     return await this.instrumentService.remove(id)
+  }
+
+  /** Field Resolver */
+
+  @ResolveField(() => Discipline)
+  async discipline(@Parent() instrument: tbl_instruments) {
+    const { disciplineID }: { disciplineID: tbl_instruments['disciplineID'] } =
+      instrument
+    return await this.disciplineService.findOne(disciplineID)
   }
 }

@@ -29,6 +29,7 @@ import { FieldConfigModule } from './submissions/field-config/field-config.modul
 import { EmailModule } from './email/email.module'
 import { EmailConfirmationModule } from './email-confirmation/email-confirmation.module'
 import { PaymentModule } from './payment/payment.module'
+import { ClassTypeModule } from './festival/class-type/class-type.module'
 import metadata from './metadata'
 
 @Module({
@@ -74,6 +75,7 @@ import metadata from './metadata'
     EmailModule,
     EmailConfirmationModule,
     PaymentModule,
+    ClassTypeModule,
   ],
 })
 export class AppModule {}

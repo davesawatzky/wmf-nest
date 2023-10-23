@@ -10,6 +10,7 @@ export class RegisteredClass {
   @Field(() => Int)
   id: number
   selections?: Selection[]
+  classType?: string
   classNumber?: string
   discipline?: string
   subdiscipline?: string
