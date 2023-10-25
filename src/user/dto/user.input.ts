@@ -16,6 +16,8 @@ export class UserInput {
   privateTeacher?: boolean
   @IsBoolean()
   schoolTeacher?: boolean
+  @IsBoolean()
+  hasSignedIn?: boolean
 
   @IsBoolean()
   emailConfirmed?: boolean
@@ -27,6 +29,7 @@ export class UserInput {
   streetName?: string
   city?: string
   province?: string
+  instrument?: string
 
   @IsPostalCode('CA')
   postalCode?: string

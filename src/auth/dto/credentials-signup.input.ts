@@ -30,4 +30,7 @@ export class CredentialsSignup {
 
   @IsBoolean()
   schoolTeacher: boolean
+
+  @IsString()
+  instrument?: string
 }

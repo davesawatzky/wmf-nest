@@ -18,6 +18,8 @@ export class TeacherService {
           userErrors: [],
           teacher: await this.prisma.tbl_user.create({
             data: {
+              privateTeacher,
+              schoolTeacher,
               ...teacherInput,
             },
           }),
@@ -62,7 +64,7 @@ export class TeacherService {
     }
   }
 
-  async findOne(teacherID: tbl_user['id']) {
+  async findOne(teacherID?: tbl_user['id'], email?: tbl_user['email']) {
     try {
       if (teacherID) {
         const teacher = await this.prisma.tbl_user.findUnique({
@@ -76,10 +78,18 @@ export class TeacherService {
         } else {
           return { teacher: null }
         }
+      } else if (email) {
+        const teacher = await this.prisma.tbl_user.findUnique({
+          where: { email },
+        })
+        if (!!teacher) {
+          const { password, staff, admin, ...teacherProps } = teacher
+          return teacherProps
+        }
       }
     } catch (err) {
       console.log(err)
-      throw new BadRequestException('No teacher found with that ID.')
+      throw new BadRequestException('No teacher found with that ID or email.')
     }
   }
 

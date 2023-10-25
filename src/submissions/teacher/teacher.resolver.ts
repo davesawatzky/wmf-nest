@@ -40,13 +40,15 @@ export class TeacherResolver {
   async teacher(
     @Args('teacherID', { type: () => Int, nullable: true })
     teacherID: Teacher['id'],
+    @Args('teacherEmail', { type: () => String, nullable: true })
+    teacherEmail: Teacher['email'],
     @Context() context
   ) {
     const id =
       context.req.user.privateTeacher || context.req.user.schoolTeacher
         ? context.req.user.id
-        : teacherID // TODO: May have to edit this with roles
-    return await this.teacherService.findOne(id)
+        : teacherID
+    return await this.teacherService.findOne(id, teacherEmail)
   }
 
   /** Mutations */
@@ -64,7 +66,7 @@ export class TeacherResolver {
       privateTeacher,
       schoolTeacher,
       teacherInput
-    ) // registrationID
+    )
   }
 
   @Mutation(() => TeacherPayload)

@@ -11,6 +11,7 @@ export const userStub: User & CredentialsSignup = {
   staff: false,
   privateTeacher: false,
   schoolTeacher: false,
+  instrument: null,
   apartment: '23B',
   streetName: 'Waterford Bay',
   streetNumber: '37',
@@ -27,6 +28,7 @@ export const testUser: CredentialsSignup = {
   lastName: 'Sawatzky',
   email: 'david@diatonic.io',
   password: 'David123!',
+  instrument: 'Cello',
   privateTeacher: false,
   schoolTeacher: false,
 }

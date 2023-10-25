@@ -69,6 +69,7 @@ input CredentialsSignin {
 input CredentialsSignup {
   email: String!
   firstName: String!
+  instrument: String
   lastName: String!
   password: String!
   privateTeacher: Boolean!
@@ -354,7 +355,7 @@ type Query {
   subdiscipline(subdisciplineID: Int!): Subdiscipline!
   subdisciplines(disciplineID: Int, performerType: PerformerType): [Subdiscipline!]!
   subdisciplinesByName(name: String!): [Subdiscipline!]!
-  teacher(teacherID: Int): Teacher!
+  teacher(teacherEmail: String, teacherID: Int): Teacher!
   teachers(privateTeacher: Boolean!, schoolTeacher: Boolean!): [Teacher!]!
   tokenCheck: Boolean!
   trophies: [Trophy!]!
@@ -609,6 +610,7 @@ type User {
   email: String
   emailConfirmed: Boolean
   firstName: String
+  hasSignedIn: Boolean
   id: Int!
   instrument: String
   lastName: String
@@ -634,6 +636,8 @@ input UserInput {
   city: String
   emailConfirmed: Boolean
   firstName: String
+  hasSignedIn: Boolean
+  instrument: String
   lastName: String
   phone: String
   postalCode: String

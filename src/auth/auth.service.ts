@@ -23,7 +23,7 @@ export class AuthService {
     const user = await this.prisma.tbl_user.findUnique({
       where: { email: credentialsSignup.email.trim().toLowerCase() },
     })
-    if (user && user.password !== null) {
+    if (!!user && !!user.password) {
       console.log('Denied')
       return {
         userErrors: [
@@ -43,13 +43,21 @@ export class AuthService {
         credentialsSignup.password.trim(),
         15
       )
-      const { firstName, lastName, email, privateTeacher, schoolTeacher } =
-        credentialsSignup
+      const {
+        firstName,
+        lastName,
+        email,
+        privateTeacher,
+        schoolTeacher,
+        instrument,
+      } = credentialsSignup
       const newUser = await this.prisma.tbl_user.upsert({
+        // updates or creates if not found
         where: { email: credentialsSignup.email },
         create: {
           firstName: firstName.trim(),
           lastName: lastName.trim(),
+          instrument: instrument.trim(),
           email: email.trim().toLowerCase(),
           password: hashedPassword,
           staff: false,
@@ -60,6 +68,7 @@ export class AuthService {
         update: {
           firstName: firstName.trim(),
           lastName: lastName.trim(),
+          instrument: instrument.trim(),
           password: hashedPassword,
           staff: false,
           admin: false,
@@ -103,6 +112,17 @@ export class AuthService {
           firstName: confirmed.firstName,
           lastName: confirmed.lastName,
         },
+      }
+    } else if (!confirmed) {
+      return {
+        userErrors: [
+          {
+            message: 'Incorrect Email or Password',
+            field: [],
+          },
+        ],
+        diatonicToken: null,
+        user: null,
       }
     } else {
       return {

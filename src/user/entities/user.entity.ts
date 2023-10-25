@@ -13,6 +13,7 @@ export class User {
   instrument?: string
   privateTeacher?: boolean
   schoolTeacher?: boolean
+  hasSignedIn?: boolean
   firstName?: string
   lastName?: string
   apartment?: string

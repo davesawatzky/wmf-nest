@@ -292,6 +292,7 @@ model tbl_user {
   postalCode       String?            @map("postal_code") @db.Text
   phone            String?            @db.Text
   instrument       String?            @db.Text
+  hasSignedIn      Boolean?           @default(false) @map("has_signed_in") @db.Boolean
   updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
   createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamp()
   RegistrationUser  tbl_registration[] @relation("UserRelation")

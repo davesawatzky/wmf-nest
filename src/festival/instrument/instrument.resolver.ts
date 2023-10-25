@@ -17,7 +17,6 @@ import { DisciplineService } from '../discipline/discipline.service'
 import { tbl_instruments } from '@prisma/client'
 
 @Resolver(() => Instrument)
-@UseGuards(JwtAuthGuard)
 export class InstrumentResolver {
   constructor(
     private readonly instrumentService: InstrumentService,
@@ -31,6 +30,7 @@ export class InstrumentResolver {
     return await this.instrumentService.findAll()
   }
 
+  @UseGuards(JwtAuthGuard)
   @Query(() => Instrument)
   async instrument(
     @Args('id', { type: () => Int, nullable: true }) id: Instrument['id'],
@@ -42,11 +42,13 @@ export class InstrumentResolver {
 
   /** Mutations */
 
+  @UseGuards(JwtAuthGuard)
   @Mutation(() => InstrumentPayload)
   async instrumentCreate(@Args('instrument') instrument: InstrumentInput) {
     return await this.instrumentService.create(instrument)
   }
 
+  @UseGuards(JwtAuthGuard)
   @Mutation(() => InstrumentPayload)
   async instrumentUpdate(
     @Args('instrumentID', { type: () => Int })
@@ -56,6 +58,7 @@ export class InstrumentResolver {
     return await this.instrumentService.update(instrumentID, instrument)
   }
 
+  @UseGuards(JwtAuthGuard)
   @Mutation(() => InstrumentPayload)
   async instrumentDelete(
     @Args('id', { type: () => Int }) id: Instrument['id']
@@ -65,6 +68,7 @@ export class InstrumentResolver {
 
   /** Field Resolver */
 
+  @UseGuards(JwtAuthGuard)
   @ResolveField(() => Discipline)
   async discipline(@Parent() instrument: tbl_instruments) {
     const { disciplineID }: { disciplineID: tbl_instruments['disciplineID'] } =
