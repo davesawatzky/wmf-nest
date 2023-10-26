@@ -22,8 +22,9 @@ export class PaymentController {
   ) {}
 
   @Post('create-payment-intent')
-  async createPaymentIntent(@Body() items: any) {
-    const calculateOrderAmount = 1400
+  async createPaymentIntent(@Body() body: any) {
+    console.log(body)
+    const calculateOrderAmount = body.items[0].amount
 
     const paymentIntent = await this.paymentService.createPaymentIntent(
       calculateOrderAmount,
