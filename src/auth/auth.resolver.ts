@@ -46,9 +46,7 @@ export class AuthResolver {
 
   @Query(() => PasswordExists)
   async checkIfPasswordExists(@Args('id', { type: () => Int }) id: User['id']) {
-    const doesIt = await this.authService.checkIfPasswordExists(id)
-    console.log(doesIt)
-    return doesIt
+    return await this.authService.checkIfPasswordExists(id)
   }
 
   @Mutation(() => AuthPayload)

@@ -24,7 +24,6 @@ export class AuthService {
       where: { email: credentialsSignup.email.trim().toLowerCase() },
     })
     if (!!user && !!user.password) {
-      console.log('Denied')
       return {
         userErrors: [
           {
@@ -97,7 +96,6 @@ export class AuthService {
       where: { id: user.id },
     })
     if (!confirmed.emailConfirmed) {
-      console.log('Not confirmed')
       return {
         userErrors: [
           {
@@ -149,7 +147,6 @@ export class AuthService {
             return user
           }
         } else {
-          console.log('User is null', user)
           return { user: null }
         }
       }
