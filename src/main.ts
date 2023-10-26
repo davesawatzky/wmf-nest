@@ -8,7 +8,6 @@ import cookieParser from 'cookie-parser'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    cors: true,
     rawBody: true,
   })
 
@@ -33,14 +32,14 @@ async function bootstrap() {
     })
   )
 
-  // app.enableCors({
-  //   origin: true,
-  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-  //   optionsSuccessStatus: 200,
-  //   credentials: true,
-  //   preflightContinue: false,
-  //   maxAge: 1000 * 60 * 60 * 24, // 1 day
-  // })
+  app.enableCors({
+    origin: 'https://winnipegmusicfestival.netlify.app/*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    optionsSuccessStatus: 200,
+    credentials: true,
+    preflightContinue: false,
+    maxAge: 1000 * 60 * 60 * 24, // 1 day
+  })
 
   app.use(cookieParser())
   app.useGlobalPipes(
