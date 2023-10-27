@@ -63,7 +63,6 @@ export class AuthResolver {
         httpOnly: true,
         sameSite: 'Lax',
         domain: 'wmf-diatonic-be.onrender.com',
-        path: '/',
         maxAge: 1000 * 60 * 60 * 24, // 1 day
       })
     }
