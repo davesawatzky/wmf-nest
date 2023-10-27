@@ -64,7 +64,6 @@ export class AuthResolver {
         sameSite: 'lax',
         secure: true,
         path: '/',
-        domain: 'web-diatonic-be.onrender.com',
         maxAge: 1000 * 60 * 60 * 24, // 1 day
       })
     }
