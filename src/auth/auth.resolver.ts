@@ -62,9 +62,9 @@ export class AuthResolver {
       context.res.cookie('diatonicToken', diatonicToken, {
         httpOnly: true,
         sameSite: 'lax',
-        // secure: true,
+        secure: true,
         path: '/',
-        domain: 'localhost',
+        domain: 'web-diatonic-be.onrender.com',
         maxAge: 1000 * 60 * 60 * 24, // 1 day
       })
     }
