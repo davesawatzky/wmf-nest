@@ -33,7 +33,7 @@ async function bootstrap() {
   )
 
   app.enableCors({
-    origin: 'https://winnipegmusicfestival.netlify.app',
+    origin: 'https://winnipegmusicfestival.diatonic.ca',
     // origin: 'http://localhost:3001',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     optionsSuccessStatus: 200,

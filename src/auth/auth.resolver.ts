@@ -62,7 +62,8 @@ export class AuthResolver {
       context.res.cookie('diatonicToken', diatonicToken, {
         httpOnly: true,
         sameSite: 'Lax',
-        domain: 'wmf-diatonic-be.onrender.com',
+        domain: 'wmf2024api.diatonic.ca',
+        path: '/',
         maxAge: 1000 * 60 * 60 * 24, // 1 day
       })
     }
