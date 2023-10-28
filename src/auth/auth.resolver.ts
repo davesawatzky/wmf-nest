@@ -61,7 +61,7 @@ export class AuthResolver {
     if (!!diatonicToken) {
       context.res.cookie('diatonicToken', diatonicToken, {
         httpOnly: true,
-        sameSite: 'Lax',
+        sameSite: 'lax',
         domain: '.diatonic.ca',
         path: '/',
         maxAge: 1000 * 60 * 60 * 24, // 1 day
