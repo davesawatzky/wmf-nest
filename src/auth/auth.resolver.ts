@@ -17,12 +17,14 @@ import { UseGuards, Res } from '@nestjs/common'
 import { GqlAuthGuard } from './gql-auth.guard'
 import { JwtAuthGuard } from './jwt-auth.guard'
 import { EmailConfirmationService } from '../email-confirmation/email-confirmation.service'
+import { ConfigService } from '@nestjs/config'
 
 @Resolver(() => User)
 export class AuthResolver {
   constructor(
     private readonly authService: AuthService,
-    private readonly emailConfirmationService: EmailConfirmationService
+    private readonly emailConfirmationService: EmailConfirmationService,
+    private readonly configService: ConfigService
   ) {}
 
   @Mutation(() => AuthPayload)
@@ -62,7 +64,7 @@ export class AuthResolver {
       context.res.cookie('diatonicToken', diatonicToken, {
         httpOnly: true,
         sameSite: 'lax',
-        domain: '.diatonic.ca',
+        domain: this.configService.get('COOKIE_DOMAIN'),
         path: '/',
         maxAge: 1000 * 60 * 60 * 24, // 1 day
       })

@@ -30,7 +30,7 @@ export class EmailConfirmationService {
     // const text = `Welcome to the Winnipeg Music Festival Registration application.  To confirm your email address, click here: ${url}`
 
     return this.emailService.sendMail({
-      from: this.configService.get('EMAIL_USER') || 'info@davesawatzky.com',
+      from: this.configService.get('EMAIL_USER'),
       to: email,
       subject: 'WMF account verification',
       template: './confirmation-email',

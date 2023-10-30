@@ -33,7 +33,7 @@ async function bootstrap() {
   )
 
   app.enableCors({
-    origin: 'https://winnipegmusicfestival.diatonic.ca',
+    origin: process.env.ORIGIN_SERVER, //'https://winnipegmusicfestival.diatonic.ca',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     optionsSuccessStatus: 200,
     credentials: true,
