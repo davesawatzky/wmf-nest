@@ -41,14 +41,22 @@ export class TeacherResolver {
     @Args('teacherID', { type: () => Int, nullable: true })
     teacherID: Teacher['id'],
     @Args('teacherEmail', { type: () => String, nullable: true })
-    teacherEmail: Teacher['email'],
-    @Context() context
+    teacherEmail: Teacher['email']
   ) {
-    const id =
+    return await this.teacherService.findOne(teacherID, teacherEmail)
+  }
+
+  @Query(() => Teacher)
+  async myStudents(@Context() context) {
+    const userID =
       context.req.user.privateTeacher || context.req.user.schoolTeacher
         ? context.req.user.id
-        : teacherID
-    return await this.teacherService.findOne(id, teacherEmail)
+        : null
+    if (!!userID) {
+      return await this.teacherService.findOne(userID)
+    } else {
+      return null
+    }
   }
 
   /** Mutations */

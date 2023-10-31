@@ -31,6 +31,7 @@ import { RegisteredClass } from '../registered-class/entities/registered-class.e
 import { Group } from '../group/entities/group.entity'
 import { Community } from '../community/entities/community.entity'
 import { School } from '../school/entities/school.entity'
+import { Teacher } from '../teacher/entities/teacher.entity'
 
 @Resolver(() => Registration)
 @UseGuards(JwtAuthGuard)
@@ -134,9 +135,10 @@ export class RegistrationResolver {
     const registrationID = id
     return await this.communityService.findOne(registrationID)
   }
-  @ResolveField(() => User)
+  @ResolveField(() => Teacher)
   async teacher(@Parent() registration: tbl_registration) {
-    const { teacherID }: { teacherID: User['id'] } = registration
+    const { teacherID }: { teacherID: Teacher['id'] } = registration
+    console.log(registration)
     return await this.teacherService.findOne(teacherID)
   }
   @ResolveField(() => School)

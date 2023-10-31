@@ -339,6 +339,7 @@ type Query {
   level(id: Int!): Level!
   levels(categoryID: Int, subdisciplineID: Int): [Level!]!
   logout: String!
+  myStudents: Teacher!
   myUser: User!
   performer(performerID: Int!): Performer!
   performers(registrationID: Int!): [Performer!]!
