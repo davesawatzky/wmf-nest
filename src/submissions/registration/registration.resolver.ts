@@ -138,7 +138,6 @@ export class RegistrationResolver {
   @ResolveField(() => Teacher)
   async teacher(@Parent() registration: tbl_registration) {
     const { teacherID }: { teacherID: Teacher['id'] } = registration
-    console.log(registration)
     return await this.teacherService.findOne(teacherID)
   }
   @ResolveField(() => School)

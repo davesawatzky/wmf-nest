@@ -67,7 +67,6 @@ export class TeacherService {
   async findOne(teacherID?: tbl_user['id'], email?: tbl_user['email']) {
     try {
       if (teacherID) {
-        console.log('TeacherID: ', teacherID)
         const teacher = await this.prisma.tbl_user.findUnique({
           where: {
             id: teacherID,
@@ -75,7 +74,6 @@ export class TeacherService {
         })
         if (teacher.privateTeacher === true || teacher.schoolTeacher === true) {
           const { password, staff, admin, ...teacherProps } = teacher
-          console.log('TeacherProps: ', teacherProps)
           return teacherProps
         } else {
           return { teacher: null }
