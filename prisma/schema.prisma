@@ -13,14 +13,14 @@ datasource db {
 
 model tbl_category {
   id               Int             @id @default(autoincrement())
-  name             String          @db.Text
+  name             String          @db.VarChar(100)
   description      String?         @db.Text
   requiredComposer String?         @map("required_composer") @db.Text
   tbl_classlist    tbl_classlist[]
 }
 
 model tbl_class_trophy {
-  classNumber   String        @db.Text @map("class_number")
+  classNumber   String        @db.VarChar(15) @map("class_number")
   trophyID      Int
   tbl_classlist tbl_classlist @relation(fields: [classNumber], references: [classNumber], onDelete: Cascade, onUpdate: Restrict)
   tbl_trophy    tbl_trophy    @relation(fields: [trophyID], references: [id], onDelete: Cascade, onUpdate: Restrict)
@@ -32,7 +32,7 @@ model tbl_class_trophy {
 model tbl_classlist {
   id                Int                @id @default(autoincrement())
   classTypeID       Int                @map("class_typeID") 
-  classNumber       String             @map("class_number") @unique @db.Text 
+  classNumber       String             @map("class_number") @unique @db.VarChar(15)
   subdisciplineID   Int
   categoryID        Int
   levelID           Int
@@ -56,7 +56,7 @@ model tbl_classlist {
 
 model tbl_class_type {
   id            Int     @id @default(autoincrement())
-  name          String  @db.Text
+  name          String  @db.VarChar(100)
   description   String? @db.Text
   tbl_classlist tbl_classlist[]
 }
@@ -95,7 +95,7 @@ model tbl_reg_classes {
   id                  Int                  @id @default(autoincrement())
   regID               Int
   classType           String?              @db.Text @map("class_type")
-  classNumber         String?              @map("class_number") @db.Text
+  classNumber         String?              @map("class_number") @db.VarChar(15)
   discipline          String?              @db.Text
   subdiscipline       String?              @db.Text
   level               String?              @db.Text
