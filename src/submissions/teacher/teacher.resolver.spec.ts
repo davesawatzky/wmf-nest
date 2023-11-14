@@ -10,13 +10,20 @@ import {
 } from 'vitest'
 import { TeacherResolver } from './teacher.resolver'
 import { TeacherService } from './teacher.service'
+import { RegistrationService } from '../registration/registration.service'
+import { PrismaService } from 'src/prisma/prisma.service'
 
 describe('TeacherResolver', () => {
   let resolver: TeacherResolver
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TeacherResolver, TeacherService],
+      providers: [
+        TeacherResolver,
+        TeacherService,
+        RegistrationService,
+        PrismaService,
+      ],
     }).compile()
 
     resolver = module.get<TeacherResolver>(TeacherResolver)

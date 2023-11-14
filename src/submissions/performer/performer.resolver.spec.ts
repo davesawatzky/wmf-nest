@@ -10,16 +10,17 @@ import {
 } from 'vitest'
 import { PerformerResolver } from './performer.resolver'
 import { PerformerService } from './performer.service'
+import { PrismaService } from 'src/prisma/prisma.service'
 
 describe('PerformerResolver', () => {
   let resolver: PerformerResolver
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [PerformerResolver, PerformerService],
+      providers: [PerformerResolver, PerformerService, PrismaService],
     }).compile()
 
-    resolver = module.get<PerformerResolver>(PerformerResolver)
+    resolver = await module.get<PerformerResolver>(PerformerResolver)
   })
 
   it('should be defined', () => {

@@ -67,13 +67,14 @@ export class CategoryResolver {
   /** Field Resolvers */
   @ResolveField(() => [FestivalClass])
   async festivalClasses(
-    @Parent() { id }: tbl_category,
-    @Args('performerType') performerType: PerformerType,
+    @Parent() category: tbl_category,
+    @Args('performerType', { type: () => PerformerType })
+    performerType: PerformerType,
     @Args('subdisciplineID', { type: () => Int })
     subdisciplineID: tbl_subdiscipline['id'],
     @Args('levelID', { type: () => Int }) levelID: tbl_level['id']
   ) {
-    const categoryID = id
+    const categoryID = category.id
     return await this.festivalClassService.findAll(
       performerType,
       subdisciplineID,

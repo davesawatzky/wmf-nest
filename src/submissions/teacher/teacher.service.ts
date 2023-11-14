@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { tbl_user } from '@prisma/client'
 import { TeacherInput } from './dto/teacher.input'
+import { UserInput } from '../../user/dto/user.input'
 import { PrismaService } from '../../prisma/prisma.service'
 
 @Injectable()
@@ -40,7 +41,9 @@ export class TeacherService {
     try {
       if (privateTeacher === true || schoolTeacher === true) {
         const teachersData = await this.prisma.tbl_user.findMany({
-          where: { privateTeacher, schoolTeacher },
+          where: {
+            OR: [{ privateTeacher }, { schoolTeacher }],
+          },
           orderBy: { lastName: 'asc' },
         })
         const teachersFiltered = teachersData.map((obj) => {
@@ -93,15 +96,22 @@ export class TeacherService {
     }
   }
 
-  async update(teacherID: tbl_user['id'], teacherInput: Partial<TeacherInput>) {
+  async update(teacherID: number, teacherInput: TeacherInput) {
     try {
       return {
         userErrors: [],
         teacher: await this.prisma.tbl_user.update({
-          where: {
-            id: teacherID,
-            AND: [{ privateTeacher: true } || { schoolTeacher: true }],
-          },
+          where: { id: teacherID },
+          // where: {
+          //   AND: [
+          //     {
+          //       id: { equals: teacherID },
+          //     },
+          //     {
+          //       OR: [{ privateTeacher: true }, { schoolTeacher: true }],
+          //     },
+          //   ],
+          // },
           data: { ...teacherInput },
         }),
       }

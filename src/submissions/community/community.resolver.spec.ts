@@ -10,13 +10,14 @@ import {
 } from 'vitest'
 import { CommunityResolver } from './community.resolver'
 import { CommunityService } from './community.service'
+import { PrismaService } from 'src/prisma/prisma.service'
 
 describe('CommunityResolver', () => {
   let resolver: CommunityResolver
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CommunityResolver, CommunityService],
+      providers: [CommunityResolver, CommunityService, PrismaService],
     }).compile()
 
     resolver = module.get<CommunityResolver>(CommunityResolver)

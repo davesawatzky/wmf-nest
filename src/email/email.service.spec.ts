@@ -9,13 +9,15 @@ import {
   expect,
 } from 'vitest'
 import { EmailService } from './email.service'
+import { PrismaService } from 'src/prisma/prisma.service'
+import { MailerService } from '@nestjs-modules/mailer'
 
 describe('EmailService', () => {
   let service: EmailService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [EmailService],
+      providers: [EmailService, PrismaService, MailerService],
     }).compile()
 
     service = module.get<EmailService>(EmailService)

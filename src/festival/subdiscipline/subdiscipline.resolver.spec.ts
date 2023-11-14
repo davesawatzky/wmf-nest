@@ -10,13 +10,20 @@ import {
 } from 'vitest'
 import { SubdisciplineResolver } from './subdiscipline.resolver'
 import { SubdisciplineService } from './subdiscipline.service'
+import { PrismaService } from 'src/prisma/prisma.service'
+import { FestivalClassService } from '../festival-class/festival-class.service'
 
 describe('SubdisciplineResolver', () => {
   let resolver: SubdisciplineResolver
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SubdisciplineResolver, SubdisciplineService],
+      providers: [
+        SubdisciplineResolver,
+        SubdisciplineService,
+        PrismaService,
+        FestivalClassService,
+      ],
     }).compile()
 
     resolver = module.get<SubdisciplineResolver>(SubdisciplineResolver)

@@ -10,13 +10,14 @@ import {
 } from 'vitest'
 import { GroupResolver } from './group.resolver'
 import { GroupService } from './group.service'
+import { PrismaService } from 'src/prisma/prisma.service'
 
 describe('GroupResolver', () => {
   let resolver: GroupResolver
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [GroupResolver, GroupService],
+      providers: [GroupResolver, GroupService, PrismaService],
     }).compile()
 
     resolver = module.get<GroupResolver>(GroupResolver)

@@ -11,7 +11,6 @@ import { Type, Transform } from 'class-transformer'
 
 registerEnumType(PerformerType, {
   name: 'PerformerType',
-  description: 'SOLO, GROUP, SCHOOL, COMMUNITY',
 })
 
 @ObjectType()

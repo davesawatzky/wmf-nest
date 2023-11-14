@@ -9,13 +9,14 @@ import {
   expect,
 } from 'vitest'
 import { SubdisciplineService } from './subdiscipline.service'
+import { PrismaService } from 'src/prisma/prisma.service'
 
 describe('SubdisciplineService', () => {
   let service: SubdisciplineService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SubdisciplineService],
+      providers: [SubdisciplineService, PrismaService],
     }).compile()
 
     service = module.get<SubdisciplineService>(SubdisciplineService)

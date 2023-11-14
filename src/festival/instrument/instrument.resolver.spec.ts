@@ -10,13 +10,20 @@ import {
 } from 'vitest'
 import { InstrumentResolver } from './instrument.resolver'
 import { InstrumentService } from './instrument.service'
+import { DisciplineService } from '../discipline/discipline.service'
+import { PrismaService } from 'src/prisma/prisma.service'
 
 describe('InstrumentResolver', () => {
   let resolver: InstrumentResolver
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [InstrumentResolver, InstrumentService],
+      providers: [
+        InstrumentResolver,
+        InstrumentService,
+        DisciplineService,
+        PrismaService,
+      ],
     }).compile()
 
     resolver = module.get<InstrumentResolver>(InstrumentResolver)

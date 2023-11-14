@@ -13,6 +13,10 @@ import { AuthService } from './auth.service'
 import { JwtService } from '@nestjs/jwt'
 import { PrismaService } from '../prisma/prisma.service'
 import { EmailConfirmationService } from '../email-confirmation/email-confirmation.service'
+import { ConfigService } from '@nestjs/config'
+import { EmailService } from 'src/email/email.service'
+import { UserService } from 'src/user/user.service'
+import { MailerService } from '@nestjs-modules/mailer'
 
 describe('AuthResolver', () => {
   let resolver: AuthResolver
@@ -25,6 +29,10 @@ describe('AuthResolver', () => {
         JwtService,
         PrismaService,
         EmailConfirmationService,
+        ConfigService,
+        EmailService,
+        UserService,
+        MailerService,
       ],
     }).compile()
 

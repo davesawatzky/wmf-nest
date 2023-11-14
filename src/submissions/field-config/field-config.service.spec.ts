@@ -9,13 +9,14 @@ import {
   expect,
 } from 'vitest'
 import { FieldConfigService } from './field-config.service'
+import { PrismaService } from 'src/prisma/prisma.service'
 
 describe('FieldConfigService', () => {
   let service: FieldConfigService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [FieldConfigService],
+      providers: [FieldConfigService, PrismaService],
     }).compile()
 
     service = module.get<FieldConfigService>(FieldConfigService)

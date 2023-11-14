@@ -10,13 +10,14 @@ import {
 } from 'vitest'
 import { SelectionResolver } from './selection.resolver'
 import { SelectionService } from './selection.service'
+import { PrismaService } from 'src/prisma/prisma.service'
 
 describe('SelectionResolver', () => {
   let resolver: SelectionResolver
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SelectionResolver, SelectionService],
+      providers: [SelectionResolver, SelectionService, PrismaService],
     }).compile()
 
     resolver = module.get<SelectionResolver>(SelectionResolver)

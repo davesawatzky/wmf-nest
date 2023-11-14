@@ -9,16 +9,17 @@ import {
   expect,
 } from 'vitest'
 import { PerformerService } from './performer.service'
+import { PrismaService } from 'src/prisma/prisma.service'
 
 describe('PerformerService', () => {
   let service: PerformerService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [PerformerService],
+      providers: [PerformerService, PrismaService],
     }).compile()
 
-    service = module.get<PerformerService>(PerformerService)
+    service = await module.get<PerformerService>(PerformerService)
   })
 
   it('should be defined', () => {

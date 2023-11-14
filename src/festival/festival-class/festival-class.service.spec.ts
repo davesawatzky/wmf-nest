@@ -9,13 +9,14 @@ import {
   expect,
 } from 'vitest'
 import { FestivalClassService } from './festival-class.service'
+import { PrismaService } from 'src/prisma/prisma.service'
 
 describe('FestivalClassService', () => {
   let service: FestivalClassService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [FestivalClassService],
+      providers: [FestivalClassService, PrismaService],
     }).compile()
 
     service = module.get<FestivalClassService>(FestivalClassService)
