@@ -105,8 +105,8 @@ model tbl_reg_classes {
   numberOfSelections  Int?                 @map("number_of_selections") @db.SmallInt
   schoolGroupID       Int?                 @map("school_groupID")
   price               Decimal?             @db.Decimal(7, 2)
-  createdAt           DateTime             @default(now()) @map("created_at") @db.Timestamp()
-  updatedAt           DateTime             @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
+  createdAt           DateTime             @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt           DateTime             @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   tbl_registration    tbl_registration     @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
   tbl_reg_schoolgroup tbl_reg_schoolgroup? @relation(fields: [schoolGroupID], references: [id], onDelete: Cascade, onUpdate: Restrict)
   tbl_reg_selection   tbl_reg_selection[]
@@ -122,8 +122,8 @@ model tbl_reg_group {
   numberOfPerformers  Int?                  @map("number_of_performers") @db.SmallInt
   age                 Int?                  @db.SmallInt
   instruments         String?               @db.Text
-  createdAt           DateTime              @default(now()) @map("created_at") @db.Timestamp()
-  updatedAt           DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
+  createdAt           DateTime              @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt           DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   tbl_registration    tbl_registration      @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
   tbl_reg_unavailable tbl_reg_unavailable[]
 
@@ -147,8 +147,8 @@ model tbl_reg_performer {
   instrument       String?          @db.Text
   level            String?          @db.Text
   otherClasses     String?          @map("other_classes") @db.Text
-  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamp()
-  updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   tbl_registration tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
   @@index([regID])
@@ -165,8 +165,8 @@ model tbl_reg_school {
   province            String?               @default("MB") @db.Text
   postalCode          String?               @map("postal_code") @db.Text
   phone               String?               @db.Text
-  createdAt           DateTime              @default(now()) @map("created_at") @db.Timestamp()
-  updatedAt           DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
+  createdAt           DateTime              @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt           DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   tbl_reg_schoolgroup tbl_reg_schoolgroup[]
   tbl_registration    tbl_registration      @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
@@ -184,8 +184,8 @@ model tbl_reg_schoolgroup {
   latestTime         String?           @map("latest_time") @db.Text
   unavailable        String?           @db.Text
   conflictPerformers String?           @map("conflict_performers") @db.Text
-  createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamp()
-  updatedAt          DateTime          @default(now()) @map("updated_at") @db.Timestamp()
+  createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt          DateTime          @default(now()) @map("updated_at") @db.Timestamp(3)
   tbl_reg_school     tbl_reg_school    @relation(fields: [schoolID], references: [id], onDelete: Cascade, onUpdate: Restrict)
   tbl_reg_classes    tbl_reg_classes[]
 
@@ -200,8 +200,8 @@ model tbl_reg_selection {
   movement        String?         @db.Text
   composer        String?         @db.Text
   duration        String?         @db.Text
-  createdAt       DateTime        @default(now()) @map("created_at") @db.Timestamp()
-  updatedAt       DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
+  createdAt       DateTime        @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt       DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   tbl_reg_classes tbl_reg_classes @relation(fields: [classpickID], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
   @@index([classpickID])
@@ -212,8 +212,8 @@ model tbl_reg_unavailable {
   groupID       Int
   date          DateTime      @db.Date
   time          DateTime      @db.Time(0)
-  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp()
-  updatedAt     DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt     DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   tbl_reg_group tbl_reg_group @relation(fields: [groupID], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
   @@index([groupID])
@@ -225,13 +225,13 @@ model tbl_registration {
   teacherID         Int?
   label             String?             @default("Registration Form") @db.Text
   performerType     tbl_performer_type  @default(SOLO) @map("performer_type")
-  submittedAt       DateTime?           @map("submitted_at") @db.Timestamp()
+  submittedAt       DateTime?           @map("submitted_at") @db.Timestamp(3)
   totalAmt          Decimal?            @map("total_amt") @db.Decimal(10, 2)
   payedAmt          Decimal?            @map("payed_amt") @db.Decimal(10, 2)
   transactionInfo   String?             @map("transaction_info") @db.Text
   confirmation      String?             @unique @db.Text
-  createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp()
-  updatedAt         DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
+  createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt         DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   User              tbl_user?           @relation("UserRelation", fields: [userID], references: [id], onUpdate: Restrict)
   Teacher           tbl_user?           @relation("TeacherRelation", fields: [teacherID], references: [id], onUpdate: Restrict)
   tbl_reg_classes   tbl_reg_classes[]
@@ -293,8 +293,8 @@ model tbl_user {
   phone            String?            @db.Text
   instrument       String?            @db.Text
   hasSignedIn      Boolean?           @default(false) @map("has_signed_in") @db.Boolean
-  updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
-  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamp()
+  updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamp(3)
   RegistrationUser  tbl_registration[] @relation("UserRelation")
   RegistrationTeacher  tbl_registration[] @relation("TeacherRelation")
 }
@@ -310,8 +310,8 @@ model tbl_reg_community {
   latestTime         String?          @map("latest_time") @db.Text
   unavailable        String?          @db.Text
   conflictPerformers String?          @map("conflict_performers") @db.Text
-  createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamp()
-  updatedAt          DateTime         @default(now()) @map("updated_at") @db.Timestamp()
+  createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt          DateTime         @default(now()) @map("updated_at") @db.Timestamp(3)
   tbl_registration   tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
   @@index([regID])
