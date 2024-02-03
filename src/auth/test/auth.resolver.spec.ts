@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
-import request from 'supertest'
 import { AuthResolver } from '../auth.resolver'
 import { AuthService } from '../auth.service'
 import { EmailConfirmationService } from '../../email-confirmation/email-confirmation.service'
-import { ConfigModule, ConfigService } from '@nestjs/config'
+import { ConfigService } from '@nestjs/config'
 import { userSignup } from '../stubs/signup'
 import { userSignin } from '../stubs/signin'
 import { ExecutionContext } from '@nestjs/common'
@@ -12,11 +11,12 @@ import { GqlExecutionContext } from '@nestjs/graphql'
 import { EmailConfirmationModule } from 'src/email-confirmation/email-confirmation.module'
 import { AuthPayload } from '../entities/auth.entity'
 import { CredentialsSignup } from '../dto/credentials-signup.input'
-import { UserError } from 'src/common.entity'
-import { User } from 'src/user/entities/user.entity'
-import { mockContext } from 'src/test/gqlMockFactory'
+import { UserError } from '../../common.entity'
+import { User } from '../../user/entities/user.entity'
+import { mockContext } from '../../test/gqlMockFactory'
 
 vi.mock('../auth.service')
+// vi.mock('../gql-auth.guard.ts')
 // vi.mock('../../email-confirmation/email-confirmation.service.ts')
 
 describe('AuthResolver', () => {
@@ -26,7 +26,7 @@ describe('AuthResolver', () => {
     sendVerificationLink: vi.fn().mockReturnValue(true),
   }
   let configService: ConfigService
-  let mockRes: Partial<GqlExecutionContext>
+  let context: GqlExecutionContext
   let credentialsSignup: CredentialsSignup
 
   beforeEach(async () => {
@@ -34,11 +34,11 @@ describe('AuthResolver', () => {
       // imports: [EmailConfirmationModule, ConfigModule],
       providers: [
         AuthResolver,
-        // AuthService,
-        {
-          provide: AuthService,
-          useValue: authService,
-        },
+        AuthService,
+        // {
+        //   provide: AuthService,
+        //   useValue: authService,
+        // },
         {
           provide: EmailConfirmationService,
           useValue: emailConfirmationService,
@@ -52,7 +52,7 @@ describe('AuthResolver', () => {
 
     authResolver = moduleRef.get<AuthResolver>(AuthResolver)
     authService = moduleRef.get<AuthService>(AuthService)
-    mockRes = mockContext({ user: 'David Sawatzky' })
+    context = mockContext(userSignup())
   })
   afterEach(() => {
     vi.clearAllMocks()
@@ -71,21 +71,21 @@ describe('AuthResolver', () => {
 
       beforeEach(async () => {
         result = await authResolver.signup(
-          userSignup(),
-          mockRes.switchToHttp().getResponse()
+          userSignup()[0],
+          context.switchToHttp().getResponse()
         )
         userErrors = result.userErrors
         user = result.user
       })
 
       it('should call the auth service with user details', () => {
-        expect(authService.signup).toHaveBeenCalledWith(userSignup())
+        expect(authService.signup).toHaveBeenCalledWith(userSignup()[0])
       })
 
       it('Should return a username with first and last name', () => {
         userName = `${user.firstName} ${user.lastName}`
         expect(userName).toEqual(
-          `${userSignup().firstName} ${userSignup().lastName}`
+          `${userSignup()[0].firstName} ${userSignup()[0].lastName}`
         )
       })
 
@@ -97,7 +97,7 @@ describe('AuthResolver', () => {
       })
       it('returns user and userError details', async () => {
         expect(userErrors).toEqual([])
-        expect(user).toEqual(userSignup())
+        expect(user).toEqual(userSignup()[0])
       })
       it('Should return type AuthPayload', () => {
         expectTypeOf(result).toEqualTypeOf<AuthPayload>()
@@ -106,34 +106,55 @@ describe('AuthResolver', () => {
   })
 
   describe('CheckUser', () => {
-    describe('When checkuser is called', () => {
-      let result: any
+    let result: any
 
+    describe('When checkuser is called', () => {
       beforeEach(async () => {
-        result = await authResolver.checkUser(userSignup().email)
+        result = await authResolver.checkUser(userSignup()[0].email)
       })
 
       it('Should call authservice findOne with the email address', () => {
-        expect(authService.findOne).toHaveBeenCalledWith(userSignup().email)
+        expect(authService.findOne).toHaveBeenCalledWith(userSignup()[0].email)
       })
 
       it('Should return the user instance', () => {
-        expect(result).toEqual({ user: userSignup() })
+        expect(result).toEqual({ user: userSignup()[0] })
       })
     })
   })
 
-  // describe('Signin', () => {
-  //   describe('When Signin is called', () => {
-  //     let result: AuthPayload
+  describe('Signin', () => {
+    let result: AuthPayload
+    let userErrors: UserError[]
+    let user: Partial<User>
+    let diatonicToken: string
 
-  //     beforeEach(async () => {
-  //       result = await authResolver.signin(userSignin(), mockRes)
-  //     })
+    describe('When Signin is called', () => {
+      beforeEach(async () => {
+        result = await authResolver.signin(userSignin(), context)
+        userErrors = result.userErrors
+        user = result.user
+        diatonicToken = result.diatonicToken
+      })
 
-  //     it('Should call the authservice signin method with user info', () => {
-  //       expect(authService.signin).toHaveBeenCalled()
-  //     })
-  //   })
-  // })
+      it('Should call the authservice signin method with user info', () => {
+        expect(authService.signin).toHaveBeenCalled()
+      })
+
+      it('Should return the userErrors, diatonicToken, and user', () => {
+        expect(result).toEqual({ userErrors, diatonicToken, user })
+        expectTypeOf(result).toEqualTypeOf<AuthPayload>()
+      })
+    })
+
+    // describe('Setting the Diatonic Cookie', () => {
+    //   beforeEach(async () => {})
+
+    //   it('Should set the cookie if diatonicToken is returned from authService', async () => {
+    //     result = await authResolver.signin(userSignin(), context)
+    //     console.log(context.getContext().res.cookie.mock.calls)
+    //     expect(context.getContext().res.cookie).toBeCalled()
+    //   })
+    // })
+  })
 })

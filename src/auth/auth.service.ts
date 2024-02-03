@@ -56,7 +56,7 @@ export class AuthService {
         create: {
           firstName: firstName.trim(),
           lastName: lastName.trim(),
-          instrument: instrument.trim(),
+          instrument: instrument ? instrument.trim() : null,
           email: email.trim().toLowerCase(),
           password: hashedPassword,
           staff: false,
@@ -67,7 +67,7 @@ export class AuthService {
         update: {
           firstName: firstName.trim(),
           lastName: lastName.trim(),
-          instrument: instrument.trim(),
+          instrument: instrument ? instrument.trim() : null,
           password: hashedPassword,
           staff: false,
           admin: false,

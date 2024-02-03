@@ -1,31 +1,31 @@
 import { userSignup } from '../stubs/signup'
 import type { Mock } from 'vitest'
 
-const { password, ...userDetails } = userSignup()
+const { password, ...userDetails } = userSignup()[0]
 
-export const AuthService = () => vi.fn().{
+export const AuthService = vi.fn().mockReturnValue({
   signup: vi.fn().mockResolvedValue({
     userErrors: [],
     diatonic: '',
     user: {
-      ...userSignup(),
+      ...userSignup()[0],
     },
   }),
   signin: vi.fn().mockResolvedValue({
     userErrors: [],
-    diatonicToken: 'jwtToken',
+    diatonicToken: null,
     user: {
-      ...userSignup(),
+      ...userSignup()[0],
     },
   }),
   findOne: vi.fn().mockResolvedValue({
     user: {
-      ...userSignup(),
+      ...userSignup()[0],
     },
   }),
   checkIfPasswordExists: vi.fn().mockResolvedValue({
     id: 1,
-    pass: userSignup().password,
+    pass: userSignup()[0].password,
   }),
   validateUser: vi.fn().mockResolvedValue({
     result: userDetails,
@@ -33,4 +33,4 @@ export const AuthService = () => vi.fn().{
   findAuthenticatedUser: vi.fn().mockResolvedValue({
     result: userDetails,
   }),
-}
+})

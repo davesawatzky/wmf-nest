@@ -33,6 +33,7 @@
     "@apollo/server": "^4.10.0",
     "@casl/ability": "^6.5.0",
     "@casl/prisma": "^1.4.1",
+    "@jest/globals": "^29.7.0",
     "@nestjs-modules/mailer": "^1.10.3",
     "@nestjs/apollo": "^12.0.11",
     "@nestjs/cli": "^10.3.0",
@@ -87,7 +88,7 @@
     "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^6.20.0",
     "@typescript-eslint/parser": "^6.20.0",
-    "@vitest/coverage-v8": "^1.0.4",
+    "@vitest/coverage-v8": "^1.2.2",
     "@vitest/ui": "^1.2.2",
     "esbuild": "^0.19.12",
     "eslint": "^8.56.0",
@@ -104,7 +105,7 @@
     "tsconfig-paths": "4.2.0",
     "unplugin-swc": "^1.4.4",
     "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^1.0.4"
+    "vitest": "^1.2.2"
   },
   "jest": {
     "moduleFileExtensions": [
