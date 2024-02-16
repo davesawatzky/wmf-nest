@@ -10,7 +10,7 @@ import {
 } from 'vitest'
 import { SchoolGroupResolver } from './school-group.resolver'
 import { SchoolGroupService } from './school-group.service'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 
 describe('SchoolGroupResolver', () => {
   let resolver: SchoolGroupResolver

@@ -9,7 +9,7 @@ import {
   expect,
 } from 'vitest'
 import { LevelService } from './level.service'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 
 describe('LevelService', () => {
   let service: LevelService

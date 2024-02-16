@@ -10,7 +10,7 @@ import {
 } from 'vitest'
 import { LevelResolver } from './level.resolver'
 import { LevelService } from './level.service'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 import { FestivalClassService } from '../festival-class/festival-class.service'
 
 describe('LevelResolver', () => {

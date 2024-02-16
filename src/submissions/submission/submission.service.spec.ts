@@ -9,7 +9,7 @@ import {
   expect,
 } from 'vitest'
 import { SubmissionService } from './submission.service'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 import { RegistrationService } from '../registration/registration.service'
 
 describe('SubmissionService', () => {

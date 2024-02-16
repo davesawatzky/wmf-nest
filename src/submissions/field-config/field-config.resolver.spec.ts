@@ -10,7 +10,7 @@ import {
 } from 'vitest'
 import { FieldConfigResolver } from './field-config.resolver'
 import { FieldConfigService } from './field-config.service'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 
 describe('FieldConfigResolver', () => {
   let resolver: FieldConfigResolver

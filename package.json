@@ -1,8 +1,8 @@
 {
   "name": "wmf-nest",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "version": "0.1.0",
+  "description": "Server application for Winnipeg Music Festival online forms",
+  "author": "David Sawatzky",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -22,11 +22,11 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "testvi": "vitest --run",
-    "testvi:watch": "vitest --watch",
+    "testvi": "vitest run",
+    "testvi:watch": "vitest --watch --ui",
     "testvi:cov": "vitest --run --coverage",
     "testvi:debug": "vitest --inspect-brk --inspect --logHeapUsage --threads=false",
-    "testvi:e2e": "vitest --run --config ./vitest.config.e2e.ts",
+    "testvi:e2e": "cross-env NODE_ENV=test vitest run --no-file-parallelism --config ./vitest.config.e2e.mts",
     "types": "ts-node ./src/generate-typings"
   },
   "dependencies": {

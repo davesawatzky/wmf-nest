@@ -9,21 +9,35 @@ import {
   expect,
 } from 'vitest'
 import { EmailService } from './email.service'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../prisma/prisma.service'
 import { MailerService } from '@nestjs-modules/mailer'
 
 describe('EmailService', () => {
-  let service: EmailService
+  let emailService: EmailService
+  let prisma: PrismaService
+  let mailer: MailerService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [EmailService, PrismaService, MailerService],
+      providers: [
+        EmailService,
+        {
+          provide: PrismaService,
+          useValue: prisma,
+        },
+        {
+          provide: MailerService,
+          useValue: mailer,
+        },
+      ],
     }).compile()
 
-    service = module.get<EmailService>(EmailService)
+    emailService = module.get<EmailService>(EmailService)
+    // prisma: module.get<PrismaService>(PrismaService)
+    // mailer: module.get<MailerService>(MailerService)
   })
 
   it('should be defined', () => {
-    expect(service).toBeDefined()
+    expect(emailService).toBeDefined()
   })
 })

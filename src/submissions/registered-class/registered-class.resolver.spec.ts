@@ -11,7 +11,7 @@ import {
 import { RegisteredClassResolver } from './registered-class.resolver'
 import { RegisteredClassService } from './registered-class.service'
 import { SelectionService } from '../selection/selection.service'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 
 describe('RegisteredClassResolver', () => {
   let resolver: RegisteredClassResolver

@@ -4,8 +4,20 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
+    include: ['**/*.e2e-spec.?(c|m)[jt]s?(x)'],
     globals: true,
-    // globalSetup: ['./src/test/setup.ts', './src/test/teardown.ts'],
+    alias: {
+      '@src': './src',
+      '@test': './test',
+    },
+    root: './',
+    globalSetup: ['./src/test/setup.ts'],
+  },
+  resolve: {
+    alias: {
+      '@src': './src',
+      '@test': './test',
+    },
   },
   plugins: [
     tsconfigPaths(),

@@ -10,7 +10,7 @@ import {
 } from 'vitest'
 import { SelectionResolver } from './selection.resolver'
 import { SelectionService } from './selection.service'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 
 describe('SelectionResolver', () => {
   let resolver: SelectionResolver

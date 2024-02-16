@@ -10,7 +10,7 @@ import {
 } from 'vitest'
 import { TrophyResolver } from './trophy.resolver'
 import { TrophyService } from './trophy.service'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 
 describe('TrophyResolver', () => {
   let resolver: TrophyResolver

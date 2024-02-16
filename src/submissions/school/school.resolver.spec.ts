@@ -11,7 +11,7 @@ import {
 import { SchoolResolver } from './school.resolver'
 import { SchoolService } from './school.service'
 import { SchoolGroupService } from '../school-group/school-group.service'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 
 describe('SchoolResolver', () => {
   let resolver: SchoolResolver

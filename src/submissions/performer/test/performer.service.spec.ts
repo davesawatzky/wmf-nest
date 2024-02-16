@@ -9,7 +9,7 @@ import {
   expect,
 } from 'vitest'
 import { PerformerService } from '../performer.service'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../../prisma/prisma.service'
 
 vi.mock('../../../prisma/prisma.service.ts')
 

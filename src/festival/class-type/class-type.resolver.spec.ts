@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { ClassTypeResolver } from './class-type.resolver'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 import { ClassTypeService } from './class-type.service'
 
 describe('ClassTypeResolver', () => {

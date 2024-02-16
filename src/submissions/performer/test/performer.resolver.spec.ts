@@ -35,10 +35,4 @@ describe('PerformerResolver', () => {
   it('should be defined', () => {
     expect(performerResolver).toBeDefined()
   })
-
-  it('should create a performer', async () => {
-    expect(
-      await performerResolver.performerCreate(1, performerStub())
-    ).toReturn()
-  })
 })

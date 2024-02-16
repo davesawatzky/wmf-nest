@@ -10,7 +10,7 @@ import {
 } from 'vitest'
 import { SubdisciplineResolver } from './subdiscipline.resolver'
 import { SubdisciplineService } from './subdiscipline.service'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 import { FestivalClassService } from '../festival-class/festival-class.service'
 
 describe('SubdisciplineResolver', () => {

@@ -5,6 +5,7 @@ import {
   IsString,
   IsNotEmpty,
   IsBoolean,
+  IsOptional,
 } from 'class-validator'
 
 @InputType()
@@ -32,5 +33,6 @@ export class CredentialsSignup {
   schoolTeacher: boolean
 
   @IsString()
+  @IsOptional()
   instrument?: string
 }

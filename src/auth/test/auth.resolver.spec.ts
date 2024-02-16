@@ -63,7 +63,7 @@ describe('AuthResolver', () => {
   })
 
   describe('Signup', () => {
-    describe('When Signup Method is called', () => {
+    describe('When Signup Method is called with normal user', () => {
       let userErrors: UserError[]
       let user: Partial<User>
       let userName: string
@@ -95,7 +95,7 @@ describe('AuthResolver', () => {
         expect(user.email).toBeTruthy()
         expect(emailConfirmationService.sendVerificationLink).toHaveBeenCalled()
       })
-      it('returns user and userError details', async () => {
+      it('returns user and userError details', () => {
         expect(userErrors).toEqual([])
         expect(user).toEqual(userSignup()[0])
       })
@@ -109,16 +109,22 @@ describe('AuthResolver', () => {
     let result: any
 
     describe('When checkuser is called', () => {
-      beforeEach(async () => {
-        result = await authResolver.checkUser(userSignup()[0].email)
-      })
+      beforeEach(async () => {})
 
-      it('Should call authservice findOne with the email address', () => {
+      it('Should call authservice findOne with the email address', async () => {
+        result = await authResolver.checkUser(userSignup()[0].email)
         expect(authService.findOne).toHaveBeenCalledWith(userSignup()[0].email)
       })
 
-      it('Should return the user instance', () => {
+      it('Should return the user instance', async () => {
+        result = await authResolver.checkUser(userSignup()[0].email)
         expect(result).toEqual({ user: userSignup()[0] })
+      })
+
+      it('Should return null if user not found', async () => {
+        authService.findOne = vi.fn().mockResolvedValue(null)
+        result = await authResolver.checkUser('test@test.email')
+        expect(result).toBeNull()
       })
     })
   })

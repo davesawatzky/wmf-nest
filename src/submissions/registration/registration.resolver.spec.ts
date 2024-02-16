@@ -11,13 +11,13 @@ import {
 import { RegistrationResolver } from './registration.resolver'
 import { RegistrationService } from './registration.service'
 import { PerformerService } from '../performer/performer.service'
-import { UserService } from 'src/user/user.service'
+import { UserService } from '../../user/user.service'
 import { RegisteredClassService } from '../registered-class/registered-class.service'
 import { GroupService } from '../group/group.service'
 import { CommunityService } from '../community/community.service'
 import { SchoolService } from '../school/school.service'
 import { TeacherService } from '../teacher/teacher.service'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 
 describe('RegistrationResolver', () => {
   let resolver: RegistrationResolver

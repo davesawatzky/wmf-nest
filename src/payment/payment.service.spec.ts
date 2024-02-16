@@ -9,33 +9,39 @@ import {
   expect,
 } from 'vitest'
 import { PaymentService } from './payment.service'
-import { StripeService } from 'src/stripe/stripe.service'
-import { StripeModule } from 'src/stripe/stripe.module'
-import { StripeModuleOptions } from 'src/stripe/stripeOptions.interface'
+import { StripeService } from '../stripe/stripe.service'
+import { StripeModule } from '../stripe/stripe.module'
+import { StripeModuleOptions } from '../stripe/stripeOptions.interface'
 import {
   ConfigurableModuleClass,
   MODULE_OPTIONS_TOKEN,
-} from 'src/stripe/stripe.module-definition'
+} from '../stripe/stripe.module-definition'
 
 describe('PaymentService', () => {
-  let service: PaymentService
-  let config: StripeModuleOptions
+  let paymentService: PaymentService
+  let stripeService: StripeService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [PaymentService, StripeService],
-      imports: [
-        StripeModule.forRootAsync({
-          useClass: ConfigurableModuleClass,
-          inject: [MODULE_OPTIONS_TOKEN],
-        }),
+      providers: [
+        PaymentService,
+        {
+          provide: StripeService,
+          useValue: stripeService,
+        },
       ],
+      // imports: [
+      //   StripeModule.forRootAsync({
+      //     useClass: ConfigurableModuleClass,
+      //     inject: [MODULE_OPTIONS_TOKEN],
+      //   }),
+      // ],
     }).compile()
 
-    service = await module.resolve<PaymentService>(PaymentService)
+    paymentService = await module.resolve<PaymentService>(PaymentService)
   })
 
   it('should be defined', () => {
-    expect(service).toBeDefined()
+    expect(paymentService).toBeDefined()
   })
 })

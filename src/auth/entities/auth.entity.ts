@@ -1,6 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql'
 import { UserError } from '../../common.entity'
-import { IsJWT } from 'class-validator'
+import { IsJWT, IsOptional } from 'class-validator'
 import { User } from '../../user/entities/user.entity'
 
 @ObjectType()
@@ -11,7 +11,7 @@ export class AuthPayload {
   diatonicToken?: string
 
   @Field(() => User)
-  user: Partial<User>
+  user?: Partial<User>
 }
 
 @ObjectType()

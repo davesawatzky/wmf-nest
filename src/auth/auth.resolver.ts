@@ -13,7 +13,13 @@ import { AuthPayload, PasswordExists } from './entities/auth.entity'
 import { CredentialsSignup } from './dto/credentials-signup.input'
 import { CredentialsSignin } from './dto/credentials-signin.input'
 import { User } from '../user/entities/user.entity'
-import { UseGuards, Res } from '@nestjs/common'
+import {
+  UseGuards,
+  Res,
+  BadGatewayException,
+  BadRequestException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { GqlAuthGuard } from './gql-auth.guard'
 import { JwtAuthGuard } from './jwt-auth.guard'
 import { EmailConfirmationService } from '../email-confirmation/email-confirmation.service'
@@ -33,11 +39,13 @@ export class AuthResolver {
     @Context('res') res: Response
   ): Promise<AuthPayload> {
     const { userErrors, user } = await this.authService.signup(credentials)
-    const userName = `${user.firstName} ${user.lastName}`
-    await this.emailConfirmationService.sendVerificationLink(
-      userName,
-      user.email
-    )
+    if (!!user) {
+      const userName = `${user.firstName} ${user.lastName}`
+      await this.emailConfirmationService.sendVerificationLink(
+        userName,
+        user.email
+      )
+    }
     return { userErrors, user }
   }
 

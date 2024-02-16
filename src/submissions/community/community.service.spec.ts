@@ -9,7 +9,7 @@ import {
   expect,
 } from 'vitest'
 import { CommunityService } from './community.service'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../../prisma/prisma.service'
 
 describe('CommunityService', () => {
   let service: CommunityService

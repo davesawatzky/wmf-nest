@@ -20,118 +20,143 @@ export class AuthService {
   ) {}
 
   async signup(credentialsSignup: CredentialsSignup): Promise<AuthPayload> {
-    const user = await this.prisma.tbl_user.findUnique({
-      where: { email: credentialsSignup.email.trim().toLowerCase() },
-    })
-    if (!!user && !!user.password) {
-      return {
-        userErrors: [
-          {
-            message: 'User already exists',
-            field: [],
-          },
-        ],
-        user: null,
-      }
-    } else if (
-      !user ||
-      credentialsSignup.privateTeacher ||
-      credentialsSignup.schoolTeacher
-    ) {
-      const hashedPassword = await bcrypt.hash(
-        credentialsSignup.password.trim(),
-        15
-      )
-      const {
-        firstName,
-        lastName,
-        email,
-        privateTeacher,
-        schoolTeacher,
-        instrument,
-      } = credentialsSignup
-      const newUser = await this.prisma.tbl_user.upsert({
-        // updates or creates if not found
-        where: { email: credentialsSignup.email },
-        create: {
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
-          instrument: instrument ? instrument.trim() : null,
-          email: email.trim().toLowerCase(),
-          password: hashedPassword,
-          staff: false,
-          admin: false,
-          privateTeacher,
-          schoolTeacher,
-        },
-        update: {
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
-          instrument: instrument ? instrument.trim() : null,
-          password: hashedPassword,
-          staff: false,
-          admin: false,
-          privateTeacher,
-          schoolTeacher,
-        },
+    try {
+      const user = await this.prisma.tbl_user.findUnique({
+        where: { email: credentialsSignup.email.trim().toLowerCase() },
       })
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const result = this.stripProperties(newUser)
-      return {
-        userErrors: [],
-        // diatonicToken: null,
-        user: result,
+      if (!!user && !!user.password) {
+        return {
+          userErrors: [
+            {
+              message: 'User already exists',
+              field: [],
+            },
+          ],
+          diatonicToken: null,
+          user: null,
+        }
+      } else if (
+        !!user &&
+        !credentialsSignup.privateTeacher &&
+        !credentialsSignup.schoolTeacher
+      ) {
+        return {
+          userErrors: [
+            {
+              message: 'User already exists',
+              field: [],
+            },
+          ],
+          diatonicToken: null,
+          user: null,
+        }
+      } else if (
+        !user ||
+        credentialsSignup.privateTeacher ||
+        credentialsSignup.schoolTeacher
+      ) {
+        const hashedPassword = await bcrypt.hash(
+          credentialsSignup.password.trim(),
+          15
+        )
+        const {
+          firstName,
+          lastName,
+          email,
+          privateTeacher,
+          schoolTeacher,
+          instrument,
+        } = credentialsSignup
+        const newUser = await this.prisma.tbl_user.upsert({
+          // updates or creates if not found
+          where: { email: credentialsSignup.email },
+          create: {
+            firstName: firstName.trim(),
+            lastName: lastName.trim(),
+            instrument: !!instrument ? instrument.trim() : null,
+            email: email.trim().toLowerCase(),
+            password: hashedPassword,
+            staff: false,
+            admin: false,
+            privateTeacher,
+            schoolTeacher,
+          },
+          update: {
+            firstName: firstName.trim(),
+            lastName: lastName.trim(),
+            instrument: !!instrument ? instrument.trim() : null,
+            password: hashedPassword,
+            staff: false,
+            admin: false,
+            privateTeacher,
+            schoolTeacher,
+          },
+        })
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const result = this.stripProperties(newUser)
+        return {
+          userErrors: [],
+          // diatonicToken: null,
+          user: result,
+        }
       }
+    } catch (err) {
+      throw new BadRequestException('Be sure to provide all fields')
     }
   }
 
   async signin(user: Partial<User>): Promise<AuthPayload> {
-    const payload = {
-      username: user.email,
-      sub: user.id,
-      privateTeacher: user.privateTeacher,
-      schoolTeacher: user.schoolTeacher,
-    }
-    const confirmed = await this.prisma.tbl_user.findUnique({
-      where: { id: user.id },
-    })
-    if (!confirmed.emailConfirmed) {
-      return {
-        userErrors: [
-          {
-            message:
-              'Account not confirmed.  Check email account for verification link',
-            field: [],
+    try {
+      const payload = {
+        username: user.email,
+        sub: user.id,
+        privateTeacher: user.privateTeacher,
+        schoolTeacher: user.schoolTeacher,
+      }
+      const signedInUser = await this.prisma.tbl_user.findUnique({
+        where: { id: user.id },
+      })
+      if (!!signedInUser && !signedInUser.emailConfirmed) {
+        return {
+          userErrors: [
+            {
+              message:
+                'Account not confirmed.  Check email account for verification link',
+              field: [],
+            },
+          ],
+          diatonicToken: null,
+          user: {
+            email: signedInUser.email,
+            firstName: signedInUser.firstName,
+            lastName: signedInUser.lastName,
           },
-        ],
-        diatonicToken: null,
-        user: {
-          email: confirmed.email,
-          firstName: confirmed.firstName,
-          lastName: confirmed.lastName,
-        },
+        }
+        // } else if (!signedInUser) {
+        //   return {
+        //     userErrors: [
+        //       {
+        //         message: 'Incorrect Email or Password',
+        //         field: [],
+        //       },
+        //     ],
+        //     diatonicToken: null,
+        //     user: null,
+        //   }
+      } else {
+        return {
+          userErrors: [],
+          diatonicToken: this.jwtService.sign(payload),
+          user: this.stripProperties(user),
+        }
       }
-    } else if (!confirmed) {
-      return {
-        userErrors: [
-          {
-            message: 'Incorrect Email or Password',
-            field: [],
-          },
-        ],
-        diatonicToken: null,
-        user: null,
-      }
-    } else {
-      return {
-        userErrors: [],
-        diatonicToken: this.jwtService.sign(payload),
-        user: this.stripProperties(user),
-      }
+    } catch (err) {
+      console.log(err)
+      throw new BadRequestException('Error searching for user')
     }
   }
 
-  async findOne(email: User['email']) {
+  async findOne(email: User['email']): Promise<User> {
     try {
       if (email) {
         const user = await this.prisma.tbl_user.findUnique({
@@ -147,11 +172,12 @@ export class AuthService {
             return user
           }
         } else {
-          return { user: null }
+          return null
         }
+      } else {
+        throw new BadRequestException('No email given')
       }
     } catch (err) {
-      console.log(err)
       throw new BadRequestException('No one found with those details')
     }
   }
@@ -161,10 +187,14 @@ export class AuthService {
       const user = await this.prisma.tbl_user.findUnique({
         where: { id },
       })
-      const pass = !!user.password
-      return { id, pass }
+      if (!!user) {
+        const pass = !!user.password
+        return { id, pass }
+      } else {
+        throw new BadRequestException('No user found')
+      }
     } catch (err) {
-      console.log(err)
+      throw new BadRequestException('No valid user given')
     }
   }
 
@@ -175,7 +205,12 @@ export class AuthService {
     const user = await this.prisma.tbl_user.findUnique({
       where: { email: username.trim().toLowerCase() },
     })
-    const valid = await bcrypt.compare(password, user?.password)
+    if (!user) {
+      return null
+    } else if (!user.password) {
+      return null
+    }
+    const valid = await bcrypt.compare(password, user.password)
     if (user && valid) {
       const result = await this.stripProperties(user)
       return result
@@ -184,14 +219,18 @@ export class AuthService {
   }
 
   async findAuthenticatedUser(id: User['id']): Promise<User> {
-    const user = await this.prisma.tbl_user.findUnique({
-      where: { id },
-    })
-    if (user) {
-      const result = await this.stripProperties(user)
-      return result
+    try {
+      const user = await this.prisma.tbl_user.findUnique({
+        where: { id },
+      })
+      if (user) {
+        const result = await this.stripProperties(user)
+        return result
+      }
+      return null
+    } catch (err) {
+      console.log(err)
     }
-    return null
   }
 
   stripProperties(user) {
