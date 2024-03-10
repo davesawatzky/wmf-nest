@@ -130,8 +130,17 @@ describe('AuthService', () => {
       })
 
       it('Should produce an error if no user found', async () => {
-        prisma.tbl_user.findUnique = vi.fn()
-        result = await authService.signin(signinFromAuthGuard)
+        prisma.tbl_user.findUnique = vi.fn().mockResolvedValue(null)
+        result = await authService.signin({
+          id: 5,
+          firstName: 'David',
+          lastName: 'Sawatzky',
+          email: 'test@test.com',
+          admin: false,
+          staff: false,
+          privateTeacher: false,
+          schoolTeacher: false,
+        })
         expect(result.diatonicToken).toBeNull()
         expect(result.userErrors[0].message).toBeTruthy()
       })

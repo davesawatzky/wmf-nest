@@ -132,17 +132,17 @@ export class AuthService {
             lastName: signedInUser.lastName,
           },
         }
-        // } else if (!signedInUser) {
-        //   return {
-        //     userErrors: [
-        //       {
-        //         message: 'Incorrect Email or Password',
-        //         field: [],
-        //       },
-        //     ],
-        //     diatonicToken: null,
-        //     user: null,
-        //   }
+        } else if (!signedInUser) {
+          return {
+            userErrors: [
+              {
+                message: 'Incorrect Email or Password',
+                field: [],
+              },
+            ],
+            diatonicToken: null,
+            user: null,
+          }
       } else {
         return {
           userErrors: [],
