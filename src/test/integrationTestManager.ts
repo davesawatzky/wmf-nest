@@ -13,6 +13,7 @@ import { TestUser } from './testUser'
 import {EmailConfirmationService} from 'src/email-confirmation/email-confirmation.service'
 import request from 'supertest-graphql'
 
+
 export class IntegrationTestManager {
   public httpServer: any
   private app: INestApplication
@@ -74,10 +75,12 @@ export class IntegrationTestManager {
     // this.app.setBaseViewsDir(join(__dirname, '..', 'emails'))
     // this.app.setViewEngine('hbs')
 
-    await this.app.init()
+ 
 
     this.httpServer = this.app.getHttpServer()
     this.prisma = this.app.get<PrismaService>(PrismaService)
+
+    await this.app.init()
 
     const response = await request<{signin: AuthPayload}>(
       this.httpServer
@@ -107,9 +110,10 @@ export class IntegrationTestManager {
         }
       })
     this.diatonicToken = response.data.signin.diatonicToken
+
   }
 
-  async afterAll():Promise <void> {
+  async afterAll() {
     await this.app.close()
   }
 

@@ -1,16 +1,13 @@
 import gql from 'graphql-tag'
 import request from 'supertest-graphql'
-import {IntegrationTestManager} from '../../test/integrationTestManager'
 import { AuthPayload } from '../entities/auth.entity'
 import { userSignup } from '../stubs/signup'
 
 describe('Signin', () => {
-  const integrationTestManager = new IntegrationTestManager()
 
   beforeAll(async () => {
-    await integrationTestManager.beforeAll()
     
-    const response = await request<{ signup: AuthPayload }>(integrationTestManager.httpServer)
+    await request<{ signup: AuthPayload }>(global.httpServer)
       .mutate(gql`
         mutation SignUp($credentials: CredentialsSignup!) {
           signup(credentials: $credentials) {
@@ -31,13 +28,11 @@ describe('Signin', () => {
   })
 
   afterAll(async () => {
-    const deleteUser = await integrationTestManager.prisma.tbl_user.delete({
+    await global.prisma.tbl_user.delete({
       where: {
         email: userSignup()[0].email,
       },
     })
-    await integrationTestManager.afterAll()
-    
   })
 
   describe('User does not exist', () => {
@@ -46,7 +41,7 @@ describe('Signin', () => {
 
       beforeAll(async () => {
         response = await request<{ signin: AuthPayload }>(
-          integrationTestManager.httpServer
+          global.httpServer
         )
           .mutate(gql`
             mutation SignIn($credentials: CredentialsSignin!) {
@@ -88,7 +83,7 @@ describe('Signin', () => {
 
       beforeAll(async () => {
         response = await request<{ signin: AuthPayload }>(
-          integrationTestManager.httpServer
+          global.httpServer
         )
           .mutate(gql`
             mutation SignIn($credentials: CredentialsSignin!) {
@@ -128,7 +123,7 @@ describe('Signin', () => {
   describe('User does exist, but not confirmed', () => {
     describe('Has never signed in', () => {
       it('Should have the "has_signed_in" field set to false', async () => {
-        const result = await integrationTestManager.prisma.tbl_user.findUnique({
+        const result = await global.prisma.tbl_user.findUnique({
           where: {
             email: userSignup()[0].email,
           },
@@ -143,7 +138,7 @@ describe('Signin', () => {
 
       beforeAll(async () => {
         response = await request<{ signin: AuthPayload }>(
-          integrationTestManager.httpServer
+          global.httpServer
         )
           .mutate(gql`
             mutation SignIn($credentials: CredentialsSignin!) {
@@ -177,7 +172,7 @@ describe('Signin', () => {
         expect(signedInUser.diatonicToken).toBeNull()
       })
       it('Should have the "has_signed_in" field still set to false', async () => {
-        const result = await integrationTestManager.prisma.tbl_user.findUnique({
+        const result = await global.prisma.tbl_user.findUnique({
           where: {
             email: userSignup()[0].email,
           },
@@ -189,7 +184,7 @@ describe('Signin', () => {
 
   describe('User has confirmed email', () => {
     beforeAll(async () => {
-      await integrationTestManager.prisma.tbl_user.update({
+      await global.prisma.tbl_user.update({
         data: {
           emailConfirmed: true,
         },
@@ -205,7 +200,7 @@ describe('Signin', () => {
 
       beforeAll(async () => {
         response = await request<{ signin: AuthPayload }>(
-          integrationTestManager.httpServer
+          global.httpServer
         )
           .mutate(gql`
             mutation SignIn($credentials: CredentialsSignin!) {

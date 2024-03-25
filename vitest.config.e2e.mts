@@ -5,17 +5,27 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   test: {
     include: ['**/*.e2e-spec.?(c|m)[jt]s?(x)'],
-    globals: true,
     alias: {
       '@src': './src',
       '@test': './test',
     },
     root: './',
-    globalSetup: ['./src/test/setup.ts'],
+    globals: true,
+    globalSetup: ['./src/test/globalSetup_e2e.ts'],
+    setupFiles: ['./src/test/integrationTestSetup.ts'],
     fileParallelism: false,
+    pool: 'forks',
     poolOptions: {
       threads: {
         singleThread: true
+      },
+      forks: {
+        singleFork: true
+      }
+    },
+    server: {
+      deps: {
+        fallbackCJS: true
       }
     }
   },

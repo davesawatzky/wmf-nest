@@ -1,29 +1,19 @@
 import gql from 'graphql-tag'
 import request from 'supertest-graphql'
-import { IntegrationTestManager } from '../../test/integrationTestManager'
 import { AuthPayload } from '../entities/auth.entity'
 import { userSignup } from '../stubs/signup'
 import {EmailConfirmationService} from 'src/email-confirmation/email-confirmation.service'
 import {response} from 'express'
 import {getGqlErrorStatus} from 'src/test/gqlStatus'
 
-describe('Signup', async () => {
-  const integrationTestManager = new IntegrationTestManager()
-  
-  beforeAll(async () => {
-    await integrationTestManager.beforeAll()
-  })
-
-  afterAll(async () => {
-    await integrationTestManager.afterAll()
-  })
+describe('Signup', () => {
 
   describe('When a signUp mutation is executed with a normal user', () => {
     let response: any
 
     beforeAll(async () => {
       response = await request<{ signup: AuthPayload }>(
-        integrationTestManager.httpServer
+        global.httpServer
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -48,7 +38,7 @@ describe('Signup', async () => {
 
     afterAll(async () => {
       if (!!response.data.signup) {
-        await integrationTestManager.prisma.tbl_user.delete({
+        await global.prisma.tbl_user.delete({
           where: {
             email: userSignup()[0].email,
           },
@@ -68,7 +58,7 @@ describe('Signup', async () => {
     })
 
     it('Should have created the user in the database', async () => {
-      const user = await integrationTestManager.prisma.tbl_user.findUnique({
+      const user = await global.prisma.tbl_user.findUnique({
         where: {
           email: userSignup()[0].email,
         },
@@ -82,7 +72,7 @@ describe('Signup', async () => {
 
     beforeAll(async () => {
       response = await request<{ signup: AuthPayload }>(
-        integrationTestManager.httpServer
+        global.httpServer
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -107,7 +97,7 @@ describe('Signup', async () => {
 
     afterAll(async () => {
       if (!!response.data.signup) {
-        await integrationTestManager.prisma.tbl_user.delete({
+        await global.prisma.tbl_user.delete({
           where: {
             email: userSignup()[1].email,
           },
@@ -127,7 +117,7 @@ describe('Signup', async () => {
     })
 
     it('Should have created the user in the database', async () => {
-      const user = await integrationTestManager.prisma.tbl_user.findUnique({
+      const user = await global.prisma.tbl_user.findUnique({
         where: {
           email: userSignup()[1].email,
         },
@@ -142,7 +132,7 @@ describe('Signup', async () => {
 
     beforeAll(async () => {
       response = await request<{ signup: AuthPayload }>(
-        integrationTestManager.httpServer
+        global.httpServer
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -173,7 +163,7 @@ describe('Signup', async () => {
 
     afterAll(async () => {
       if (!response.errors) {
-        await integrationTestManager.prisma.tbl_user.delete({
+        await global.prisma.tbl_user.delete({
           where: {
             email: userSignup()[0].email,
           },
@@ -186,7 +176,7 @@ describe('Signup', async () => {
     })
 
     it('should not write user to the database', async () => {
-      const user = await integrationTestManager.prisma.tbl_user.findUnique({
+      const user = await global.prisma.tbl_user.findUnique({
         where: {
           email: userSignup()[1].email,
         },
@@ -200,7 +190,7 @@ describe('Signup', async () => {
 
     beforeAll(async () => {
       response = await request<{ signup: AuthPayload }>(
-        integrationTestManager.httpServer
+        global.httpServer
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -230,7 +220,7 @@ describe('Signup', async () => {
 
     afterAll(async () => {
       if (!response.errors) {
-        await integrationTestManager.prisma.tbl_user.delete({
+        await global.prisma.tbl_user.delete({
           where: {
             email: userSignup()[0].email,
           },
@@ -243,7 +233,7 @@ describe('Signup', async () => {
     })
 
     it('should not write user to the database', async () => {
-      const user = await integrationTestManager.prisma.tbl_user.findUnique({
+      const user = await global.prisma.tbl_user.findUnique({
         where: {
           email: userSignup()[1].email,
         },
@@ -257,7 +247,7 @@ describe('Signup', async () => {
 
     beforeAll(async () => {
       response = await request<{ signup: AuthPayload }>(
-        integrationTestManager.httpServer
+        global.httpServer
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -281,7 +271,7 @@ describe('Signup', async () => {
 
     afterAll(async () => {
       if (!!response) {
-        await integrationTestManager.prisma.tbl_user.delete({
+        await global.prisma.tbl_user.delete({
           where: {
             email: userSignup()[2].email,
           },
@@ -300,7 +290,7 @@ describe('Signup', async () => {
     })
 
     it('Should have created the user in the database', async () => {
-      const user = await integrationTestManager.prisma.tbl_user.findUnique({
+      const user = await global.prisma.tbl_user.findUnique({
         where: {
           email: userSignup()[2].email,
         },
@@ -314,7 +304,7 @@ describe('Signup', async () => {
 
     beforeAll(async () => {
       response = await request<{ signup: AuthPayload }>(
-        integrationTestManager.httpServer
+        global.httpServer
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -339,7 +329,7 @@ describe('Signup', async () => {
 
     afterAll(async () => {
       if (!!response) {
-        await integrationTestManager.prisma.tbl_user.delete({
+        await global.prisma.tbl_user.delete({
           where: {
             email: userSignup()[3].email,
           },
@@ -358,7 +348,7 @@ describe('Signup', async () => {
     })
 
     it('Should have created the user in the database', async () => {
-      const user = await integrationTestManager.prisma.tbl_user.findUnique({
+      const user = await global.prisma.tbl_user.findUnique({
         where: {
           email: userSignup()[3].email,
         },
@@ -369,7 +359,7 @@ describe('Signup', async () => {
 
   describe('Teacher exists but has not created an account yet.', () => {
     beforeAll(async () => {
-      const result = await integrationTestManager.prisma.tbl_user.create({
+      const result = await global.prisma.tbl_user.create({
         data: {
           email: userSignup()[2].email,
           firstName: userSignup()[2].firstName,
@@ -383,7 +373,7 @@ describe('Signup', async () => {
     })
 
     afterAll(async () => {
-      const result = await integrationTestManager.prisma.tbl_user.delete({
+      const result = await global.prisma.tbl_user.delete({
         where: {
           email: userSignup()[2].email,
         },
@@ -391,7 +381,7 @@ describe('Signup', async () => {
     })
 
     it('Account should be in the database without a password', async () => {
-      const response = await integrationTestManager.prisma.tbl_user.findUnique({
+      const response = await global.prisma.tbl_user.findUnique({
         where: {
           email: userSignup()[2].email,
         },
@@ -402,7 +392,7 @@ describe('Signup', async () => {
 
     it('Should be able to add the password to the existing account', async () => {
       const response = await request<{ signup: AuthPayload }>(
-        integrationTestManager.httpServer
+        global.httpServer
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -423,7 +413,7 @@ describe('Signup', async () => {
         })
       .expectNoErrors()
 
-      const result = await integrationTestManager.prisma.tbl_user.findUnique({
+      const result = await global.prisma.tbl_user.findUnique({
         where: {
           email: userSignup()[2].email,
         },
@@ -436,7 +426,7 @@ describe('Signup', async () => {
 
     beforeAll(async () => {
       await request<{ signup: AuthPayload }>(
-        integrationTestManager.httpServer
+        global.httpServer
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -459,7 +449,7 @@ describe('Signup', async () => {
     })
     
     afterAll(async () => {
-      await integrationTestManager.prisma.tbl_user.delete({
+      await global.prisma.tbl_user.delete({
         where: {
           email: userSignup()[0].email,
         },
@@ -468,7 +458,7 @@ describe('Signup', async () => {
 
     it('should return an Error in an AuthPayload object', async () => {
       const response = await request<{ signup: AuthPayload }>(
-        integrationTestManager.httpServer
+        global.httpServer
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
