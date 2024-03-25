@@ -12,6 +12,12 @@ export default defineConfig({
     },
     root: './',
     globalSetup: ['./src/test/setup.ts'],
+    fileParallelism: false,
+    poolOptions: {
+      threads: {
+        singleThread: true
+      }
+    }
   },
   resolve: {
     alias: {

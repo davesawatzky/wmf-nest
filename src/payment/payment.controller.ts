@@ -12,6 +12,7 @@ import {
 import { PaymentService } from './payment.service'
 import { ConfigService } from '@nestjs/config'
 import { RestJwtAuthGuard } from '../auth/jwt-auth.guard'
+import {PaymentCreateDto} from './dto/payment.dto'
 
 @Controller('payment')
 // @UseGuards(RestJwtAuthGuard)
@@ -22,8 +23,8 @@ export class PaymentController {
   ) {}
 
   @Post('create-payment-intent')
-  async createPaymentIntent(@Body() body: any) {
-    const calculateOrderAmount = body.items[0].amount
+  async createPaymentIntent(@Body() body:PaymentCreateDto) {
+    const calculateOrderAmount = body.amount
 
     const paymentIntent = await this.paymentService.createPaymentIntent(
       calculateOrderAmount,

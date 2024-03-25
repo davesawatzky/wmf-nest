@@ -13,6 +13,7 @@ import { PaymentService } from './payment.service'
 import { StripeService } from '../stripe/stripe.service'
 import { StripeModule } from '../stripe/stripe.module'
 import { ConfigService } from '@nestjs/config'
+import {PaymentCreateDto} from './dto/payment.dto'
 
 describe('PaymentController', () => {
   let controller: PaymentController
@@ -23,11 +24,7 @@ describe('PaymentController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PaymentController],
-      providers: [
-        {
-          provide: PaymentService,
-          useValue: payment,
-        },
+      providers: [PaymentService,
         {
           provide: StripeService,
           useValue: stripe,
@@ -41,9 +38,33 @@ describe('PaymentController', () => {
     }).compile()
 
     controller = module.get<PaymentController>(PaymentController)
+    payment = module.get<PaymentService>(PaymentService)
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
   })
 
   it('should be defined', () => {
     expect(controller).toBeDefined()
   })
+
+  describe('createPaymentIntent', () => {
+
+    let body: PaymentCreateDto
+    beforeEach(() => {
+      body = {
+        amount: 25.00,
+        currency: 'cad'
+      },
+        payment.createPaymentIntent = vi.fn().mockResolvedValue({
+          client_secret: 'newClientSecret'
+        })
+    })
+
+    it('Should return the clientSecret', async () => {
+      const result = await controller.createPaymentIntent(body)
+      expect(result).toEqual({clientSecret: 'newClientSecret'})
+    })
+  })  
 })

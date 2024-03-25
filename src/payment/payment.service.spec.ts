@@ -16,20 +16,21 @@ import {
   ConfigurableModuleClass,
   MODULE_OPTIONS_TOKEN,
 } from '../stripe/stripe.module-definition'
+import {RawBodyRequest} from '@nestjs/common'
 
 describe('PaymentService', () => {
   let paymentService: PaymentService
   let stripeService: StripeService
-
+  
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        PaymentService,
+      providers: [PaymentService,
         {
           provide: StripeService,
-          useValue: stripeService,
-        },
-      ],
+          useValue: stripeService
+        }
+      ]
+       
       // imports: [
       //   StripeModule.forRootAsync({
       //     useClass: ConfigurableModuleClass,
@@ -39,9 +40,36 @@ describe('PaymentService', () => {
     }).compile()
 
     paymentService = await module.resolve<PaymentService>(PaymentService)
+    stripeService = await module.resolve<StripeService>(StripeService)
+
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
   })
 
   it('should be defined', () => {
     expect(paymentService).toBeDefined()
   })
+
+  // describe('Webhook', () => {
+  //   let req:RawBodyRequest<Request> = null
+  //   let signature = 'testing'
+  //   let endpointSecret = 'the code'
+
+  //   beforeEach(() => {
+  //     stripeService.stripe.webhooks.constructEvent = vi.fn().mockResolvedValue({
+  //       type: 'payment_intent.payment_failed',
+  //       data: {
+  //         object: 'payment object'
+  //       }
+  //     })
+  //   })
+
+  //   it('Should log different case depending on event object', async () => {
+  //     const result = paymentService.webhook(req, signature, endpointSecret)
+  //     expect(console.log).toBeCalledWith('Payment failed')
+      
+  //   })
+  // })
 })

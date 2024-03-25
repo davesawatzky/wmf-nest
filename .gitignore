@@ -40,3 +40,6 @@ lerna-debug.log*
 
 # certs
 supacert.crt
+
+#SQL Seed Files
+*.sql

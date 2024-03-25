@@ -37,7 +37,7 @@ export class FestivalClassService {
     levelID?: tbl_level['id'],
     categoryID?: tbl_category['id']
   ) {
-    return await this.prisma.tbl_classlist.findMany({
+        return await this.prisma.tbl_classlist.findMany({
       where: {
         performerType,
         subdisciplineID,

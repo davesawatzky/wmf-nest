@@ -1,13 +1,15 @@
-import { describe, it, beforeAll, afterAll, expect } from 'vitest'
 import gql from 'graphql-tag'
 import request from 'supertest-graphql'
 import { IntegrationTestManager } from '../../test/integrationTestManager'
 import { AuthPayload } from '../entities/auth.entity'
 import { userSignup } from '../stubs/signup'
+import {EmailConfirmationService} from 'src/email-confirmation/email-confirmation.service'
+import {response} from 'express'
+import {getGqlErrorStatus} from 'src/test/gqlStatus'
 
-describe('Signup', () => {
+describe('Signup', async () => {
   const integrationTestManager = new IntegrationTestManager()
-
+  
   beforeAll(async () => {
     await integrationTestManager.beforeAll()
   })
@@ -16,423 +18,446 @@ describe('Signup', () => {
     await integrationTestManager.afterAll()
   })
 
-  describe('User does not exist', () => {
-    describe('when a signUp mutation is executed with a normal user', () => {
-      let createdUser: AuthPayload
+  describe('When a signUp mutation is executed with a normal user', () => {
+    let response: any
 
-      beforeAll(async () => {
-        const response = await request<{ signup: AuthPayload }>(
-          integrationTestManager.httpServer
-        )
-          .mutate(gql`
-            mutation SignUp($credentials: CredentialsSignup!) {
-              signup(credentials: $credentials) {
-                userErrors {
-                  message
-                  field
-                }
-                user {
-                  email
-                }
+    beforeAll(async () => {
+      response = await request<{ signup: AuthPayload }>(
+        integrationTestManager.httpServer
+      )
+        .mutate(gql`
+          mutation SignUp($credentials: CredentialsSignup!) {
+            signup(credentials: $credentials) {
+              userErrors {
+                message
+                field
               }
+              user {
+                email
+              }
+              diatonicToken
             }
-          `)
-          .variables({
-            credentials: userSignup()[0],
-          })
-        createdUser = response.data.signup
-      })
-
-      afterAll(async () => {
-        if (!!createdUser) {
-          await integrationTestManager.prisma.tbl_user.delete({
-            where: {
-              email: userSignup()[0].email,
-            },
-          })
-        }
-      })
-
-      it('should return a the user email in an AuthPayload object', () => {
-        expect(createdUser).toMatchObject({
-          userErrors: [],
-          user: {
-            email: userSignup()[0].email,
-          },
+          }
+        `)
+        .variables({
+          credentials: userSignup()[0]
         })
-      })
+        .expectNoErrors()
+      
+    })
 
-      it('Should have created the user in the database', async () => {
-        const user = await integrationTestManager.prisma.tbl_user.findUnique({
+    afterAll(async () => {
+      if (!!response.data.signup) {
+        await integrationTestManager.prisma.tbl_user.delete({
           where: {
             email: userSignup()[0].email,
           },
         })
-        expect(user).toBeDefined()
+      }
+      response = null
+    })
+
+    it('Should return the user email in an AuthPayload object', async () => {
+      expect(await response.data.signup).toMatchObject({
+        userErrors: [],
+        user: {
+          email: userSignup()[0].email,
+        },
+        diatonicToken: null
       })
     })
 
-    describe('Normal user signs up without instrument', () => {
-      let createdUser: AuthPayload
+    it('Should have created the user in the database', async () => {
+      const user = await integrationTestManager.prisma.tbl_user.findUnique({
+        where: {
+          email: userSignup()[0].email,
+        },
+      })
+      expect(user).toBeTruthy()
+    })
+  })
 
-      beforeAll(async () => {
-        const response = await request<{ signup: AuthPayload }>(
-          integrationTestManager.httpServer
-        )
-          .mutate(gql`
-            mutation SignUp($credentials: CredentialsSignup!) {
-              signup(credentials: $credentials) {
-                userErrors {
-                  message
-                  field
-                }
-                user {
-                  email
-                }
+  describe('Normal user signs up without instrument', () => {
+    let response: any
+
+    beforeAll(async () => {
+      response = await request<{ signup: AuthPayload }>(
+        integrationTestManager.httpServer
+      )
+        .mutate(gql`
+          mutation SignUp($credentials: CredentialsSignup!) {
+            signup(credentials: $credentials) {
+              userErrors {
+                message
+                field
               }
+              user {
+                email
+                instrument
+              }
+              diatonicToken
             }
-          `)
-          .variables({
-            credentials: userSignup()[1],
-          })
-        createdUser = response.data.signup
-      })
-
-      afterAll(async () => {
-        if (!!createdUser) {
-          await integrationTestManager.prisma.tbl_user.delete({
-            where: {
-              email: userSignup()[1].email,
-            },
-          })
-        }
-      })
-
-      it('should return the user email in an AuthPayload object', () => {
-        expect(createdUser).toMatchObject({
-          userErrors: [],
-          user: {
-            email: userSignup()[1].email,
-          },
+          }
+        `)
+        .variables({
+          credentials: userSignup()[1],
         })
-      })
+      .expectNoErrors()
+    })
 
-      it('Should have created the user in the database', async () => {
-        const user = await integrationTestManager.prisma.tbl_user.findUnique({
+    afterAll(async () => {
+      if (!!response.data.signup) {
+        await integrationTestManager.prisma.tbl_user.delete({
           where: {
             email: userSignup()[1].email,
           },
         })
-        expect(user).toBeDefined()
-        expect(user.instrument).toBeNull()
+      }
+    })
+
+    it('should return the user email in an AuthPayload object', async () => {
+      expect(await response.data.signup).toMatchObject({
+        userErrors: [],
+        user: {
+          email: userSignup()[1].email,
+          instrument: null,
+        },
+        diatonicToken: null
       })
     })
 
-    describe('Normal user signs up without Email (username)', () => {
-      let createdUser: any
-      let response: any
+    it('Should have created the user in the database', async () => {
+      const user = await integrationTestManager.prisma.tbl_user.findUnique({
+        where: {
+          email: userSignup()[1].email,
+        },
+      })
+      expect(user).toBeDefined()
+      // expect(user.instrument).toBeNull()
+    })
+  })
 
-      beforeAll(async () => {
-        response = await request<{ signup: AuthPayload }>(
-          integrationTestManager.httpServer
-        )
-          .mutate(gql`
-            mutation SignUp($credentials: CredentialsSignup!) {
-              signup(credentials: $credentials) {
-                userErrors {
-                  message
-                  field
-                }
-                user {
-                  email
-                }
+  describe('Normal user signs up without Email (username)', () => {
+    let response: any
+
+    beforeAll(async () => {
+      response = await request<{ signup: AuthPayload }>(
+        integrationTestManager.httpServer
+      )
+        .mutate(gql`
+          mutation SignUp($credentials: CredentialsSignup!) {
+            signup(credentials: $credentials) {
+              userErrors {
+                message
+                field
               }
+              user {
+                email
+              }
+              diatonic
             }
-          `)
-          .variables({
-            credentials: {
-              email: null,
-              password: userSignup()[0].password,
-              firstName: userSignup()[0].firstName,
-              lastName: userSignup()[0].lastName,
-              instrument: userSignup()[0].instrument,
-              privateTeacher: userSignup()[0].privateTeacher,
-              schoolTeacher: userSignup()[0].schoolTeacher,
-            },
-          })
-      })
-
-      afterAll(async () => {
-        if (!response.errors) {
-          await integrationTestManager.prisma.tbl_user.delete({
-            where: {
-              email: userSignup()[0].email,
-            },
-          })
-        }
-      })
-
-      it('should return an Error', () => {
-        expect(response.errors).toBeDefined()
-      })
-
-      it('should not write user to the database', async () => {
-        const user = await integrationTestManager.prisma.tbl_user.findUnique({
-          where: {
-            email: userSignup()[1].email,
+          }
+        `)
+        .variables({
+          credentials: {
+            email: null,
+            password: userSignup()[0].password,
+            firstName: userSignup()[0].firstName,
+            lastName: userSignup()[0].lastName,
+            instrument: userSignup()[0].instrument,
+            privateTeacher: userSignup()[0].privateTeacher,
+            schoolTeacher: userSignup()[0].schoolTeacher,
           },
         })
-        expect(user).toBeNull()
-      })
     })
 
-    describe('Normal user signs up with weak Password', () => {
-      let createdUser: any
-      let response: any
-
-      beforeAll(async () => {
-        response = await request<{ signup: AuthPayload }>(
-          integrationTestManager.httpServer
-        )
-          .mutate(gql`
-            mutation SignUp($credentials: CredentialsSignup!) {
-              signup(credentials: $credentials) {
-                userErrors {
-                  message
-                  field
-                }
-                user {
-                  email
-                }
-              }
-            }
-          `)
-          .variables({
-            credentials: {
-              email: userSignup()[0].email,
-              password: 'weakpassword',
-              firstName: userSignup()[0].firstName,
-              lastName: userSignup()[0].lastName,
-              instrument: userSignup()[0].instrument,
-              privateTeacher: userSignup()[0].privateTeacher,
-              schoolTeacher: userSignup()[0].schoolTeacher,
-            },
-          })
-      })
-
-      afterAll(async () => {
-        if (!response.errors) {
-          await integrationTestManager.prisma.tbl_user.delete({
-            where: {
-              email: userSignup()[0].email,
-            },
-          })
-        }
-      })
-
-      it('should return an Error', () => {
-        expect(response.errors).toBeDefined()
-      })
-
-      it('should not write user to the database', async () => {
-        const user = await integrationTestManager.prisma.tbl_user.findUnique({
+    afterAll(async () => {
+      if (!response.errors) {
+        await integrationTestManager.prisma.tbl_user.delete({
           where: {
-            email: userSignup()[1].email,
+            email: userSignup()[0].email,
           },
         })
-        expect(user).toBeNull()
-      })
+      }
     })
 
-    describe('Private Teacher signs up', () => {
-      let createdUser: AuthPayload
-      let response: any
+    it('should return an Error', async () => {
+      expect(await response.errors).toBeDefined()
+    })
 
-      beforeAll(async () => {
-        response = await request<{ signup: AuthPayload }>(
-          integrationTestManager.httpServer
-        )
-          .mutate(gql`
-            mutation SignUp($credentials: CredentialsSignup!) {
-              signup(credentials: $credentials) {
-                userErrors {
-                  message
-                  field
-                }
-                user {
-                  email
-                }
+    it('should not write user to the database', async () => {
+      const user = await integrationTestManager.prisma.tbl_user.findUnique({
+        where: {
+          email: userSignup()[1].email,
+        },
+      })
+      expect(user).toBeNull()
+    })
+  })
+
+  describe('Normal user signs up with weak Password', () => {
+    let response: any
+
+    beforeAll(async () => {
+      response = await request<{ signup: AuthPayload }>(
+        integrationTestManager.httpServer
+      )
+        .mutate(gql`
+          mutation SignUp($credentials: CredentialsSignup!) {
+            signup(credentials: $credentials) {
+              userErrors {
+                message
+                field
+              }
+              user {
+                email
               }
             }
-          `)
-          .variables({
-            credentials: userSignup()[2],
-          })
-        createdUser = response.data.signup
-      })
+          }
+        `)
+        .variables({
+          credentials: {
+            email: userSignup()[0].email,
+            password: 'weakpassword',
+            firstName: userSignup()[0].firstName,
+            lastName: userSignup()[0].lastName,
+            instrument: userSignup()[0].instrument,
+            privateTeacher: userSignup()[0].privateTeacher,
+            schoolTeacher: userSignup()[0].schoolTeacher,
+          },
+        })
+    })
 
-      afterAll(async () => {
-        if (!!createdUser) {
-          await integrationTestManager.prisma.tbl_user.delete({
-            where: {
-              email: userSignup()[2].email,
-            },
-          })
-        }
-      })
+    afterAll(async () => {
+      if (!response.errors) {
+        await integrationTestManager.prisma.tbl_user.delete({
+          where: {
+            email: userSignup()[0].email,
+          },
+        })
+      }
+    })
 
-      it('should return the user email in an AuthPayload object', () => {
-        expect(createdUser).toMatchObject({
-          userErrors: [],
-          user: {
+    it('should return an Error', async () => {
+      expect(await response.errors).toBeDefined()
+    })
+
+    it('should not write user to the database', async () => {
+      const user = await integrationTestManager.prisma.tbl_user.findUnique({
+        where: {
+          email: userSignup()[1].email,
+        },
+      })
+      expect(user).toBeNull()
+    })
+  })
+
+  describe('Private Teacher signs up', () => {
+    let response: any
+
+    beforeAll(async () => {
+      response = await request<{ signup: AuthPayload }>(
+        integrationTestManager.httpServer
+      )
+        .mutate(gql`
+          mutation SignUp($credentials: CredentialsSignup!) {
+            signup(credentials: $credentials) {
+              userErrors {
+                message
+                field
+              }
+              user {
+                email
+              }
+              diatonicToken
+            }
+          }
+        `)
+        .variables({
+          credentials: userSignup()[2],
+        })
+      .expectNoErrors()
+    })
+
+    afterAll(async () => {
+      if (!!response) {
+        await integrationTestManager.prisma.tbl_user.delete({
+          where: {
             email: userSignup()[2].email,
           },
         })
-      })
+      }
+    })
 
-      it('Should have created the user in the database', async () => {
-        const user = await integrationTestManager.prisma.tbl_user.findUnique({
-          where: {
-            email: userSignup()[2].email,
-          },
-        })
-        expect(user).toBeDefined()
+    it('should return the user email in an AuthPayload object', async () => {
+      expect(await response.data.signup).toMatchObject({
+        userErrors: [],
+        user: {
+          email: userSignup()[2].email,
+        },
+        diatonicToken: null
       })
     })
 
-    describe('School Teacher signs up', () => {
-      let createdUser: AuthPayload
-      let response: any
+    it('Should have created the user in the database', async () => {
+      const user = await integrationTestManager.prisma.tbl_user.findUnique({
+        where: {
+          email: userSignup()[2].email,
+        },
+      })
+      expect(user).toBeDefined()
+    })
+  })
 
-      beforeAll(async () => {
-        response = await request<{ signup: AuthPayload }>(
-          integrationTestManager.httpServer
-        )
-          .mutate(gql`
-            mutation SignUp($credentials: CredentialsSignup!) {
-              signup(credentials: $credentials) {
-                userErrors {
-                  message
-                  field
-                }
-                user {
-                  email
-                }
+  describe('School Teacher signs up', () => {
+    let response: any
+
+    beforeAll(async () => {
+      response = await request<{ signup: AuthPayload }>(
+        integrationTestManager.httpServer
+      )
+        .mutate(gql`
+          mutation SignUp($credentials: CredentialsSignup!) {
+            signup(credentials: $credentials) {
+              userErrors {
+                message
+                field
               }
+              user {
+                email
+              }
+              diatonicToken
             }
-          `)
-          .variables({
-            credentials: userSignup()[3],
-          })
-        createdUser = response.data.signup
-      })
-
-      afterAll(async () => {
-        if (!!createdUser) {
-          await integrationTestManager.prisma.tbl_user.delete({
-            where: {
-              email: userSignup()[3].email,
-            },
-          })
-        }
-      })
-
-      it('should return the user email in an AuthPayload object', () => {
-        expect(createdUser).toMatchObject({
-          userErrors: [],
-          user: {
-            email: userSignup()[3].email,
-          },
+          }
+        `)
+        .variables({
+          credentials: userSignup()[3],
         })
-      })
+      .expectNoErrors()
 
-      it('Should have created the user in the database', async () => {
-        const user = await integrationTestManager.prisma.tbl_user.findUnique({
+    })
+
+    afterAll(async () => {
+      if (!!response) {
+        await integrationTestManager.prisma.tbl_user.delete({
           where: {
             email: userSignup()[3].email,
           },
         })
-        expect(user).toBeDefined()
+      }
+    })
+
+    it('should return the user email in an AuthPayload object', async() => {
+      expect(await response.data.signup).toMatchObject({
+        userErrors: [],
+        user: {
+          email: userSignup()[3].email,
+        },
+        diatonicToken: null
       })
+    })
+
+    it('Should have created the user in the database', async () => {
+      const user = await integrationTestManager.prisma.tbl_user.findUnique({
+        where: {
+          email: userSignup()[3].email,
+        },
+      })
+      expect(user).toBeDefined()
     })
   })
 
   describe('Teacher exists but has not created an account yet.', () => {
     beforeAll(async () => {
-      await integrationTestManager.prisma.tbl_user.create({
+      const result = await integrationTestManager.prisma.tbl_user.create({
         data: {
-          email: 'info@davesawatzky.com',
-          firstName: 'Private',
-          lastName: 'Teacher',
+          email: userSignup()[2].email,
+          firstName: userSignup()[2].firstName,
+          lastName: userSignup()[2].lastName,
+          privateTeacher: userSignup()[2].privateTeacher,
+          schoolTeacher: userSignup()[2].schoolTeacher,
+          instrument: userSignup()[2].instrument,
           password: null,
-          privateTeacher: true,
-          schoolTeacher: false,
-          instrument: null,
-        },
-      })
-    })
-    afterAll(async () => {
-      await integrationTestManager.prisma.tbl_user.delete({
-        where: {
-          email: userSignup()[3].email,
         },
       })
     })
 
-    it('Account should be in database without password', async () => {
+    afterAll(async () => {
+      const result = await integrationTestManager.prisma.tbl_user.delete({
+        where: {
+          email: userSignup()[2].email,
+        },
+      })
+    })
+
+    it('Account should be in the database without a password', async () => {
       const response = await integrationTestManager.prisma.tbl_user.findUnique({
         where: {
-          email: userSignup()[3].email,
+          email: userSignup()[2].email,
         },
       })
       expect(response.email).toBeTruthy()
       expect(response.password).toBeNull()
     })
 
-    describe('Teacher adding password to existing account', () => {
-      let createdUser: AuthPayload
-      let response: any
-
-      beforeAll(async () => {
-        response = await request<{ signup: AuthPayload }>(
-          integrationTestManager.httpServer
-        )
-          .mutate(gql`
-            mutation SignUp($credentials: CredentialsSignup!) {
-              signup(credentials: $credentials) {
-                userErrors {
-                  message
-                  field
-                }
-                user {
-                  email
-                }
+    it('Should be able to add the password to the existing account', async () => {
+      const response = await request<{ signup: AuthPayload }>(
+        integrationTestManager.httpServer
+      )
+        .mutate(gql`
+          mutation SignUp($credentials: CredentialsSignup!) {
+            signup(credentials: $credentials) {
+              userErrors {
+                message
+                field
               }
+              user {
+                email
+              }
+              diatonicToken
             }
-          `)
-          .variables({
-            credentials: userSignup()[3],
-          })
-        createdUser = response.data.signup
-      })
-
-      it('Should add the password to the existing account', async () => {
-        const result = await integrationTestManager.prisma.tbl_user.findUnique({
-          where: {
-            email: userSignup()[3].email,
-          },
+          }
+        `)
+        .variables({
+          credentials: userSignup()[2],
         })
-        expect(result.password).not.toBeNull()
+      .expectNoErrors()
+
+      const result = await integrationTestManager.prisma.tbl_user.findUnique({
+        where: {
+          email: userSignup()[2].email,
+        },
       })
+      expect(result.password).toBeTruthy()
     })
   })
 
-  describe('User Already Exists', () => {
+  describe('If user already exists in database', () => {
+
     beforeAll(async () => {
-      await integrationTestManager.prisma.tbl_user.create({
-        data: userSignup()[0],
-      })
+      await request<{ signup: AuthPayload }>(
+        integrationTestManager.httpServer
+      )
+        .mutate(gql`
+          mutation SignUp($credentials: CredentialsSignup!) {
+            signup(credentials: $credentials) {
+              userErrors {
+                message
+                field
+              }
+              user {
+                email
+              }
+              diatonicToken
+            }
+          }
+        `)
+        .variables({
+          credentials: userSignup()[0],
+        })
+      .expectNoErrors()
     })
+    
     afterAll(async () => {
       await integrationTestManager.prisma.tbl_user.delete({
         where: {
@@ -441,38 +466,33 @@ describe('Signup', () => {
       })
     })
 
-    describe('When a signUp mutation is executed with a normal user', () => {
-      let createdUser: AuthPayload
-
-      beforeAll(async () => {
-        const response = await request<{ signup: AuthPayload }>(
-          integrationTestManager.httpServer
-        )
-          .mutate(gql`
-            mutation SignUp($credentials: CredentialsSignup!) {
-              signup(credentials: $credentials) {
-                userErrors {
-                  message
-                  field
-                }
-                user {
-                  email
-                }
+    it('should return an Error in an AuthPayload object', async () => {
+      const response = await request<{ signup: AuthPayload }>(
+        integrationTestManager.httpServer
+      )
+        .mutate(gql`
+          mutation SignUp($credentials: CredentialsSignup!) {
+            signup(credentials: $credentials) {
+              userErrors {
+                message
+                field
               }
+              user {
+                email
+              }
+              diatonicToken
             }
-          `)
-          .variables({
-            credentials: userSignup()[0],
-          })
-        createdUser = response.data.signup
-      })
-
-      it('should return an Error in an AuthPayload object', () => {
-        expect(createdUser).toMatchObject({
-          userErrors: [{ message: 'User already exists', field: [] }],
-          user: null,
+          }
+        `)
+        .variables({
+          credentials: userSignup()[0],
         })
+      expect(response.data.signup).toMatchObject({
+        userErrors: [{ message: 'User already exists', field: [] }],
+        user: null,
+        diatonicToken: null
       })
     })
   })
 })
+

@@ -39,15 +39,6 @@ export class CategoryService {
     })
   }
 
-  // async findClasses(categoryID: tbl_category['id']) {
-  //   return {
-  //     userErrors: [],
-  //     classes: this.prisma.tbl_classlist.findMany({
-  //       where: { categoryID },
-  //     })
-  //   }
-  // }
-
   async update(id: tbl_category['id'], categoryInput: CategoryInput) {
     return {
       userErrors: [],

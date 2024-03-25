@@ -75,7 +75,7 @@ export class CategoryResolver {
     @Args('levelID', { type: () => Int }) levelID: tbl_level['id']
   ) {
     const categoryID = category.id
-    return await this.festivalClassService.findAll(
+        return await this.festivalClassService.findAll(
       performerType,
       subdisciplineID,
       levelID,

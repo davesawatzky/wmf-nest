@@ -6,33 +6,35 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev",
+    "migrate:dev": "dotenvx run --env-file=.env.development -- prisma migrate dev",
+    "seed:dev": "dotenvx run --env-file=.env.development -- prisma db seed",
     "prebuild": "rimraf dist",
     "build": "prisma generate && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "prisma:generate": "prisma generate --watch",
-    "start": "nest start",
+    "start": "cross-env NODE_ENV=production nest start",
     "start:dev": "cross-env NODE_ENV=development nest start --watch",
     "start:swc": "cross-env NODE_ENV=development nest start -b swc --type-check",
     "start:debug": "cross-env NODE_ENV=development nest start --debug --watch",
     "start:prod": "cross-env NODE_ENV=production node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
-    "testvi": "vitest run",
-    "testvi:watch": "vitest --watch --ui",
-    "testvi:cov": "vitest --run --coverage",
-    "testvi:debug": "vitest --inspect-brk --inspect --logHeapUsage --threads=false",
-    "testvi:e2e": "cross-env NODE_ENV=test vitest run --no-file-parallelism --config ./vitest.config.e2e.mts",
+    "test": "cross-env NODE_ENV=test jest",
+    "test:watch": "cross-env NODE_ENV=test jest --watch",
+    "test:cov": "cross-env NODE_ENV=test jest --coverage",
+    "test:debug": "cross-env NODE_ENV=test node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json",
+    "testvi": "cross-env NODE_ENV=test vitest run",
+    "testvi:watch": "cross-env NODE_ENV=test vitest --watch",
+    "testvi:cov": "cross-env NODE_ENV=test vitest --run --coverage",
+    "testvi:debug": "cross-env NODE_ENV=test vitest --inspect-brk --inspect --logHeapUsage --threads=false",
+    "testvi:e2e": "cross-env NODE_ENV=test vitest --config ./vitest.config.e2e.mts",
     "types": "ts-node ./src/generate-typings"
   },
   "dependencies": {
     "@apollo/server": "^4.10.1",
     "@casl/ability": "^6.7.0",
     "@casl/prisma": "^1.4.1",
+    "@dotenvx/dotenvx": "^0.26.0",
     "@jest/globals": "^29.7.0",
     "@nestjs-modules/mailer": "^1.11.2",
     "@nestjs/apollo": "^12.1.0",
@@ -53,6 +55,7 @@
     "concurrently": "^8.2.2",
     "cookie-parser": "^1.4.6",
     "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
     "graphql": "^16.8.1",
     "graphql-tag": "^2.12.6",
     "handlebars": "^4.7.8",
@@ -136,6 +139,6 @@
     "testEnvironment": "node"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "bash prisma/seed.sh"
   }
 }
