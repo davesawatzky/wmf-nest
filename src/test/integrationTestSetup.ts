@@ -36,6 +36,7 @@ beforeAll(async () => {
 
   app = moduleRef.createNestApplication()
 
+
   app.use(cookieParser())
   app.use(
     helmet({
@@ -76,42 +77,39 @@ beforeAll(async () => {
     // this.app.setBaseViewsDir(join(__dirname, '..', 'emails'))
     // this.app.setViewEngine('hbs')
 
-
-
-  httpServer = app.getHttpServer()
-  prisma = app.get<PrismaService>(PrismaService)
-
   await app.init()
+  
+  httpServer = await app.getHttpServer()
+  prisma = app.get<PrismaService>(PrismaService)
 
   const response = await request<{signin: AuthPayload}>(
     httpServer
   ).mutate(gql`
-          mutation SignIn($credentials: CredentialsSignin!) {
-            signin(credentials: $credentials) {
-              userErrors {
-                message
-              }
-              diatonicToken
-              user {
-                id
-                email
-                firstName
-                lastName
-                privateTeacher
-                schoolTeacher
-                hasSignedIn
-              }
-            }
-          }
-        `)
-    .variables({
-      credentials: {
-        email: TestUser().email,
-        password: TestUser().password
+    mutation SignIn($credentials: CredentialsSignin!) {
+      signin(credentials: $credentials) {
+        userErrors {
+          message
+        }
+        diatonicToken
+        user {
+          id
+          email
+          firstName
+          lastName
+          privateTeacher
+          schoolTeacher
+          hasSignedIn
+        }
       }
-    })
+    }
+  `)
+  .variables({
+    credentials: {
+      email: TestUser().email,
+      password: TestUser().password
+    }
+  })
   diatonicToken = response.data.signin.diatonicToken
-
   
   globalThis.httpServer = httpServer
   globalThis.diatonicToken = diatonicToken
@@ -119,6 +117,8 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
+  global.prisma = null
+
   delete globalThis.prisma
   delete globalThis.diatonicToken
   delete globalThis.httpServer

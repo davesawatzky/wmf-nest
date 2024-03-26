@@ -10,6 +10,7 @@ export default defineConfig({
       '@test': './test',
     },
     root: './',
+    isolate: false,
     globals: true,
     globalSetup: ['./src/test/globalSetup_e2e.ts'],
     setupFiles: ['./src/test/integrationTestSetup.ts'],
