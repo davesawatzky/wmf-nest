@@ -12,7 +12,7 @@ export class CategoryService {
     return {
       userErrors: [],
       category: await this.prisma.tbl_category.create({
-        data: { ...categoryInput },
+        data: {...categoryInput } ,
       }),
     }
   }

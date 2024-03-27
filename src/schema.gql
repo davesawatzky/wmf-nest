@@ -12,13 +12,13 @@ type Category {
   description: String
   festivalClasses(levelID: Int!, performerType: PerformerType!, subdisciplineID: Int!): [FestivalClass!]
   id: Int!
-  name: String!
+  name: String
   requiredComposer: String
 }
 
 input CategoryInput {
   description: String
-  name: String!
+  name: String
   requiredComposer: String
 }
 
