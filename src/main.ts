@@ -5,6 +5,7 @@ import { AppModule } from './app.module'
 import { join } from 'path'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
+import {GraphQLExceptionFilter} from './exceptionFilters/gql-exception.filter'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {

@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
 import { LevelInput } from './dto/level.input'
 import { PrismaService } from '../../prisma/prisma.service'
+import {Level} from './entities/level.entity'
+import {UserError} from 'src/common.entity'
 // import { CreateLevelInput } from './dto/create-level.input'
 // import { UpdateLevelInput } from './dto/update-level.input'
 
@@ -10,9 +12,36 @@ export class LevelService {
   constructor(private prisma: PrismaService) {}
 
   async create(levelInput: LevelInput) {
-    return await this.prisma.tbl_level.create({
-      data: { ...levelInput },
-    })
+    let level: Level
+    let userErrors: UserError[]
+    try {
+      userErrors = []
+      level = await this.prisma.tbl_level.create({
+        data: {...levelInput}
+      })
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        userErrors = [
+          {
+            message: 'Level name already exists',
+            field: ['name']
+          }
+        ]
+        level = null
+      } else {
+        userErrors = [
+          {
+            message: 'Cannot create level',
+            field: []
+          }
+        ]
+        level = null
+      }
+    }
+    return {
+      userErrors,
+      level
+    }
   }
 
   async findAll(
@@ -37,31 +66,72 @@ export class LevelService {
     })
   }
 
-  // async findClasses(levelID: tbl_level['id']) {
-  //   return {
-  //     userErrors: [],
-  //       festivalClasses: await this.prisma.tbl_classlist.findMany({
-  //       where: { levelID },
-  //     })
-  //   }
-  // }
-
   async update(id: tbl_level['id'], levelInput: LevelInput) {
+    let level: Level
+    let userErrors: UserError[]
+    try {
+      userErrors = []
+      level = await this.prisma.tbl_level.update({
+        where: {id},
+        data: {...levelInput}
+      })
+    } catch (error: any) {
+      if (error.code === 'P2025') {
+        userErrors = [
+          {
+            message: 'Level details to update not found',
+            field: ['id']
+          }
+        ]
+        level = null
+      } else {
+        console.log(error)
+        userErrors = [
+          {
+            message: 'Cannot update level',
+            field: []
+          }
+        ]
+        level =null
+      }
+    }
     return {
-      userErrors: [],
-      level: await this.prisma.tbl_level.update({
-        where: { id },
-        data: { ...levelInput },
-      }),
+      userErrors,
+      level
     }
   }
 
   async remove(id: tbl_level['id']) {
+    let level: Level
+    let userErrors: UserError[]
+    try {
+      userErrors = []
+      level = await this.prisma.tbl_level.delete({
+        where: {id},
+      })
+    } catch (error: any) {
+      if (error.code === 'P2025') {
+        userErrors = [
+          {
+            message: 'Level to delete not found',
+            field: ['id']
+          }
+        ]
+        level = null
+      } else {
+        console.log(error)
+        userErrors = [
+          {
+            message: 'Cannot delete level',
+            field: []
+          }
+        ]
+        level =null
+      }
+    }
     return {
-      userErrors: [],
-      level: await this.prisma.tbl_level.delete({
-        where: { id },
-      }),
+      userErrors,
+      level
     }
   }
 }

@@ -3,16 +3,13 @@ import request from 'supertest-graphql'
 import {CategoryInput} from '../dto/category.input'
 import {Category, CategoryPayload} from '../entities/category.entity'
 
-import {log} from 'console'
-import exp from 'constants'
-
 
 describe('Category', () => {
 
   describe('Listing Categories', () => {
     let response: any
 
-    it('Can provide a list of all cateogires', async () => {
+    it('Can provide a list of all categories', async () => {
       response = await request<{categories: Category[]}>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
@@ -146,7 +143,7 @@ describe('Category', () => {
           }
         `)
         .variables({
-          categoryId: 123
+          categoryId: 10000
         })
       expectTypeOf(response.errors[0].message).toBeString
       expect(response.errors).toBeTruthy()
@@ -189,7 +186,31 @@ describe('Category', () => {
       categoryId = response.data.categoryCreate.category.id
       expect(response.data.categoryCreate.category.name).toBe('Cajun Swing')
       expect(response.data.categoryCreate.category.id).toBeTruthy()
+    })
 
+    it('Returns error if trying to add duplicate category name', async () => {
+      response = await request<{categoryCreate: CategoryPayload}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .mutate(gql`
+          mutation CreateCategory($categoryInput: CategoryInput!) {
+          categoryCreate(categoryInput: $categoryInput) {
+            userErrors {
+            message
+          }
+          category {
+            id
+            name
+          }
+        }
+      }`)
+        .variables({
+          categoryInput: {
+            name: "Cajun Swing",
+            description: "Dance music from Louisianna"
+        }
+        })
+      expect(response.data.categoryCreate.userErrors[0]).toBeTruthy()
+      expect(response.data.categoryCreate.category).toBeNull()
     })
 
     it('Improper input returns error', async () => {
@@ -214,13 +235,12 @@ describe('Category', () => {
         }
         })
       expect(response.errors[0]).toBeTruthy()
-
     })
   })
 
   describe('Update', () => {
     let response: any
-    let categoryId: number
+    let categoryID: number
 
     beforeEach(async () => {
       response = await request<{categoryCreate: CategoryPayload}>(global.httpServer)
@@ -243,14 +263,13 @@ describe('Category', () => {
             description: "Dance music from Louisianna"
         }
         })
-      
-      categoryId = response.data.categoryCreate.category.id
+      categoryID = response.data.categoryCreate.category.id
     })
 
     afterEach(async () => {
       await global.prisma.tbl_category.delete({
         where: {
-          id: categoryId
+          id: categoryID
         }
       })
     })
@@ -273,14 +292,156 @@ describe('Category', () => {
           }
       }`)
         .variables({
-          categoryId,
+          categoryId: categoryID,
           categoryInput: {
+            name: 'Cajun Swing',
             requiredComposer: 'Sammy Davis Jr.'
           }
         })
-      
       expect(response.data.categoryUpdate.category.requiredComposer).toBe('Sammy Davis Jr.')
       expect(response.errors).not.toBeDefined()
+    })
+
+    it('Returns error if category not found', async () => {
+      response = await request<{categoryUpdate: CategoryPayload}>(global.httpServer)
+      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .mutate(gql`
+        mutation CategoryUpdate($categoryId: Int!, $categoryInput: CategoryInput!){
+          categoryUpdate(categoryID: $categoryId, categoryInput: $categoryInput) {
+            userErrors {
+              message
+            }
+            category {
+              id
+              name
+              description
+              requiredComposer
+            }
+          }
+      }`)
+        .variables({
+          categoryId: categoryID + 1,
+          categoryInput: {
+            name: 'Cajun Swing',
+          }
+        })
+      expect(response.data.categoryUpdate.category).toBeNull()
+      expect(response.data.categoryUpdate.userErrors[0].message).toBeTruthy()
+    })
+
+    it('Returns error if name is null or undefined in update', async () => {
+      response = await request<{categoryUpdate: CategoryPayload}>(global.httpServer)
+      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .mutate(gql`
+        mutation CategoryUpdate($categoryId: Int!, $categoryInput: CategoryInput!){
+          categoryUpdate(categoryID: $categoryId, categoryInput: $categoryInput) {
+            userErrors {
+              message
+            }
+            category {
+              id
+              name
+              description
+              requiredComposer
+            }
+          }
+      }`)
+        .variables({
+          categoryId: categoryID,
+          categoryInput: {
+            name: null,
+            description: 'Testing if null works in update'
+          }
+        })
+      expect(response.data).toBeFalsy()
+      expect(response.errors[0]).toBeTruthy()
+    })
+  })
+
+  describe('Delete', () => {
+    let response: any
+    let categoryId: number
+    beforeEach(async () => {
+      response = await request<{categoryCreate: CategoryPayload}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .mutate(gql`
+          mutation CreateCategory($categoryInput: CategoryInput!) {
+          categoryCreate(categoryInput: $categoryInput) {
+            userErrors {
+            message
+          }
+          category {
+            id
+            name
+          }
+        }
+      }`)
+        .variables({
+          categoryInput: {
+            name: "Cajun Swing",
+            description: "Dance music from Louisianna"
+        }
+        })
+      categoryId = response.data.categoryCreate.category.id
+    })
+
+    afterEach(async () => {
+      try {
+        await global.prisma.tbl_category.delete({
+          where: {
+            id: categoryId
+          }
+        })
+      } catch (error) {}
+    })
+
+    it('Deletes a category using the categoryID', async() => {
+      response = await request<{categoryDelete: CategoryPayload}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .mutate(gql`
+        mutation CategoryDelete($categoryDeleteId: Int!) {
+          categoryDelete(categoryID: $categoryDeleteId) {
+            userErrors {
+              message
+            }
+              category {
+            id
+            name
+            description
+          }
+        }
+      }`)
+        .variables({
+        categoryDeleteId: categoryId
+        })
+      const deleteCheck = await global.prisma.tbl_category.findUnique({
+        where: {id: categoryId}
+      })
+      expect(deleteCheck).toBeNull()
+      expect(response.data.categoryDelete.category.name).toBe('Cajun Swing')
+    })
+
+    it('Returns error message if category not found', async() => {
+      response = await request<{categoryDelete: CategoryPayload}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .mutate(gql`
+        mutation CategoryDelete($categoryDeleteId: Int!) {
+          categoryDelete(categoryID: $categoryDeleteId) {
+            userErrors {
+              message
+            }
+              category {
+            id
+            name
+            description
+          }
+        }
+      }`)
+        .variables({
+        categoryDeleteId: categoryId + 1
+        })
+      expect(response.data.categoryDelete.category).toBeNull()
+      expect(response.data.categoryDelete.userErrors[0].message).toBeTruthy()
     })
   })
 })

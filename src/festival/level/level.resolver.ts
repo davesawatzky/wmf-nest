@@ -8,7 +8,7 @@ import {
   Int,
   registerEnumType,
 } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 import { LevelService } from './level.service'
 import { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
@@ -51,7 +51,13 @@ export class LevelResolver {
 
   @Mutation(() => LevelPayload)
   async levelCreate(@Args('levelInput') levelInput: LevelInput) {
-    return await this.levelService.create(levelInput)
+    let response: any
+    try {
+      response = await this.levelService.create(levelInput)
+    } catch (error) {
+      throw new HttpException('Could not create level', HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+    return response
   }
 
   @Mutation(() => LevelPayload)
@@ -59,20 +65,32 @@ export class LevelResolver {
     @Args('levelID', { type: () => Int }) levelID: Level['id'],
     @Args('levelInput') levelInput: LevelInput
   ) {
-    return await this.levelService.update(levelID, levelInput)
+    let response: any
+    try {
+      response = await this.levelService.update(levelID, levelInput)
+    } catch (error) {
+      throw new HttpException('Level to update not found', HttpStatus.BAD_REQUEST)
+    }
+    return response
   }
 
   @Mutation(() => LevelPayload)
   async levelDelete(
     @Args('levelID', { type: () => Int }) levelID: Level['id']
   ) {
-    return await this.levelService.remove(levelID)
+    let response: any
+    try {
+      response = await this.levelService.remove(levelID)
+    } catch (error) {
+      throw new HttpException('Level to delete not found', HttpStatus.BAD_REQUEST)
+    }
+    return response
   }
 
   /** Field Resolver */
 
   @ResolveField(() => [FestivalClass])
-  async classes(
+  async festivalClasses(
     @Parent() level: tbl_level,
     @Args('performerType', { type: () => PerformerType })
     performerType: PerformerType,

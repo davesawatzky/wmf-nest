@@ -12,18 +12,18 @@ type Category {
   description: String
   festivalClasses(levelID: Int!, performerType: PerformerType!, subdisciplineID: Int!): [FestivalClass!]
   id: Int!
-  name: String
+  name: String!
   requiredComposer: String
 }
 
 input CategoryInput {
   description: String
-  name: String
+  name: String!
   requiredComposer: String
 }
 
 type CategoryPayload {
-  category: Category!
+  category: Category
   userErrors: [UserError!]!
 }
 
@@ -193,8 +193,8 @@ type InstrumentPayload {
 }
 
 type Level {
-  classes(categoryID: Int!, performerType: PerformerType!, subdisciplineID: Int!): [FestivalClass!]
   description: String
+  festivalClasses(categoryID: Int!, performerType: PerformerType!, subdisciplineID: Int!): [FestivalClass!]
   id: Int!
   name: String!
 }
@@ -211,7 +211,7 @@ type LevelPayload {
 
 type Mutation {
   categoryCreate(categoryInput: CategoryInput!): CategoryPayload!
-  categoryDelete(id: Int!): CategoryPayload!
+  categoryDelete(categoryID: Int!): CategoryPayload!
   categoryUpdate(categoryID: Int!, categoryInput: CategoryInput!): CategoryPayload!
   communityCreate(registrationID: Int!): CommunityPayload!
   communityDelete(communityID: Int!): CommunityPayload!

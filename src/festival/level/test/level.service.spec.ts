@@ -8,18 +8,18 @@ import {
   it,
   expect,
 } from 'vitest'
-import { FestivalClassService } from './festival-class.service'
-import { PrismaService } from '../../prisma/prisma.service'
+import { LevelService } from '../level.service'
+import { PrismaService } from '../../../prisma/prisma.service'
 
-describe('FestivalClassService', () => {
-  let service: FestivalClassService
+describe('LevelService', () => {
+  let service: LevelService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [FestivalClassService, PrismaService],
+      providers: [LevelService, PrismaService],
     }).compile()
 
-    service = module.get<FestivalClassService>(FestivalClassService)
+    service = module.get<LevelService>(LevelService)
   })
 
   it('should be defined', () => {

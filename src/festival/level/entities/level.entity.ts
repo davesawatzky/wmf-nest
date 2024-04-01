@@ -8,7 +8,7 @@ export class Level {
   id: number
   name: string
   description?: string
-  classes?: FestivalClass[]
+  festivalClasses?: FestivalClass[]
 }
 
 @ObjectType()

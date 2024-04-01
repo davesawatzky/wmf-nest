@@ -4,8 +4,7 @@ import { IsOptional, IsString } from 'class-validator'
 @InputType()
 export class CategoryInput {
   @IsString()
-  @IsOptional()
-  name?: string
+  name: string
 
   @IsString()
   @IsOptional()

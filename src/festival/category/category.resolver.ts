@@ -14,9 +14,10 @@ import { Category, CategoryPayload } from './entities/category.entity'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PerformerType } from '../../common.entity'
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
-import { UseGuards } from '@nestjs/common'
+import { HttpException, HttpStatus, UseFilters, UseGuards } from '@nestjs/common'
 import { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
 import { FestivalClass } from '../festival-class/entities/festival-class.entity'
+import {GraphQLExceptionFilter} from '../../exceptionFilters/gql-exception.filter'
 
 @Resolver(() => Category)
 @UseGuards(JwtAuthGuard)
@@ -47,7 +48,13 @@ export class CategoryResolver {
 
   @Mutation(() => CategoryPayload)
   async categoryCreate(@Args('categoryInput') categoryInput: CategoryInput) {
-    return await this.categoryService.create(categoryInput)
+    let response: any
+    try {
+      response = await this.categoryService.create(categoryInput)
+    } catch (error) {
+      throw new HttpException('Could not create category', HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+    return response
   }
 
   @Mutation(() => CategoryPayload)
@@ -56,12 +63,24 @@ export class CategoryResolver {
     categoryID: Category['id'],
     @Args('categoryInput') categoryInput: CategoryInput
   ) {
-    return await this.categoryService.update(categoryID, categoryInput)
+    let response: any
+    try {
+      response = await this.categoryService.update(categoryID, categoryInput)
+    } catch (error) {
+      throw new HttpException('Category to update not found', HttpStatus.BAD_REQUEST)
+    }
+    return response
   }
 
   @Mutation(() => CategoryPayload)
-  async categoryDelete(@Args('id', { type: () => Int }) id: Category['id']) {
-    return await this.categoryService.remove(id)
+  async categoryDelete(@Args('categoryID', {type: () => Int}) categoryID: Category['id']) {
+    let response: any
+    try {
+      response = await this.categoryService.remove(categoryID)
+    } catch (error) {
+      throw new HttpException('Category to delete not found', HttpStatus.BAD_REQUEST)
+    }
+    return response
   }
 
   /** Field Resolvers */

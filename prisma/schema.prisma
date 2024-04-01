@@ -13,7 +13,7 @@ datasource db {
 
 model tbl_category {
   id               Int             @id @default(autoincrement())
-  name             String          @db.VarChar(100)
+  name             String          @unique @db.VarChar(100)
   description      String?         @db.Text
   requiredComposer String?         @map("required_composer") @db.Text
   tbl_classlist    tbl_classlist[]
@@ -56,14 +56,14 @@ model tbl_classlist {
 
 model tbl_class_type {
   id            Int     @id @default(autoincrement())
-  name          String  @db.VarChar(100)
+  name          String  @db.VarChar(100) @unique
   description   String? @db.Text
   tbl_classlist tbl_classlist[]
 }
 
 model tbl_discipline {
   id                  Int                 @id @default(autoincrement())
-  name                String              @db.Text
+  name                String              @db.Text @unique
   tbl_subdiscipline   tbl_subdiscipline[]
   tbl_instruments     tbl_instruments[]
 }
@@ -85,7 +85,7 @@ model tbl_field_config {
 
 model tbl_level {
   id            Int             @id @default(autoincrement())
-  name          String          @db.Text
+  name          String          @db.Text @unique
   description   String?         @db.Text
   sortOrder     Int?            @map("sort_order")
   tbl_classlist tbl_classlist[]
@@ -254,7 +254,7 @@ model tbl_sacred {
 model tbl_subdiscipline {
   id             Int                        @id @default(autoincrement())
   disciplineID   Int
-  name           String                     @db.Text
+  name           String                     @db.Text @unique
   description    String?                    @db.Text
   maxPerformers  Int?                       @map("max_performers")
   minPerformers  Int?                       @map("min_performers")
@@ -268,7 +268,7 @@ model tbl_subdiscipline {
 
 model tbl_trophy {
   id               Int                @id @default(autoincrement())
-  name             String             @db.Text
+  name             String             @db.Text @unique
   description      String?            @db.Text
   tbl_class_trophy tbl_class_trophy[]
 }
