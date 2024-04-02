@@ -32,9 +32,9 @@ export class CategoryResolver {
   @Query(() => [Category])
   async categories(
     @Args('levelID', { type: () => Int, nullable: true })
-    levelID: tbl_level['id'],
+    levelID: tbl_level['id'] | null,
     @Args('subdisciplineID', { type: () => Int, nullable: true })
-    subdisciplineID: tbl_subdiscipline['id']
+    subdisciplineID: tbl_subdiscipline['id'] | null
   ) {
     return await this.categoryService.findAll(levelID, subdisciplineID)
   }

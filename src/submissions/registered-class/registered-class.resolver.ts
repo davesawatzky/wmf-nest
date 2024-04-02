@@ -53,7 +53,7 @@ export class RegisteredClassResolver {
       type: () => RegisteredClassInput,
       nullable: true,
     })
-    registeredClass: Partial<RegisteredClassInput>
+    registeredClass: Partial<RegisteredClassInput> | null
   ) {
     return await this.registeredClassService.create(
       registrationID,

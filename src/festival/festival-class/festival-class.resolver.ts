@@ -45,12 +45,12 @@ export class FestivalClassResolver {
   @Query(() => [FestivalClass])
   async festivalClasses(
     @Args('performerType', { type: () => PerformerType, nullable: true })
-    performerType: PerformerType,
+    performerType: PerformerType | null,
     @Args('festivalClassSearch', {
       type: () => FestivalClassSearchArgs,
       nullable: true,
     })
-    festivalClassSearch: FestivalClassSearchArgs
+    festivalClassSearch: FestivalClassSearchArgs | null
   ) {
     const { subdisciplineID, categoryID, levelID } = festivalClassSearch
     return await this.festivalClassService.findAll(

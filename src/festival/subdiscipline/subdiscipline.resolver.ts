@@ -39,9 +39,9 @@ export class SubdisciplineResolver {
   @Query(() => [Subdiscipline])
   async subdisciplines(
     @Args('disciplineID', { type: () => Int, nullable: true })
-    disciplineID: tbl_discipline['id'],
+    disciplineID: tbl_discipline['id'] | null,
     @Args('performerType', { type: () => PerformerType, nullable: true })
-    performerType: PerformerType
+    performerType: PerformerType | null
   ) {
     return await this.subdisciplineService.findAll(disciplineID, performerType)
   }
@@ -104,11 +104,11 @@ export class SubdisciplineResolver {
   async festivalClasses(
     @Parent() Subdiscipline: tbl_subdiscipline,
     @Args('performerType', { type: () => PerformerType, nullable: true })
-    performerType: PerformerType,
+    performerType: PerformerType | null,
     @Args('levelID', { type: () => Int, nullable: true })
-    levelID: tbl_level['id'],
+    levelID: tbl_level['id'] | null,
     @Args('categoryID', { type: () => Int, nullable: true })
-    categoryID: tbl_category['id']
+    categoryID: tbl_category['id'] | null
   ) {
     const subdisciplineID = Subdiscipline.id
     return await this.festivalClassService.findAll(

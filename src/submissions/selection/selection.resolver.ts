@@ -17,7 +17,7 @@ export class SelectionResolver {
   @Query(() => [Selection])
   async selections(
     @Args('registeredClassID', { type: () => Int, nullable: true })
-    registeredClassID: RegisteredClass['id']
+    registeredClassID: RegisteredClass['id'] | null
   ) {
     return await this.selectionService.findAll(registeredClassID)
   }

@@ -7,7 +7,7 @@ import {
   Parent,
   ResolveField,
 } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 import { DisciplineService } from './discipline.service'
 import { Discipline, DisciplinePayload } from './entities/discipline.entity'
@@ -33,9 +33,9 @@ export class DisciplineResolver {
   @Query(() => [Discipline])
   async disciplines(
     @Args('performerType', { type: () => PerformerType, nullable: true })
-    performerType: PerformerType,
+    performerType: PerformerType | null,
     @Args('instrument', { type: () => String, nullable: true })
-    instrument: Instrument['name']
+    instrument: Instrument['name'] | null
   ) {
     return await this.disciplineService.findAll(performerType, instrument)
   }
@@ -51,22 +51,40 @@ export class DisciplineResolver {
   async disciplineCreate(
     @Args('disciplineInput') disciplineInput: DisciplineInput
   ) {
-    return this.disciplineService.create(disciplineInput)
+    let response: any
+    try{
+      response = await this.disciplineService.create(disciplineInput)
+    } catch(error) {
+      throw new HttpException('Could not create discipline', HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+    return response
   }
 
   @Mutation(() => DisciplinePayload)
   async disciplineUpdate(
-    @Args('id', { type: () => Int }) id: Discipline['id'],
+    @Args('disciplineID', { type: () => Int }) disciplineID: Discipline['id'],
     @Args('disciplineInput') disciplineInput: DisciplineInput
   ) {
-    return await this.disciplineService.update(id, disciplineInput)
+    let response: any
+    try{
+      response = await this.disciplineService.update(disciplineID, disciplineInput)
+    } catch(error) {
+      throw new HttpException('Discipline to update not found', HttpStatus.BAD_REQUEST)
+    }
+    return response
   }
 
   @Mutation(() => DisciplinePayload)
   async disciplineDelete(
-    @Args('id', { type: () => Int }) id: Discipline['id']
+    @Args('disciplineID', { type: () => Int }) disciplineID: Discipline['id']
   ) {
-    return await this.disciplineService.remove(id)
+    // let response: any
+    // try{
+      return await this.disciplineService.remove(disciplineID)
+    // } catch (error) {
+    //   throw new HttpException('Discipline to delete not found', HttpStatus.BAD_REQUEST)
+    // }
+    // return response
   }
 
   /**
@@ -76,8 +94,7 @@ export class DisciplineResolver {
   async subdisciplines(
     @Parent() discipline: Discipline,
     @Args('performerType', { type: () => PerformerType, nullable: true })
-    performerType: PerformerType
-  ) {
+    performerType: PerformerType | null ) {
     const { id } = discipline
     return await this.subdisciplineService.findAll(id, performerType)
   }

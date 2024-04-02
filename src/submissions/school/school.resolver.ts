@@ -44,7 +44,7 @@ export class SchoolResolver {
     @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
     @Args('schoolInput', { type: () => SchoolInput, nullable: true })
-    schoolInput: Partial<SchoolInput>
+    schoolInput: Partial<SchoolInput> | null
   ) {
     return await this.schoolService.create(registrationID, schoolInput)
   }

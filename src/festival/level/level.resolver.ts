@@ -35,9 +35,9 @@ export class LevelResolver {
   @Query(() => [Level])
   async levels(
     @Args('categoryID', { type: () => Int, nullable: true })
-    categoryID: tbl_category['id'],
+    categoryID: tbl_category['id'] | null,
     @Args('subdisciplineID', { type: () => Int, nullable: true })
-    subdisciplineID: tbl_subdiscipline['id']
+    subdisciplineID: tbl_subdiscipline['id'] | null
   ) {
     return await this.levelService.findAll(categoryID, subdisciplineID)
   }

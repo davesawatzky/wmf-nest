@@ -15,5 +15,5 @@ export class Discipline {
 @ObjectType()
 export class DisciplinePayload {
   userErrors: UserError[]
-  discipline: Discipline
+  discipline?: Discipline
 }

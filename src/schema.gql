@@ -96,7 +96,7 @@ input DisciplineInput {
 }
 
 type DisciplinePayload {
-  discipline: Discipline!
+  discipline: Discipline
   userErrors: [UserError!]!
 }
 
@@ -217,8 +217,8 @@ type Mutation {
   communityDelete(communityID: Int!): CommunityPayload!
   communityUpdate(communityID: Int!, communityInput: CommunityInput!): CommunityPayload!
   disciplineCreate(disciplineInput: DisciplineInput!): DisciplinePayload!
-  disciplineDelete(id: Int!): DisciplinePayload!
-  disciplineUpdate(disciplineInput: DisciplineInput!, id: Int!): DisciplinePayload!
+  disciplineDelete(disciplineID: Int!): DisciplinePayload!
+  disciplineUpdate(disciplineID: Int!, disciplineInput: DisciplineInput!): DisciplinePayload!
   festivalClassDelete(festivalClassID: Int!): FestivalClassPayload!
   festivalClassUpdate(festivalClass: FestivalClassInput!, festivalClassID: Int!): FestivalClassPayload!
   groupCreate(registrationID: Int!): GroupPayload!

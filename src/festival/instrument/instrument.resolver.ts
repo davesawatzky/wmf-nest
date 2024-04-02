@@ -33,9 +33,9 @@ export class InstrumentResolver {
   @UseGuards(JwtAuthGuard)
   @Query(() => Instrument)
   async instrument(
-    @Args('id', { type: () => Int, nullable: true }) id: Instrument['id'],
+    @Args('id', { type: () => Int, nullable: true }) id: Instrument['id'] | null,
     @Args('name', { type: () => String, nullable: true })
-    name: Instrument['name']
+    name: Instrument['name'] | null
   ) {
     return await this.instrumentService.findOne(id, name)
   }

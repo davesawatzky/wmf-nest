@@ -53,7 +53,7 @@ export class RegistrationResolver {
   async registrations(
     @Context() context,
     @Args('performerType', { nullable: true, type: () => PerformerType })
-    performerType?: Registration['performerType']
+    performerType?: Registration['performerType'] | null
   ) {
     return await this.registrationService.findAll(
       context.req.user.id,
