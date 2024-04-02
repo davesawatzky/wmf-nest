@@ -8,6 +8,6 @@ export const TestUser = (): CredentialsSignup => {
     password: 'David123!',
     privateTeacher: false,
     schoolTeacher: false,
-    instrument: 'piano'
+    instrument: 'piano',
   }
 }

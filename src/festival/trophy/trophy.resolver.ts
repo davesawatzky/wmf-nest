@@ -7,7 +7,7 @@ import {
   Args,
   Int,
 } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 import { TrophyService } from './trophy.service'
 import { Trophy, TrophyPayload } from './entities/trophy.entity'
@@ -27,7 +27,7 @@ export class TrophyResolver {
   }
 
   @Query(() => Trophy)
-  async trophy(@Args('id', { type: () => Int }) id: Trophy['id']) {
+  async trophy(@Args('id', {type: () => Int}) id: Trophy['id']) {
     return await this.trophyService.findOne(id)
   }
 
@@ -35,20 +35,38 @@ export class TrophyResolver {
 
   @Mutation(() => TrophyPayload)
   async trophyCreate(@Args('trophyInput') trophyInput: TrophyInput) {
-    return await this.trophyService.create(trophyInput)
+    let response:any
+    try {
+      response = await this.trophyService.create(trophyInput)
+    } catch (error) {
+      throw new HttpException('Could not create trophy', HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+    return response
   }
 
   @Mutation(() => TrophyPayload)
   async trophyUpdate(
-    @Args('trophyID', { type: () => Int }) trophyID: Trophy['id'],
+    @Args('trophyID', {type: () => Int}) trophyID: Trophy['id'],
     @Args('trophyInput') trophyInput: TrophyInput
   ) {
-    return await this.trophyService.update(trophyID, trophyInput)
+    let response: any
+    try {
+      response = await this.trophyService.update(trophyID, trophyInput)
+    } catch (error) {
+      throw new HttpException('Trophy to update not found', HttpStatus.BAD_REQUEST)
+    }
+    return response
   }
 
   @Mutation(() => TrophyPayload)
-  async trophyDelete(@Args('id', { type: () => Int }) id: Trophy['id']) {
-    return await this.trophyService.remove(id)
+  async trophyDelete(@Args('trophyID', {type: () => Int}) trophyID: Trophy['id']) {
+    let response: any
+    try {
+      response = await this.trophyService.remove(trophyID)
+    } catch (error) {
+      throw new HttpException('Trophy to delete not found', HttpStatus.BAD_REQUEST)
+    }
+    return response
   }
 
   /** Field Resolvers */

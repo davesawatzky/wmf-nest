@@ -5,9 +5,11 @@ module.exports = {
     tsconfigRootDir : __dirname,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin'],
+  plugins: ['@typescript-eslint/eslint-plugin',
+  'vitest'],
   extends: [
     'plugin:@typescript-eslint/recommended',
+    'plugin:vitest/recommended',
     'prettier',
   ],
   root: true,
@@ -21,5 +23,11 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
+    'viteset/max-nested-describe': [
+      'error',
+      {
+        max: 3
+      }
+    ]
   },
 };

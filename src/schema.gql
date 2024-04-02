@@ -257,7 +257,7 @@ type Mutation {
   teacherDelete(teacherID: Int!): TeacherPayload!
   teacherUpdate(teacherID: Int!, teacherInput: TeacherInput!): TeacherPayload!
   trophyCreate(trophyInput: TrophyInput!): TrophyPayload!
-  trophyDelete(id: Int!): TrophyPayload!
+  trophyDelete(trophyID: Int!): TrophyPayload!
   trophyUpdate(trophyID: Int!, trophyInput: TrophyInput!): TrophyPayload!
   userDelete(id: Int!): UserPayload!
   userUpdate(userID: Int!, userInput: UserInput!): UserPayload!

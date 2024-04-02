@@ -85,7 +85,6 @@ export class LevelService {
         ]
         level = null
       } else {
-        console.log(error)
         userErrors = [
           {
             message: 'Cannot update level',

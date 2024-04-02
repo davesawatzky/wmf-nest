@@ -8,9 +8,9 @@ import {
   it,
   expect,
 } from 'vitest'
-import { TrophyResolver } from './trophy.resolver'
-import { TrophyService } from './trophy.service'
-import { PrismaService } from '../../prisma/prisma.service'
+import { TrophyResolver } from '../trophy.resolver'
+import { TrophyService } from '../trophy.service'
+import { PrismaService } from '../../../prisma/prisma.service'
 
 describe('TrophyResolver', () => {
   let resolver: TrophyResolver
