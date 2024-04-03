@@ -72,7 +72,6 @@ export class ClassTypeService {
         ]
         classType = null
       } else {
-        console.log(error)
         userErrors = [
           {
             message: 'Cannot update class type',
@@ -106,7 +105,6 @@ export class ClassTypeService {
         ]
         classType = null
       } else {
-        console.log(error)
         userErrors = [
           {
             message: 'Cannot delete class type',

@@ -195,7 +195,9 @@ type Instrument {
 }
 
 input InstrumentInput {
-  name: String
+  disciplineID: Int
+  mozart: Boolean
+  name: String!
 }
 
 type InstrumentPayload {
@@ -238,9 +240,9 @@ type Mutation {
   groupCreate(registrationID: Int!): GroupPayload!
   groupDelete(groupID: Int!): GroupPayload!
   groupUpdate(groupID: Int!, groupInput: GroupInput!): GroupPayload!
-  instrumentCreate(instrument: InstrumentInput!): InstrumentPayload!
-  instrumentDelete(id: Int!): InstrumentPayload!
-  instrumentUpdate(instrument: InstrumentInput!, instrumentID: Int!): InstrumentPayload!
+  instrumentCreate(instrumentInput: InstrumentInput!): InstrumentPayload!
+  instrumentDelete(instrumentID: Int!): InstrumentPayload!
+  instrumentUpdate(instrumentID: Int!, instrumentInput: InstrumentInput!): InstrumentPayload!
   levelCreate(levelInput: LevelInput!): LevelPayload!
   levelDelete(levelID: Int!): LevelPayload!
   levelUpdate(levelID: Int!, levelInput: LevelInput!): LevelPayload!
@@ -350,7 +352,7 @@ type Query {
   group(registrationID: Int!): Group!
   groups: [Group!]!
   instrument(id: Int, name: String): Instrument!
-  instruments: [Instrument!]!
+  instruments(disciplineID: Int): [Instrument!]!
   level(id: Int!): Level!
   levels(categoryID: Int, subdisciplineID: Int): [Level!]!
   logout: String!

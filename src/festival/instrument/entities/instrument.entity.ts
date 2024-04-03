@@ -7,8 +7,8 @@ export class Instrument {
   @Field(() => Int)
   id: number
   name: string
-  mozart: boolean
-  discipline: Discipline
+  mozart?: boolean
+  discipline?: Discipline
 }
 
 @ObjectType()

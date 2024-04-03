@@ -27,6 +27,7 @@ export class Subdiscipline {
   @Type(() => Object)
   @Transform(transformToDecimal)
   price?: Decimal
+  
   levels?: Level[]
   discipline?: Discipline
   festivalClasses?: FestivalClass[]

@@ -8,10 +8,10 @@ import {
   it,
   expect,
 } from 'vitest'
-import { InstrumentResolver } from './instrument.resolver'
-import { InstrumentService } from './instrument.service'
-import { DisciplineService } from '../discipline/discipline.service'
-import { PrismaService } from '../../prisma/prisma.service'
+import { InstrumentResolver } from '../instrument.resolver'
+import { InstrumentService } from '../instrument.service'
+import { DisciplineService } from '../../discipline/discipline.service'
+import { PrismaService } from '../../../prisma/prisma.service'
 
 describe('InstrumentResolver', () => {
   let resolver: InstrumentResolver

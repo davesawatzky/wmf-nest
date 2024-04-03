@@ -319,7 +319,7 @@ model tbl_reg_community {
 
 model tbl_instruments {
   id              Int             @id @default(autoincrement())
-  name            String          @default("0") @db.Text
+  name            String          @db.Text @unique
   mozart          Boolean?        @default(false)
   disciplineID    Int?       
   tbl_discipline  tbl_discipline? @relation(fields: [disciplineID], references:[id], onDelete: Restrict, onUpdate: Restrict)
