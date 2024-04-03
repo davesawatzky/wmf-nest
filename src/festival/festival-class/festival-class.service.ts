@@ -9,6 +9,7 @@ import {
   tbl_level,
   tbl_classlist,
   tbl_class_trophy,
+  tbl_class_type
 } from '@prisma/client'
 import { PerformerType } from '../../common.entity'
 
@@ -35,14 +36,16 @@ export class FestivalClassService {
     performerType?: PerformerType,
     subdisciplineID?: tbl_subdiscipline['id'],
     levelID?: tbl_level['id'],
-    categoryID?: tbl_category['id']
+    categoryID?: tbl_category['id'],
+    classTypeID?: tbl_class_type['id']
   ) {
-        return await this.prisma.tbl_classlist.findMany({
+      return await this.prisma.tbl_classlist.findMany({
       where: {
         performerType,
         subdisciplineID,
         levelID,
         categoryID,
+        classTypeID
       },
     })
   }

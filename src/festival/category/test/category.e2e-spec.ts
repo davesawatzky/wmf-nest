@@ -1,6 +1,5 @@
 import gql from 'graphql-tag'
 import request from 'supertest-graphql'
-import {CategoryInput} from '../dto/category.input'
 import {Category, CategoryPayload} from '../entities/category.entity'
 
 

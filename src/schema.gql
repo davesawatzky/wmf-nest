@@ -29,8 +29,19 @@ type CategoryPayload {
 
 type ClassType {
   description: String
+  festivalClasses: [FestivalClass!]!
   id: Int!
   name: String!
+}
+
+input ClassTypeInput {
+  description: String
+  name: String!
+}
+
+type ClassTypePayload {
+  classType: ClassType
+  userErrors: [UserError!]!
 }
 
 type Community {
@@ -213,6 +224,9 @@ type Mutation {
   categoryCreate(categoryInput: CategoryInput!): CategoryPayload!
   categoryDelete(categoryID: Int!): CategoryPayload!
   categoryUpdate(categoryID: Int!, categoryInput: CategoryInput!): CategoryPayload!
+  classTypeCreate(classTypeInput: ClassTypeInput!): ClassTypePayload!
+  classTypeDelete(classTypeID: Int!): ClassTypePayload!
+  classTypeUpdate(classTypeID: Int!, classTypeInput: ClassTypeInput!): ClassTypePayload!
   communityCreate(registrationID: Int!): CommunityPayload!
   communityDelete(communityID: Int!): CommunityPayload!
   communityUpdate(communityID: Int!, communityInput: CommunityInput!): CommunityPayload!
@@ -322,6 +336,7 @@ type Query {
   checkIfPasswordExists(id: Int!): PasswordExists!
   checkUser(email: String!): User!
   classType(id: Int!): ClassType!
+  classTypes: [ClassType!]!
   communities: [Community!]!
   community(registrationID: Int!): Community!
   discipline(id: Int!): Discipline!
