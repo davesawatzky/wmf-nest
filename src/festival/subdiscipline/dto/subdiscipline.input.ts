@@ -1,4 +1,4 @@
-import { InputType, Field } from '@nestjs/graphql'
+import { InputType, Field, Int } from '@nestjs/graphql'
 import { Decimal } from '@prisma/client/runtime/library'
 import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
 import { Transform, Type } from 'class-transformer'
@@ -16,14 +16,21 @@ export class SubdisciplineInput {
 
   @IsInt()
   @IsOptional()
+  @Field(() => Int)
   maxPerformers?: number
 
   @IsInt()
   @IsOptional()
+  @Field(() => Int)
   minPerformers?: number
 
+  @IsOptional()
   @Field(() => PerformerType)
   performerType: PerformerType
+
+  @IsInt()
+  @Field(() => Int)
+  disciplineID: number
 
   @Field(() => GraphQLDecimal)
   @Type(() => Object)

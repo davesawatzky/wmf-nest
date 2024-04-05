@@ -5,6 +5,7 @@ import {
   IsEmail,
   IsString,
   IsOptional,
+  IsInt,
 } from 'class-validator'
 
 @InputType()
@@ -49,6 +50,7 @@ export class PerformerInput {
   @IsOptional()
   email?: string
 
+  @IsInt()
   @Field(() => Int)
   @IsOptional()
   age?: number

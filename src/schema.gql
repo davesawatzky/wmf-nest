@@ -12,8 +12,10 @@ type Category {
   description: String
   festivalClasses(levelID: Int!, performerType: PerformerType!, subdisciplineID: Int!): [FestivalClass!]
   id: Int!
+  levels: [Level!]
   name: String!
   requiredComposer: String
+  subdisciplines: [Subdiscipline!]
 }
 
 input CategoryInput {
@@ -188,9 +190,9 @@ type GroupPayload {
 }
 
 type Instrument {
-  discipline: Discipline!
+  discipline: Discipline
   id: Int!
-  mozart: Boolean!
+  mozart: Boolean
   name: String!
 }
 
@@ -206,10 +208,12 @@ type InstrumentPayload {
 }
 
 type Level {
+  categories: [Category!]
   description: String
   festivalClasses(categoryID: Int!, performerType: PerformerType!, subdisciplineID: Int!): [FestivalClass!]
   id: Int!
   name: String!
+  subdisciplines: [Subdiscipline!]
 }
 
 input LevelInput {
@@ -266,7 +270,7 @@ type Mutation {
   selectionUpdate(selectionID: Int!, selectionInput: SelectionInput!): SelectionPayload!
   signin(credentials: CredentialsSignin!): AuthPayload!
   signup(credentials: CredentialsSignup!): AuthPayload!
-  subdisciplineCreate(disciplineID: Int!, subdisciplineInput: SubdisciplineInput!): SubdisciplinePayload!
+  subdisciplineCreate(subdisciplineInput: SubdisciplineInput!): SubdisciplinePayload!
   subdisciplineDelete(subdisciplineID: Int!): SubdisciplinePayload!
   subdisciplineUpdate(subdisciplineID: Int!, subdisciplineInput: SubdisciplineInput!): SubdisciplinePayload!
   teacherCreate(privateTeacher: Boolean!, schoolTeacher: Boolean!, teacherInput: TeacherInput!): TeacherPayload!
@@ -372,7 +376,6 @@ type Query {
   selections(registeredClassID: Int): [Selection!]!
   subdiscipline(subdisciplineID: Int!): Subdiscipline!
   subdisciplines(disciplineID: Int, performerType: PerformerType): [Subdiscipline!]!
-  subdisciplinesByName(name: String!): [Subdiscipline!]!
   teacher(teacherEmail: String, teacherID: Int): Teacher!
   teachers(privateTeacher: Boolean!, schoolTeacher: Boolean!): [Teacher!]!
   tokenCheck: Boolean!
@@ -533,6 +536,7 @@ type SelectionPayload {
 }
 
 type Subdiscipline {
+  categories: [Category!]
   description: String
   discipline: Discipline
   festivalClasses(categoryID: Int, levelID: Int, performerType: PerformerType): [FestivalClass!]
@@ -541,12 +545,13 @@ type Subdiscipline {
   maxPerformers: Int
   minPerformers: Int
   name: String!
-  performerType: PerformerType!
+  performerType: PerformerType
   price: Decimal
 }
 
 input SubdisciplineInput {
   description: String
+  disciplineID: Int!
   maxPerformers: Int
   minPerformers: Int
   name: String!
@@ -555,7 +560,7 @@ input SubdisciplineInput {
 }
 
 type SubdisciplinePayload {
-  subdiscpline: Subdiscipline
+  subdiscipline: Subdiscipline
   userErrors: [UserError!]!
 }
 

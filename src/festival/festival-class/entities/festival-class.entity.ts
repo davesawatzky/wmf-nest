@@ -7,7 +7,8 @@ import { Category } from '../../category/entities/category.entity'
 import { Trophy } from '../../trophy/entities/trophy.entity'
 import { ClassType } from '../../class-type/entities/class-type.entity'
 import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
-import { Type, Transform } from 'class-transformer'
+import {Type, Transform} from 'class-transformer'
+import { tbl_performer_type } from '@prisma/client'
 
 registerEnumType(PerformerType, {
   name: 'PerformerType',
@@ -32,7 +33,7 @@ export class FestivalClass {
   requiredSelection?: string
 
   @Field(() => PerformerType)
-  performerType: PerformerType
+  performerType: PerformerType | tbl_performer_type
 
   @Field(() => GraphQLDecimal)
   @Type(() => Object)

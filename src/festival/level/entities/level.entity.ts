@@ -1,6 +1,8 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { FestivalClass } from '../../festival-class/entities/festival-class.entity'
 import { UserError } from '../../../common.entity'
+import {Category} from 'src/festival/category/entities/category.entity'
+import {Subdiscipline} from 'src/festival/subdiscipline/entities/subdiscipline.entity'
 
 @ObjectType()
 export class Level {
@@ -8,6 +10,8 @@ export class Level {
   id: number
   name: string
   description?: string
+  categories?: Category[]
+  subdisciplines?: Subdiscipline[]
   festivalClasses?: FestivalClass[]
 }
 

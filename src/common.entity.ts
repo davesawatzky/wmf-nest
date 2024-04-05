@@ -9,10 +9,8 @@ export enum PerformerType {
   SOLO = 'SOLO',
   GROUP = 'GROUP',
   SCHOOL = 'SCHOOL',
-  COMMUNITY = 'COMMUNITY',
+  COMMUNITY = 'COMMUNITY'
 }
-
-registerEnumType(PerformerType, { name: 'PerformerType' })
 
 @ObjectType()
 export class UserError {
