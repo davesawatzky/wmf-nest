@@ -373,200 +373,208 @@ describe('Subdiscipline', () => {
     })
   })
 
-  // describe('Update', () => {
-  //   let response: any
-  //   let subdisciplineId: number
+  describe('Update', () => {
+    let response: any
+    let subdisciplineId: number
 
-  //   beforeEach(async () => {
-  //     response = await request<{subdisciplineCreate: SubdisciplinePayload}>(global.httpServer)
-  //       .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-  //       .mutate(gql`
-  //         mutation CreateSubdiscipline($subdisciplineInput: SubdisciplineInput!) {
-  //         subdisciplineCreate(subdisciplineInput: $subdisciplineInput) {
-  //           userErrors {
-  //           message
-  //         }
-  //         subdiscipline {
-  //           id
-  //           name
-  //         }
-  //       }
-  //     }`)
-  //       .variables({
-  //         subdisciplineInput: {
-  //           name: "Sticks",
-  //       }
-  //       })
-  //     subdisciplineId = await response.data.subdisciplineCreate.subdiscipline.id
+    beforeEach(async () => {
+      response = await request<{subdisciplineCreate: SubdisciplinePayload}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .mutate(gql`
+          mutation CreateSubdiscipline($subdisciplineInput: SubdisciplineInput!) {
+          subdisciplineCreate(subdisciplineInput: $subdisciplineInput) {
+            userErrors {
+            message
+          }
+          subdiscipline {
+            id
+            name
+          }
+        }
+      }`)
+        .variables({
+          subdisciplineInput: {
+            name: "Bird Calls",
+            performerType: "SOLO",
+            disciplineID: 1
+        }
+        })
+      subdisciplineId = await response.data.subdisciplineCreate.subdiscipline.id
 
-  //   })
+    })
 
-  //   afterEach(async () => {
-  //     await global.prisma.tbl_subdiscipline.delete({
-  //       where: {
-  //         id: subdisciplineId
-  //       }
-  //     })
-  //   })
+    afterEach(async () => {
+      await global.prisma.tbl_subdiscipline.delete({
+        where: {
+          id: subdisciplineId
+        }
+      })
+    })
 
-  //   it('Update details of existing subdiscipline', async () => {
-  //     response = await request<{subdisciplineUpdate: SubdisciplinePayload}>(global.httpServer)
-  //     .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-  //     .mutate(gql`
-  //       mutation SubdisciplineUpdate($subdisciplineId: Int!, $subdisciplineInput: SubdisciplineInput!){
-  //         subdisciplineUpdate(subdisciplineID: $subdisciplineId, subdisciplineInput: $subdisciplineInput) {
-  //           userErrors {
-  //             message
-  //           }
-  //           subdiscipline {
-  //             id
-  //             name
-  //           }
-  //         }
-  //     }`)
-  //       .variables({
-  //         subdisciplineId,
-  //         subdisciplineInput: {
-  //           name: 'Stones',
-  //         }
-  //       })
-  //     expect(response.data.subdisciplineUpdate.subdiscipline.name).toBe('Stones')
-  //     expect(response.errors).not.toBeDefined()
-  //   })
+    it('Update details of existing subdiscipline', async () => {
+      response = await request<{subdisciplineUpdate: SubdisciplinePayload}>(global.httpServer)
+      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .mutate(gql`
+        mutation SubdisciplineUpdate($subdisciplineId: Int!, $subdisciplineInput: SubdisciplineInput!){
+          subdisciplineUpdate(subdisciplineID: $subdisciplineId, subdisciplineInput: $subdisciplineInput) {
+            userErrors {
+              message
+            }
+            subdiscipline {
+              id
+              name
+            }
+          }
+      }`)
+        .variables({
+          subdisciplineId,
+          subdisciplineInput: {
+            name: 'Stones',
+            performerType: 'SOLO',
+            disciplineID: 1
+          }
+        })
+      expect(response.data.subdisciplineUpdate.subdiscipline.name).toBe('Stones')
+      expect(response.errors).not.toBeDefined()
+    })
 
-  //   it('Returns error if subdiscipline not found', async () => {
-  //     response = await request<{subdisciplineUpdate: SubdisciplinePayload}>(global.httpServer)
-  //     .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-  //     .mutate(gql`
-  //       mutation SubdisciplineUpdate($subdisciplineId: Int!, $subdisciplineInput: SubdisciplineInput!){
-  //         subdisciplineUpdate(subdisciplineID: $subdisciplineId, subdisciplineInput: $subdisciplineInput) {
-  //           userErrors {
-  //             message
-  //           }
-  //           subdiscipline {
-  //             id
-  //             name
-  //           }
-  //         }
-  //     }`)
-  //       .variables({
-  //         subdisciplineId: subdisciplineId + 1,
-  //         subdisciplineInput: {
-  //           name: 'Sticks',
-  //         }
-  //       })
-  //     expect(response.data.subdisciplineUpdate.subdiscipline).toBeNull()
-  //     expect(response.data.subdisciplineUpdate.userErrors[0].message).toBeTruthy()
-  //   })
+    it('Returns error if subdiscipline not found', async () => {
+      response = await request<{subdisciplineUpdate: SubdisciplinePayload}>(global.httpServer)
+      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .mutate(gql`
+        mutation SubdisciplineUpdate($subdisciplineId: Int!, $subdisciplineInput: SubdisciplineInput!){
+          subdisciplineUpdate(subdisciplineID: $subdisciplineId, subdisciplineInput: $subdisciplineInput) {
+            userErrors {
+              message
+            }
+            subdiscipline {
+              id
+              name
+            }
+          }
+      }`)
+        .variables({
+          subdisciplineId: subdisciplineId + 1,
+          subdisciplineInput: {
+            name: 'Bird Calls',
+            performerType: 'SOLO',
+            disciplineID: 1
+          }
+        })
+      expect(response.data.subdisciplineUpdate.subdiscipline).toBeNull()
+      expect(response.data.subdisciplineUpdate.userErrors[0].message).toBeTruthy()
+    })
 
-  //   it('Returns error if name is null or undefined in update', async () => {
-  //     response = await request<{subdisciplineUpdate: SubdisciplinePayload}>(global.httpServer)
-  //     .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-  //     .mutate(gql`
-  //       mutation SubdisciplineUpdate($subdisciplineId: Int!, $subdisciplineInput: SubdisciplineInput!){
-  //         subdisciplineUpdate(subdisciplineID: $subdisciplineId, subdisciplineInput: $subdisciplineInput) {
-  //           userErrors {
-  //             message
-  //           }
-  //           subdiscipline {
-  //             id
-  //             name
-  //           }
-  //         }
-  //     }`)
-  //       .variables({
-  //         subdisciplineId,
-  //         subdisciplineInput: {
-  //           name: null,
-  //         }
-  //       })
-  //     expect(response.data).toBeFalsy()
-  //     expect(response.errors[0]).toBeTruthy()
-  //   })
-  // })
+    it('Returns error if name is null or undefined in update', async () => {
+      response = await request<{subdisciplineUpdate: SubdisciplinePayload}>(global.httpServer)
+      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .mutate(gql`
+        mutation SubdisciplineUpdate($subdisciplineId: Int!, $subdisciplineInput: SubdisciplineInput!){
+          subdisciplineUpdate(subdisciplineID: $subdisciplineId, subdisciplineInput: $subdisciplineInput) {
+            userErrors {
+              message
+            }
+            subdiscipline {
+              id
+              name
+            }
+          }
+      }`)
+        .variables({
+          subdisciplineId,
+          subdisciplineInput: {
+            name: null,
+          }
+        })
+      expect(response.data).toBeFalsy()
+      expect(response.errors[0]).toBeTruthy()
+    })
+  })
 
-  // describe('Delete', () => {
-  //   let response: any
-  //   let subdisciplineId: number
+  describe('Delete', () => {
+    let response: any
+    let subdisciplineId: number
 
-  //   beforeEach(async () => {
-  //     response = await request<{subdisciplineCreate: SubdisciplinePayload}>(global.httpServer)
-  //       .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-  //       .mutate(gql`
-  //         mutation CreateSubdiscipline($subdisciplineInput: SubdisciplineInput!) {
-  //         subdisciplineCreate(subdisciplineInput: $subdisciplineInput) {
-  //           userErrors {
-  //           message
-  //         }
-  //         subdiscipline {
-  //           id
-  //           name
-  //         }
-  //       }
-  //     }`)
-  //       .variables({
-  //         subdisciplineInput: {
-  //           name: "Sticks",
-  //       }
-  //       })
-  //     subdisciplineId = await response.data.subdisciplineCreate.subdiscipline.id
-  //   })
+    beforeEach(async () => {
+      response = await request<{subdisciplineCreate: SubdisciplinePayload}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .mutate(gql`
+          mutation CreateSubdiscipline($subdisciplineInput: SubdisciplineInput!) {
+          subdisciplineCreate(subdisciplineInput: $subdisciplineInput) {
+            userErrors {
+            message
+          }
+          subdiscipline {
+            id
+            name
+          }
+        }
+      }`)
+        .variables({
+          subdisciplineInput: {
+            name: "Bird Calls",
+            performerType: "SOLO",
+            disciplineID: 1
+        }
+        })
+      subdisciplineId = await response.data.subdisciplineCreate.subdiscipline.id
+    })
 
-  //   afterEach(async () => {
-  //     try {
-  //       await global.prisma.tbl_subdiscipline.delete({
-  //         where: {
-  //           id: subdisciplineId
-  //         }
-  //       })
-  //     } catch(error) {}
-  //   })
+    afterEach(async () => {
+      try {
+        await global.prisma.tbl_subdiscipline.delete({
+          where: {
+            id: subdisciplineId
+          }
+        })
+      } catch(error) {}
+    })
 
-  //   it('Deletes a subdiscipline using the subdisciplineID', async() => {
-  //     response = await request<{subdisciplineDelete: SubdisciplinePayload}>(global.httpServer)
-  //       .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-  //       .mutate(gql`
-  //       mutation SubdisciplineDelete($subdisciplineId: Int!) {
-  //         subdisciplineDelete(subdisciplineID: $subdisciplineId) {
-  //           userErrors {
-  //             message
-  //           }
-  //             subdiscipline {
-  //           id
-  //           name
-  //         }
-  //       }
-  //     }`)
-  //       .variables({
-  //       subdisciplineId
-  //       })
-  //     const deleteCheck = await global.prisma.tbl_subdiscipline.findUnique({
-  //       where: {id: subdisciplineId}
-  //     })
-  //     expect(deleteCheck).toBeNull()
-  //     expect(response.data.subdisciplineDelete.subdiscipline.name).toBe('Sticks')
-  //    })
+    it('Deletes a subdiscipline using the subdisciplineID', async() => {
+      response = await request<{subdisciplineDelete: SubdisciplinePayload}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .mutate(gql`
+        mutation SubdisciplineDelete($subdisciplineId: Int!) {
+          subdisciplineDelete(subdisciplineID: $subdisciplineId) {
+            userErrors {
+              message
+            }
+              subdiscipline {
+            id
+            name
+          }
+        }
+      }`)
+        .variables({
+        subdisciplineId
+        })
+      const deleteCheck = await global.prisma.tbl_subdiscipline.findUnique({
+        where: {id: subdisciplineId}
+      })
+      expect(deleteCheck).toBeNull()
+      expect(response.data.subdisciplineDelete.subdiscipline.name).toBe('Bird Calls')
+    })
 
-  //   it('Returns error message if subdiscipline not found', async() => {
-  //     response = await request<{subdisciplineDelete: SubdisciplinePayload}>(global.httpServer)
-  //       .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-  //       .mutate(gql`
-  //       mutation SubdisciplineDelete($subdisciplineId: Int!) {
-  //         subdisciplineDelete(subdisciplineID: $subdisciplineId) {
-  //           userErrors {
-  //             message
-  //           }
-  //             subdiscipline {
-  //           id
-  //           name
-  //         }
-  //       }
-  //     }`)
-  //       .variables({
-  //       subdisciplineId: subdisciplineId + 1
-  //       })
-  //     expect(response.data.subdisciplineDelete.subdiscipline).toBeNull()
-  //     expect(response.data.subdisciplineDelete.userErrors[0].message).toBeTruthy()
-  //   })
-  // })
+    it('Returns error message if subdiscipline not found', async() => {
+      response = await request<{subdisciplineDelete: SubdisciplinePayload}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .mutate(gql`
+        mutation SubdisciplineDelete($subdisciplineId: Int!) {
+          subdisciplineDelete(subdisciplineID: $subdisciplineId) {
+            userErrors {
+              message
+            }
+              subdiscipline {
+            id
+            name
+          }
+        }
+      }`)
+        .variables({
+        subdisciplineId: subdisciplineId + 1
+        })
+      expect(response.data.subdisciplineDelete.subdiscipline).toBeNull()
+      expect(response.data.subdisciplineDelete.userErrors[0].message).toBeTruthy()
+    })
+  })
 })
