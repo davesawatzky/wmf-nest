@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { HttpException, Injectable } from '@nestjs/common'
 import { PrismaService } from '../../prisma/prisma.service'
 import { FestivalClassSearchArgs } from './dto/festival-class.input'
 import { FestivalClassInput } from './dto/festival-class.input'
@@ -11,26 +11,48 @@ import {
   tbl_class_trophy,
   tbl_class_type
 } from '@prisma/client'
-import { PerformerType } from '../../common.entity'
+import { PerformerType, UserError } from '../../common.entity'
+import {FestivalClass, FestivalClassPayload} from './entities/festival-class.entity'
 
 @Injectable()
 export class FestivalClassService {
   constructor(private prisma: PrismaService) {}
 
-  // async create(
-  //   performerType: PerformerType,
-  //   festivalClass: FestivalClassInput
-  // ) {
-  //   return {
-  //     userErrors: [],
-  //     festivalClass: await this.prisma.tbl_classlist.create({
-  //       data: {
-  //         performerType,
-  //         ...festivalClass,
-  //       },
-  //     }),
-  //   }
-  // }
+  async create(
+    festivalClassInput: FestivalClassInput
+  ): Promise<FestivalClassPayload>{
+    let festivalClass: FestivalClass
+    let userErrors: UserError[]
+    try {
+      festivalClass = await this.prisma.tbl_classlist.create({
+        data: {
+          ...festivalClassInput,
+        },
+      })
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        userErrors = [
+          {
+            message: 'Festival class already exists',
+            field: ['name']
+          }
+        ]
+        festivalClass = null
+      } else {
+        userErrors = [
+          {
+            message: 'Cannot create festival class',
+            field: []
+          }
+        ]
+        festivalClass = null
+      }
+    }
+    return {
+      userErrors,
+      festivalClass,
+    }
+  }
 
   async findAll(
     performerType?: PerformerType,
@@ -41,11 +63,11 @@ export class FestivalClassService {
   ) {
       return await this.prisma.tbl_classlist.findMany({
       where: {
-        performerType,
-        subdisciplineID,
-        levelID,
-        categoryID,
-        classTypeID
+        performerType: performerType ?? undefined,
+        subdisciplineID: subdisciplineID ?? undefined,
+        levelID: levelID ?? undefined,
+        categoryID: categoryID ?? undefined,
+        classTypeID: classTypeID ?? undefined
       },
     })
   }
@@ -89,18 +111,18 @@ export class FestivalClassService {
 
   async update(
     festivalClassID: tbl_classlist['id'],
-    festivalClass: Partial<tbl_classlist>
-  ) {
+    festivalClassInput: FestivalClassInput
+  ){
     return {
       userErrors: [],
       festivalClass: await this.prisma.tbl_classlist.update({
         where: { id: festivalClassID },
-        data: { ...festivalClass },
+        data: { ...festivalClassInput },
       }),
     }
   }
 
-  async remove(id: tbl_classlist['id']) {
+  async remove(id: tbl_classlist['id']):Promise<FestivalClassPayload> {
     return {
       userErrors: [],
       festivalClass: await this.prisma.tbl_classlist.delete({

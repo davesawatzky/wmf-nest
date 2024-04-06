@@ -7,7 +7,7 @@ import {
   Parent,
   Int,
 } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
 import { FestivalClassService } from './festival-class.service'
 import { FestivalClassInput } from './dto/festival-class.input'
@@ -16,7 +16,6 @@ import {
   FestivalClass,
   FestivalClassPayload,
 } from './entities/festival-class.entity'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PerformerType } from '../../common.entity'
 import { ClassType } from '../class-type/entities/class-type.entity'
 import { SubdisciplineService } from '../subdiscipline/subdiscipline.service'
@@ -86,26 +85,37 @@ export class FestivalClassResolver {
 
   /** Mutations */
 
-  // @Mutation(() => FestivalClassPayload)
-  // async festivalClassCreate(
-  //   @Args('performerType') performerType: PerformerType,
-  //   @Args('festivalClass')
-  //   festivalClass: FestivalClassInput
-  // ) {
-  //   return await this.festivalClassService.create(performerType, festivalClass)
-  // }
+  @Mutation(() => FestivalClassPayload)
+  async festivalClassCreate(
+    @Args('festivalClassInput')
+    festivalClassInput: FestivalClassInput
+  ) {
+    let response: any
+    try {
+      response = await this.festivalClassService.create(festivalClassInput)
+    } catch (error) {
+      throw new HttpException('Could not create festival class', HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+    return response
+  }
 
   @Mutation(() => FestivalClassPayload)
   async festivalClassUpdate(
     @Args('festivalClassID', { type: () => Int })
     festivalClassID: FestivalClass['id'],
-    @Args('festivalClass', { type: () => FestivalClassInput })
-    festivalClass: Partial<FestivalClassInput>
-  ) {
-    return await this.festivalClassService.update(
-      festivalClassID,
-      festivalClass
-    )
+    @Args('festivalClassInput', { type: () => FestivalClassInput })
+    festivalClassInput: FestivalClassInput
+  ){
+    let response: any
+    try {
+      response = await this.festivalClassService.update(
+        festivalClassID,
+        festivalClassInput
+      )
+    } catch (error) {
+      throw new HttpException('Could not update festival class', HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+    return response
   }
 
   @Mutation(() => FestivalClassPayload)

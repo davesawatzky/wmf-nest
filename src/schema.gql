@@ -239,8 +239,9 @@ type Mutation {
   disciplineCreate(disciplineInput: DisciplineInput!): DisciplinePayload!
   disciplineDelete(disciplineID: Int!): DisciplinePayload!
   disciplineUpdate(disciplineID: Int!, disciplineInput: DisciplineInput!): DisciplinePayload!
+  festivalClassCreate(festivalClassInput: FestivalClassInput!): FestivalClassPayload!
   festivalClassDelete(festivalClassID: Int!): FestivalClassPayload!
-  festivalClassUpdate(festivalClass: FestivalClassInput!, festivalClassID: Int!): FestivalClassPayload!
+  festivalClassUpdate(festivalClassID: Int!, festivalClassInput: FestivalClassInput!): FestivalClassPayload!
   groupCreate(registrationID: Int!): GroupPayload!
   groupDelete(groupID: Int!): GroupPayload!
   groupUpdate(groupID: Int!, groupInput: GroupInput!): GroupPayload!

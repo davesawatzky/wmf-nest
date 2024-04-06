@@ -60,14 +60,17 @@ export class FestivalClassInput {
 @InputType()
 export class FestivalClassSearchArgs {
   @IsInt()
+  @IsOptional()
   @Field(() => Int)
   subdisciplineID?: number
 
   @IsInt()
+  @IsOptional()
   @Field(() => Int)
   levelID?: number
 
   @IsInt()
+  @IsOptional()
   @Field(() => Int)
   categoryID?: number
 }

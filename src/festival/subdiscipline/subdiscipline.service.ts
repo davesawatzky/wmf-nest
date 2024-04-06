@@ -36,7 +36,6 @@ export class SubdisciplineService {
         ]
         subdiscipline = null
       } else {
-        console.log(error)
         userErrors = [
           {
             message: 'Cannot create subdiscipline',

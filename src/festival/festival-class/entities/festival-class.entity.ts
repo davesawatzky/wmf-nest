@@ -16,23 +16,20 @@ registerEnumType(PerformerType, {
 
 @ObjectType()
 export class FestivalClass {
-  @Field(() => Int)
+  @Field(type => Int)
   id: number
-
-  classType: ClassType
+  classType?: ClassType
   classNumber: string
-  subdiscipline: Subdiscipline
-  level: Level
-  category: Category
+  subdiscipline?: Subdiscipline
+  level?: Level
+  category?: Category
 
-  @Field(() => Int)
+  @Field(type => Int)
   maxSelections: number
 
-  @Field(() => Int)
+  @Field(type => Int)
   minSelections: number
   requiredSelection?: string
-
-  @Field(() => PerformerType)
   performerType: PerformerType | tbl_performer_type
 
   @Field(() => GraphQLDecimal)
