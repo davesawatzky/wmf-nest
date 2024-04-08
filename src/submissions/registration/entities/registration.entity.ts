@@ -8,9 +8,7 @@ import { Group } from '../../group/entities/group.entity'
 import { Community } from '../../community/entities/community.entity'
 import { School } from '../../school/entities/school.entity'
 
-registerEnumType(PerformerType, {
-  name: 'PerformerType',
-})
+
 
 @ObjectType()
 export class Registration {
@@ -25,7 +23,6 @@ export class Registration {
   teacher?: User
   school?: School
 
-  @Field(() => PerformerType)
   performerType: PerformerType
 
   @Field(() => GraphQLDecimal)

@@ -8,29 +8,28 @@ import {
   Int,
 } from '@nestjs/graphql'
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { SubdisciplineService } from './subdiscipline.service'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { PerformerType } from '../../common.entity'
+import { PerformerType } from '@/common.entity'
 import {
   tbl_discipline,
   tbl_category,
   tbl_level,
   tbl_subdiscipline,
 } from '@prisma/client'
-import { FestivalClassService } from '../festival-class/festival-class.service'
+import { FestivalClassService } from '@/festival/festival-class/festival-class.service'
 import {
   Subdiscipline,
   SubdisciplinePayload,
 } from './entities/subdiscipline.entity'
 import { SubdisciplineInput } from './dto/subdiscipline.input'
-import { FestivalClass } from '../festival-class/entities/festival-class.entity'
-import {CategoryService} from '../category/category.service'
-import {LevelService} from '../level/level.service'
-import {Category} from '../category/entities/category.entity'
-import {Level} from '../level/entities/level.entity'
-import {Discipline} from '../discipline/entities/discipline.entity'
-import {DisciplineService} from '../discipline/discipline.service'
+import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
+import {CategoryService} from '@/festival/category/category.service'
+import {LevelService} from '@/festival/level/level.service'
+import {Category} from '@/festival/category/entities/category.entity'
+import {Level} from '@/festival/level/entities/level.entity'
+import {Discipline} from '@/festival/discipline/entities/discipline.entity'
+import {DisciplineService} from '@/festival/discipline/discipline.service'
 
 @Resolver(() => Subdiscipline)
 @UseGuards(JwtAuthGuard)
@@ -70,11 +69,10 @@ export class SubdisciplineResolver {
   async subdisciplineCreate(
     @Args('subdisciplineInput')
     subdisciplineInput: SubdisciplineInput
-  ) {
-    let response: SubdisciplinePayload
+  ): Promise<SubdisciplinePayload> {
+    let response: any
     try {
-      response = await this.subdisciplineService.create(
-        subdisciplineInput
+      response = await this.subdisciplineService.create(subdisciplineInput
       )
     } catch (error) {
       throw new HttpException('Could not create subdiscipline', HttpStatus.INTERNAL_SERVER_ERROR)
@@ -89,7 +87,7 @@ export class SubdisciplineResolver {
     @Args('subdisciplineInput', {type: () => SubdisciplineInput})
     subdisciplineInput: SubdisciplineInput
   ) {
-    let response: SubdisciplinePayload
+    let response: any
     try {
       response = await this.subdisciplineService.update(
         subdisciplineID,
@@ -106,7 +104,7 @@ export class SubdisciplineResolver {
     @Args('subdisciplineID', {type: () => Int})
     subdisciplineID: Subdiscipline['id']
   ) {
-    let response: SubdisciplinePayload
+    let response: any
     try {
       response = await this.subdisciplineService.remove(subdisciplineID)
     } catch (error) {

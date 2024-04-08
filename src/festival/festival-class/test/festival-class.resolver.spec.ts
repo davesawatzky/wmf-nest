@@ -10,11 +10,11 @@ import {
 } from 'vitest'
 import { FestivalClassResolver } from '../festival-class.resolver'
 import { FestivalClassService } from '../festival-class.service'
-import { SubdisciplineService } from '../../subdiscipline/subdiscipline.service'
-import { LevelService } from '../../level/level.service'
-import { CategoryService } from '../../category/category.service'
-import { ClassTypeService } from '../../class-type/class-type.service'
-import { PrismaService } from '../../../prisma/prisma.service'
+import { SubdisciplineService } from '@/festival/subdiscipline/subdiscipline.service'
+import { LevelService } from '@/festival/level/level.service'
+import { CategoryService } from '@/festival/category/category.service'
+import { ClassTypeService } from '@/festival/class-type/class-type.service'
+import { PrismaService } from '@/prisma/prisma.service'
 
 describe('FestivalClassResolver', () => {
   let resolver: FestivalClassResolver

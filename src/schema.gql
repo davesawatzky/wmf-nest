@@ -133,7 +133,7 @@ input FestivalClassInput {
   categoryID: Int!
   classNumber: String!
   classTypeID: Int!
-  description: String
+  description: String!
   levelID: Int!
   maxSelections: Int!
   minSelections: Int!
@@ -274,6 +274,7 @@ type Mutation {
   subdisciplineCreate(subdisciplineInput: SubdisciplineInput!): SubdisciplinePayload!
   subdisciplineDelete(subdisciplineID: Int!): SubdisciplinePayload!
   subdisciplineUpdate(subdisciplineID: Int!, subdisciplineInput: SubdisciplineInput!): SubdisciplinePayload!
+  submitRegistration(registrationID: Int!): SubmissionPayload!
   teacherCreate(privateTeacher: Boolean!, schoolTeacher: Boolean!, teacherInput: TeacherInput!): TeacherPayload!
   teacherDelete(teacherID: Int!): TeacherPayload!
   teacherUpdate(teacherID: Int!, teacherInput: TeacherInput!): TeacherPayload!
@@ -377,6 +378,7 @@ type Query {
   selections(registeredClassID: Int): [Selection!]!
   subdiscipline(subdisciplineID: Int!): Subdiscipline!
   subdisciplines(disciplineID: Int, performerType: PerformerType): [Subdiscipline!]!
+  submissions(performerType: PerformerType!): [Registration!]!
   teacher(teacherEmail: String, teacherID: Int): Teacher!
   teachers(privateTeacher: Boolean!, schoolTeacher: Boolean!): [Teacher!]!
   tokenCheck: Boolean!
@@ -540,7 +542,7 @@ type Subdiscipline {
   categories: [Category!]
   description: String
   discipline: Discipline
-  festivalClasses(categoryID: Int, levelID: Int, performerType: PerformerType): [FestivalClass!]
+  festivalClasses(categoryID: Int!, levelID: Int!, performerType: PerformerType!): [FestivalClass!]
   id: Int!
   levels: [Level!]
   maxPerformers: Int
@@ -569,6 +571,11 @@ type Submission {
   confirmation: String!
   payedAmt: Decimal
   submittedAt: DateTime!
+}
+
+type SubmissionPayload {
+  submission: Submission!
+  userErrors: [UserError!]!
 }
 
 type Teacher {

@@ -1,5 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common'
-import { PrismaService } from '../../prisma/prisma.service'
+import { PrismaService } from '@/prisma/prisma.service'
 import { FestivalClassSearchArgs } from './dto/festival-class.input'
 import { FestivalClassInput } from './dto/festival-class.input'
 
@@ -11,7 +11,7 @@ import {
   tbl_class_trophy,
   tbl_class_type
 } from '@prisma/client'
-import { PerformerType, UserError } from '../../common.entity'
+import { PerformerType, UserError } from '@/common.entity'
 import {FestivalClass, FestivalClassPayload} from './entities/festival-class.entity'
 
 @Injectable()
@@ -20,13 +20,13 @@ export class FestivalClassService {
 
   async create(
     festivalClassInput: FestivalClassInput
-  ): Promise<FestivalClassPayload>{
-    let festivalClass: FestivalClass
+  ){
+    let festivalClass: tbl_classlist
     let userErrors: UserError[]
     try {
       festivalClass = await this.prisma.tbl_classlist.create({
         data: {
-          ...festivalClassInput,
+          ...festivalClassInput
         },
       })
     } catch (error: any) {
@@ -122,7 +122,7 @@ export class FestivalClassService {
     }
   }
 
-  async remove(id: tbl_classlist['id']):Promise<FestivalClassPayload> {
+  async remove(id: tbl_classlist['id']) {
     return {
       userErrors: [],
       festivalClass: await this.prisma.tbl_classlist.delete({

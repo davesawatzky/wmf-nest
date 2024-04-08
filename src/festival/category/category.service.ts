@@ -2,15 +2,15 @@ import { Injectable } from '@nestjs/common'
 import { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
 import { Category, CategoryPayload } from './entities/category.entity'
 import { CategoryInput } from './dto/category.input'
-import { PrismaService } from '../../prisma/prisma.service'
-import {UserError} from 'src/common.entity'
+import { PrismaService } from '@/prisma/prisma.service'
+import {UserError} from '@/common.entity'
 
 @Injectable()
 export class CategoryService {
   constructor(private prisma: PrismaService) {}
 
-  async create(categoryInput: CategoryInput):Promise<CategoryPayload> {
-    let category: Category
+  async create(categoryInput: CategoryInput) {
+    let category: tbl_category
     let userErrors: UserError[]
     try {
       userErrors = [],
@@ -46,7 +46,7 @@ export class CategoryService {
   async findAll(
     levelID?: tbl_level['id'],
     subdisciplineID?: tbl_subdiscipline['id']
-  ):Promise<Category[]> {
+  ) {
     return await this.prisma.tbl_category.findMany({
       where: {
         tbl_classlist: {
@@ -59,14 +59,14 @@ export class CategoryService {
     })
   }
 
-  async findOne(id: tbl_category['id']):Promise<Category> {
+  async findOne(id: tbl_category['id']) {
     return await this.prisma.tbl_category.findUnique({
       where: { id },
     })
   }
 
-  async update(id: tbl_category['id'], categoryInput: CategoryInput):Promise<CategoryPayload> {
-    let category: Category
+  async update(id: tbl_category['id'], categoryInput: CategoryInput) {
+    let category: tbl_category
     let userErrors: UserError[]
     try {
       userErrors = []
@@ -100,8 +100,8 @@ export class CategoryService {
     }
   }
 
-  async remove(id: tbl_category['id']):Promise<CategoryPayload> {
-    let category: Category
+  async remove(id: tbl_category['id']) {
+    let category: tbl_category
     let userErrors: UserError[]
     try {
       userErrors = []

@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { UserError } from '../../../common.entity'
-import { Discipline } from '../../discipline/entities/discipline.entity'
+import { UserError } from '@/common.entity'
+import { Discipline } from '@/festival/discipline/entities/discipline.entity'
 
 @ObjectType()
 export class Instrument {

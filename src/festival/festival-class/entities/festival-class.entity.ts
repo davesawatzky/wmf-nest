@@ -5,32 +5,34 @@ import { Subdiscipline } from '../../subdiscipline/entities/subdiscipline.entity
 import { Level } from '../../level/entities/level.entity'
 import { Category } from '../../category/entities/category.entity'
 import { Trophy } from '../../trophy/entities/trophy.entity'
-import { ClassType } from '../../class-type/entities/class-type.entity'
+import { ClassType } from '@/festival/class-type/entities/class-type.entity'
 import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
 import {Type, Transform} from 'class-transformer'
-import { tbl_performer_type } from '@prisma/client'
+import {IsNotEmpty} from 'class-validator'
 
-registerEnumType(PerformerType, {
-  name: 'PerformerType',
-})
+
 
 @ObjectType()
 export class FestivalClass {
-  @Field(type => Int)
+  @Field(() => Int)
   id: number
-  classType?: ClassType
-  classNumber: string
-  subdiscipline?: Subdiscipline
-  level?: Level
-  category?: Category
 
-  @Field(type => Int)
+  classNumber: string
+
+  classType: ClassType
+  subdiscipline: Subdiscipline
+  level: Level
+  category: Category
+
+  @Field(() => Int)
   maxSelections: number
 
   @Field(type => Int)
   minSelections: number
   requiredSelection?: string
-  performerType: PerformerType | tbl_performer_type
+
+  @IsNotEmpty()
+  performerType: PerformerType
 
   @Field(() => GraphQLDecimal)
   @Type(() => Object)

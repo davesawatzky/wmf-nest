@@ -10,8 +10,8 @@ import {
 } from 'vitest'
 import { SubdisciplineResolver } from '../subdiscipline.resolver'
 import { SubdisciplineService } from '../subdiscipline.service'
-import { PrismaService } from '../../../prisma/prisma.service'
-import { FestivalClassService } from '../../festival-class/festival-class.service'
+import { PrismaService } from '@/prisma/prisma.service'
+import { FestivalClassService } from '@/festival/festival-class/festival-class.service'
 
 describe('SubdisciplineResolver', () => {
   let resolver: SubdisciplineResolver

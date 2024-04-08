@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
 import { LevelInput } from './dto/level.input'
-import { PrismaService } from '../../prisma/prisma.service'
+import { PrismaService } from '@/prisma/prisma.service'
 import {Level} from './entities/level.entity'
-import {UserError} from 'src/common.entity'
+import {UserError} from '@/common.entity'
 // import { CreateLevelInput } from './dto/create-level.input'
 // import { UpdateLevelInput } from './dto/update-level.input'
 
@@ -12,7 +12,7 @@ export class LevelService {
   constructor(private prisma: PrismaService) {}
 
   async create(levelInput: LevelInput) {
-    let level: Level
+    let level: tbl_level
     let userErrors: UserError[]
     try {
       userErrors = []
@@ -67,7 +67,7 @@ export class LevelService {
   }
 
   async update(id: tbl_level['id'], levelInput: LevelInput) {
-    let level: Level
+    let level: tbl_level
     let userErrors: UserError[]
     try {
       userErrors = []
@@ -101,7 +101,7 @@ export class LevelService {
   }
 
   async remove(id: tbl_level['id']) {
-    let level: Level
+    let level: tbl_level
     let userErrors: UserError[]
     try {
       userErrors = []

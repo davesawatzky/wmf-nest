@@ -8,11 +8,11 @@ import {
   Int,
 } from '@nestjs/graphql'
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { TrophyService } from './trophy.service'
 import { Trophy, TrophyPayload } from './entities/trophy.entity'
 import { TrophyInput } from './dto/trophy.input'
-import { FestivalClass } from '../festival-class/entities/festival-class.entity'
+import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
 
 @Resolver(() => Trophy)
 @UseGuards(JwtAuthGuard)

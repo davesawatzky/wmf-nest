@@ -10,7 +10,7 @@ import {
 } from 'vitest'
 import { UserResolver } from './user.resolver'
 import { UserService } from './user.service'
-import { RegistrationService } from '../submissions/registration/registration.service'
+import { RegistrationService } from '@/submissions/registration/registration.service'
 import { AbilityFactory } from '../ability/ability.factory'
 import { PrismaService } from '../prisma/prisma.service'
 

@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common'
 import { tbl_instruments } from '@prisma/client'
-import {PrismaService} from '../../prisma/prisma.service'
+import {PrismaService} from '@/prisma/prisma.service'
 import {Instrument, InstrumentPayload} from './entities/instrument.entity'
 import { InstrumentInput } from './dto/instrument.input'
-import {UserError} from 'src/common.entity'
+import {UserError} from '@/common.entity'
 import {error} from 'console'
 
 @Injectable()
 export class InstrumentService {
   constructor(private prisma: PrismaService) {}
 
-  async create(instrumentInput: InstrumentInput):Promise<InstrumentPayload> {
-    let instrument: Instrument
+  async create(instrumentInput: InstrumentInput) {
+    let instrument: tbl_instruments
     let userErrors: UserError[]
     try {
       userErrors = [],
@@ -44,7 +44,7 @@ export class InstrumentService {
     }
   }
 
-  async findAll(disciplineID?: number):Promise<Instrument[]> {
+  async findAll(disciplineID?: number) {
     if (!!disciplineID) {
       return await this.prisma.tbl_instruments.findMany({
         where: {
@@ -63,7 +63,7 @@ export class InstrumentService {
     }
   }
 
-  async findOne(id?: tbl_instruments['id'], name?: tbl_instruments['name']):Promise<Instrument> {
+  async findOne(id?: tbl_instruments['id'], name?: tbl_instruments['name']) {
     if (id) {
       return await this.prisma.tbl_instruments.findUnique({
         where: { id },
@@ -78,8 +78,8 @@ export class InstrumentService {
   async update(
     instrumentID: tbl_instruments['id'],
     inst: Partial<tbl_instruments>
-  ): Promise<InstrumentPayload> {
-    let instrument: Instrument
+  ) {
+    let instrument: tbl_instruments
     let userErrors: UserError[]
     try {
       userErrors = [],
@@ -116,8 +116,8 @@ export class InstrumentService {
     }
   }
 
-  async remove(id: tbl_instruments['id']): Promise<InstrumentPayload> {
-    let instrument: Instrument
+  async remove(id: tbl_instruments['id']) {
+    let instrument: tbl_instruments
     let userErrors: UserError[]
     try {
       userErrors = [],

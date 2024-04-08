@@ -8,15 +8,15 @@ import {
   ResolveField,
 } from '@nestjs/graphql'
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { DisciplineService } from './discipline.service'
 import { Discipline, DisciplinePayload } from './entities/discipline.entity'
-import { SubdisciplineService } from '../subdiscipline/subdiscipline.service'
+import { SubdisciplineService } from '@/festival/subdiscipline/subdiscipline.service'
 import { DisciplineInput } from './dto/discipline.input'
-import { PerformerType } from '../../common.entity'
-import { InstrumentService } from '../instrument/instrument.service'
-import { Instrument } from '../instrument/entities/instrument.entity'
-import { Subdiscipline } from '../subdiscipline/entities/subdiscipline.entity'
+import { PerformerType } from '@/common.entity'
+import { InstrumentService } from '@/festival/instrument/instrument.service'
+import { Instrument } from '@/festival/instrument/entities/instrument.entity'
+import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity'
 import { tbl_discipline } from '@prisma/client'
 
 @Resolver(() => Discipline)

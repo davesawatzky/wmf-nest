@@ -6,8 +6,8 @@ import {
   tbl_discipline,
 } from '@prisma/client'
 import { SubdisciplineInput } from './dto/subdiscipline.input'
-import { PrismaService } from '../../prisma/prisma.service'
-import { PerformerType, UserError } from '../../common.entity'
+import { PrismaService } from '@/prisma/prisma.service'
+import { PerformerType, UserError } from '@/common.entity'
 import {Subdiscipline, SubdisciplinePayload} from './entities/subdiscipline.entity'
 
 @Injectable()
@@ -16,8 +16,8 @@ export class SubdisciplineService {
 
   async create(
     subdisciplineInput: SubdisciplineInput
-  ):Promise<SubdisciplinePayload> {
-    let subdiscipline: Subdiscipline
+  ) {
+    let subdiscipline: tbl_subdiscipline
     let userErrors: UserError[]
     try {
       userErrors = [],
@@ -52,8 +52,8 @@ export class SubdisciplineService {
   }
 
   async findAll(
-    disciplineID?: tbl_discipline['id'],
-    performerType?: PerformerType
+    disciplineID?: tbl_discipline['id'] | null,
+    performerType?: PerformerType | null
   ) {
     return await this.prisma.tbl_subdiscipline.findMany({
       where: {
@@ -72,8 +72,8 @@ export class SubdisciplineService {
   async update(
     id: tbl_subdiscipline['id'],
     subdisciplineInput: SubdisciplineInput
-  ): Promise<SubdisciplinePayload> {
-    let subdiscipline: Subdiscipline
+  ) {
+    let subdiscipline: tbl_subdiscipline
     let userErrors: UserError[]
     try {
       userErrors = []
@@ -106,8 +106,8 @@ export class SubdisciplineService {
     }
   }
 
-  async remove(id: tbl_subdiscipline['id']):Promise<SubdisciplinePayload> {
-    let subdiscipline: Subdiscipline
+  async remove(id: tbl_subdiscipline['id']) {
+    let subdiscipline: tbl_subdiscipline
     let userErrors: UserError[]
     try {
       userErrors = [],

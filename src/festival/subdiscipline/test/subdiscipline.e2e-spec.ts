@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 import request from 'supertest-graphql'
 import {Subdiscipline, SubdisciplinePayload} from '../entities/subdiscipline.entity'
 import { SubdisciplineInput } from '../dto/subdiscipline.input'
-import {PerformerType} from 'src/common.entity'
+import {PerformerType} from '@/common.entity'
 
 
 describe('Subdiscipline', () => {

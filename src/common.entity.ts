@@ -12,6 +12,11 @@ export enum PerformerType {
   COMMUNITY = 'COMMUNITY'
 }
 
+registerEnumType(PerformerType, {
+  name: 'PerformerType',
+  description: 'SOLO, GROUP, SCHOOL, COMMUNITY',
+})
+
 @ObjectType()
 export class UserError {
   message: string

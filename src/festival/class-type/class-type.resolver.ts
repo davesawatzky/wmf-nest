@@ -2,11 +2,11 @@ import { Resolver, Query, Args, Int, Mutation, ResolveField, Parent } from '@nes
 import { ClassType, ClassTypePayload } from './entities/class-type.entity'
 import { ClassTypeService } from './class-type.service'
 import {HttpException, HttpStatus, UseGuards} from '@nestjs/common'
-import {JwtAuthGuard} from 'src/auth/jwt-auth.guard'
+import {JwtAuthGuard} from '@/auth/jwt-auth.guard'
 import {ClassTypeInput} from './dto/class-type.input'
 import {tbl_class_type} from '@prisma/client'
-import {FestivalClass} from '../festival-class/entities/festival-class.entity'
-import { FestivalClassService } from '../festival-class/festival-class.service'
+import {FestivalClass} from '@/festival/festival-class/entities/festival-class.entity'
+import { FestivalClassService } from '@/festival/festival-class/festival-class.service'
 
 @Resolver(() => ClassType)
 @UseGuards(JwtAuthGuard)

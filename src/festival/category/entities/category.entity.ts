@@ -1,8 +1,8 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { UserError } from '../../../common.entity'
-import { FestivalClass } from '../../festival-class/entities/festival-class.entity'
-import {Level} from 'src/festival/level/entities/level.entity'
-import {Subdiscipline} from 'src/festival/subdiscipline/entities/subdiscipline.entity'
+import { UserError } from '@/common.entity'
+import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
+import {Level} from '@/festival/level/entities/level.entity'
+import {Subdiscipline} from '@/festival/subdiscipline/entities/subdiscipline.entity'
 
 @ObjectType()
 export class Category {

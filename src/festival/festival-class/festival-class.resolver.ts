@@ -8,7 +8,7 @@ import {
   Int,
 } from '@nestjs/graphql'
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { FestivalClassService } from './festival-class.service'
 import { FestivalClassInput } from './dto/festival-class.input'
 import { FestivalClassSearchArgs } from './dto/festival-class.input'
@@ -16,17 +16,17 @@ import {
   FestivalClass,
   FestivalClassPayload,
 } from './entities/festival-class.entity'
-import { PerformerType } from '../../common.entity'
-import { ClassType } from '../class-type/entities/class-type.entity'
-import { SubdisciplineService } from '../subdiscipline/subdiscipline.service'
-import { LevelService } from '../level/level.service'
-import { ClassTypeService } from '../class-type/class-type.service'
-import { CategoryService } from '../category/category.service'
+import { PerformerType } from '@/common.entity'
+import { ClassType } from '@/festival/class-type/entities/class-type.entity'
+import { SubdisciplineService } from '@/festival/subdiscipline/subdiscipline.service'
+import { LevelService } from '@/festival/level/level.service'
+import { ClassTypeService } from '@/festival/class-type/class-type.service'
+import { CategoryService } from '@/festival/category/category.service'
 import { tbl_class_type, tbl_classlist } from '@prisma/client'
-import { Trophy } from '../trophy/entities/trophy.entity'
-import { Level } from '../level/entities/level.entity'
-import { Subdiscipline } from '../subdiscipline/entities/subdiscipline.entity'
-import { Category } from '../category/entities/category.entity'
+import { Trophy } from '@/festival/trophy/entities/trophy.entity'
+import { Level } from '@/festival/level/entities/level.entity'
+import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity'
+import { Category } from '@/festival/category/entities/category.entity'
 
 @Resolver(() => FestivalClass)
 @UseGuards(JwtAuthGuard)

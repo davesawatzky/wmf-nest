@@ -8,16 +8,16 @@ import {
   Int,
 } from '@nestjs/graphql'
 import { CategoryService } from './category.service'
-import { FestivalClassService } from '../festival-class/festival-class.service'
+import { FestivalClassService } from '@/festival/festival-class/festival-class.service'
 import { CategoryInput } from './dto/category.input'
 import { Category, CategoryPayload } from './entities/category.entity'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { PerformerType } from '../../common.entity'
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
+import { PerformerType } from '@/common.entity'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { HttpException, HttpStatus, UseFilters, UseGuards } from '@nestjs/common'
 import { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
-import { FestivalClass } from '../festival-class/entities/festival-class.entity'
-import {GraphQLExceptionFilter} from '../../exceptionFilters/gql-exception.filter'
+import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
+import {GraphQLExceptionFilter} from '@/exceptionFilters/gql-exception.filter'
 
 @Resolver(() => Category)
 @UseGuards(JwtAuthGuard)

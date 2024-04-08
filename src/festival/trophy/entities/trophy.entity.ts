@@ -1,6 +1,6 @@
 import { Field, ObjectType, Int } from '@nestjs/graphql'
-import { FestivalClass } from '../../festival-class/entities/festival-class.entity'
-import { UserError } from '../../../common.entity'
+import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
+import { UserError } from '@/common.entity'
 
 @ObjectType()
 export class Trophy {

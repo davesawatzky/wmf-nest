@@ -2,14 +2,12 @@ import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
 import { Type, Transform } from 'class-transformer'
 import { Decimal } from '@prisma/client/runtime/library'
-import {Discipline} from '../../discipline/entities/discipline.entity'
-import { Category } from 'src/festival/category/entities/category.entity'
-import { FestivalClass } from '../../festival-class/entities/festival-class.entity'
-import { Level } from '../../level/entities/level.entity'
-import {PerformerType, UserError} from '../../../common.entity'
-import { tbl_subdiscipline_performer_type } from '@prisma/client'
+import {Discipline} from '@/festival/discipline/entities/discipline.entity'
+import { Category } from '@/festival/category/entities/category.entity'
+import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
+import { Level } from '@/festival/level/entities/level.entity'
+import {PerformerType, UserError} from '@/common.entity'
 
-registerEnumType(PerformerType, {name: 'PerformerType'})
 
 @ObjectType()
 export class Subdiscipline {
@@ -24,8 +22,7 @@ export class Subdiscipline {
   @Field(() => Int)
   minPerformers?: number
 
-  @Field(() => PerformerType)
-  performerType?: PerformerType | tbl_subdiscipline_performer_type
+  performerType?: PerformerType
 
   @Field(() => GraphQLDecimal)
   @Type(() => Object)

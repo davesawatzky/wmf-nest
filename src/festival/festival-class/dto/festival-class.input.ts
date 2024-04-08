@@ -2,22 +2,20 @@ import { InputType, Field, Int, registerEnumType } from '@nestjs/graphql'
 import { Decimal } from '@prisma/client/runtime/library'
 import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
 import { Type, Transform } from 'class-transformer'
-import { PerformerType } from '../../../common.entity'
-import { IsInt, IsNumber, IsOptional, IsString } from 'class-validator'
+import { PerformerType } from '@/common.entity'
+import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, isNotEmpty } from 'class-validator'
 
-registerEnumType(PerformerType, {
-  name: 'PerformerType',
-  description: 'SOLO, GROUP, SCHOOL, COMMUNITY',
-})
+
 
 @InputType()
 export class FestivalClassInput {
-  @IsInt()
-  @Field(() => Int)
-  classTypeID: number
-
+  
   @IsString()
   classNumber: string
+  
+  @Field(() => Int)
+  @IsInt()
+  classTypeID: number
 
   @IsInt()
   @Field(() => Int)
@@ -43,18 +41,20 @@ export class FestivalClassInput {
   @IsOptional()
   requiredSelection?: string
 
-  @Field(() => PerformerType)
+  @IsNotEmpty()
   performerType: PerformerType
 
   @IsNumber()
+  @IsOptional()
   @Field(() => GraphQLDecimal)
   @Type(() => Object)
   @Transform(transformToDecimal)
   price?: Decimal
 
   @IsString()
-  @IsOptional()
-  description?: string
+  description: string
+
+
 }
 
 @InputType()

@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common'
-import { PrismaService } from '../../prisma/prisma.service'
+import { PrismaService } from '@/prisma/prisma.service'
 import { DisciplineInput } from './dto/discipline.input'
 import { tbl_discipline } from '@prisma/client'
-import { PerformerType } from '../../common.entity'
-import { Instrument } from '../instrument/entities/instrument.entity'
+import { PerformerType } from '@/common.entity'
+import { Instrument } from '@/festival/instrument/entities/instrument.entity'
 import {Discipline, DisciplinePayload} from './entities/discipline.entity'
-import { UserError } from '../../common.entity'
+import { UserError } from '@/common.entity'
 
 @Injectable()
 export class DisciplineService {
   constructor(private prisma: PrismaService) {}
 
-  async create(disciplineInput: DisciplineInput):Promise<DisciplinePayload> {
-    let discipline: Discipline
+  async create(disciplineInput: DisciplineInput) {
+    let discipline: tbl_discipline;
     let userErrors: UserError[]
     try{
       userErrors = [],
@@ -47,7 +47,7 @@ export class DisciplineService {
   async findAll(
     performerType?: PerformerType | null,
     instrument?: Instrument['name'] | null
-  ):Promise<Discipline[]> {
+  ) {
     if (!!performerType && !instrument) {
       return await this.prisma.tbl_discipline.findMany({
         where: {
@@ -105,7 +105,7 @@ export class DisciplineService {
     }
   }
 
-  async findOne(id: tbl_discipline['id']):Promise<Discipline> {
+  async findOne(id: tbl_discipline['id']) {
     return await this.prisma.tbl_discipline.findUnique({
       where: { id },
     })
@@ -114,8 +114,8 @@ export class DisciplineService {
   async update(
     id: tbl_discipline['id'],
     DisciplineInput: Partial<tbl_discipline>
-  ):Promise<DisciplinePayload> {
-    let discipline: Discipline
+  ) {
+    let discipline: tbl_discipline
     let userErrors: UserError[]
     try {
       userErrors = []
@@ -148,8 +148,8 @@ export class DisciplineService {
     }
   }
 
-  async remove(disciplineID: tbl_discipline['id']):Promise<DisciplinePayload> {
-    let discipline: Discipline
+  async remove(disciplineID: tbl_discipline['id']) {
+    let discipline: tbl_discipline
     let userErrors: UserError[]
     try {
       userErrors = []

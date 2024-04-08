@@ -8,12 +8,12 @@ import {
   Parent,
 } from '@nestjs/graphql'
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { Instrument, InstrumentPayload } from './entities/instrument.entity'
 import { InstrumentInput } from './dto/instrument.input'
 import { InstrumentService } from './instrument.service'
-import { Discipline } from '../discipline/entities/discipline.entity'
-import { DisciplineService } from '../discipline/discipline.service'
+import { Discipline } from '@/festival/discipline/entities/discipline.entity'
+import { DisciplineService } from '@/festival/discipline/discipline.service'
 import { tbl_instruments } from '@prisma/client'
 
 @Resolver(() => Instrument)

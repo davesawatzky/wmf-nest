@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { tbl_class_type } from '@prisma/client'
-import {PrismaService} from '../../prisma/prisma.service'
-import {UserError} from 'src/common.entity'
+import {PrismaService} from '@/prisma/prisma.service'
+import {UserError} from '@/common.entity'
 import {ClassType, ClassTypePayload} from './entities/class-type.entity'
 import { ClassTypeInput } from './dto/class-type.input'
 
@@ -9,8 +9,8 @@ import { ClassTypeInput } from './dto/class-type.input'
 export class ClassTypeService {
   constructor(private prisma: PrismaService) {}
 
-    async create(classTypeInput: ClassTypeInput):Promise<ClassTypePayload> {
-    let classType: ClassType
+    async create(classTypeInput: ClassTypeInput) {
+    let classType: tbl_class_type
     let userErrors: UserError[]
     try {
       userErrors = [],
@@ -43,18 +43,18 @@ export class ClassTypeService {
     }
   }
   
-  async findAll():Promise<ClassType[]> {
+  async findAll() {
     return await this.prisma.tbl_class_type.findMany()
   }
 
-  async findOne(id: tbl_class_type['id']):Promise<ClassType> {
+  async findOne(id: tbl_class_type['id']) {
     return await this.prisma.tbl_class_type.findUnique({
       where: { id },
     })
   }
 
-  async update(id: tbl_class_type['id'], classTypeInput: ClassTypeInput):Promise<ClassTypePayload> {
-    let classType: ClassType
+  async update(id: tbl_class_type['id'], classTypeInput: ClassTypeInput){
+    let classType: tbl_class_type
     let userErrors: UserError[]
     try {
       userErrors = []
@@ -87,8 +87,8 @@ export class ClassTypeService {
     }
   }
 
-  async remove(id: tbl_class_type['id']):Promise<ClassTypePayload> {
-    let classType: ClassType
+  async remove(id: tbl_class_type['id']) {
+    let classType: tbl_class_type
     let userErrors: UserError[]
     try {
       userErrors = []

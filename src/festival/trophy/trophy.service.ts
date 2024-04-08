@@ -10,7 +10,7 @@ export class TrophyService {
   constructor(private prisma: PrismaService) {}
 
   async create(trophyInput: TrophyInput) {
-    let trophy: Trophy
+    let trophy: tbl_trophy
     let userErrors: UserError[]
     try {
       userErrors = [],
@@ -66,7 +66,7 @@ export class TrophyService {
   }
 
   async update(id: tbl_trophy['id'], trophyInput: TrophyInput) {
-    let trophy: Trophy
+    let trophy: tbl_trophy
     let userErrors: UserError[]
     try {
       userErrors = [],
@@ -100,7 +100,7 @@ export class TrophyService {
   }
 
   async remove(id: tbl_trophy['id']) {
-    let trophy: Trophy
+    let trophy: tbl_trophy
     let userErrors: UserError[]
     try {
       userErrors = [],

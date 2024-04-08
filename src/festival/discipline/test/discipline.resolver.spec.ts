@@ -10,9 +10,9 @@ import {
 } from 'vitest'
 import { DisciplineResolver } from '../discipline.resolver'
 import { DisciplineService } from '../discipline.service'
-import { InstrumentService } from '../../instrument/instrument.service'
-import { SubdisciplineService } from '../../subdiscipline/subdiscipline.service'
-import { PrismaService } from '../../../prisma/prisma.service'
+import { InstrumentService } from '@/festival/instrument/instrument.service'
+import { SubdisciplineService } from '@/festival/subdiscipline/subdiscipline.service'
+import { PrismaService } from '@/prisma/prisma.service'
 
 describe('DisciplineResolver', () => {
   let resolver: DisciplineResolver
