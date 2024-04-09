@@ -2,13 +2,13 @@
   "prettier.enable": true,
   "prettier.requireConfig": true,
   "material-icon-theme.activeIconPack": "nest",
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "editor.formatOnSave": true,
   "editor.formatOnType": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "never"
   },
-  "eslint.format.enable": false,
+  "eslint.format.enable": true,
   "eslint.codeActionsOnSave.mode": "problems",
   "eslint.enable": true,
   "eslint.lintTask.enable": false,

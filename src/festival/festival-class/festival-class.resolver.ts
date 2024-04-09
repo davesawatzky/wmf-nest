@@ -51,13 +51,16 @@ export class FestivalClassResolver {
     })
     festivalClassSearch: FestivalClassSearchArgs | null
   ) {
-    const { subdisciplineID, categoryID, levelID } = festivalClassSearch
-    return await this.festivalClassService.findAll(
-      performerType,
-      subdisciplineID,
-      levelID,
-      categoryID
-    )
+    try {
+      return await this.festivalClassService.findAll(
+        performerType,
+        festivalClassSearch?.subdisciplineID,
+        festivalClassSearch?.levelID,
+        festivalClassSearch?.categoryID
+      )
+    } catch(error) {
+      throw new HttpException('Festival classes not found', HttpStatus.NOT_FOUND)
+    }
   }
 
   @Query(() => [FestivalClass])
@@ -65,14 +68,22 @@ export class FestivalClassResolver {
     @Args('festivalClassSearch', { type: () => FestivalClassSearchArgs })
     festivalClassSearch: FestivalClassSearchArgs
   ) {
-    return await this.festivalClassService.search(festivalClassSearch)
+    try {
+      return await this.festivalClassService.search(festivalClassSearch)
+    } catch (error) {
+      throw new HttpException('Festival class not found', HttpStatus.NOT_FOUND)
+    }
   }
 
   @Query(() => FestivalClass)
   async festivalClass(
     @Args('id', { type: () => Int }) id: FestivalClass['id']
   ) {
-    return await this.festivalClassService.findById(id)
+    try {
+      return await this.festivalClassService.findById(id)
+    } catch (error) {
+      throw new HttpException('Festival class not found', HttpStatus.NOT_FOUND)
+    }
   }
 
   @Query(() => FestivalClass)
@@ -80,7 +91,11 @@ export class FestivalClassResolver {
     @Args('festivalClassNumber', { type: () => String })
     festivalClassNumber: FestivalClass['classNumber']
   ) {
-    return await this.festivalClassService.findByNumber(festivalClassNumber)
+    try {
+      return await this.festivalClassService.findByNumber(festivalClassNumber)
+    } catch (error) {
+      throw new HttpException('Festival class not found', HttpStatus.NOT_FOUND)
+    }
   }
 
   /** Mutations */

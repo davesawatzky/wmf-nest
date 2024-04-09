@@ -123,7 +123,7 @@ type FestivalClass {
   maxSelections: Int!
   minSelections: Int!
   performerType: PerformerType!
-  price: Decimal
+  price: Int
   requiredSelection: String
   subdiscipline: Subdiscipline!
   trophies: [Trophy!]
@@ -138,7 +138,7 @@ input FestivalClassInput {
   maxSelections: Int!
   minSelections: Int!
   performerType: PerformerType!
-  price: Decimal
+  price: Int
   requiredSelection: String
   subdisciplineID: Int!
 }
@@ -542,7 +542,7 @@ type Subdiscipline {
   categories: [Category!]
   description: String
   discipline: Discipline
-  festivalClasses(categoryID: Int!, levelID: Int!, performerType: PerformerType!): [FestivalClass!]
+  festivalClasses(categoryID: Int, levelID: Int, performerType: PerformerType): [FestivalClass!]
   id: Int!
   levels: [Level!]
   maxPerformers: Int

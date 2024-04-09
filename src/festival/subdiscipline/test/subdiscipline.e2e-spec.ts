@@ -343,7 +343,6 @@ describe('Subdiscipline', () => {
             performerType: "GROUP"
         }
         })
-      console.log(response.errors)
       expect(response.data.subdisciplineCreate.userErrors[0]).toBeTruthy()
       expect(response.data.subdisciplineCreate.subdiscipline).toBeNull()
     })

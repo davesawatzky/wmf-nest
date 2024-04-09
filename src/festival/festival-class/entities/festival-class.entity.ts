@@ -1,14 +1,13 @@
-import { Field, ObjectType, Int, registerEnumType } from '@nestjs/graphql'
-import { Decimal } from '@prisma/client/runtime/library'
-import { PerformerType, UserError } from '../../../common.entity'
-import { Subdiscipline } from '../../subdiscipline/entities/subdiscipline.entity'
-import { Level } from '../../level/entities/level.entity'
-import { Category } from '../../category/entities/category.entity'
-import { Trophy } from '../../trophy/entities/trophy.entity'
+import { Field, ObjectType, Int, registerEnumType, Float } from '@nestjs/graphql'
+import { PerformerType, UserError } from '@/common.entity'
+import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity'
+import { Level } from '@/festival/level/entities/level.entity'
+import { Category } from '@/festival/category/entities/category.entity'
+import { Trophy } from '@/festival/trophy/entities/trophy.entity'
 import { ClassType } from '@/festival/class-type/entities/class-type.entity'
-import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
 import {Type, Transform} from 'class-transformer'
 import {IsNotEmpty} from 'class-validator'
+import {Decimal} from '@prisma/client/runtime/library'
 
 
 
@@ -31,13 +30,9 @@ export class FestivalClass {
   minSelections: number
   requiredSelection?: string
 
-  @IsNotEmpty()
   performerType: PerformerType
 
-  @Field(() => GraphQLDecimal)
-  @Type(() => Object)
-  @Transform(transformToDecimal)
-  price?: Decimal
+  price?: number
   description?: string
   trophies?: Trophy[]
 }

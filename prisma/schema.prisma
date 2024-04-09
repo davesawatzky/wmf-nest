@@ -52,6 +52,7 @@ model tbl_classlist {
   @@index([categoryID])
   @@index([levelID])
   @@index([subdisciplineID])
+  @@unique([subdisciplineID, categoryID, levelID])
 }
 
 model tbl_class_type {

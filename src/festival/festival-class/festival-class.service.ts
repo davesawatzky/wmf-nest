@@ -24,6 +24,16 @@ export class FestivalClassService {
     let festivalClass: tbl_classlist
     let userErrors: UserError[]
     try {
+      userErrors = []
+      await this.prisma.tbl_category.findUnique({
+        where: { id: festivalClassInput.categoryID },
+      })
+      await this.prisma.tbl_level.findUnique({
+        where: { id: festivalClassInput.levelID },
+      })
+      await this.prisma.tbl_subdiscipline.findUnique({
+        where: { id: festivalClassInput.subdisciplineID },
+      })
       festivalClass = await this.prisma.tbl_classlist.create({
         data: {
           ...festivalClassInput
@@ -112,22 +122,88 @@ export class FestivalClassService {
   async update(
     festivalClassID: tbl_classlist['id'],
     festivalClassInput: FestivalClassInput
-  ){
+  ) {
+    let festivalClass: tbl_classlist
+    let userErrors: UserError[]
+    try {
+      const category = await this.prisma.tbl_category.findUnique({
+        where: {id: festivalClassInput.categoryID},
+      })
+      const level = await this.prisma.tbl_level.findUnique({
+        where: {id: festivalClassInput.levelID},
+      })
+      const subdiscipline = await this.prisma.tbl_subdiscipline.findUnique({
+        where: {id: festivalClassInput.subdisciplineID},
+      })
+
+      userErrors = []
+      festivalClass = await this.prisma.tbl_classlist.update({
+        where: {id: festivalClassID},
+        data: {...festivalClassInput},
+      })
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        userErrors = [
+          {
+            message: 'Festival class already exists',
+            field: ['name']
+          }
+        ]
+        festivalClass = null
+      } else if (error.code === 'p2025') {
+        userErrors = [
+          {
+            message: 'Festival class to update not found',
+            field: ['id']
+          }
+        ]
+        festivalClass = null
+      } else {
+        userErrors = [
+          {
+            message: 'Cannot update festival class',
+            field: []
+          }
+        ]
+        festivalClass = null
+      }
+    }
     return {
-      userErrors: [],
-      festivalClass: await this.prisma.tbl_classlist.update({
-        where: { id: festivalClassID },
-        data: { ...festivalClassInput },
-      }),
+      userErrors,
+      festivalClass,
     }
   }
 
   async remove(id: tbl_classlist['id']) {
-    return {
-      userErrors: [],
-      festivalClass: await this.prisma.tbl_classlist.delete({
+    let festivalClass: tbl_classlist
+    let userErrors: UserError[]
+    try {
+      userErrors = [],
+      festivalClass = await this.prisma.tbl_classlist.delete({
         where: { id },
-      }),
+      })
+    } catch (error:any) {
+      if (error.code === 'P2025') {
+        userErrors = [
+          {
+            message: 'Festival class to delete not found',
+            field: ['id']
+          }
+        ]
+        festivalClass = null
+      } else {
+        userErrors = [
+          {
+            message: 'Cannot delete festival class',
+            field: []
+          }
+        ]
+        festivalClass = null
+      }
+    }
+    return {
+      userErrors,
+      festivalClass,
     }
   }
 }
