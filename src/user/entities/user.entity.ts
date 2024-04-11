@@ -29,5 +29,5 @@ export class User {
 @ObjectType()
 export class UserPayload {
   userErrors: UserError[]
-  user: User
+  user?: User
 }

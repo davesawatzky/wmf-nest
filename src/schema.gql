@@ -384,7 +384,7 @@ type Query {
   tokenCheck: Boolean!
   trophies: [Trophy!]!
   trophy(id: Int!): Trophy!
-  user(userID: Int!): User!
+  user(email: String, userID: Int): User!
   users: [User!]!
 }
 
@@ -681,6 +681,6 @@ input UserInput {
 }
 
 type UserPayload {
-  user: User!
+  user: User
   userErrors: [UserError!]!
 }
