@@ -110,8 +110,8 @@ export class AuthService {
       const payload = {
         username: user.email,
         sub: user.id,
-        privateTeacher: user.privateTeacher,
-        schoolTeacher: user.schoolTeacher,
+        // privateTeacher: user.privateTeacher,
+        // schoolTeacher: user.schoolTeacher,
       }
       const signedInUser = await this.prisma.tbl_user.findUnique({
         where: { id: user.id },

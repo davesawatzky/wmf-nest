@@ -30,6 +30,9 @@ import {Category} from '@/festival/category/entities/category.entity'
 import {Level} from '@/festival/level/entities/level.entity'
 import {Discipline} from '@/festival/discipline/entities/discipline.entity'
 import {DisciplineService} from '@/festival/discipline/discipline.service'
+import {AbilitiesGuard} from '@/ability/abilities.guard'
+import {CheckAbilities} from '@/ability/abilities.decorator'
+import {Action} from '@/ability/ability.factory'
 
 @Resolver(() => Subdiscipline)
 @UseGuards(JwtAuthGuard)
@@ -45,6 +48,8 @@ export class SubdisciplineResolver {
   /** Queries */
 
   @Query(() => [Subdiscipline])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Subdiscipline})
   async subdisciplines(
     @Args('disciplineID', { type: () => Int, nullable: true })
     disciplineID: tbl_discipline['id'] | null,
@@ -55,6 +60,8 @@ export class SubdisciplineResolver {
   }
 
   @Query(() => Subdiscipline)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Subdiscipline})
   async subdiscipline(
     @Args('subdisciplineID', { type: () => Int })
     subdisciplineID: Subdiscipline['id']
@@ -66,6 +73,8 @@ export class SubdisciplineResolver {
   /** Mutations */
 
   @Mutation(() => SubdisciplinePayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Create, subject: Subdiscipline})
   async subdisciplineCreate(
     @Args('subdisciplineInput')
     subdisciplineInput: SubdisciplineInput
@@ -81,6 +90,8 @@ export class SubdisciplineResolver {
   }
   
   @Mutation(() => SubdisciplinePayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Update, subject: Subdiscipline})
   async subdisciplineUpdate(
     @Args('subdisciplineID', {type: () => Int})
     subdisciplineID: Subdiscipline['id'],
@@ -100,6 +111,8 @@ export class SubdisciplineResolver {
   }
 
   @Mutation(() => SubdisciplinePayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Delete, subject: Subdiscipline})
   async subdisciplineDelete(
     @Args('subdisciplineID', {type: () => Int})
     subdisciplineID: Subdiscipline['id']
@@ -116,6 +129,8 @@ export class SubdisciplineResolver {
   /** Field Resolvers */
 
   @ResolveField(() => [FestivalClass])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: FestivalClass})
   async festivalClasses(
     @Parent() subdiscipline: tbl_subdiscipline,
     @Args('performerType', { type: () => PerformerType, nullable: true })
@@ -135,6 +150,8 @@ export class SubdisciplineResolver {
   }
 
   @ResolveField(() => [Category])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Category})
   async categories(
     @Parent() subdiscipline: tbl_subdiscipline,
   ) {
@@ -143,6 +160,8 @@ export class SubdisciplineResolver {
   }
 
   @ResolveField(() => [Level])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Level})
   async levels(
     @Parent() subdiscipline:tbl_subdiscipline,
   ) {
@@ -151,6 +170,8 @@ export class SubdisciplineResolver {
   }
 
   @ResolveField(() => Discipline)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Discipline})
   async discipline(
     @Parent() subdiscipline: tbl_subdiscipline,
   ) {

@@ -13,6 +13,9 @@ import { TrophyService } from './trophy.service'
 import { Trophy, TrophyPayload } from './entities/trophy.entity'
 import { TrophyInput } from './dto/trophy.input'
 import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
+import {CheckAbilities} from '@/ability/abilities.decorator'
+import {Action} from '@/ability/ability.factory'
+import {AbilitiesGuard} from '@/ability/abilities.guard'
 
 @Resolver(() => Trophy)
 @UseGuards(JwtAuthGuard)
@@ -22,11 +25,15 @@ export class TrophyResolver {
   /** Queries */
 
   @Query(() => [Trophy])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Trophy})
   async trophies() {
     return await this.trophyService.findAll()
   }
 
   @Query(() => Trophy)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Trophy})
   async trophy(@Args('id', {type: () => Int}) id: Trophy['id']) {
     return await this.trophyService.findOne(id)
   }
@@ -34,6 +41,8 @@ export class TrophyResolver {
   /** Mutations */
 
   @Mutation(() => TrophyPayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Create, subject: Trophy})
   async trophyCreate(@Args('trophyInput') trophyInput: TrophyInput) {
     let response:any
     try {
@@ -45,6 +54,8 @@ export class TrophyResolver {
   }
 
   @Mutation(() => TrophyPayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Update, subject: Trophy})
   async trophyUpdate(
     @Args('trophyID', {type: () => Int}) trophyID: Trophy['id'],
     @Args('trophyInput') trophyInput: TrophyInput
@@ -59,6 +70,8 @@ export class TrophyResolver {
   }
 
   @Mutation(() => TrophyPayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Delete, subject: Trophy})
   async trophyDelete(@Args('trophyID', {type: () => Int}) trophyID: Trophy['id']) {
     let response: any
     try {
@@ -72,6 +85,8 @@ export class TrophyResolver {
   /** Field Resolvers */
 
   @ResolveField(() => [FestivalClass])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: FestivalClass})
   async festivalClasses(@Parent() trophy: Trophy) {
     const { id }: { id: Trophy['id'] } = trophy
     return await this.trophyService.findTrophyClasses(id)

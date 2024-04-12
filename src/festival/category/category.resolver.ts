@@ -18,6 +18,9 @@ import { HttpException, HttpStatus, UseFilters, UseGuards } from '@nestjs/common
 import { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
 import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
 import {GraphQLExceptionFilter} from '@/exceptionFilters/gql-exception.filter'
+import {AbilitiesGuard} from '@/ability/abilities.guard'
+import {CheckAbilities} from '@/ability/abilities.decorator'
+import {Action} from '@/ability/ability.factory'
 
 @Resolver(() => Category)
 @UseGuards(JwtAuthGuard)
@@ -30,6 +33,8 @@ export class CategoryResolver {
   /** Queries */
 
   @Query(() => [Category])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Category})
   async categories(
     @Args('levelID', { type: () => Int, nullable: true })
     levelID: tbl_level['id'] | null,
@@ -40,6 +45,8 @@ export class CategoryResolver {
   }
 
   @Query(() => Category)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Category})
   async category(@Args('id', { type: () => Int }) id: Category['id']) {
     return await this.categoryService.findOne(id)
   }
@@ -47,6 +54,8 @@ export class CategoryResolver {
   /** Mutations */
 
   @Mutation(() => CategoryPayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Create, subject: Category})
   async categoryCreate(@Args('categoryInput') categoryInput: CategoryInput) {
     let response: any
     try {
@@ -58,6 +67,8 @@ export class CategoryResolver {
   }
 
   @Mutation(() => CategoryPayload)
+  @UseGuards(AbilitiesGuard)
+    @CheckAbilities({action: Action.Update, subject: Category})
   async categoryUpdate(
     @Args('categoryID', { type: () => Int })
     categoryID: Category['id'],
@@ -73,6 +84,8 @@ export class CategoryResolver {
   }
 
   @Mutation(() => CategoryPayload)
+  @UseGuards(AbilitiesGuard)
+    @CheckAbilities({action: Action.Delete, subject: Category})
   async categoryDelete(@Args('categoryID', {type: () => Int}) categoryID: Category['id']) {
     let response: any
     try {
@@ -85,6 +98,8 @@ export class CategoryResolver {
 
   /** Field Resolvers */
   @ResolveField(() => [FestivalClass])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: FestivalClass})
   async festivalClasses(
     @Parent() category: tbl_category,
     @Args('performerType', { type: () => PerformerType })

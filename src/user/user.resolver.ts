@@ -7,19 +7,21 @@ import {
   Args,
   Int,
   Context,
+  GqlExecutionContext,
 } from '@nestjs/graphql'
 import { UserService } from './user.service'
 import { User, UserPayload } from './entities/user.entity'
 import { UserInput } from './dto/user.input'
 import { Registration } from '@/submissions/registration/entities/registration.entity'
 import { RegistrationService } from '@/submissions/registration/registration.service'
-import { ForbiddenException, HttpException, HttpStatus, UseGuards, UsePipes } from '@nestjs/common'
+import { ExecutionContext, ForbiddenException, HttpException, HttpStatus, UseGuards, UsePipes } from '@nestjs/common'
 import { JwtAuthGuard } from '../auth/jwt-auth.guard'
 import { AbilityFactory, Action } from '../ability/ability.factory'
 import { ForbiddenError } from '@casl/ability'
 import { CheckAbilities } from '../ability/abilities.decorator'
 import { AbilitiesGuard } from '../ability/abilities.guard'
 import {NotFoundError} from 'rxjs'
+import {userInfo} from 'os'
 
 @Resolver(() => User)
 @UseGuards(JwtAuthGuard)
@@ -27,37 +29,27 @@ export class UserResolver {
   constructor(
     private readonly userService: UserService,
     private readonly registrationService: RegistrationService,
-    private abilityFactory: AbilityFactory
   ) {}
 
   /** Queries */
 
   @Query(() => [User])
   @UseGuards(AbilitiesGuard)
-  @CheckAbilities({ action: Action.Users, subject: User })
+  @CheckAbilities({action: Action.Read, subject: 'admin'})
   async users() {
-    const username = { id: 1, isAdmin: false }
-    const ability = this.abilityFactory.defineAbility(username)
-    const isAllowed = ability.can(Action.Users, username)
-    if (!isAllowed) {
-      throw new ForbiddenException('only admin!!')
-    }
-    try {
-      ForbiddenError.from(ability).throwUnlessCan(Action.Users, username)
-    return await this.userService.findAll()
-    } catch (error) {
-      if (error instanceof ForbiddenError) {
-        throw new ForbiddenException(error.message)
-      }
-    }
+      return await this.userService.findAll()
   }
 
   @Query(() => User)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Read, subject: User })
   async myUser(@Context() context) {
     return await this.userService.findOne(context.req.user.id)
   }
 
   @Query(() => User || null)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Read, subject: 'admin' })
   async user(
     @Args('userID', {type: () => Int, nullable: true}) userID: User['id'],
     @Args('email', {type: () => String, nullable: true}) email: User['email'])
@@ -68,6 +60,8 @@ export class UserResolver {
   /** Mutations */
 
   @Mutation(() => UserPayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Update, subject: User })
   async userUpdate(
     @Args('userID', { type: () => Int }) userID: User['id'],
     @Args('userInput', { type: () => UserInput }) userInput: Partial<UserInput>
@@ -86,6 +80,8 @@ export class UserResolver {
   }
 
   @Mutation(() => UserPayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Delete, subject: User })
   async userDelete(@Args('id', { type: () => Int }) id: User['id']) {
     return await this.userService.remove(id)
   }
@@ -93,6 +89,8 @@ export class UserResolver {
   /** Field Resolvers */
 
   @ResolveField(() => [Registration])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Read, subject: Registration })
   async registrations(@Parent() user: User) {
     const { id }: { id: User['id'] } = user
     return await this.registrationService.findAll(id)

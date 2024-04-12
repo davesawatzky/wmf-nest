@@ -17,6 +17,9 @@ import { LevelInput } from './dto/level.input'
 import { FestivalClassService } from '@/festival/festival-class/festival-class.service'
 import { PerformerType } from '@/common.entity'
 import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
+import {AbilitiesGuard} from '@/ability/abilities.guard'
+import {CheckAbilities} from '@/ability/abilities.decorator'
+import {Action} from '@/ability/ability.factory'
 
 
 @Resolver(() => Level)
@@ -30,6 +33,8 @@ export class LevelResolver {
   /** Queries */
 
   @Query(() => [Level])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Read, subject: Level })
   async levels(
     @Args('categoryID', { type: () => Int, nullable: true })
     categoryID: tbl_category['id'] | null,
@@ -40,6 +45,8 @@ export class LevelResolver {
   }
 
   @Query(() => Level)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Read, subject: Level })
   async level(@Args('id', { type: () => Int }) id: Level['id']) {
     return await this.levelService.findOne(id)
   }
@@ -47,6 +54,8 @@ export class LevelResolver {
   /** Mutations */
 
   @Mutation(() => LevelPayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Create, subject: Level })
   async levelCreate(@Args('levelInput') levelInput: LevelInput) {
     let response: any
     try {
@@ -58,6 +67,8 @@ export class LevelResolver {
   }
 
   @Mutation(() => LevelPayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Update, subject: Level })
   async levelUpdate(
     @Args('levelID', { type: () => Int }) levelID: Level['id'],
     @Args('levelInput') levelInput: LevelInput
@@ -72,6 +83,8 @@ export class LevelResolver {
   }
 
   @Mutation(() => LevelPayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Delete, subject: Level })
   async levelDelete(
     @Args('levelID', { type: () => Int }) levelID: Level['id']
   ) {
@@ -87,6 +100,8 @@ export class LevelResolver {
   /** Field Resolver */
 
   @ResolveField(() => [FestivalClass])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Read, subject: FestivalClass })
   async festivalClasses(
     @Parent() level: tbl_level,
     @Args('performerType', { type: () => PerformerType })

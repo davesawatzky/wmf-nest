@@ -23,13 +23,13 @@ import {RegisteredClass} from '@/submissions/registered-class/entities/registere
 import {Registration} from '@/submissions/registration/entities/registration.entity'
 import {School} from '@/submissions/school/entities/school.entity'
 import {SchoolGroup} from '@/submissions/school-group/entities/school-group.entity'
+import { Selection } from '@/submissions/selection/entities/selection.entity'
 import {Teacher} from '@/submissions/teacher/entities/teacher.entity'
 
 export enum Action {
   Manage = 'manage',
   Create = 'create',
-  Read = 'Read',
-  Users = 'users',
+  Read = 'read',
   Update = 'update',
   Delete = 'delete',
 }
@@ -53,7 +53,9 @@ export type Subjects = InferSubjects<
   typeof School | 
   typeof SchoolGroup | 
   typeof Selection | 
-  typeof Teacher> | 'all'
+  typeof Teacher> |
+  'all' |
+  'admin'
 
 export type AppAbility = MongoAbility<[Action, Subjects]>
 
@@ -63,13 +65,28 @@ export class AbilityFactory {
     const { can, cannot, build } = new AbilityBuilder<AppAbility>(
       createMongoAbility
     )
-
     if (user.admin) {
       can(Action.Manage, 'all')
     } else {
-      can(Action.Read, 'all').because(
-        'your special message: only admins!!!'
-      )
+      cannot(Action.Manage,'admin').because('Admins only')
+      can(Action.Manage, Teacher)
+      can(Action.Manage, Selection)
+      can(Action.Manage, SchoolGroup)
+      can(Action.Manage, School)
+      can(Action.Manage, RegisteredClass)
+      can(Action.Manage, Registration)
+      can(Action.Manage, Group)
+      can(Action.Manage, Performer)
+      can(Action.Manage, Community)
+      can(Action.Read, FestivalClass)
+      can(Action.Read, Trophy)
+      can(Action.Read, Subdiscipline)
+      can(Action.Read, Level)
+      can(Action.Read, Instrument)
+      can(Action.Read, Discipline)
+      can(Action.Read, Category)
+      can(Action.Read, ClassType)
+      can(Action.Read, User)
     }
     return build({
       detectSubjectType: (item): any => {

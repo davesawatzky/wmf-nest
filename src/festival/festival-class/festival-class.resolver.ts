@@ -27,6 +27,9 @@ import { Trophy } from '@/festival/trophy/entities/trophy.entity'
 import { Level } from '@/festival/level/entities/level.entity'
 import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity'
 import { Category } from '@/festival/category/entities/category.entity'
+import {AbilitiesGuard} from '@/ability/abilities.guard'
+import {CheckAbilities} from '@/ability/abilities.decorator'
+import {Action} from '@/ability/ability.factory'
 
 @Resolver(() => FestivalClass)
 @UseGuards(JwtAuthGuard)
@@ -42,6 +45,8 @@ export class FestivalClassResolver {
   /** Queries */
 
   @Query(() => [FestivalClass])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: FestivalClass})
   async festivalClasses(
     @Args('performerType', { type: () => PerformerType, nullable: true })
     performerType: PerformerType | null,
@@ -64,6 +69,8 @@ export class FestivalClassResolver {
   }
 
   @Query(() => [FestivalClass])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: FestivalClass})
   async festivalClassSearch(
     @Args('festivalClassSearch', { type: () => FestivalClassSearchArgs })
     festivalClassSearch: FestivalClassSearchArgs
@@ -76,6 +83,8 @@ export class FestivalClassResolver {
   }
 
   @Query(() => FestivalClass)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: FestivalClass})
   async festivalClass(
     @Args('id', { type: () => Int }) id: FestivalClass['id']
   ) {
@@ -87,6 +96,8 @@ export class FestivalClassResolver {
   }
 
   @Query(() => FestivalClass)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: FestivalClass})
   async festivalClassByNumber(
     @Args('festivalClassNumber', { type: () => String })
     festivalClassNumber: FestivalClass['classNumber']
@@ -101,6 +112,8 @@ export class FestivalClassResolver {
   /** Mutations */
 
   @Mutation(() => FestivalClassPayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Create, subject: FestivalClass})
   async festivalClassCreate(
     @Args('festivalClassInput')
     festivalClassInput: FestivalClassInput
@@ -115,6 +128,8 @@ export class FestivalClassResolver {
   }
 
   @Mutation(() => FestivalClassPayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Update, subject: FestivalClass})
   async festivalClassUpdate(
     @Args('festivalClassID', { type: () => Int })
     festivalClassID: FestivalClass['id'],
@@ -134,6 +149,8 @@ export class FestivalClassResolver {
   }
 
   @Mutation(() => FestivalClassPayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Delete, subject: FestivalClass})
   async festivalClassDelete(
     @Args('festivalClassID', { type: () => Int })
     festivalClassID: FestivalClass['id']
@@ -144,6 +161,8 @@ export class FestivalClassResolver {
   /** Field Resolvers */
 
   @ResolveField(() => [Trophy])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: FestivalClass})
   async trophies(@Parent() festivalClass: FestivalClass) {
     const { classNumber }: { classNumber: FestivalClass['classNumber'] } =
       festivalClass
@@ -151,11 +170,15 @@ export class FestivalClassResolver {
   }
 
   @ResolveField(() => Level)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Level})
   async level(@Parent() festivalClass: tbl_classlist) {
     const { levelID }: { levelID: tbl_classlist['levelID'] } = festivalClass
     return await this.levelService.findOne(levelID)
   }
   @ResolveField(() => Subdiscipline)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Subdiscipline})
   async subdiscipline(@Parent() festivalClass: tbl_classlist) {
     const {
       subdisciplineID,
@@ -163,12 +186,16 @@ export class FestivalClassResolver {
     return await this.subdisciplineService.findOne(subdisciplineID)
   }
   @ResolveField(() => Category)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Category})
   async category(@Parent() festivalClass: tbl_classlist) {
     const { categoryID }: { categoryID: tbl_classlist['categoryID'] } =
       festivalClass
     return await this.categoryService.findOne(categoryID)
   }
   @ResolveField(() => ClassType)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: ClassType})
   async classType(@Parent() festivalClass: tbl_classlist) {
     const { classTypeID }: { classTypeID: tbl_class_type['id'] } = festivalClass
     return await this.classTypeService.findOne(classTypeID)

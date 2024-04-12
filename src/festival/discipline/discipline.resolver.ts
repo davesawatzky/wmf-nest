@@ -18,7 +18,9 @@ import { InstrumentService } from '@/festival/instrument/instrument.service'
 import { Instrument } from '@/festival/instrument/entities/instrument.entity'
 import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity'
 import { tbl_discipline } from '@prisma/client'
-
+import {AbilitiesGuard} from '@/ability/abilities.guard'
+import {CheckAbilities} from '@/ability/abilities.decorator'
+import {Action} from '@/ability/ability.factory'
 @Resolver(() => Discipline)
 @UseGuards(JwtAuthGuard)
 export class DisciplineResolver {
@@ -31,6 +33,8 @@ export class DisciplineResolver {
   /** Queries */
 
   @Query(() => [Discipline])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Discipline})
   async disciplines(
     @Args('performerType', { type: () => PerformerType, nullable: true })
     performerType: PerformerType | null,
@@ -41,6 +45,8 @@ export class DisciplineResolver {
   }
 
   @Query(() => Discipline)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Discipline})
   async discipline(@Args('id', { type: () => Int }) id: Discipline['id']) {
     return await this.disciplineService.findOne(id)
   }
@@ -48,6 +54,8 @@ export class DisciplineResolver {
   /** Mutations */
 
   @Mutation(() => DisciplinePayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Create, subject: Discipline})
   async disciplineCreate(
     @Args('disciplineInput') disciplineInput: DisciplineInput
   ) {
@@ -61,6 +69,8 @@ export class DisciplineResolver {
   }
 
   @Mutation(() => DisciplinePayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Update, subject: Discipline})
   async disciplineUpdate(
     @Args('disciplineID', { type: () => Int }) disciplineID: Discipline['id'],
     @Args('disciplineInput') disciplineInput: DisciplineInput
@@ -75,6 +85,8 @@ export class DisciplineResolver {
   }
 
   @Mutation(() => DisciplinePayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Delete, subject: Discipline})
   async disciplineDelete(
     @Args('disciplineID', { type: () => Int }) disciplineID: Discipline['id']
   ) {
@@ -91,6 +103,8 @@ export class DisciplineResolver {
    * Field Resolvers
    */
   @ResolveField(() => [Subdiscipline])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Subdiscipline})
   async subdisciplines(
     @Parent() discipline: Discipline,
     @Args('performerType', { type: () => PerformerType, nullable: true })

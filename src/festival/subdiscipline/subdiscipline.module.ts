@@ -5,6 +5,7 @@ import { DisciplineModule } from '@/festival/discipline/discipline.module'
 import { FestivalClassModule } from '@/festival/festival-class/festival-class.module'
 import {CategoryModule} from '@/festival/category/category.module'
 import {LevelModule} from '@/festival/level/level.module'
+import {AbilityModule} from '@/ability/ability.module'
 
 @Module({
   providers: [SubdisciplineResolver, SubdisciplineService],
@@ -12,7 +13,8 @@ import {LevelModule} from '@/festival/level/level.module'
     forwardRef(() => DisciplineModule),
     forwardRef(() => FestivalClassModule),
     CategoryModule,
-    LevelModule
+    LevelModule,
+    AbilityModule
   ],
   exports: [SubdisciplineService],
 })
