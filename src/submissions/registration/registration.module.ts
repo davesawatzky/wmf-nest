@@ -16,7 +16,7 @@ import { SchoolModule } from '../school/school.module'
     PerformerModule,
     RegisteredClassModule,
     GroupModule,
-    CommunityModule,
+    forwardRef(() => CommunityModule),
     forwardRef(() => TeacherModule),
     SchoolModule,
   ],

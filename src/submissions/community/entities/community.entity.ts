@@ -1,5 +1,6 @@
 import { Field, ObjectType, Int } from '@nestjs/graphql'
 import { UserError } from '../../../common.entity'
+import {Registration} from '@/submissions/registration/entities/registration.entity'
 
 @ObjectType()
 export class Community {
@@ -19,6 +20,8 @@ export class Community {
   earliestTime?: string
   latestTime?: string
   unavailable?: string
+
+  registration: Registration
 }
 
 @ObjectType()

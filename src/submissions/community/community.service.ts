@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { tbl_registration, tbl_reg_community } from '@prisma/client'
 import { CommunityInput } from './dto/community.input'
-import { PrismaService } from '../../prisma/prisma.service'
+import { PrismaService } from '@/prisma/prisma.service'
 
 @Injectable()
 export class CommunityService {
@@ -22,9 +22,14 @@ export class CommunityService {
     })
   }
 
-  async findOne(registrationID: tbl_reg_community['id']) {
+  async findOne(
+    registrationID?: tbl_reg_community['id'],
+    communityID?: tbl_reg_community['id']) {
     return await this.prisma.tbl_reg_community.findUnique({
-      where: { regID: registrationID },
+      where: {
+        regID: registrationID ?? undefined,
+        id: communityID ?? undefined
+      },
     })
   }
 

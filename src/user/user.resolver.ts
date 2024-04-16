@@ -82,8 +82,8 @@ export class UserResolver {
   @Mutation(() => UserPayload)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Delete, subject: User })
-  async userDelete(@Args('id', { type: () => Int }) id: User['id']) {
-    return await this.userService.remove(id)
+  async userDelete(@Args('userID', { type: () => Int }) userID: User['id']) {
+    return await this.userService.remove(userID)
   }
 
   /** Field Resolvers */

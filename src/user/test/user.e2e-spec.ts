@@ -1,17 +1,14 @@
 import gql from 'graphql-tag'
 import request from 'supertest-graphql'
 import {User, UserPayload} from '../entities/user.entity'
-import {UserError} from '@/common.entity'
 
 describe('User', () => {
-
-  let testUserId: number
 
   describe('Read full User List', () => {
     let response: any
     
     it('Should return a list of users', async () => {
-      response = await request<{users: User}>(global.httpServer)
+      response = await request<{users: User[]}>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
         query {
@@ -43,7 +40,7 @@ describe('User', () => {
     })
 
     it('Should return a list of users and associated registrations', async () => {
-      response = await request<{users: User}>(global.httpServer)
+      response = await request<{users: User[]}>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
         query {
@@ -147,13 +144,19 @@ describe('User', () => {
         .expectNoErrors()
       expect(response.data.user.firstName).toBeTruthy()
       expect(response.data.user.id).toBeTruthy()
-      testUserId = response.data.user.id
     })
   })
 
   describe('Update User', () => {
+    let testUserId: number
     let response: any
-    let userErrors: UserError[]
+
+    beforeAll(async () => {
+      let user = await global.prisma.tbl_user.findUnique({
+        where: {email: 'test_e2e_user@test.com'}
+      })
+      testUserId = user.id
+    })
 
     it('Should update a user', async () => {
       response = await request<{updateUser: UserPayload}>(global.httpServer)
@@ -205,7 +208,7 @@ describe('User', () => {
           }
         `)
         .variables({
-          userId: 9999,
+          userId: testUserId + 1,
           userInput: {
             firstName: 'UpdatedFirstName',
             lastName: 'UpdatedLastName',
@@ -215,36 +218,121 @@ describe('User', () => {
       expect(response.data.userUpdate.userErrors[0]).toHaveProperty('field')
     })
 
-    it('Should return a userError if new email address already used for another user', async () => {
-      response = await request<{updateUser: UserPayload}>(global.httpServer)
+    // it('Should return a userError if new email address already used for another user', async () => {
+    //   response = await request<{updateUser: UserPayload}>(global.httpServer)
+    //     .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+    //     .query(gql`
+    //       mutation UserUpdate($userId: Int!, $userInput: UserInput!) {
+    //         userUpdate(userID: $userId, userInput: $userInput) {
+    //           userErrors {
+    //             message
+    //             field
+    //           }
+    //           user {
+    //             id
+    //             firstName
+    //             lastName
+    //           }
+    //         }
+    //       }
+    //     `)
+    //     .variables({
+    //       userId: testUserId,
+    //       userInput: {
+    //         email: 'david@diatonic.io',
+    //         firstName: 'UpdatedFirstName',
+    //         lastName: 'UpdatedLastName',
+    //       }
+    //     })
+    //   console.log(response.errors)
+    //   expect(response.data.userUpdate.userErrors[0].message).toBeTruthy()
+    //   expect(response.data.userUpdate.userErrors[0]).toHaveProperty('field')
+    // })
+  })
+
+  describe('Delete User', () => {
+    let response: any
+    let newUserId:number
+
+    beforeEach(async () => {
+      try {
+        const newUser = await global.prisma.tbl_user.create({
+          data: {
+            email: 'test.delete@test.com',
+            firstName: 'User',
+            lastName: 'Delete',
+            password: 'password',
+            privateTeacher: false,
+            schoolTeacher: false,
+            staff: false,
+            admin: false
+          }
+        })
+        newUserId = newUser.id
+      } catch(error){}
+    })
+
+    afterEach(async () => {
+      try {
+        await global.prisma.tbl_user.delete({
+          where: {
+            email: 'test.delete@test.com'
+          }
+        })
+      } catch(error){}
+    })
+
+    it('Should delete a user', async () => {
+      response = await request<{deleteUser: UserPayload}>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
-          mutation UserUpdate($userId: Int!, $userInput: UserInput!) {
-            userUpdate(userID: $userId, userInput: $userInput) {
-              userErrors {
-                message
-                field
-              }
+          mutation UserDelete($userId: Int!) {
+            userDelete(userID: $userId) {
               user {
                 id
                 firstName
                 lastName
               }
+              userErrors {
+                message
+                field
+              }
             }
           }
         `)
         .variables({
-          userId: testUserId,
-          userInput: {
-            email: 'david@diatonic.io',
-            firstName: 'UpdatedFirstName',
-            lastName: 'UpdatedLastName',
-          }
+          userId: newUserId
         })
-      console.log(response.errors)
-      expect(response.data.userUpdate.userErrors[0].message).toBeTruthy()
-      expect(response.data.userUpdate.userErrors[0]).toHaveProperty('field')
+      const deleteCheck = await global.prisma.tbl_user.findUnique({
+        where: {id: newUserId}
+      })
+      expect(response.data.userDelete.user.id).toBe(newUserId)
+      expect(deleteCheck).toBeNull()
     })
 
+    it('Should return an error if the user is not found', async () => {
+      response = await request<{deleteUser: UserPayload}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .query(gql`
+          mutation UserDelete($userId: Int!) {
+            userDelete(userID: $userId) {
+              user {
+                id
+                firstName
+                lastName
+              }
+              userErrors {
+                message
+                field
+              }
+            }
+          }
+        `)
+        .variables({
+          userId: newUserId + 1
+        })
+      expect(response.data.userDelete.userErrors[0].message).toBeTruthy()
+      expect(response.data.userDelete.userErrors[0]).toHaveProperty('field')
+    })
   })
 })

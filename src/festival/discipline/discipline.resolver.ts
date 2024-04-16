@@ -114,6 +114,8 @@ export class DisciplineResolver {
   }
 
   @ResolveField(() => [Instrument])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Instrument})
   async instruments(@Parent() { id }: tbl_discipline) {
     const disciplineID = id
     return await this.instrumentService.findAll(disciplineID)

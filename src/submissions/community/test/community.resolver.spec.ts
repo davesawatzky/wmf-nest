@@ -8,9 +8,9 @@ import {
   it,
   expect,
 } from 'vitest'
-import { CommunityResolver } from './community.resolver'
-import { CommunityService } from './community.service'
-import { PrismaService } from '../../prisma/prisma.service'
+import { CommunityResolver } from '../community.resolver'
+import { CommunityService } from '../community.service'
+import { PrismaService } from '@/prisma/prisma.service'
 
 describe('CommunityResolver', () => {
   let resolver: CommunityResolver

@@ -4,6 +4,7 @@ import { UserInput } from './dto/user.input'
 import { tbl_user } from '@prisma/client'
 import {UserError} from '@/common.entity'
 import {User} from './entities/user.entity'
+import {PrismaClientKnownRequestError} from '@prisma/client/runtime/library'
 
 @Injectable()
 export class UserService {
@@ -62,12 +63,28 @@ export class UserService {
     }
   }
 
-  async remove(id: tbl_user['id']) {
+  async remove(userID: tbl_user['id']) {
+    let user: User
+    let userErrors: UserError[]
+
+    try {
+      userErrors = [],
+      user = await this.prisma.tbl_user.delete({
+        where: { id:userID },
+      })
+    } catch (error:any) {
+      if (error.code === 'P2025') {
+        userErrors = [
+          {
+            message: 'User not found',
+            field: ['id', 'email']
+          }
+        ]
+        user = null
+      }
+    }
     return {
-      userErrors: [],
-      user: await this.prisma.tbl_user.delete({
-        where: { id },
-      }),
+      userErrors, user
     }
   }
 }

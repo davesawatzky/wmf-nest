@@ -86,7 +86,8 @@ export class AbilityFactory {
       can(Action.Read, Discipline)
       can(Action.Read, Category)
       can(Action.Read, ClassType)
-      can(Action.Read, User)
+      can([Action.Read, Action.Update], User)
+
     }
     return build({
       detectSubjectType: (item): any => {

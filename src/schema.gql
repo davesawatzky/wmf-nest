@@ -54,6 +54,7 @@ type Community {
   id: Int!
   latestTime: String
   name: String
+  registration: Registration!
   unavailable: String
   wheelchairs: Int
 }
@@ -281,7 +282,7 @@ type Mutation {
   trophyCreate(trophyInput: TrophyInput!): TrophyPayload!
   trophyDelete(trophyID: Int!): TrophyPayload!
   trophyUpdate(trophyID: Int!, trophyInput: TrophyInput!): TrophyPayload!
-  userDelete(id: Int!): UserPayload!
+  userDelete(userID: Int!): UserPayload!
   userUpdate(userID: Int!, userInput: UserInput!): UserPayload!
 }
 
@@ -345,8 +346,8 @@ type Query {
   checkUser(email: String!): User!
   classType(id: Int!): ClassType!
   classTypes: [ClassType!]!
-  communities: [Community!]!
-  community(registrationID: Int!): Community!
+  communities(registrationID: Int): [Community!]!
+  community(communityID: Int, registrationID: Int): Community!
   discipline(id: Int!): Discipline!
   disciplines(instrument: String, performerType: PerformerType): [Discipline!]!
   festivalClass(id: Int!): FestivalClass!

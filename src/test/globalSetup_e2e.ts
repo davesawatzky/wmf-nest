@@ -18,13 +18,12 @@ export async function setup(): Promise<void> {
   const prismaService = moduleRef.get<PrismaService>(PrismaService)
   await prismaService.tbl_user.update({
     where: {email: TestUser().email},
-    data: {emailConfirmed: true}
+    data: {emailConfirmed: true, admin: true}
+
   })
 
   await app.close()
 }
-
-
 
 export async function teardown(): Promise<void> {
   const moduleRef = await Test.createTestingModule({
