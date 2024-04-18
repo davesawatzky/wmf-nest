@@ -470,7 +470,7 @@ type School {
   phone: String
   postalCode: String
   province: String
-  registration: Registration!
+  registration: Registration
   schoolGroups: [SchoolGroup!]
   streetName: String
   streetNumber: String
@@ -516,7 +516,7 @@ input SchoolInput {
 }
 
 type SchoolPayload {
-  school: School!
+  school: School
   userErrors: [UserError!]!
 }
 

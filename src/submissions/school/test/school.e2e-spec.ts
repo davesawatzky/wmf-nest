@@ -58,8 +58,7 @@ describe('School', () => {
           query Schools{
             schools {
               id
-              firstName
-              lastName
+              name
               registration {
                 id
                 confirmation
@@ -75,41 +74,40 @@ describe('School', () => {
       expect(response.data.schools[0].id).toBeTruthy()
     })
 
-    it('Can return the full list of schools with optional registrationID', async () => {
+    it('Can return the full list of schools with registrations and school groups', async () => {
       response = await request<{schools: School[]}>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
-          query Schools($registrationId: Int) {
-            schools(registrationID: $registrationId) {
+          query Schools{
+            schools {
               id
-              firstName
-              lastName
+              name
               registration {
                 id
-                confirmation
                 label
-                createdAt
+              }
+              schoolGroups {
+                id
+                name
               }
             }
           }
         `)
-        .variables({
-          registrationId: 24
-        })
         .expectNoErrors()
+      expect(response.data.schools.length).toBeGreaterThan(1)
       expect(response.data.schools[0]).toHaveProperty('registration')
-      expect(response.data.schools[0].id).toBeTruthy()
+      expect(response.data.schools[0]).toHaveProperty('schoolGroups')
+      expect(response.data.schools[0].schoolGroups[0].name).toBeTruthy()
     })
 
     it('Can return a single school with schoolID', async () => {
       response = await request<{school: School}>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
-          query School($schoolId: Int!) {
-            school(schoolID: $schoolId) {
+          query School($registrationId: Int, $schoolId: Int) {
+            school(registrationID: $registrationId, schoolID: $schoolId) {
               id
-              firstName
-              lastName
+              name
               registration {
                 id
                 confirmation
@@ -120,10 +118,10 @@ describe('School', () => {
           }
         `)
         .variables({
-          schoolId: 7,
+          schoolId: 10,
         })
         .expectNoErrors()
-      expect(response.data.school.lastName).toBe('Zhou')
+      expect(response.data.school.name).toBeTruthy()
       expect(response.data.school.registration.id).toBeTruthy()
     })
 
@@ -131,11 +129,10 @@ describe('School', () => {
       response = await request<{school: School}>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
-          query School($schoolId: Int) {
-            school(schoolID: $schoolId) {
+          query School($registrationId: Int, $schoolId: Int) {
+            school(registrationID: $registrationId, schoolID: $schoolId) {
               id
-              firstName
-              lastName
+              name
               registration {
                 id
                 confirmation
@@ -146,7 +143,8 @@ describe('School', () => {
           }
         `)
         .variables({
-          schoolId: 1,
+          schoolId: 10,
+          registrationId: 10
         })
       expect(response.errors).toBeTruthy()
     })
@@ -199,8 +197,7 @@ describe('School', () => {
             schoolCreate(registrationID: $registrationId, schoolInput: $schoolInput) {
               school {
                 id
-                firstName
-                lastName
+                name
                 }
               userErrors {
                 field 
@@ -212,14 +209,13 @@ describe('School', () => {
         .variables({
           registrationId: regId,
           schoolInput: {
-            firstName: 'School',
-            lastName: 'Test',
+            name: 'Test School'
           }
         })
         .expectNoErrors()
       schoolId = await response.data.schoolCreate.school.id
       expect(response.data.schoolCreate.school.id).toBeTypeOf('number')
-      expect(response.data.schoolCreate.school.lastName).toBe('Test')
+      expect(response.data.schoolCreate.school.name).toBe('Test School')
     })
 
     it('Returns an error if trying to create a school without proper registrationId', async () => {
@@ -230,8 +226,7 @@ describe('School', () => {
             schoolCreate(registrationID: $registrationId, schoolInput: $schoolInput) {
               school {
                 id
-                firstName
-                lastName
+                name
                 }
               userErrors {
                 field 
@@ -243,8 +238,7 @@ describe('School', () => {
         .variables({
           registrationId: regId + 1,
           schoolInput: {
-            firstName: 'School',
-            lastName: 'Test',
+            name: 'Test School'
           }
         })
       expect(response.data.schoolCreate.userErrors[0].message).toBeTruthy()
@@ -260,9 +254,8 @@ describe('School', () => {
       response = await global.prisma.tbl_reg_school.create({
         data: {
           regID: regId,
-          firstName: 'Test',
-          lastName: 'School',
-          streetName: 'Test Street',
+          name: 'Test School',
+          division: 'Test Division',
         }
       })
       schoolId = await response.id
@@ -278,15 +271,14 @@ describe('School', () => {
 
     it('Can update any school', async () => {
       response = await request<{schoolUpdate: School}>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
       .query(gql`
         mutation SchoolUpdate($schoolId: Int!, $schoolInput: SchoolInput!) {
           schoolUpdate(schoolID: $schoolId, schoolInput: $schoolInput) {
             school {
               id
-              firstName
-              lastName
-              streetName              
+              name
+              division            
               }
             userErrors {
               field 
@@ -298,12 +290,12 @@ describe('School', () => {
       .variables({
         schoolId,
         schoolInput: {
-          streetName: 'Updated Test Street',
+          division: 'Updated Division',
         }
       })
       .expectNoErrors()
-      expect(response.data.schoolUpdate.school.streetName).toBe('Updated Test Street')
-      expect(response.data.schoolUpdate.school.firstName).toBe('Test')
+      expect(response.data.schoolUpdate.school.division).toBe('Updated Division')
+      expect(response.data.schoolUpdate.school.name).toBe('Test School')
     })
 
     it('Returns userError if incorrect school id', async () => {
@@ -314,8 +306,7 @@ describe('School', () => {
           schoolUpdate(schoolID: $schoolId, schoolInput: $schoolInput) {
             school {
               id
-              firstName
-              lastName
+              name
               }
             userErrors {
               field 
@@ -327,7 +318,7 @@ describe('School', () => {
       .variables({
         schoolId: schoolId + 1,
         schoolInput: {
-          lastName: 'HuckleBerry',
+          division: 'Updated Division',
         }
       })
       expect(response.data.schoolUpdate.userErrors[0].message).toBeTruthy()
@@ -342,8 +333,8 @@ describe('School', () => {
           schoolUpdate(schoolID: $schoolId, schoolInput: $schoolInput) {
             school {
               id
-              firstName
-              lastName
+              name
+              division
               }
             userErrors {
               field 
@@ -355,7 +346,7 @@ describe('School', () => {
       .variables({
         schoolId: null,
         schoolInput: {
-          lastName: 'HuckleBerry',
+          division: 'Updated Division',
         }
       })
       expect(response.errors[0].message).toBeTruthy()
@@ -382,7 +373,7 @@ describe('School', () => {
       .variables({
         schoolId,
         schoolInput: {
-          name: 'UpdatedSchool',
+          name: 'Updated School',
           okeydokey: true
         }
       })
@@ -398,8 +389,7 @@ describe('School', () => {
       response = await global.prisma.tbl_reg_school.create({
         data: {
           regID: regId,
-          firstName: 'Test',
-          lastName: 'School',
+          name: 'Test School'
         }
       })
       schoolId = await response.id
@@ -423,8 +413,7 @@ describe('School', () => {
           schoolDelete(schoolID: $schoolId) {
             school {
               id
-              firstName
-              lastName
+              name
             }
             userErrors {
               field 
@@ -442,7 +431,7 @@ describe('School', () => {
         where: {id: schoolId}
       })
       expect(deleteCheck).toBeNull()
-      expect(response.data.schoolDelete.school.lastName).toBe('School')
+      expect(response.data.schoolDelete.school.name).toBe('Test School')
     })
 
     it('Returns a userError if school not found', async () => {
@@ -453,8 +442,7 @@ describe('School', () => {
           schoolDelete(schoolID: $schoolId) {
             school {
               id
-              firstName
-              lastName
+              name
             }
             userErrors {
               field 

@@ -57,8 +57,8 @@ export class SchoolService {
   ) {
     return await this.prisma.tbl_reg_school.findUnique({
       where: {
-        regID: registrationID,
-        id: schoolID
+        regID: registrationID ?? undefined,
+        id: schoolID ?? undefined,
       },
     })
   }
