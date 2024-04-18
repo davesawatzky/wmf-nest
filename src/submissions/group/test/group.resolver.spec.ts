@@ -8,9 +8,9 @@ import {
   it,
   expect,
 } from 'vitest'
-import { GroupResolver } from './group.resolver'
-import { GroupService } from './group.service'
-import { PrismaService } from '../../prisma/prisma.service'
+import { GroupResolver } from '../group.resolver'
+import { GroupService } from '../group.service'
+import { PrismaService } from '@/prisma/prisma.service'
 
 describe('GroupResolver', () => {
   let resolver: GroupResolver

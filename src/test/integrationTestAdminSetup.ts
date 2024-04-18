@@ -6,7 +6,7 @@ import { AppModule } from '../app.module'
 import { AuthPayload } from 'src/auth/entities/auth.entity'
 import helmet from 'helmet'
 import { PrismaService } from '../prisma/prisma.service'
-import { TestUser } from './testUser'
+import { TestAdmin } from './testUser'
 import {EmailConfirmationService} from 'src/email-confirmation/email-confirmation.service'
 import request from 'supertest-graphql'
 
@@ -32,8 +32,6 @@ beforeAll(async () => {
     .compile()
 
   app = moduleRef.createNestApplication()
-
-
   app.use(cookieParser())
   app.use(
     helmet({
@@ -102,15 +100,20 @@ beforeAll(async () => {
   `)
   .variables({
     credentials: {
-      email: TestUser().email,
-      password: TestUser().password
+      email: TestAdmin().email,
+      password: TestAdmin().password
     }
   })
+
   diatonicToken = response.data.signin.diatonicToken
-  
-  globalThis.httpServer = httpServer
   globalThis.diatonicToken = diatonicToken
-  globalThis.prisma = prisma
+
+  if (!globalThis.defined) {
+    globalThis.httpServer = httpServer
+    globalThis.prisma = prisma
+    globalThis.userId = response.data.signin.user.id
+    globalThis.defined = true
+  }
 })
 
 afterAll(async () => {
@@ -119,6 +122,9 @@ afterAll(async () => {
   delete globalThis.prisma
   delete globalThis.diatonicToken
   delete globalThis.httpServer
+  delete globalThis.userId
+  delete globalThis.defined
+  
   vi.resetAllMocks()
 
   await app.close()

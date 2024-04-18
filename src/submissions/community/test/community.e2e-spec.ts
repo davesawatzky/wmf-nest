@@ -3,7 +3,28 @@ import request from 'supertest-graphql'
 import {Community, CommunityPayload} from '../entities/community.entity'
 
 describe('Community', () => {
-  
+
+  let regId: number
+
+  beforeAll(async () => {
+    const reg = await global.prisma.tbl_registration.create({
+      data: {
+        userID: global.userId,
+        performerType: 'SOLO',
+        label: 'Test Form',
+      }
+    })
+    regId = reg.id
+  })
+
+  afterAll(async () => {
+    await global.prisma.tbl_registration.delete({
+      where: {
+        id: regId
+      }
+    })
+  })
+
   describe('Read full communities list', () => {
     let response: any
 
@@ -198,31 +219,305 @@ describe('Community', () => {
 
   describe('Create', () => {
     let response: any
-    let communityId: number
-    
+    let communityId: number | null
+
+    afterEach(async () => {
+      try {
+        await global.prisma.tbl_reg_community.delete({
+          where: {
+            id: communityId
+          }
+        })
+      } catch (error) {}
+    })
+        
     it('Can create a community', async () => {
       response = await request<{communityCreate: Community}>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           mutation CommunityCreate($registrationId: Int!) {
             communityCreate(registrationID: $registrationId) {
-              id
-              name
-              groupSize
-              chaperones
-              conflictPerformers
-              earliestTime
-              latestTime
-              unavailable
-              wheelchairs
-              __typename
+              community {
+                id
+                }
+              userErrors {
+                field 
+                message
+              }
             }
           } 
         `)
         .variables({
-          registrationId: 1500
+          registrationId: regId,
         })
         .expectNoErrors()
+      communityId = await response.data.communityCreate.community.id
+      expect(response.data.communityCreate.community.id).toBeTypeOf('number')
+      expect(response.data.communityCreate.community.id).toBeTruthy()
+    })
+
+    it('Returns an error if trying to create a community without registrationId', async () => {
+      response = await request<{communityCreate: Community}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .query(gql`
+          mutation CommunityCreate($registrationId: Int!) {
+            communityCreate(registrationID: $registrationId) {
+              community {
+                id
+                }
+              userErrors {
+                field 
+                message
+              }
+            }
+          } 
+        `)
+        .variables({
+          registrationId: regId + 1,
+        })
+      expect(response.data.communityCreate.userErrors[0].message).toBeTruthy()
+      expect(response.data.communityCreate.community).toBeNull()
+    })
+  })
+
+  describe('Update', () => {
+    let response: any
+    let communityId: number
+
+    beforeAll(async () => {
+      response = await global.prisma.tbl_reg_community.create({
+        data: {
+          regID: regId,
+          name: 'TestCommunity',
+        }
+      })
+      communityId = await response.id
+    })
+
+    afterAll(async () => {
+      await global.prisma.tbl_reg_community.delete({
+        where: {
+          id: communityId
+        }
+      })
+    })
+
+    it('Can update any community', async () => {
+      response = await request<{communityUpdate: Community}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .query(gql`
+        mutation CommunityUpdate($communityId: Int!, $communityInput: CommunityInput!) {
+          communityUpdate(communityID: $communityId, communityInput: $communityInput) {
+            community {
+              id
+              name
+              groupSize
+              }
+            userErrors {
+              field 
+              message
+            }
+          }
+        } 
+      `)
+      .variables({
+        communityId,
+        communityInput: {
+          name: 'UpdatedCommunity',
+          groupSize: 25
+        }
+      })
+      .expectNoErrors()
+      expect(response.data.communityUpdate.community.name).toBe('UpdatedCommunity')
+      expect(response.data.communityUpdate.community.groupSize).toBe(25)
+    })
+
+    it('Returns userError if incorrect community id', async () => {
+      response = await request<{communityUpdate: Community}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .query(gql`
+        mutation CommunityUpdate($communityId: Int!, $communityInput: CommunityInput!) {
+          communityUpdate(communityID: $communityId, communityInput: $communityInput) {
+            community {
+              id
+              name
+              groupSize
+              }
+            userErrors {
+              field 
+              message
+            }
+          }
+        } 
+      `)
+      .variables({
+        communityId: communityId + 1,
+        communityInput: {
+          name: 'UpdatedCommunity',
+          groupSize: 25
+        }
+      })
+      expect(response.data.communityUpdate.userErrors[0].message).toBeTruthy()
+      expect(response.data.communityUpdate.community).toBeNull()
+    })
+
+    it('Returns html status error if any missing arguments', async () => {
+      response = await request<{communityUpdate: Community}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .query(gql`
+        mutation CommunityUpdate($communityId: Int!, $communityInput: CommunityInput!) {
+          communityUpdate(communityID: $communityId, communityInput: $communityInput) {
+            community {
+              id
+              name
+              groupSize
+              }
+            userErrors {
+              field 
+              message
+            }
+          }
+        } 
+      `)
+      .variables({
+        communityId: null,
+        communityInput: {
+          name: 'UpdatedCommunity',
+          groupSize: 25
+        }
+      })
+      expect(response.errors[0].message).toBeTruthy()
+    })
+
+    it('Returns html status error if any bad input args', async () => {
+      response = await request<{communityUpdate: Community}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .query(gql`
+        mutation CommunityUpdate($communityId: Int!, $communityInput: CommunityInput!) {
+          communityUpdate(communityID: $communityId, communityInput: $communityInput) {
+            community {
+              id
+              name
+              groupSize
+              }
+            userErrors {
+              field 
+              message
+            }
+          }
+        } 
+      `)
+      .variables({
+        communityId: null,
+        communityInput: {
+          name: 'UpdatedCommunity',
+          okeydokey: true
+        }
+      })
+      expect(response.errors[0].message).toBeTruthy()
+    })
+  })
+
+  describe('Delete', () => {
+    let response: any
+    let communityId: number
+
+    beforeEach(async () => {
+      response = await global.prisma.tbl_reg_community.create({
+        data: {
+          regID: regId,
+          name: 'TestCommunity',
+        }
+      })
+      communityId = await response.id
+    })
+
+    afterEach(async () => {
+      try {
+        await global.prisma.tbl_reg_community.delete({
+          where: {
+            id: communityId
+          }
+        })
+      } catch (error) {}
+    })
+
+    it('Can delete a community', async () => {
+      response = await request<{communityDelete: boolean}>(global.httpServer)
+      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .query(gql`
+        mutation CommunityDelete($communityId: Int!) {
+          communityDelete(communityID: $communityId) {
+            community {
+              id
+              name
+            }
+            userErrors {
+              field 
+              message
+            }
+          }
+        } 
+      `)
+      .variables({
+        communityId
+      })
+      .expectNoErrors()
+      
+      const deleteCheck = await global.prisma.tbl_reg_community.findUnique({
+        where: {id: communityId}
+      })
+      expect(deleteCheck).toBeNull()
+      expect(response.data.communityDelete.community.id).toBeTruthy()
+    })
+
+    it('Returns a userError if community not found', async () => {
+      response = await request<{communityDelete: boolean}>(global.httpServer)
+      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .query(gql`
+        mutation CommunityDelete($communityId: Int!) {
+          communityDelete(communityID: $communityId) {
+            community {
+              id
+              name
+            }
+            userErrors {
+              field 
+              message
+            }
+          }
+        } 
+      `)
+      .variables({
+        communityId: communityId + 1
+      })
+      .expectNoErrors()
+      expect(response.data.communityDelete.userErrors[0].message).toBeTruthy()
+    })
+
+    it('Returns status error if community id not given', async () => {
+      response = await request<{communityDelete: boolean}>(global.httpServer)
+      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .query(gql`
+        mutation CommunityDelete($communityId: Int!) {
+          communityDelete(communityID: $communityId) {
+            community {
+              id
+              name
+            }
+            userErrors {
+              field 
+              message
+            }
+          }
+        } 
+      `)
+      .variables({
+        communityId: null
+      })
+      expect(response.errors[0].message).toBeTruthy()
     })
   })
 })
+  
+

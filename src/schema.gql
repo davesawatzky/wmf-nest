@@ -71,7 +71,7 @@ input CommunityInput {
 }
 
 type CommunityPayload {
-  community: Community!
+  community: Community
   userErrors: [UserError!]!
 }
 
@@ -175,6 +175,7 @@ type Group {
   instruments: String
   name: String
   numberOfPerformers: Int
+  registration: Registration
 }
 
 input GroupInput {
@@ -186,7 +187,7 @@ input GroupInput {
 }
 
 type GroupPayload {
-  group: Group!
+  group: Group
   userErrors: [UserError!]!
 }
 
@@ -305,6 +306,7 @@ type Performer {
   phone: String
   postalCode: String
   province: String
+  registration: Registration
   streetName: String
   streetNumber: String
 }
@@ -327,7 +329,7 @@ input PerformerInput {
 }
 
 type PerformerPayload {
-  performer: Performer!
+  performer: Performer
   userErrors: [UserError!]!
 }
 
@@ -356,8 +358,8 @@ type Query {
   festivalClasses(festivalClassSearch: FestivalClassSearchArgs, performerType: PerformerType): [FestivalClass!]!
   fieldConfig(fieldName: String!, tableName: String!): FieldConfig!
   fieldConfigs: [FieldConfig!]!
-  group(registrationID: Int!): Group!
-  groups: [Group!]!
+  group(groupID: Int, registrationID: Int): Group!
+  groups(registrationID: Int): [Group!]!
   instrument(id: Int, name: String): Instrument!
   instruments(disciplineID: Int): [Instrument!]!
   level(id: Int!): Level!
@@ -366,7 +368,7 @@ type Query {
   myStudents: Teacher!
   myUser: User!
   performer(performerID: Int!): Performer!
-  performers(registrationID: Int!): [Performer!]!
+  performers(registrationID: Int): [Performer!]!
   registeredClass(registeredClassID: Int!): RegisteredClass!
   registeredClasses(registrationID: Int!): [RegisteredClass!]!
   registration(id: Int!): Registration!

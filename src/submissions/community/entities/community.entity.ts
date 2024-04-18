@@ -27,5 +27,5 @@ export class Community {
 @ObjectType()
 export class CommunityPayload {
   userErrors: UserError[]
-  community: Community
+  community?: Community
 }

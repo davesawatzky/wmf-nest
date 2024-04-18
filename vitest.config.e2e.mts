@@ -13,7 +13,10 @@ export default defineConfig({
     isolate: false,
     globals: true,
     globalSetup: ['./src/test/globalSetup_e2e.ts'],
-    setupFiles: ['./src/test/integrationTestSetup.ts'],
+    setupFiles: [
+      './src/test/integrationTestAdminSetup.ts',
+      // './src/test/integrationTestUserSetup.ts'
+    ],
     fileParallelism: false,
     pool: 'forks',
     poolOptions: {

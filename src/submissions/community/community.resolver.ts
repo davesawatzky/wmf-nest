@@ -77,7 +77,11 @@ export class CommunityResolver {
     @Args('communityInput', { type: () => CommunityInput })
     communityInput: Partial<CommunityInput>
   ) {
-    return await this.communityService.update(communityID, communityInput)
+    try {
+      return await this.communityService.update(communityID, communityInput)
+    } catch (error) {
+      throw new HttpException('Cannot update community', HttpStatus.NOT_MODIFIED)
+    }
   }
 
   @Mutation(() => CommunityPayload)
@@ -87,13 +91,17 @@ export class CommunityResolver {
     @Args('communityID', { type: () => Int })
     communityID: Community['id']
   ) {
-    return await this.communityService.remove(communityID)
+    try {
+      return await this.communityService.remove(communityID)
+    } catch (error) {
+      throw new HttpException('Cannot delete community', HttpStatus.BAD_REQUEST)
+    }
   }
 
   /**
    *  Field Resolver
    */
-  @ResolveField(() => [Registration])
+  @ResolveField(() => Registration)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({action: Action.Read, subject: Registration})
   async registration(@Parent() community: tbl_reg_community) {

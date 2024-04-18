@@ -1,5 +1,6 @@
 import { Field, ObjectType, Int } from '@nestjs/graphql'
 import { UserError } from '../../../common.entity'
+import {Registration} from '@/submissions/registration/entities/registration.entity'
 
 @ObjectType()
 export class Performer {
@@ -21,10 +22,11 @@ export class Performer {
   otherClasses?: string
   instrument?: string
   level?: string
+  registration?: Registration
 }
 
 @ObjectType()
 export class PerformerPayload {
   userErrors: UserError[]
-  performer: Performer
+  performer?: Performer
 }

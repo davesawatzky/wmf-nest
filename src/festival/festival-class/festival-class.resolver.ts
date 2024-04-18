@@ -176,6 +176,7 @@ export class FestivalClassResolver {
     const { levelID }: { levelID: tbl_classlist['levelID'] } = festivalClass
     return await this.levelService.findOne(levelID)
   }
+
   @ResolveField(() => Subdiscipline)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({action: Action.Read, subject: Subdiscipline})
@@ -185,6 +186,7 @@ export class FestivalClassResolver {
     }: { subdisciplineID: tbl_classlist['subdisciplineID'] } = festivalClass
     return await this.subdisciplineService.findOne(subdisciplineID)
   }
+
   @ResolveField(() => Category)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({action: Action.Read, subject: Category})
@@ -193,6 +195,7 @@ export class FestivalClassResolver {
       festivalClass
     return await this.categoryService.findOne(categoryID)
   }
+  
   @ResolveField(() => ClassType)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({action: Action.Read, subject: ClassType})
