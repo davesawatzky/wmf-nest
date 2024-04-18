@@ -73,7 +73,8 @@ export class PerformerResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({action: Action.Update, subject: Performer})
   async performerUpdate(
-    @Args('performerID', { type: () => Int }) performerID: Performer['id'],
+    @Args('performerID', {type: () => Int})
+    performerID: Performer['id'],
     @Args('performerInput', { type: () => PerformerInput })
     performerInput: Partial<PerformerInput>
   ) {
@@ -88,12 +89,14 @@ export class PerformerResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({action: Action.Delete, subject: Performer})
   async performerDelete(
-    @Args('performerID', { type: () => Int }) performerID: Performer['id']
+    @Args('performerID', {type: () => Int})
+    performerID: Performer['id']
   ) {
     try {
       return await this.performerService.remove(performerID)
     } catch (error) {
-      throw new HttpException('Cannot delete performer', HttpStatus.BAD_REQUEST)}
+      throw new HttpException('Cannot delete performer', HttpStatus.INTERNAL_SERVER_ERROR)
+    }
   }
 
   /**
@@ -101,7 +104,7 @@ export class PerformerResolver {
    */
   @ResolveField(() => Registration)
   @UseGuards(AbilitiesGuard)
-    @CheckAbilities({action: Action.Read, subject: Registration})
+  @CheckAbilities({action: Action.Read, subject: Registration})
   async registration(@Parent() performer: tbl_reg_performer) {
     const regID = performer.regID
     return await this.registrationService.findOne(regID)

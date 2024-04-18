@@ -373,7 +373,7 @@ type Query {
   registeredClasses(registrationID: Int!): [RegisteredClass!]!
   registration(id: Int!): Registration!
   registrations(performerType: PerformerType): [Registration!]!
-  school(schoolID: Int!): School!
+  school(registrationID: Int, schoolID: Int): School!
   schoolGroup(schoolGroupID: Int!): SchoolGroup!
   schoolGroups(schoolID: Int!): [SchoolGroup!]!
   schools: [School!]!
@@ -470,6 +470,7 @@ type School {
   phone: String
   postalCode: String
   province: String
+  registration: Registration!
   schoolGroups: [SchoolGroup!]
   streetName: String
   streetNumber: String
