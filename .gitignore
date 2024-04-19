@@ -42,4 +42,4 @@ lerna-debug.log*
 supacert.crt
 
 # sql files
-**/*.sql
+/prisma/*.sql
