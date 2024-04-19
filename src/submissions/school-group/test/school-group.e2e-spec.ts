@@ -251,241 +251,244 @@ describe('SchoolGroup', () => {
     })
   })
 
-  // describe('Update', () => {
-  //   let response: any
-  //   let schoolGroupId: number
+  describe('Update', () => {
+    let response: any
+    let schoolGroupId: number
 
-  //   beforeAll(async () => {
-  //     response = await global.prisma.tbl_reg_schoolgroup.create({
-  //       data: {
-  //         regID: regId,
-  //         name: 'Test SchoolGroup',
-  //         division: 'Test Division',
-  //       }
-  //     })
-  //     schoolGroupId = await response.id
-  //   })
+    beforeAll(async () => {
+      response = await global.prisma.tbl_reg_schoolgroup.create({
+        data: {
+          schoolID: schlId,
+          name: 'Test SchoolGroup',
+          groupSize: 25,
+          chaperones: 3
+        }
+      })
+      schoolGroupId = await response.id
+    })
 
-  //   afterAll(async () => {
-  //     await global.prisma.tbl_reg_schoolgroup.delete({
-  //       where: {
-  //         id: schoolGroupId
-  //       }
-  //     })
-  //   })
+    afterAll(async () => {
+      await global.prisma.tbl_reg_schoolgroup.delete({
+        where: {
+          id: schoolGroupId
+        }
+      })
+    })
 
-  //   it('Can update any schoolGroup', async () => {
-  //     response = await request<{schoolGroupUpdate: SchoolGroup}>(global.httpServer)
-  //     .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-  //     .query(gql`
-  //       mutation SchoolGroupUpdate($schoolGroupId: Int!, $schoolGroupInput: SchoolGroupInput!) {
-  //         schoolGroupUpdate(schoolGroupID: $schoolGroupId, schoolGroupInput: $schoolGroupInput) {
-  //           schoolGroup {
-  //             id
-  //             name
-  //             division            
-  //             }
-  //           userErrors {
-  //             field 
-  //             message
-  //           }
-  //         }
-  //       } 
-  //     `)
-  //     .variables({
-  //       schoolGroupId,
-  //       schoolGroupInput: {
-  //         division: 'Updated Division',
-  //       }
-  //     })
-  //     .expectNoErrors()
-  //     expect(response.data.schoolGroupUpdate.schoolGroup.division).toBe('Updated Division')
-  //     expect(response.data.schoolGroupUpdate.schoolGroup.name).toBe('Test SchoolGroup')
-  //   })
+    it('Can update any schoolGroup', async () => {
+      response = await request<{schoolGroupUpdate: SchoolGroup}>(global.httpServer)
+      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .query(gql`
+        mutation SchoolGroupUpdate($schoolGroupId: Int!, $schoolGroupInput: SchoolGroupInput!) {
+          schoolGroupUpdate(schoolGroupID: $schoolGroupId, schoolGroupInput: $schoolGroupInput) {
+            schoolGroup {
+              id
+              name
+              groupSize
+            }
+            userErrors {
+              field
+              message
+            }
+          }
+        }
+      `)
+      .variables({
+        schoolGroupId,
+        schoolGroupInput: {
+          name: 'Updated SchoolGroup',
+          groupSize: 30
+        }
+      })
+      .expectNoErrors()
+      expect(response.data.schoolGroupUpdate.schoolGroup.name).toBe('Updated SchoolGroup')
+      expect(response.data.schoolGroupUpdate.schoolGroup.groupSize).toBe(30)
+    })
 
-  //   it('Returns userError if incorrect schoolGroup id', async () => {
-  //     response = await request<{schoolGroupUpdate: SchoolGroup}>(global.httpServer)
-  //       .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-  //     .query(gql`
-  //       mutation SchoolGroupUpdate($schoolGroupId: Int!, $schoolGroupInput: SchoolGroupInput!) {
-  //         schoolGroupUpdate(schoolGroupID: $schoolGroupId, schoolGroupInput: $schoolGroupInput) {
-  //           schoolGroup {
-  //             id
-  //             name
-  //             }
-  //           userErrors {
-  //             field 
-  //             message
-  //           }
-  //         }
-  //       } 
-  //     `)
-  //     .variables({
-  //       schoolGroupId: schoolGroupId + 1,
-  //       schoolGroupInput: {
-  //         division: 'Updated Division',
-  //       }
-  //     })
-  //     expect(response.data.schoolGroupUpdate.userErrors[0].message).toBeTruthy()
-  //     expect(response.data.schoolGroupUpdate.schoolGroup).toBeNull()
-  //   })
+    it('Returns userError if incorrect schoolGroup id', async () => {
+      response = await request<{schoolGroupUpdate: SchoolGroup}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .query(gql`
+        mutation SchoolGroupUpdate($schoolGroupId: Int!, $schoolGroupInput: SchoolGroupInput!) {
+          schoolGroupUpdate(schoolGroupID: $schoolGroupId, schoolGroupInput: $schoolGroupInput) {
+            schoolGroup {
+              id
+              name
+              groupSize
+            }
+            userErrors {
+              field
+              message
+            }
+          }
+        }
+      `)
+      .variables({
+        schoolGroupId: schoolGroupId + 1,
+        schoolGroupInput: {
+          name: 'Updated SchoolGroup',
+        }
+      })
+      expect(response.data.schoolGroupUpdate.userErrors[0].message).toBeTruthy()
+      expect(response.data.schoolGroupUpdate.schoolGroup).toBeNull()
+    })
 
-  //   it('Returns html status error if missing schoolGroup id', async () => {
-  //     response = await request<{schoolGroupUpdate: SchoolGroup}>(global.httpServer)
-  //       .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-  //     .query(gql`
-  //       mutation SchoolGroupUpdate($schoolGroupId: Int!, $schoolGroupInput: SchoolGroupInput!) {
-  //         schoolGroupUpdate(schoolGroupID: $schoolGroupId, schoolGroupInput: $schoolGroupInput) {
-  //           schoolGroup {
-  //             id
-  //             name
-  //             division
-  //             }
-  //           userErrors {
-  //             field 
-  //             message
-  //           }
-  //         }
-  //       } 
-  //     `)
-  //     .variables({
-  //       schoolGroupId: null,
-  //       schoolGroupInput: {
-  //         division: 'Updated Division',
-  //       }
-  //     })
-  //     expect(response.errors[0].message).toBeTruthy()
-  //   })
+    it('Returns html status error if missing schoolGroup id', async () => {
+      response = await request<{schoolGroupUpdate: SchoolGroup}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .query(gql`
+        mutation SchoolGroupUpdate($schoolGroupId: Int!, $schoolGroupInput: SchoolGroupInput!) {
+          schoolGroupUpdate(schoolGroupID: $schoolGroupId, schoolGroupInput: $schoolGroupInput) {
+            schoolGroup {
+              id
+              name
+              groupSize
+            }
+            userErrors {
+              field
+              message
+            }
+          }
+        }
+      `)
+      .variables({
+        schoolGroupId: null,
+        schoolGroupInput: {
+          name: 'Updated SchoolGroup',
+        }
+      })
+      expect(response.errors[0].message).toBeTruthy()
+    })
 
-  //   it('Returns html status error if any bad input args', async () => {
-  //     response = await request<{schoolGroupUpdate: SchoolGroup}>(global.httpServer)
-  //       .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-  //     .query(gql`
-  //       mutation SchoolGroupUpdate($schoolGroupId: Int!, $schoolGroupInput: SchoolGroupInput!) {
-  //         schoolGroupUpdate(schoolGroupID: $schoolGroupId, schoolGroupInput: $schoolGroupInput) {
-  //           schoolGroup {
-  //             id
-  //             name
-  //             performerType
-  //             }
-  //           userErrors {
-  //             field 
-  //             message
-  //           }
-  //         }
-  //       } 
-  //     `)
-  //     .variables({
-  //       schoolGroupId,
-  //       schoolGroupInput: {
-  //         name: 'Updated SchoolGroup',
-  //         okeydokey: true
-  //       }
-  //     })
-  //     expect(response.errors[0].message).toBeTruthy()
-  //   })
-  // })
+    it('Returns html status error if any bad input args', async () => {
+      response = await request<{schoolGroupUpdate: SchoolGroup}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .query(gql`
+        mutation SchoolGroupUpdate($schoolGroupId: Int!, $schoolGroupInput: SchoolGroupInput!) {
+          schoolGroupUpdate(schoolGroupID: $schoolGroupId, schoolGroupInput: $schoolGroupInput) {
+            schoolGroup {
+              id
+              name
+              groupSize
+            }
+            userErrors {
+              field
+              message
+            }
+          }
+        }
+      `)
+      .variables({
+        schoolGroupId,
+        schoolGroupInput: {
+          name: 'Updated SchoolGroup',
+          okeydokey: true
+        }
+      })
+      expect(response.errors[0].message).toBeTruthy()
+    })
+  })
 
-  // describe('Delete', () => {
-  //   let response: any
-  //   let schoolGroupId: number
+  describe('Delete', () => {
+    let response: any
+    let schoolGroupId: number
 
-  //   beforeEach(async () => {
-  //     response = await global.prisma.tbl_reg_schoolgroup.create({
-  //       data: {
-  //         regID: regId,
-  //         name: 'Test SchoolGroup'
-  //       }
-  //     })
-  //     schoolGroupId = await response.id
-  //   })
+    beforeEach(async () => {
+      response = await global.prisma.tbl_reg_schoolgroup.create({
+        data: {
+          schoolID: schlId,
+          name: 'Test SchoolGroup'
+        }
+      })
+      schoolGroupId = await response.id
+    })
 
-  //   afterEach(async () => {
-  //     try {
-  //       await global.prisma.tbl_reg_schoolgroup.delete({
-  //         where: {
-  //           id: schoolGroupId
-  //         }
-  //       })
-  //     } catch (error) {}
-  //   })
+    afterEach(async () => {
+      try {
+        await global.prisma.tbl_reg_schoolgroup.delete({
+          where: {
+            id: schoolGroupId
+          }
+        })
+      } catch (error) {}
+    })
 
-  //   it('Can delete a schoolGroup', async () => {
-  //     response = await request<{schoolGroupDelete: boolean}>(global.httpServer)
-  //     .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-  //     .query(gql`
-  //       mutation SchoolGroupDelete($schoolGroupId: Int!) {
-  //         schoolGroupDelete(schoolGroupID: $schoolGroupId) {
-  //           schoolGroup {
-  //             id
-  //             name
-  //           }
-  //           userErrors {
-  //             field 
-  //             message
-  //           }
-  //         }
-  //       } 
-  //     `)
-  //     .variables({
-  //       schoolGroupId
-  //     })
-  //     .expectNoErrors()
+    it('Can delete a schoolGroup', async () => {
+      response = await request<{schoolGroupDelete: boolean}>(global.httpServer)
+      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .query(gql`
+        mutation SchoolGroupDelete($schoolGroupId: Int!) {
+          schoolGroupDelete(schoolGroupID: $schoolGroupId) {
+            schoolGroup {
+              id
+              name
+            }
+            userErrors {
+              field 
+              message
+            }
+          }
+        } 
+      `)
+      .variables({
+        schoolGroupId
+      })
+      .expectNoErrors()
       
-  //     const deleteCheck = await global.prisma.tbl_reg_schoolgroup.findUnique({
-  //       where: {id: schoolGroupId}
-  //     })
-  //     expect(deleteCheck).toBeNull()
-  //     expect(response.data.schoolGroupDelete.schoolGroup.name).toBe('Test SchoolGroup')
-  //   })
+      const deleteCheck = await global.prisma.tbl_reg_schoolgroup.findUnique({
+        where: {id: schoolGroupId}
+      })
+      expect(deleteCheck).toBeNull()
+      expect(response.data.schoolGroupDelete.schoolGroup.name).toBe('Test SchoolGroup')
+    })
 
-  //   it('Returns a userError if schoolGroup not found', async () => {
-  //     response = await request<{schoolGroupDelete: boolean}>(global.httpServer)
-  //     .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-  //     .query(gql`
-  //       mutation SchoolGroupDelete($schoolGroupId: Int!) {
-  //         schoolGroupDelete(schoolGroupID: $schoolGroupId) {
-  //           schoolGroup {
-  //             id
-  //             name
-  //           }
-  //           userErrors {
-  //             field 
-  //             message
-  //           }
-  //         }
-  //       } 
-  //     `)
-  //     .variables({
-  //       schoolGroupId: schoolGroupId + 1
-  //     })
-  //     .expectNoErrors()
-  //     expect(response.data.schoolGroupDelete.userErrors[0].message).toBeTruthy()
-  //   })
+    it('Returns a userError if schoolGroup not found', async () => {
+      response = await request<{schoolGroupDelete: boolean}>(global.httpServer)
+      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .query(gql`
+        mutation SchoolGroupDelete($schoolGroupId: Int!) {
+          schoolGroupDelete(schoolGroupID: $schoolGroupId) {
+            schoolGroup {
+              id
+              name
+            }
+            userErrors {
+              field 
+              message
+            }
+          }
+        } 
+      `)
+      .variables({
+        schoolGroupId: schoolGroupId + 1
+      })
+      .expectNoErrors()
+      expect(response.data.schoolGroupDelete.userErrors[0].message).toBeTruthy()
+    })
 
-  //   it('Returns status error if schoolGroup id not given', async () => {
-  //     response = await request<{schoolGroupDelete: boolean}>(global.httpServer)
-  //     .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-  //     .query(gql`
-  //       mutation SchoolGroupDelete($schoolGroupId: Int!) {
-  //         schoolGroupDelete(schoolGroupID: $schoolGroupId) {
-  //           schoolGroup {
-  //             id
-  //             name
-  //           }
-  //           userErrors {
-  //             field 
-  //             message
-  //           }
-  //         }
-  //       } 
-  //     `)
-  //     .variables({
-  //       schoolGroupId: null
-  //     })
-  //     expect(response.errors[0].message).toBeTruthy()
-  //   })
-  // })
+    it('Returns status error if schoolGroup id not given', async () => {
+      response = await request<{schoolGroupDelete: boolean}>(global.httpServer)
+      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      .query(gql`
+        mutation SchoolGroupDelete($schoolGroupId: Int!) {
+          schoolGroupDelete(schoolGroupID: $schoolGroupId) {
+            schoolGroup {
+              id
+              name
+            }
+            userErrors {
+              field 
+              message
+            }
+          }
+        } 
+      `)
+      .variables({
+        schoolGroupId: null
+      })
+      expect(response.errors[0].message).toBeTruthy()
+    })
+  })
 })
   
 
