@@ -42,4 +42,4 @@ lerna-debug.log*
 supacert.crt
 
 #SQL Seed Files
-**/*.sql
+/prisma/*.sql
