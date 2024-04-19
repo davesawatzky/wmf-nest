@@ -208,7 +208,7 @@ describe('Group', () => {
       } catch (error) {}
     })
         
-    it('Can create a group', async () => {
+    it('Admin can create a group on any existing registration', async () => {
       response = await request<{groupCreate: Group}>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
@@ -279,7 +279,7 @@ describe('Group', () => {
       })
     })
 
-    it('Can update any group', async () => {
+    it('Admin can update any group', async () => {
       response = await request<{groupUpdate: Group}>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
       .query(gql`

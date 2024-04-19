@@ -164,7 +164,7 @@ describe('School', () => {
       } catch (error) {}
     })
         
-    it('Can create a school', async () => {
+    it('Can create a school with regId', async () => {
       response = await request<{schoolCreate: School}>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`

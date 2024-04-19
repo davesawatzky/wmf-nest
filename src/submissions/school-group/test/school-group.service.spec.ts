@@ -8,8 +8,8 @@ import {
   it,
   expect,
 } from 'vitest'
-import { SchoolGroupService } from './school-group.service'
-import { PrismaService } from '../../prisma/prisma.service'
+import { SchoolGroupService } from '../school-group.service'
+import { PrismaService } from '@/prisma/prisma.service'
 
 describe('SchoolGroupService', () => {
   let service: SchoolGroupService

@@ -1,5 +1,6 @@
 import { Field, ObjectType, Int } from '@nestjs/graphql'
 import { UserError } from '../../../common.entity'
+import {School} from '@/submissions/school/entities/school.entity'
 
 @ObjectType()
 export class SchoolGroup {
@@ -19,10 +20,11 @@ export class SchoolGroup {
   earliestTime?: string
   latestTime?: string
   unavailable?: string
+  school?: School
 }
 
 @ObjectType()
 export class SchoolGroupPayload {
   userErrors: UserError[]
-  schoolGroup: SchoolGroup
+  schoolGroup?: SchoolGroup
 }

@@ -375,7 +375,7 @@ type Query {
   registrations(performerType: PerformerType): [Registration!]!
   school(registrationID: Int, schoolID: Int): School!
   schoolGroup(schoolGroupID: Int!): SchoolGroup!
-  schoolGroups(schoolID: Int!): [SchoolGroup!]!
+  schoolGroups(schoolID: Int): [SchoolGroup!]!
   schools: [School!]!
   selection(selectionID: Int!): Selection!
   selections(registeredClassID: Int): [Selection!]!
@@ -484,6 +484,7 @@ type SchoolGroup {
   id: Int!
   latestTime: String
   name: String
+  school: School
   unavailable: String
   wheelchairs: Int
 }
@@ -500,7 +501,7 @@ input SchoolGroupInput {
 }
 
 type SchoolGroupPayload {
-  schoolGroup: SchoolGroup!
+  schoolGroup: SchoolGroup
   userErrors: [UserError!]!
 }
 
