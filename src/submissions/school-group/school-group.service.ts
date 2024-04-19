@@ -8,13 +8,16 @@ import {UserError} from '@/common.entity'
 export class SchoolGroupService {
   constructor(private prisma: PrismaService) {}
 
-  async create(schoolID: tbl_reg_school['id']) {
+  async create(
+    schoolID: tbl_reg_school['id'],
+    schoolGroupInput?: Partial<SchoolGroupInput>
+  ) {
     let schoolGroup: tbl_reg_schoolgroup
     let userErrors: UserError[]
     try {
       userErrors = [],
       schoolGroup = await this.prisma.tbl_reg_schoolgroup.create({
-        data: { schoolID: schoolID },
+        data: { schoolID: schoolID, ...schoolGroupInput },
       })
     } catch (error: any) {
       if (error.code === 'P2003') {
@@ -26,6 +29,7 @@ export class SchoolGroupService {
         ]
         schoolGroup = null
       } else {
+        console.log(error)
         userErrors = [
           {
             message: 'Cannot create school group',

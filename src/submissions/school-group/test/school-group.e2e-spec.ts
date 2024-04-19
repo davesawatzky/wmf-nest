@@ -20,7 +20,7 @@ describe('SchoolGroup', () => {
     const schl = await global.prisma.tbl_reg_school.create({
       data: {
         regID: regId,
-        name: 'Test SchoolGroup'
+        name: 'Test School'
       }
     })
     schlId = await schl.id
@@ -39,10 +39,10 @@ describe('SchoolGroup', () => {
     })
   })
 
-  describe('Read full schoolgroups list', () => {
+  describe('Read full schoolGroups list', () => {
     let response: any
 
-    it('Can return the full list of schoolgroups', async () => {
+    it('Can return the full list of schoolGroups', async () => {
       response = await request<{schoolGroups: SchoolGroup[]}>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
@@ -65,7 +65,7 @@ describe('SchoolGroup', () => {
       expect(response.data.schoolGroups.length).toBeGreaterThan(1)
     })
 
-    it('Can return the full list of schoolgroups with associated schools and reg', async () => {
+    it('Can return the full list of schoolGroups with associated schools and reg', async () => {
       response = await request<{schoolGroups: SchoolGroup[]}>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
@@ -91,8 +91,8 @@ describe('SchoolGroup', () => {
       expect(response.data.schoolGroups[0].school.registration.label).toBeTruthy()
     })
 
-    it('Can return the full list of schoolgroups from one school using schoolID', async () => {
-      response = await request<{schoolgroups: SchoolGroup[]}>(global.httpServer)
+    it('Can return the full list of schoolGroups from one school using schoolID', async () => {
+      response = await request<{schoolGroups: SchoolGroup[]}>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query SchoolGroups{
@@ -110,8 +110,8 @@ describe('SchoolGroup', () => {
       expect(response.data.schoolGroups[0].name).toBeTruthy()
     })
 
-    it('Can return a single schoolgroup with schoolgroupID with school', async () => {
-      response = await request<{schoolgroup: SchoolGroup}>(global.httpServer)
+    it('Can return a single schoolGroup with schoolGroupID with school', async () => {
+      response = await request<{schoolGroup: SchoolGroup}>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query SchoolGroup($schoolGroupId: Int!) {
@@ -134,7 +134,7 @@ describe('SchoolGroup', () => {
     })
 
     it('Returns an error if nothing is found', async () => {
-      response = await request<{schoolgroup: SchoolGroup}>(global.httpServer)
+      response = await request<{schoolGroup: SchoolGroup}>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query SchoolGroup($schoolGroupId: Int!) {
@@ -149,111 +149,111 @@ describe('SchoolGroup', () => {
           }
         `)
         .variables({
-          schoolgroupId: 1000,
+          schoolGroupId: 1000,
         })
       expect(response.errors).toBeTruthy()
     })
   })
 
-  // describe('Create', () => {
-  //   let response: any
-  //   let schoolgroupId: number | null
+  describe('Create', () => {
+    let response: any
+    let schoolGroupId: number
 
-  //   afterEach(async () => {
-  //     try {
-  //       await global.prisma.tbl_reg_schoolgroup.delete({
-  //         where: {
-  //           id: schoolgroupId
-  //         }
-  //       })
-  //     } catch (error) {}
-  //   })
+    afterEach(async () => {
+      try {
+        await global.prisma.tbl_reg_schoolgroup.delete({
+          where: {
+            id: schoolGroupId
+          }
+        })
+      } catch (error) {}
+    })
         
-  //   it('Can create a schoolgroup', async () => {
-  //     response = await request<{schoolgroupCreate: SchoolGroup}>(global.httpServer)
-  //       .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-  //       .query(gql`
-  //         mutation SchoolGroupCreate($registrationId: Int!) {
-  //           schoolgroupCreate(registrationID: $registrationId) {
-  //             schoolgroup {
-  //               id
-  //               }
-  //             userErrors {
-  //               field 
-  //               message
-  //             }
-  //           }
-  //         } 
-  //       `)
-  //       .variables({
-  //         registrationId: regId,
-  //       })
-  //       .expectNoErrors()
-  //     schoolgroupId = await response.data.schoolgroupCreate.schoolgroup.id
-  //     expect(response.data.schoolgroupCreate.schoolgroup.id).toBeTypeOf('number')
-  //     expect(response.data.schoolgroupCreate.schoolgroup.id).toBeTruthy()
-  //   })
+    it('Can create a schoolGroup', async () => {
+      response = await request<{schoolGroupCreate: SchoolGroup}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .query(gql`
+          mutation SchoolGroup($schoolId: Int!, $schoolGroupInput: SchoolGroupInput) {
+            schoolGroupCreate(schoolID: $schoolId, schoolGroupInput: $schoolGroupInput) {
+              schoolGroup {
+                id
+              }
+              userErrors {
+                field
+                message
+              }
+            }
+          }
+        `)
+        .variables({
+          schoolId: schlId,
+        })
+        .expectNoErrors()
+      schoolGroupId = await response.data.schoolGroupCreate.schoolGroup.id
+      expect(response.data.schoolGroupCreate.schoolGroup.id).toBeTypeOf('number')
+      expect(response.data.schoolGroupCreate.schoolGroup.id).toBeTruthy()
+    })
 
-  //   it('Can create a schoolgroup with schoolgroup Input', async () => {
-  //     response = await request<{schoolgroupCreate: SchoolGroup}>(global.httpServer)
-  //       .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-  //       .query(gql`
-  //         mutation SchoolGroupCreate($registrationId: Int!, $schoolgroupInput: SchoolGroupInput) {
-  //           schoolgroupCreate(registrationID: $registrationId, schoolgroupInput: $schoolgroupInput) {
-  //             schoolgroup {
-  //               id
-  //               name
-  //               }
-  //             userErrors {
-  //               field 
-  //               message
-  //             }
-  //           }
-  //         } 
-  //       `)
-  //       .variables({
-  //         registrationId: regId,
-  //         schoolgroupInput: {
-  //           name: 'Test SchoolGroup'
-  //         }
-  //       })
-  //       .expectNoErrors()
-  //     schoolgroupId = await response.data.schoolgroupCreate.schoolgroup.id
-  //     expect(response.data.schoolgroupCreate.schoolgroup.id).toBeTypeOf('number')
-  //     expect(response.data.schoolgroupCreate.schoolgroup.name).toBe('Test SchoolGroup')
-  //   })
+    it('Can create a schoolGroup with schoolGroup Input', async () => {
+      response = await request<{schoolGroupCreate: SchoolGroup}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .query(gql`
+          mutation SchoolGroup($schoolId: Int!, $schoolGroupInput: SchoolGroupInput) {
+            schoolGroupCreate(schoolID: $schoolId, schoolGroupInput: $schoolGroupInput) {
+              schoolGroup {
+                id
+                name
+              }
+              userErrors {
+                field
+                message
+              }
+            }
+          }
+        `)
+        .variables({
+          schoolId: schlId,
+          schoolGroupInput: {
+            name: 'Test SchoolGroup'
+          }
+        })
+        .expectNoErrors()
+      schoolGroupId = await response.data.schoolGroupCreate.schoolGroup.id
+      expect(response.data.schoolGroupCreate.schoolGroup.id).toBeTypeOf('number')
+      expect(response.data.schoolGroupCreate.schoolGroup.name).toBe('Test SchoolGroup')
+    })
 
-  //   it('Returns an error if trying to create a schoolgroup without proper registrationId', async () => {
-  //     response = await request<{schoolgroupCreate: SchoolGroup}>(global.httpServer)
-  //       .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-  //       .query(gql`
-  //         mutation SchoolGroupCreate($registrationId: Int!, $schoolgroupInput: SchoolGroupInput) {
-  //           schoolgroupCreate(registrationID: $registrationId, schoolgroupInput: $schoolgroupInput) {
-  //             schoolgroup {
-  //               id
-  //               name
-  //               }
-  //             userErrors {
-  //               field 
-  //               message
-  //             }
-  //           }
-  //         } 
-  //       `)
-  //       .variables({
-  //         registrationId: regId + 1,
-  //         schoolgroupInput: {
-  //           name: 'Test SchoolGroup'
-  //         }
-  //       })
-  //     expect(response.data.schoolgroupCreate.userErrors[0].message).toBeTruthy()
-  //     expect(response.data.schoolgroupCreate.schoolgroup).toBeNull()
-  //   })
-  // })
+    it('Returns an userError if trying to create a schoolGroup without valid schoolID', async () => {
+      response = await request<{schoolGroupCreate: SchoolGroup}>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .query(gql`
+          mutation SchoolGroup($schoolId: Int!, $schoolGroupInput: SchoolGroupInput) {
+            schoolGroupCreate(schoolID: $schoolId, schoolGroupInput: $schoolGroupInput) {
+              schoolGroup {
+                id
+                name
+              }
+              userErrors {
+                field
+                message
+              }
+            }
+          }
+        `)
+        .variables({
+          schoolId: schlId + 1,
+          schoolGroupInput: {
+            name: 'Test SchoolGroup'
+          }
+        })
+      expect(response.data.schoolGroupCreate.userErrors[0].message).toBeTruthy()
+      expect(response.data.schoolGroupCreate.schoolGroup).toBeNull()
+    })
+  })
 
   // describe('Update', () => {
   //   let response: any
-  //   let schoolgroupId: number
+  //   let schoolGroupId: number
 
   //   beforeAll(async () => {
   //     response = await global.prisma.tbl_reg_schoolgroup.create({
@@ -263,24 +263,24 @@ describe('SchoolGroup', () => {
   //         division: 'Test Division',
   //       }
   //     })
-  //     schoolgroupId = await response.id
+  //     schoolGroupId = await response.id
   //   })
 
   //   afterAll(async () => {
   //     await global.prisma.tbl_reg_schoolgroup.delete({
   //       where: {
-  //         id: schoolgroupId
+  //         id: schoolGroupId
   //       }
   //     })
   //   })
 
-  //   it('Can update any schoolgroup', async () => {
-  //     response = await request<{schoolgroupUpdate: SchoolGroup}>(global.httpServer)
+  //   it('Can update any schoolGroup', async () => {
+  //     response = await request<{schoolGroupUpdate: SchoolGroup}>(global.httpServer)
   //     .set('Cookie', `diatonicToken=${global.diatonicToken}`)
   //     .query(gql`
-  //       mutation SchoolGroupUpdate($schoolgroupId: Int!, $schoolgroupInput: SchoolGroupInput!) {
-  //         schoolgroupUpdate(schoolgroupID: $schoolgroupId, schoolgroupInput: $schoolgroupInput) {
-  //           schoolgroup {
+  //       mutation SchoolGroupUpdate($schoolGroupId: Int!, $schoolGroupInput: SchoolGroupInput!) {
+  //         schoolGroupUpdate(schoolGroupID: $schoolGroupId, schoolGroupInput: $schoolGroupInput) {
+  //           schoolGroup {
   //             id
   //             name
   //             division            
@@ -293,23 +293,23 @@ describe('SchoolGroup', () => {
   //       } 
   //     `)
   //     .variables({
-  //       schoolgroupId,
-  //       schoolgroupInput: {
+  //       schoolGroupId,
+  //       schoolGroupInput: {
   //         division: 'Updated Division',
   //       }
   //     })
   //     .expectNoErrors()
-  //     expect(response.data.schoolgroupUpdate.schoolgroup.division).toBe('Updated Division')
-  //     expect(response.data.schoolgroupUpdate.schoolgroup.name).toBe('Test SchoolGroup')
+  //     expect(response.data.schoolGroupUpdate.schoolGroup.division).toBe('Updated Division')
+  //     expect(response.data.schoolGroupUpdate.schoolGroup.name).toBe('Test SchoolGroup')
   //   })
 
-  //   it('Returns userError if incorrect schoolgroup id', async () => {
-  //     response = await request<{schoolgroupUpdate: SchoolGroup}>(global.httpServer)
+  //   it('Returns userError if incorrect schoolGroup id', async () => {
+  //     response = await request<{schoolGroupUpdate: SchoolGroup}>(global.httpServer)
   //       .set('Cookie', `diatonicToken=${global.diatonicToken}`)
   //     .query(gql`
-  //       mutation SchoolGroupUpdate($schoolgroupId: Int!, $schoolgroupInput: SchoolGroupInput!) {
-  //         schoolgroupUpdate(schoolgroupID: $schoolgroupId, schoolgroupInput: $schoolgroupInput) {
-  //           schoolgroup {
+  //       mutation SchoolGroupUpdate($schoolGroupId: Int!, $schoolGroupInput: SchoolGroupInput!) {
+  //         schoolGroupUpdate(schoolGroupID: $schoolGroupId, schoolGroupInput: $schoolGroupInput) {
+  //           schoolGroup {
   //             id
   //             name
   //             }
@@ -321,22 +321,22 @@ describe('SchoolGroup', () => {
   //       } 
   //     `)
   //     .variables({
-  //       schoolgroupId: schoolgroupId + 1,
-  //       schoolgroupInput: {
+  //       schoolGroupId: schoolGroupId + 1,
+  //       schoolGroupInput: {
   //         division: 'Updated Division',
   //       }
   //     })
-  //     expect(response.data.schoolgroupUpdate.userErrors[0].message).toBeTruthy()
-  //     expect(response.data.schoolgroupUpdate.schoolgroup).toBeNull()
+  //     expect(response.data.schoolGroupUpdate.userErrors[0].message).toBeTruthy()
+  //     expect(response.data.schoolGroupUpdate.schoolGroup).toBeNull()
   //   })
 
-  //   it('Returns html status error if missing schoolgroup id', async () => {
-  //     response = await request<{schoolgroupUpdate: SchoolGroup}>(global.httpServer)
+  //   it('Returns html status error if missing schoolGroup id', async () => {
+  //     response = await request<{schoolGroupUpdate: SchoolGroup}>(global.httpServer)
   //       .set('Cookie', `diatonicToken=${global.diatonicToken}`)
   //     .query(gql`
-  //       mutation SchoolGroupUpdate($schoolgroupId: Int!, $schoolgroupInput: SchoolGroupInput!) {
-  //         schoolgroupUpdate(schoolgroupID: $schoolgroupId, schoolgroupInput: $schoolgroupInput) {
-  //           schoolgroup {
+  //       mutation SchoolGroupUpdate($schoolGroupId: Int!, $schoolGroupInput: SchoolGroupInput!) {
+  //         schoolGroupUpdate(schoolGroupID: $schoolGroupId, schoolGroupInput: $schoolGroupInput) {
+  //           schoolGroup {
   //             id
   //             name
   //             division
@@ -349,8 +349,8 @@ describe('SchoolGroup', () => {
   //       } 
   //     `)
   //     .variables({
-  //       schoolgroupId: null,
-  //       schoolgroupInput: {
+  //       schoolGroupId: null,
+  //       schoolGroupInput: {
   //         division: 'Updated Division',
   //       }
   //     })
@@ -358,12 +358,12 @@ describe('SchoolGroup', () => {
   //   })
 
   //   it('Returns html status error if any bad input args', async () => {
-  //     response = await request<{schoolgroupUpdate: SchoolGroup}>(global.httpServer)
+  //     response = await request<{schoolGroupUpdate: SchoolGroup}>(global.httpServer)
   //       .set('Cookie', `diatonicToken=${global.diatonicToken}`)
   //     .query(gql`
-  //       mutation SchoolGroupUpdate($schoolgroupId: Int!, $schoolgroupInput: SchoolGroupInput!) {
-  //         schoolgroupUpdate(schoolgroupID: $schoolgroupId, schoolgroupInput: $schoolgroupInput) {
-  //           schoolgroup {
+  //       mutation SchoolGroupUpdate($schoolGroupId: Int!, $schoolGroupInput: SchoolGroupInput!) {
+  //         schoolGroupUpdate(schoolGroupID: $schoolGroupId, schoolGroupInput: $schoolGroupInput) {
+  //           schoolGroup {
   //             id
   //             name
   //             performerType
@@ -376,8 +376,8 @@ describe('SchoolGroup', () => {
   //       } 
   //     `)
   //     .variables({
-  //       schoolgroupId,
-  //       schoolgroupInput: {
+  //       schoolGroupId,
+  //       schoolGroupInput: {
   //         name: 'Updated SchoolGroup',
   //         okeydokey: true
   //       }
@@ -388,7 +388,7 @@ describe('SchoolGroup', () => {
 
   // describe('Delete', () => {
   //   let response: any
-  //   let schoolgroupId: number
+  //   let schoolGroupId: number
 
   //   beforeEach(async () => {
   //     response = await global.prisma.tbl_reg_schoolgroup.create({
@@ -397,26 +397,26 @@ describe('SchoolGroup', () => {
   //         name: 'Test SchoolGroup'
   //       }
   //     })
-  //     schoolgroupId = await response.id
+  //     schoolGroupId = await response.id
   //   })
 
   //   afterEach(async () => {
   //     try {
   //       await global.prisma.tbl_reg_schoolgroup.delete({
   //         where: {
-  //           id: schoolgroupId
+  //           id: schoolGroupId
   //         }
   //       })
   //     } catch (error) {}
   //   })
 
-  //   it('Can delete a schoolgroup', async () => {
-  //     response = await request<{schoolgroupDelete: boolean}>(global.httpServer)
+  //   it('Can delete a schoolGroup', async () => {
+  //     response = await request<{schoolGroupDelete: boolean}>(global.httpServer)
   //     .set('Cookie', `diatonicToken=${global.diatonicToken}`)
   //     .query(gql`
-  //       mutation SchoolGroupDelete($schoolgroupId: Int!) {
-  //         schoolgroupDelete(schoolgroupID: $schoolgroupId) {
-  //           schoolgroup {
+  //       mutation SchoolGroupDelete($schoolGroupId: Int!) {
+  //         schoolGroupDelete(schoolGroupID: $schoolGroupId) {
+  //           schoolGroup {
   //             id
   //             name
   //           }
@@ -428,24 +428,24 @@ describe('SchoolGroup', () => {
   //       } 
   //     `)
   //     .variables({
-  //       schoolgroupId
+  //       schoolGroupId
   //     })
   //     .expectNoErrors()
       
   //     const deleteCheck = await global.prisma.tbl_reg_schoolgroup.findUnique({
-  //       where: {id: schoolgroupId}
+  //       where: {id: schoolGroupId}
   //     })
   //     expect(deleteCheck).toBeNull()
-  //     expect(response.data.schoolgroupDelete.schoolgroup.name).toBe('Test SchoolGroup')
+  //     expect(response.data.schoolGroupDelete.schoolGroup.name).toBe('Test SchoolGroup')
   //   })
 
-  //   it('Returns a userError if schoolgroup not found', async () => {
-  //     response = await request<{schoolgroupDelete: boolean}>(global.httpServer)
+  //   it('Returns a userError if schoolGroup not found', async () => {
+  //     response = await request<{schoolGroupDelete: boolean}>(global.httpServer)
   //     .set('Cookie', `diatonicToken=${global.diatonicToken}`)
   //     .query(gql`
-  //       mutation SchoolGroupDelete($schoolgroupId: Int!) {
-  //         schoolgroupDelete(schoolgroupID: $schoolgroupId) {
-  //           schoolgroup {
+  //       mutation SchoolGroupDelete($schoolGroupId: Int!) {
+  //         schoolGroupDelete(schoolGroupID: $schoolGroupId) {
+  //           schoolGroup {
   //             id
   //             name
   //           }
@@ -457,19 +457,19 @@ describe('SchoolGroup', () => {
   //       } 
   //     `)
   //     .variables({
-  //       schoolgroupId: schoolgroupId + 1
+  //       schoolGroupId: schoolGroupId + 1
   //     })
   //     .expectNoErrors()
-  //     expect(response.data.schoolgroupDelete.userErrors[0].message).toBeTruthy()
+  //     expect(response.data.schoolGroupDelete.userErrors[0].message).toBeTruthy()
   //   })
 
-  //   it('Returns status error if schoolgroup id not given', async () => {
-  //     response = await request<{schoolgroupDelete: boolean}>(global.httpServer)
+  //   it('Returns status error if schoolGroup id not given', async () => {
+  //     response = await request<{schoolGroupDelete: boolean}>(global.httpServer)
   //     .set('Cookie', `diatonicToken=${global.diatonicToken}`)
   //     .query(gql`
-  //       mutation SchoolGroupDelete($schoolgroupId: Int!) {
-  //         schoolgroupDelete(schoolgroupID: $schoolgroupId) {
-  //           schoolgroup {
+  //       mutation SchoolGroupDelete($schoolGroupId: Int!) {
+  //         schoolGroupDelete(schoolGroupID: $schoolGroupId) {
+  //           schoolGroup {
   //             id
   //             name
   //           }
@@ -481,7 +481,7 @@ describe('SchoolGroup', () => {
   //       } 
   //     `)
   //     .variables({
-  //       schoolgroupId: null
+  //       schoolGroupId: null
   //     })
   //     expect(response.errors[0].message).toBeTruthy()
   //   })

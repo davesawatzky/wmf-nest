@@ -56,10 +56,13 @@ export class SchoolGroupResolver {
   @UseGuards(AbilitiesGuard)
     @CheckAbilities({action: Action.Create, subject: SchoolGroup})
   async schoolGroupCreate(
-    @Args('schoolID', {type: () => Int}) schoolID: tbl_reg_school['id']
+    @Args('schoolID', {type: () => Int})
+    schoolID: tbl_reg_school['id'],
+    @Args('schoolGroupInput', {type: () => SchoolGroupInput, nullable: true})
+    schoolGroupInput: Partial<SchoolGroupInput>
   ) {
     try {
-      return await this.schoolGroupService.create(schoolID)
+      return await this.schoolGroupService.create(schoolID, schoolGroupInput)
     } catch (error) {
       throw new HttpException('Cannot create school group', HttpStatus.INTERNAL_SERVER_ERROR)
     }
