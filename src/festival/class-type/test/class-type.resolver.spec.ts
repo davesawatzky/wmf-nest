@@ -1,9 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import { TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
 import { ClassTypeResolver } from '../class-type.resolver'
-import { PrismaService } from '@/prisma/prisma.service'
 import { ClassTypeService } from '../class-type.service'
+import { PrismaService } from '@/prisma/prisma.service'
 
-describe('ClassTypeResolver', () => {
+describe('classTypeResolver', () => {
   let resolver: ClassTypeResolver
 
   beforeEach(async () => {

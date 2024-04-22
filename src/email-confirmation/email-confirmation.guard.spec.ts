@@ -1,15 +1,11 @@
-import { EmailConfirmationGuard } from './email-confirmation.guard'
 import {
   describe,
-  beforeAll,
-  beforeEach,
-  afterAll,
-  test,
-  it,
   expect,
+  it,
 } from 'vitest'
+import { EmailConfirmationGuard } from './email-confirmation.guard'
 
-describe('EmailConfirmationGuard', () => {
+describe('emailConfirmationGuard', () => {
   it('should be defined', () => {
     expect(new EmailConfirmationGuard()).toBeDefined()
   })

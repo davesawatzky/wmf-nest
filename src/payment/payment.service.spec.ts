@@ -1,36 +1,25 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import { TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
 import {
-  describe,
-  beforeAll,
   beforeEach,
-  afterAll,
-  test,
-  it,
+  describe,
   expect,
+  it,
 } from 'vitest'
 import { PaymentService } from './payment.service'
-import { StripeService } from '../stripe/stripe.service'
-import { StripeModule } from '../stripe/stripe.module'
-import { StripeModuleOptions } from '../stripe/stripeOptions.interface'
-import {
-  ConfigurableModuleClass,
-  MODULE_OPTIONS_TOKEN,
-} from '../stripe/stripe.module-definition'
-import {RawBodyRequest} from '@nestjs/common'
+import { StripeService } from '@/stripe/stripe.service'
 
-describe('PaymentService', () => {
+describe('paymentService', () => {
   let paymentService: PaymentService
   let stripeService: StripeService
-  
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [PaymentService,
-        {
-          provide: StripeService,
-          useValue: stripeService
-        }
-      ]
-       
+      providers: [PaymentService, {
+        provide: StripeService,
+        useValue: stripeService,
+      }],
+
       // imports: [
       //   StripeModule.forRootAsync({
       //     useClass: ConfigurableModuleClass,
@@ -41,7 +30,6 @@ describe('PaymentService', () => {
 
     paymentService = await module.resolve<PaymentService>(PaymentService)
     stripeService = await module.resolve<StripeService>(StripeService)
-
   })
 
   afterEach(() => {
@@ -69,7 +57,7 @@ describe('PaymentService', () => {
   //   it('Should log different case depending on event object', async () => {
   //     const result = paymentService.webhook(req, signature, endpointSecret)
   //     expect(console.log).toBeCalledWith('Payment failed')
-      
+
   //   })
   // })
 })

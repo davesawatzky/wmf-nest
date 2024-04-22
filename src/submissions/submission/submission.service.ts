@@ -1,16 +1,16 @@
+import { randomInt } from 'node:crypto'
 import { Injectable } from '@nestjs/common'
-import { randomInt } from 'crypto'
-import { PerformerType } from '../../common.entity'
-import { PrismaService } from '../../prisma/prisma.service'
 import { tbl_registration } from '@prisma/client'
-import { Submission, SubmissionPayload } from './entities/submission.entity'
-import { RegistrationService } from '../registration/registration.service'
+import { Submission } from './entities/submission.entity'
+import { PerformerType } from '@/common.entity'
+import { PrismaService } from '@/prisma/prisma.service'
+import { RegistrationService } from '@/submissions/registration/registration.service'
 
 @Injectable()
 export class SubmissionService {
   constructor(
     private prisma: PrismaService,
-    private registrationService: RegistrationService
+    private registrationService: RegistrationService,
   ) {}
 
   private requiredField = []
@@ -124,7 +124,7 @@ export class SubmissionService {
 
     const submissionData: Submission = await {
       submittedAt: new Date(),
-      confirmation: 'WMF-' + id + '-' + randomInt(1000, 9999),
+      confirmation: `WMF-${id}-${randomInt(1000, 9999)}`,
     }
 
     // return {
@@ -158,17 +158,19 @@ export class SubmissionService {
     let result = true
 
     result = Object.keys(registration).every((key): boolean => {
-      if (registration[key] instanceof Array) {
-        return registration[key].every((val) => this.emptyValueCheck(val, key))
-      } else if (this.isObj(registration[key])) {
+      if (Array.isArray(registration[key])) {
+        return registration[key].every(val => this.emptyValueCheck(val, key))
+      }
+      else if (this.isObj(registration[key])) {
         return this.emptyValueCheck(registration[key], key)
-      } else if (
-        registration[key] === null ||
-        registration[key] === undefined ||
-        registration[key] === ''
+      }
+      else if (
+        registration[key] === null
+        || registration[key] === undefined
+        || registration[key] === ''
       ) {
         const isRequired = this.requiredField.find((el) => {
-          return el.tableName == tableName && el.fieldName == key
+          return el.tableName === tableName && el.fieldName === key
         })
         return !isRequired.submissionRequired
       }

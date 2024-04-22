@@ -1,6 +1,6 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { IsJWT } from 'class-validator'
 import { UserError } from '../../common.entity'
-import { IsJWT, IsOptional } from 'class-validator'
 import { User } from '../../user/entities/user.entity'
 
 @ObjectType()
@@ -18,5 +18,6 @@ export class AuthPayload {
 export class PasswordExists {
   @Field(() => Int)
   id: number
+
   pass: boolean
 }

@@ -1,8 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import { TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
 import { ClassTypeService } from '../class-type.service'
 import { PrismaService } from '@/prisma/prisma.service'
 
-describe('ClassTypeService', () => {
+describe('classTypeService', () => {
   let service: ClassTypeService
 
   beforeEach(async () => {

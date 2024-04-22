@@ -1,16 +1,13 @@
 import gql from 'graphql-tag'
 import request from 'supertest-graphql'
-import {LevelInput} from '../dto/level.input'
-import {Level, LevelPayload} from '../entities/level.entity'
-
+import { Level, LevelPayload } from '../entities/level.entity'
 
 describe('Level', () => {
-
   describe('Listing Levels', () => {
     let response: any
 
     it('Can provide a list of all levels', async () => {
-      response = await request<{levels: Level[]}>(global.httpServer)
+      response = await request<{ levels: Level[] }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query Levels {
@@ -26,7 +23,7 @@ describe('Level', () => {
     })
 
     it('Can provide a list of levels with SubdisciplineID', async () => {
-      response = await request<{levels: Level[]}>(global.httpServer)
+      response = await request<{ levels: Level[] }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query Levels($categoryId: Int, $subdisciplineId: Int){
@@ -38,13 +35,13 @@ describe('Level', () => {
           }
         `)
         .variables({
-        subdisciplineId: 194
+          subdisciplineId: 194,
         })
       expect(response.data.levels.length).toBeGreaterThanOrEqual(1)
     })
 
     it('Can provide a list of levels with CategoryID', async () => {
-      const response2:any = await request<{levels: Level[]}>(global.httpServer)
+      const response2: any = await request<{ levels: Level[] }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query Levels($categoryId: Int, $subdisciplineId: Int){
@@ -56,14 +53,14 @@ describe('Level', () => {
           }
         `)
         .variables({
-        categoryId: 43
+          categoryId: 43,
         })
       expect(response.data.levels.length).toBeGreaterThanOrEqual(1)
       expect(response2.data.levels).not.toEqual(response.data.levels)
     })
 
     it('Can provide a list of levels with CategoryID and SubdisciplineID', async () => {
-      response = await request<{levels: Level[]}>(global.httpServer)
+      response = await request<{ levels: Level[] }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query Levels($categoryId: Int, $subdisciplineId: Int){
@@ -76,13 +73,13 @@ describe('Level', () => {
         `)
         .variables({
           categoryId: 40,
-          subdisciplineId: 219
+          subdisciplineId: 219,
         })
       expect(response.data.levels.length).toBeGreaterThanOrEqual(1)
     })
 
     it('Returns empty array if nothing is found', async () => {
-      response = await request<{levels: Level[]}>(global.httpServer)
+      response = await request<{ levels: Level[] }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query Levels($categoryId: Int, $subdisciplineId: Int){
@@ -95,7 +92,7 @@ describe('Level', () => {
         `)
         .variables({
           categoryId: 1000,
-          subdisciplineId: 194
+          subdisciplineId: 194,
         })
       expect(response.data.levels.length).toBeLessThanOrEqual(0)
     })
@@ -105,7 +102,7 @@ describe('Level', () => {
     let response: any
 
     it('Find level using proper ID', async () => {
-      response = await request<{level: Level}>(global.httpServer)
+      response = await request<{ level: Level }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query Level($levelId: Int!) {
@@ -117,14 +114,14 @@ describe('Level', () => {
           }
         `)
         .variables({
-          levelId:37
+          levelId: 37,
         })
       expectTypeOf(response.data.level.name).toBeString
       expect(response.data.level.name).toBe('GRADE C')
     })
 
     it('Returns error when nothing found', async () => {
-      response = await request<{level: Level}>(global.httpServer)
+      response = await request<{ level: Level }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query Level($levelId: Int!) {
@@ -136,7 +133,7 @@ describe('Level', () => {
           }
         `)
         .variables({
-          levelId: 10000
+          levelId: 10000,
         })
       expectTypeOf(response.errors[0].message).toBeString
       expect(response.errors).toBeTruthy()
@@ -150,13 +147,13 @@ describe('Level', () => {
     afterAll(async () => {
       await global.prisma.tbl_level.delete({
         where: {
-          id: levelId
-        }
+          id: levelId,
+        },
       })
     })
 
     it('Successfully creates a level using LevelInput', async () => {
-      response = await request<{levelCreate: LevelPayload}>(global.httpServer)
+      response = await request<{ levelCreate: LevelPayload }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .mutate(gql`
           mutation CreateLevel($levelInput: LevelInput!) {
@@ -172,9 +169,9 @@ describe('Level', () => {
       }`)
         .variables({
           levelInput: {
-            name: "Really Old",
-            description: "Over 90"
-        }
+            name: 'Really Old',
+            description: 'Over 90',
+          },
         })
       levelId = response.data.levelCreate.level.id
       expect(response.data.levelCreate.level.name).toBe('Really Old')
@@ -182,7 +179,7 @@ describe('Level', () => {
     })
 
     it('Returns error if trying to add duplicate level name', async () => {
-      response = await request<{levelCreate: LevelPayload}>(global.httpServer)
+      response = await request<{ levelCreate: LevelPayload }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .mutate(gql`
           mutation CreateLevel($levelInput: LevelInput!) {
@@ -198,16 +195,16 @@ describe('Level', () => {
       }`)
         .variables({
           levelInput: {
-            name: "Really Old",
-            description: "Over 90"
-        }
+            name: 'Really Old',
+            description: 'Over 90',
+          },
         })
       expect(response.data.levelCreate.userErrors[0]).toBeTruthy()
       expect(response.data.levelCreate.level).toBeNull()
     })
 
     it('Improper input returns error', async () => {
-      response = await request<{levelCreate: LevelPayload}>(global.httpServer)
+      response = await request<{ levelCreate: LevelPayload }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .mutate(gql`
           mutation CreateLevel($levelInput: LevelInput!) {
@@ -224,8 +221,8 @@ describe('Level', () => {
         .variables({
           levelInput: {
             name: null,
-            description: "Those young at heart"
-        }
+            description: 'Those young at heart',
+          },
         })
       expect(response.errors[0]).toBeTruthy()
     })
@@ -236,7 +233,7 @@ describe('Level', () => {
     let levelId: number
 
     beforeEach(async () => {
-      response = await request<{levelCreate: LevelPayload}>(global.httpServer)
+      response = await request<{ levelCreate: LevelPayload }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .mutate(gql`
           mutation CreateLevel($levelInput: LevelInput!) {
@@ -252,9 +249,9 @@ describe('Level', () => {
       }`)
         .variables({
           levelInput: {
-            name: "Really Old",
-            description: "Over 90"
-        }
+            name: 'Really Old',
+            description: 'Over 90',
+          },
         })
       levelId = response.data.levelCreate.level.id
     })
@@ -262,15 +259,15 @@ describe('Level', () => {
     afterEach(async () => {
       await global.prisma.tbl_level.delete({
         where: {
-          id: levelId
-        }
+          id: levelId,
+        },
       })
     })
 
     it('Update details of existing level', async () => {
-      response = await request<{levelUpdate: LevelPayload}>(global.httpServer)
-      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-      .mutate(gql`
+      response = await request<{ levelUpdate: LevelPayload }>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .mutate(gql`
         mutation LevelUpdate($levelId: Int!, $levelInput: LevelInput!){
           levelUpdate(levelID: $levelId, levelInput: $levelInput) {
             userErrors {
@@ -287,17 +284,17 @@ describe('Level', () => {
           levelId,
           levelInput: {
             name: 'Really Old',
-            description: 'Young at heart'
-          }
+            description: 'Young at heart',
+          },
         })
       expect(response.data.levelUpdate.level.description).toBe('Young at heart')
       expect(response.errors).not.toBeDefined()
     })
 
     it('Returns error if level not found', async () => {
-      response = await request<{levelUpdate: LevelPayload}>(global.httpServer)
-      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-      .mutate(gql`
+      response = await request<{ levelUpdate: LevelPayload }>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .mutate(gql`
         mutation LevelUpdate($levelId: Int!, $levelInput: LevelInput!){
           levelUpdate(levelID: $levelId, levelInput: $levelInput) {
             userErrors {
@@ -314,16 +311,16 @@ describe('Level', () => {
           levelId: levelId + 1,
           levelInput: {
             name: 'Really Old',
-          }
+          },
         })
       expect(response.data.levelUpdate.level).toBeNull()
       expect(response.data.levelUpdate.userErrors[0].message).toBeTruthy()
     })
 
     it('Returns error if name is null or undefined in update', async () => {
-      response = await request<{levelUpdate: LevelPayload}>(global.httpServer)
-      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-      .mutate(gql`
+      response = await request<{ levelUpdate: LevelPayload }>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .mutate(gql`
         mutation LevelUpdate($levelId: Int!, $levelInput: LevelInput!){
           levelUpdate(levelID: $levelId, levelInput: $levelInput) {
             userErrors {
@@ -340,8 +337,8 @@ describe('Level', () => {
           levelId,
           levelInput: {
             name: null,
-            description: 'Testing if null works in update'
-          }
+            description: 'Testing if null works in update',
+          },
         })
       expect(response.data).toBeFalsy()
       expect(response.errors[0]).toBeTruthy()
@@ -353,7 +350,7 @@ describe('Level', () => {
     let levelId: number
 
     beforeEach(async () => {
-      response = await request<{levelCreate: LevelPayload}>(global.httpServer)
+      response = await request<{ levelCreate: LevelPayload }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .mutate(gql`
           mutation CreateLevel($levelInput: LevelInput!) {
@@ -369,9 +366,9 @@ describe('Level', () => {
       }`)
         .variables({
           levelInput: {
-            name: "Really Old",
-            description: "Over 90"
-        }
+            name: 'Really Old',
+            description: 'Over 90',
+          },
         })
       levelId = response.data.levelCreate.level.id
     })
@@ -380,14 +377,15 @@ describe('Level', () => {
       try {
         await global.prisma.tbl_level.delete({
           where: {
-            id: levelId
-          }
+            id: levelId,
+          },
         })
-      } catch(error) {}
+      }
+      catch (error) {}
     })
 
-    it('Deletes a level using the levelID', async() => {
-      response = await request<{levelDelete: LevelPayload}>(global.httpServer)
+    it('Deletes a level using the levelID', async () => {
+      response = await request<{ levelDelete: LevelPayload }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .mutate(gql`
         mutation LevelDelete($levelDeleteId: Int!) {
@@ -403,17 +401,17 @@ describe('Level', () => {
         }
       }`)
         .variables({
-        levelDeleteId: levelId
+          levelDeleteId: levelId,
         })
       const deleteCheck = await global.prisma.tbl_level.findUnique({
-        where: {id: levelId}
+        where: { id: levelId },
       })
       expect(deleteCheck).toBeNull()
       expect(response.data.levelDelete.level.name).toBe('Really Old')
     })
 
-    it('Returns error message if level not found', async() => {
-      response = await request<{levelDelete: LevelPayload}>(global.httpServer)
+    it('Returns error message if level not found', async () => {
+      response = await request<{ levelDelete: LevelPayload }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .mutate(gql`
         mutation LevelDelete($levelDeleteId: Int!) {
@@ -429,7 +427,7 @@ describe('Level', () => {
         }
       }`)
         .variables({
-        levelDeleteId: levelId + 1
+          levelDeleteId: levelId + 1,
         })
       expect(response.data.levelDelete.level).toBeNull()
       expect(response.data.levelDelete.userErrors[0].message).toBeTruthy()

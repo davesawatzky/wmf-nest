@@ -1,21 +1,18 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import { TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
 import {
-  describe,
-  beforeAll,
   beforeEach,
-  afterAll,
-  test,
-  it,
+  describe,
   expect,
+  it,
 } from 'vitest'
+import { ConfigService } from '@nestjs/config'
 import { PaymentController } from './payment.controller'
 import { PaymentService } from './payment.service'
-import { StripeService } from '../stripe/stripe.service'
-import { StripeModule } from '../stripe/stripe.module'
-import { ConfigService } from '@nestjs/config'
-import {PaymentCreateDto} from './dto/payment.dto'
+import { PaymentCreateDto } from './dto/payment.dto'
+import { StripeService } from '@/stripe/stripe.service'
 
-describe('PaymentController', () => {
+describe('paymentController', () => {
   let controller: PaymentController
   let payment: PaymentService
   let stripe: StripeService
@@ -24,16 +21,13 @@ describe('PaymentController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PaymentController],
-      providers: [PaymentService,
-        {
-          provide: StripeService,
-          useValue: stripe,
-        },
-        {
-          provide: ConfigService,
-          useValue: configService,
-        },
-      ],
+      providers: [PaymentService, {
+        provide: StripeService,
+        useValue: stripe,
+      }, {
+        provide: ConfigService,
+        useValue: configService,
+      }],
       // imports: [StripeModule],
     }).compile()
 
@@ -50,21 +44,20 @@ describe('PaymentController', () => {
   })
 
   describe('createPaymentIntent', () => {
-
     let body: PaymentCreateDto
     beforeEach(() => {
       body = {
         amount: 25.00,
-        currency: 'cad'
+        currency: 'cad',
       },
-        payment.createPaymentIntent = vi.fn().mockResolvedValue({
-          client_secret: 'newClientSecret'
-        })
+      payment.createPaymentIntent = vi.fn().mockResolvedValue({
+        client_secret: 'newClientSecret',
+      })
     })
 
-    it('Should return the clientSecret', async () => {
+    it('should return the clientSecret', async () => {
       const result = await controller.createPaymentIntent(body)
-      expect(result).toEqual({clientSecret: 'newClientSecret'})
+      expect(result).toEqual({ clientSecret: 'newClientSecret' })
     })
-  })  
+  })
 })

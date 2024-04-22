@@ -1,6 +1,6 @@
 import { CredentialsSignup } from '../dto/credentials-signup.input'
 
-export const userSignup = (): CredentialsSignup[] => {
+export function userSignup(): CredentialsSignup[] {
   return [
     {
       email: 'test_user.instrument@test.com',

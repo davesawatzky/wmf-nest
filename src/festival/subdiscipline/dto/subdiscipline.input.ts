@@ -1,11 +1,9 @@
-import { InputType, Field, Int, registerEnumType } from '@nestjs/graphql'
+import { Field, InputType, Int } from '@nestjs/graphql'
 import { Decimal } from '@prisma/client/runtime/library'
 import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
 import { Transform, Type } from 'class-transformer'
+import { IsInt, IsOptional, IsString } from 'class-validator'
 import { PerformerType } from '@/common.entity'
-import {IsEnum, IsInt, IsOptional, IsString} from 'class-validator'
-import {Discipline} from '@/festival/discipline/entities/discipline.entity'
-
 
 @InputType()
 export class SubdisciplineInput {

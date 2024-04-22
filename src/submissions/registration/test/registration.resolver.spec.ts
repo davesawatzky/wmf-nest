@@ -1,12 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import { TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
 import {
-  describe,
-  beforeAll,
   beforeEach,
-  afterAll,
-  test,
-  it,
+  describe,
   expect,
+  it,
 } from 'vitest'
 import { RegistrationResolver } from '../registration.resolver'
 import { RegistrationService } from '../registration.service'
@@ -19,7 +17,7 @@ import { SchoolService } from '@/submissions/school/school.service'
 import { TeacherService } from '@/submissions/teacher/teacher.service'
 import { PrismaService } from '@/prisma/prisma.service'
 
-describe('RegistrationResolver', () => {
+describe('registrationResolver', () => {
   let resolver: RegistrationResolver
 
   beforeEach(async () => {

@@ -1,4 +1,5 @@
-import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator'
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
+
 export class PaymentCreateDto {
   // ... Other parameters
 
@@ -9,5 +10,4 @@ export class PaymentCreateDto {
   @IsNotEmpty()
   @IsString()
   currency: string
-  
 }

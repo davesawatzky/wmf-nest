@@ -13,5 +13,4 @@ export class InstrumentInput {
   @IsBoolean()
   @IsOptional()
   mozart?: boolean
-
 }

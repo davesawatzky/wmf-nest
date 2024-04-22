@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import { PrismaService } from '../../prisma/prisma.service'
-import { SchoolGroupInput } from './dto/school-group.input'
 import { tbl_reg_school, tbl_reg_schoolgroup } from '@prisma/client'
-import {UserError} from '@/common.entity'
+import { SchoolGroupInput } from './dto/school-group.input'
+import { PrismaService } from '@/prisma/prisma.service'
+import { UserError } from '@/common.entity'
 
 @Injectable()
 export class SchoolGroupService {
@@ -10,31 +10,33 @@ export class SchoolGroupService {
 
   async create(
     schoolID: tbl_reg_school['id'],
-    schoolGroupInput?: Partial<SchoolGroupInput>
+    schoolGroupInput?: Partial<SchoolGroupInput>,
   ) {
     let schoolGroup: tbl_reg_schoolgroup
     let userErrors: UserError[]
     try {
-      userErrors = [],
+      userErrors = []
       schoolGroup = await this.prisma.tbl_reg_schoolgroup.create({
-        data: { schoolID: schoolID, ...schoolGroupInput },
+        data: { schoolID, ...schoolGroupInput },
       })
-    } catch (error: any) {
+    }
+    catch (error: any) {
       if (error.code === 'P2003') {
         userErrors = [
           {
             message: 'Cannot create school group. Missing school ID',
-            field: ['schoolId']
-          }
+            field: ['schoolId'],
+          },
         ]
         schoolGroup = null
-      } else {
+      }
+      else {
         console.log(error)
         userErrors = [
           {
             message: 'Cannot create school group',
-            field: []
-          }
+            field: [],
+          },
         ]
         schoolGroup = null
       }
@@ -47,7 +49,7 @@ export class SchoolGroupService {
 
   async findAll(schoolID?: tbl_reg_schoolgroup['schoolID']) {
     return await this.prisma.tbl_reg_schoolgroup.findMany({
-      where: { schoolID},
+      where: { schoolID },
     })
   }
 
@@ -59,32 +61,34 @@ export class SchoolGroupService {
 
   async update(
     schoolGroupID: tbl_reg_schoolgroup['id'],
-    schoolGroupInput: Partial<SchoolGroupInput>
+    schoolGroupInput: Partial<SchoolGroupInput>,
   ) {
     let userErrors: UserError[]
     let schoolGroup: tbl_reg_schoolgroup
 
     try {
-      userErrors = [],
+      userErrors = []
       schoolGroup = await this.prisma.tbl_reg_schoolgroup.update({
         where: { id: schoolGroupID },
         data: { ...schoolGroupInput },
       })
-    } catch (error: any) {
+    }
+    catch (error: any) {
       if (error.code === 'P2025') {
         userErrors = [
           {
             message: 'School group to update not found',
-            field: ['id']
-          }
+            field: ['id'],
+          },
         ]
         schoolGroup = null
-      } else {
+      }
+      else {
         userErrors = [
           {
             message: 'Cannot update school group',
-            field: []
-          }
+            field: [],
+          },
         ]
         schoolGroup = null
       }
@@ -100,25 +104,27 @@ export class SchoolGroupService {
     let schoolGroup: tbl_reg_schoolgroup
 
     try {
-      userErrors = [],
+      userErrors = []
       schoolGroup = await this.prisma.tbl_reg_schoolgroup.delete({
         where: { id: schoolGroupID },
       })
-    } catch (error: any) {
+    }
+    catch (error: any) {
       if (error.code === 'P2025') {
         userErrors = [
           {
             message: 'School group to delete not found',
-            field: ['id']
-          }
+            field: ['id'],
+          },
         ]
         schoolGroup = null
-      } else {
+      }
+      else {
         userErrors = [
           {
             message: 'Cannot delete school group',
-            field: []
-          }
+            field: [],
+          },
         ]
         schoolGroup = null
       }

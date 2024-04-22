@@ -1,4 +1,5 @@
-import { Injectable, ExecutionContext, CanActivate } from '@nestjs/common'
+import { ExecutionContext } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { GqlExecutionContext } from '@nestjs/graphql'
 import { AuthGuard } from '@nestjs/passport'
 import { Observable } from 'rxjs'
@@ -14,7 +15,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 @Injectable()
 export class RestJwtAuthGuard extends AuthGuard('jwt') {
   canActivate(
-    context: ExecutionContext
+    context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     return super.canActivate(context)
   }

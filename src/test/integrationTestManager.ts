@@ -1,40 +1,36 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common'
-import {Test} from '@nestjs/testing'
+import { INestApplication } from '@nestjs/common'
+import { ValidationPipe } from '@nestjs/common'
+import { Test } from '@nestjs/testing'
 import gql from 'graphql-tag'
 import cookieParser from 'cookie-parser'
-import { join } from 'path'
-import { AppModule } from '../app.module'
-import {AuthService} from '../auth/auth.service'
 import { AuthPayload } from 'src/auth/entities/auth.entity'
 import helmet from 'helmet'
-import { PrismaService } from '../prisma/prisma.service'
-import {userSignup} from '../auth/stubs/signup'
-import { TestUser } from './testUser'
-import {EmailConfirmationService} from 'src/email-confirmation/email-confirmation.service'
+import { EmailConfirmationService } from 'src/email-confirmation/email-confirmation.service'
 import request from 'supertest-graphql'
-
+import { PrismaService } from '../prisma/prisma.service'
+import { AppModule } from '../app.module'
+import { TestUser } from './testUser'
 
 export class IntegrationTestManager {
   public httpServer: any
   private app: INestApplication
   private diatonicToken: string
   public prisma: PrismaService
-  
-  async beforeAll(): Promise<void> {
 
-    let emailConfirmationService: Partial<EmailConfirmationService> = {
+  async beforeAll(): Promise<void> {
+    const emailConfirmationService: Partial<EmailConfirmationService> = {
       sendVerificationLink: vi.fn().mockReturnValue(true),
     }
 
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule]
+      imports: [AppModule],
     })
       .overrideProvider(EmailConfirmationService)
       .useValue(emailConfirmationService)
       .compile()
 
     this.app = moduleRef.createNestApplication()
- 
+
     this.app.use(cookieParser())
     this.app.use(
       helmet({
@@ -54,7 +50,7 @@ export class IntegrationTestManager {
             frameSrc: [`'self'`, 'sandbox.embed.apollographql.com'],
           },
         },
-      })
+      }),
     )
 
     this.app.enableCors({
@@ -69,21 +65,19 @@ export class IntegrationTestManager {
     this.app.useGlobalPipes(
       new ValidationPipe({
         transform: true,
-      })
+      }),
     )
     // this.app.useStaticAssets(join(__dirname, '..', 'public'))
     // this.app.setBaseViewsDir(join(__dirname, '..', 'emails'))
     // this.app.setViewEngine('hbs')
-
- 
 
     this.httpServer = this.app.getHttpServer()
     this.prisma = this.app.get<PrismaService>(PrismaService)
 
     await this.app.init()
 
-    const response = await request<{signin: AuthPayload}>(
-      this.httpServer
+    const response = await request<{ signin: AuthPayload }>(
+      this.httpServer,
     ).mutate(gql`
             mutation SignIn($credentials: CredentialsSignin!) {
               signin(credentials: $credentials) {
@@ -106,11 +100,10 @@ export class IntegrationTestManager {
       .variables({
         credentials: {
           email: TestUser().email,
-          password: TestUser().password
-        }
+          password: TestUser().password,
+        },
       })
     this.diatonicToken = response.data.signin.diatonicToken
-
   }
 
   async afterAll() {

@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
-import { EmailConfirmationService } from './email-confirmation.service'
-import { EmailModule } from '../email/email.module'
 import { JwtModule } from '@nestjs/jwt'
+import { EmailConfirmationService } from './email-confirmation.service'
 import { EmailConfirmationController } from './email-confirmation.controller'
-import { UserModule } from '../user/user.module'
+import { EmailModule } from '@/email/email.module'
+import { UserModule } from '@/user/user.module'
 
 @Module({
   imports: [EmailModule, JwtModule.register({}), UserModule],

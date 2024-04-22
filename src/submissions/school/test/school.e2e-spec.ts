@@ -1,9 +1,8 @@
 import gql from 'graphql-tag'
 import request from 'supertest-graphql'
-import { School, SchoolPayload } from '../entities/school.entity'
+import { School } from '../entities/school.entity'
 
 describe('School', () => {
-
   let regId: number
 
   beforeAll(async () => {
@@ -12,7 +11,7 @@ describe('School', () => {
         userID: global.userId,
         performerType: 'SCHOOL',
         label: 'Test Form',
-      }
+      },
     })
     regId = reg.id
   })
@@ -20,8 +19,8 @@ describe('School', () => {
   afterAll(async () => {
     await global.prisma.tbl_registration.delete({
       where: {
-        id: regId
-      }
+        id: regId,
+      },
     })
   })
 
@@ -29,7 +28,7 @@ describe('School', () => {
     let response: any
 
     it('Can return the full list of schools', async () => {
-      response = await request<{schools: School[]}>(global.httpServer)
+      response = await request<{ schools: School[] }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query Schools{
@@ -52,7 +51,7 @@ describe('School', () => {
     })
 
     it('Can return the full list of schools with associated registrations', async () => {
-      response = await request<{schools: School[]}>(global.httpServer)
+      response = await request<{ schools: School[] }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query Schools{
@@ -75,7 +74,7 @@ describe('School', () => {
     })
 
     it('Can return the full list of schools with registrations and school groups', async () => {
-      response = await request<{schools: School[]}>(global.httpServer)
+      response = await request<{ schools: School[] }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query Schools{
@@ -101,7 +100,7 @@ describe('School', () => {
     })
 
     it('Can return a single school with schoolID', async () => {
-      response = await request<{school: School}>(global.httpServer)
+      response = await request<{ school: School }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query School($registrationId: Int, $schoolId: Int) {
@@ -126,7 +125,7 @@ describe('School', () => {
     })
 
     it('Returns an error if nothing is found', async () => {
-      response = await request<{school: School}>(global.httpServer)
+      response = await request<{ school: School }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query School($registrationId: Int, $schoolId: Int) {
@@ -144,7 +143,7 @@ describe('School', () => {
         `)
         .variables({
           schoolId: 10,
-          registrationId: 10
+          registrationId: 10,
         })
       expect(response.errors).toBeTruthy()
     })
@@ -158,14 +157,15 @@ describe('School', () => {
       try {
         await global.prisma.tbl_reg_school.delete({
           where: {
-            id: schoolId
-          }
+            id: schoolId,
+          },
         })
-      } catch (error) {}
+      }
+      catch (error) {}
     })
-        
+
     it('Can create a school with regId', async () => {
-      response = await request<{schoolCreate: School}>(global.httpServer)
+      response = await request<{ schoolCreate: School }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           mutation SchoolCreate($registrationId: Int!) {
@@ -190,7 +190,7 @@ describe('School', () => {
     })
 
     it('Can create a school with school Input', async () => {
-      response = await request<{schoolCreate: School}>(global.httpServer)
+      response = await request<{ schoolCreate: School }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           mutation SchoolCreate($registrationId: Int!, $schoolInput: SchoolInput) {
@@ -209,8 +209,8 @@ describe('School', () => {
         .variables({
           registrationId: regId,
           schoolInput: {
-            name: 'Test School'
-          }
+            name: 'Test School',
+          },
         })
         .expectNoErrors()
       schoolId = await response.data.schoolCreate.school.id
@@ -219,7 +219,7 @@ describe('School', () => {
     })
 
     it('Returns an error if trying to create a school without proper registrationId', async () => {
-      response = await request<{schoolCreate: School}>(global.httpServer)
+      response = await request<{ schoolCreate: School }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           mutation SchoolCreate($registrationId: Int!, $schoolInput: SchoolInput) {
@@ -238,8 +238,8 @@ describe('School', () => {
         .variables({
           registrationId: regId + 1,
           schoolInput: {
-            name: 'Test School'
-          }
+            name: 'Test School',
+          },
         })
       expect(response.data.schoolCreate.userErrors[0].message).toBeTruthy()
       expect(response.data.schoolCreate.school).toBeNull()
@@ -256,7 +256,7 @@ describe('School', () => {
           regID: regId,
           name: 'Test School',
           division: 'Test Division',
-        }
+        },
       })
       schoolId = await response.id
     })
@@ -264,15 +264,15 @@ describe('School', () => {
     afterAll(async () => {
       await global.prisma.tbl_reg_school.delete({
         where: {
-          id: schoolId
-        }
+          id: schoolId,
+        },
       })
     })
 
     it('Can update any school', async () => {
-      response = await request<{schoolUpdate: School}>(global.httpServer)
-      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-      .query(gql`
+      response = await request<{ schoolUpdate: School }>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .query(gql`
         mutation SchoolUpdate($schoolId: Int!, $schoolInput: SchoolInput!) {
           schoolUpdate(schoolID: $schoolId, schoolInput: $schoolInput) {
             school {
@@ -287,21 +287,21 @@ describe('School', () => {
           }
         } 
       `)
-      .variables({
-        schoolId,
-        schoolInput: {
-          division: 'Updated Division',
-        }
-      })
-      .expectNoErrors()
+        .variables({
+          schoolId,
+          schoolInput: {
+            division: 'Updated Division',
+          },
+        })
+        .expectNoErrors()
       expect(response.data.schoolUpdate.school.division).toBe('Updated Division')
       expect(response.data.schoolUpdate.school.name).toBe('Test School')
     })
 
     it('Returns userError if incorrect school id', async () => {
-      response = await request<{schoolUpdate: School}>(global.httpServer)
+      response = await request<{ schoolUpdate: School }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-      .query(gql`
+        .query(gql`
         mutation SchoolUpdate($schoolId: Int!, $schoolInput: SchoolInput!) {
           schoolUpdate(schoolID: $schoolId, schoolInput: $schoolInput) {
             school {
@@ -315,20 +315,20 @@ describe('School', () => {
           }
         } 
       `)
-      .variables({
-        schoolId: schoolId + 1,
-        schoolInput: {
-          division: 'Updated Division',
-        }
-      })
+        .variables({
+          schoolId: schoolId + 1,
+          schoolInput: {
+            division: 'Updated Division',
+          },
+        })
       expect(response.data.schoolUpdate.userErrors[0].message).toBeTruthy()
       expect(response.data.schoolUpdate.school).toBeNull()
     })
 
     it('Returns html status error if missing school id', async () => {
-      response = await request<{schoolUpdate: School}>(global.httpServer)
+      response = await request<{ schoolUpdate: School }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-      .query(gql`
+        .query(gql`
         mutation SchoolUpdate($schoolId: Int!, $schoolInput: SchoolInput!) {
           schoolUpdate(schoolID: $schoolId, schoolInput: $schoolInput) {
             school {
@@ -343,19 +343,19 @@ describe('School', () => {
           }
         } 
       `)
-      .variables({
-        schoolId: null,
-        schoolInput: {
-          division: 'Updated Division',
-        }
-      })
+        .variables({
+          schoolId: null,
+          schoolInput: {
+            division: 'Updated Division',
+          },
+        })
       expect(response.errors[0].message).toBeTruthy()
     })
 
     it('Returns html status error if any bad input args', async () => {
-      response = await request<{schoolUpdate: School}>(global.httpServer)
+      response = await request<{ schoolUpdate: School }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-      .query(gql`
+        .query(gql`
         mutation SchoolUpdate($schoolId: Int!, $schoolInput: SchoolInput!) {
           schoolUpdate(schoolID: $schoolId, schoolInput: $schoolInput) {
             school {
@@ -370,13 +370,13 @@ describe('School', () => {
           }
         } 
       `)
-      .variables({
-        schoolId,
-        schoolInput: {
-          name: 'Updated School',
-          okeydokey: true
-        }
-      })
+        .variables({
+          schoolId,
+          schoolInput: {
+            name: 'Updated School',
+            okeydokey: true,
+          },
+        })
       expect(response.errors[0].message).toBeTruthy()
     })
   })
@@ -389,8 +389,8 @@ describe('School', () => {
       response = await global.prisma.tbl_reg_school.create({
         data: {
           regID: regId,
-          name: 'Test School'
-        }
+          name: 'Test School',
+        },
       })
       schoolId = await response.id
     })
@@ -399,16 +399,17 @@ describe('School', () => {
       try {
         await global.prisma.tbl_reg_school.delete({
           where: {
-            id: schoolId
-          }
+            id: schoolId,
+          },
         })
-      } catch (error) {}
+      }
+      catch (error) {}
     })
 
     it('Can delete a school', async () => {
-      response = await request<{schoolDelete: boolean}>(global.httpServer)
-      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-      .query(gql`
+      response = await request<{ schoolDelete: boolean }>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .query(gql`
         mutation SchoolDelete($schoolId: Int!) {
           schoolDelete(schoolID: $schoolId) {
             school {
@@ -422,22 +423,22 @@ describe('School', () => {
           }
         } 
       `)
-      .variables({
-        schoolId
-      })
-      .expectNoErrors()
-      
+        .variables({
+          schoolId,
+        })
+        .expectNoErrors()
+
       const deleteCheck = await global.prisma.tbl_reg_school.findUnique({
-        where: {id: schoolId}
+        where: { id: schoolId },
       })
       expect(deleteCheck).toBeNull()
       expect(response.data.schoolDelete.school.name).toBe('Test School')
     })
 
     it('Returns a userError if school not found', async () => {
-      response = await request<{schoolDelete: boolean}>(global.httpServer)
-      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-      .query(gql`
+      response = await request<{ schoolDelete: boolean }>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .query(gql`
         mutation SchoolDelete($schoolId: Int!) {
           schoolDelete(schoolID: $schoolId) {
             school {
@@ -451,17 +452,17 @@ describe('School', () => {
           }
         } 
       `)
-      .variables({
-        schoolId: schoolId + 1
-      })
-      .expectNoErrors()
+        .variables({
+          schoolId: schoolId + 1,
+        })
+        .expectNoErrors()
       expect(response.data.schoolDelete.userErrors[0].message).toBeTruthy()
     })
 
     it('Returns status error if school id not given', async () => {
-      response = await request<{schoolDelete: boolean}>(global.httpServer)
-      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-      .query(gql`
+      response = await request<{ schoolDelete: boolean }>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .query(gql`
         mutation SchoolDelete($schoolId: Int!) {
           schoolDelete(schoolID: $schoolId) {
             school {
@@ -475,12 +476,10 @@ describe('School', () => {
           }
         } 
       `)
-      .variables({
-        schoolId: null
-      })
+        .variables({
+          schoolId: null,
+        })
       expect(response.errors[0].message).toBeTruthy()
     })
   })
 })
-  
-

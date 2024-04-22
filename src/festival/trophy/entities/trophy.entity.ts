@@ -1,4 +1,4 @@
-import { Field, ObjectType, Int } from '@nestjs/graphql'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
 import { UserError } from '@/common.entity'
 
@@ -6,6 +6,7 @@ import { UserError } from '@/common.entity'
 export class Trophy {
   @Field(() => Int)
   id: number
+
   name: string
   description?: string
   festivalClasses?: FestivalClass[]

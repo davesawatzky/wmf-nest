@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
-import { Category, CategoryPayload } from './entities/category.entity'
 import { CategoryInput } from './dto/category.input'
 import { PrismaService } from '@/prisma/prisma.service'
-import {UserError} from '@/common.entity'
+import { UserError } from '@/common.entity'
 
 @Injectable()
 export class CategoryService {
@@ -13,39 +12,41 @@ export class CategoryService {
     let category: tbl_category
     let userErrors: UserError[]
     try {
-      userErrors = [],
-        category = await this.prisma.tbl_category.create({
-          data: {...categoryInput},
-        })
-    } catch (error: any) {
+      userErrors = []
+      category = await this.prisma.tbl_category.create({
+        data: { ...categoryInput },
+      })
+    }
+    catch (error: any) {
       if (error.code === 'P2002') {
         userErrors = [
           {
             message: 'Category name already exists',
-            field: ['name']
-          }
+            field: ['name'],
+          },
         ]
         category = null
-      } else {
+      }
+      else {
         console.log(error)
         userErrors = [
           {
             message: 'Cannot create category',
-            field: []
-          }
+            field: [],
+          },
         ]
         category = null
       }
     }
     return {
       userErrors,
-      category
+      category,
     }
   }
 
   async findAll(
     levelID?: tbl_level['id'],
-    subdisciplineID?: tbl_subdiscipline['id']
+    subdisciplineID?: tbl_subdiscipline['id'],
   ) {
     return await this.prisma.tbl_category.findMany({
       where: {
@@ -71,32 +72,34 @@ export class CategoryService {
     try {
       userErrors = []
       category = await this.prisma.tbl_category.update({
-        where: {id},
-        data: {...categoryInput}
+        where: { id },
+        data: { ...categoryInput },
       })
-    } catch (error: any) {
+    }
+    catch (error: any) {
       if (error.code === 'P2025') {
         userErrors = [
           {
             message: 'Category to update not found',
-            field: ['id']
-          }
+            field: ['id'],
+          },
         ]
         category = null
-      } else {
+      }
+      else {
         console.log(error)
         userErrors = [
           {
             message: 'Cannot update category',
-            field: []
-          }
+            field: [],
+          },
         ]
-        category =null
+        category = null
       }
     }
     return {
       userErrors,
-      category
+      category,
     }
   }
 
@@ -106,32 +109,33 @@ export class CategoryService {
     try {
       userErrors = []
       category = await this.prisma.tbl_category.delete({
-        where: {id},
+        where: { id },
       })
-    } catch (error: any) {
+    }
+    catch (error: any) {
       if (error.code === 'P2025') {
         userErrors = [
           {
             message: 'Category to delete not found',
-            field: ['id']
-          }
+            field: ['id'],
+          },
         ]
         category = null
-      } else {
+      }
+      else {
         console.log(error)
         userErrors = [
           {
             message: 'Cannot delete category',
-            field: []
-          }
+            field: [],
+          },
         ]
-        category =null
+        category = null
       }
     }
     return {
       userErrors,
-      category
+      category,
     }
   }
 }
-

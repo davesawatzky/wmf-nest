@@ -1,28 +1,27 @@
 import {
-  Resolver,
+  Args,
+  Int,
+  Mutation,
   Parent,
   Query,
-  Mutation,
-  Args,
   ResolveField,
-  Int,
+  Resolver,
 } from '@nestjs/graphql'
-import { tbl_registration, tbl_reg_classes } from '@prisma/client'
+import { tbl_reg_classes, tbl_registration } from '@prisma/client'
+import { UseGuards } from '@nestjs/common/decorators'
 import { RegisteredClassService } from './registered-class.service'
 import { RegisteredClassInput } from './dto/registered-class.input'
-import { RegisteredClassPayload } from './entities/registered-class.entity'
-import { SelectionService } from '../selection/selection.service'
-import { RegisteredClass } from './entities/registered-class.entity'
-import { UseGuards } from '@nestjs/common/decorators'
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
-import { Selection } from '../selection/entities/selection.entity'
+import { RegisteredClass, RegisteredClassPayload } from './entities/registered-class.entity'
+import { SelectionService } from '@/submissions/selection/selection.service'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
+import { Selection } from '@/submissions/selection/entities/selection.entity'
 
 @Resolver(() => RegisteredClass)
 @UseGuards(JwtAuthGuard)
 export class RegisteredClassResolver {
   constructor(
     private readonly registeredClassService: RegisteredClassService,
-    private readonly selectionService: SelectionService
+    private readonly selectionService: SelectionService,
   ) {}
 
   /** Queries */
@@ -30,7 +29,7 @@ export class RegisteredClassResolver {
   @Query(() => [RegisteredClass])
   async registeredClasses(
     @Args('registrationID', { type: () => Int })
-    registrationID: tbl_registration['id']
+    registrationID: tbl_registration['id'],
   ) {
     return await this.registeredClassService.findAll(registrationID)
   }
@@ -38,7 +37,7 @@ export class RegisteredClassResolver {
   @Query(() => RegisteredClass)
   async registeredClass(
     @Args('registeredClassID', { type: () => Int })
-    registeredClassID: RegisteredClass['id']
+    registeredClassID: RegisteredClass['id'],
   ) {
     return await this.registeredClassService.findOne(registeredClassID)
   }
@@ -53,11 +52,11 @@ export class RegisteredClassResolver {
       type: () => RegisteredClassInput,
       nullable: true,
     })
-    registeredClass: Partial<RegisteredClassInput> | null
+    registeredClass: Partial<RegisteredClassInput> | null,
   ) {
     return await this.registeredClassService.create(
       registrationID,
-      registeredClass
+      registeredClass,
     )
   }
 
@@ -66,18 +65,18 @@ export class RegisteredClassResolver {
     @Args('registeredClassID', { type: () => Int })
     registeredClassID: RegisteredClass['id'],
     @Args('registeredClassInput', { type: () => RegisteredClassInput })
-    registeredClassInput: Partial<RegisteredClassInput>
+    registeredClassInput: Partial<RegisteredClassInput>,
   ) {
     return await this.registeredClassService.update(
       registeredClassID,
-      registeredClassInput
+      registeredClassInput,
     )
   }
 
   @Mutation(() => RegisteredClassPayload)
   async registeredClassDelete(
     @Args('registeredClassID', { type: () => Int })
-    registeredClassID: RegisteredClass['id']
+    registeredClassID: RegisteredClass['id'],
   ) {
     return await this.registeredClassService.remove(registeredClassID)
   }

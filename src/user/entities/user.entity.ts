@@ -1,11 +1,12 @@
-import { Field, ObjectType, Int } from '@nestjs/graphql'
-import { UserError } from '../../common.entity'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { UserError } from '@/common.entity'
 import { Registration } from '@/submissions/registration/entities/registration.entity'
 
 @ObjectType()
 export class User {
   @Field(() => Int)
   id: number
+
   email?: string
   emailConfirmed?: boolean
   staff?: boolean

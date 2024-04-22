@@ -1,5 +1,4 @@
 import { userSignup } from '../stubs/signup'
-import type { Mock } from 'vitest'
 
 const { password, ...userDetails } = userSignup()[0]
 

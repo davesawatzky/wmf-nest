@@ -1,19 +1,17 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import { TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
 import {
-  describe,
-  beforeAll,
   beforeEach,
-  afterAll,
-  test,
-  it,
+  describe,
   expect,
+  it,
 } from 'vitest'
 import { SchoolResolver } from '../school.resolver'
 import { SchoolService } from '../school.service'
 import { SchoolGroupService } from '@/submissions/school-group/school-group.service'
 import { PrismaService } from '@/prisma/prisma.service'
 
-describe('SchoolResolver', () => {
+describe('schoolResolver', () => {
   let resolver: SchoolResolver
 
   beforeEach(async () => {

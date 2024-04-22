@@ -2,7 +2,7 @@ import { Module, forwardRef } from '@nestjs/common'
 import { InstrumentService } from './instrument.service'
 import { InstrumentResolver } from './instrument.resolver'
 import { DisciplineModule } from '@/festival/discipline/discipline.module'
-import {AbilityModule} from '@/ability/ability.module'
+import { AbilityModule } from '@/ability/ability.module'
 
 @Module({
   providers: [InstrumentResolver, InstrumentService],

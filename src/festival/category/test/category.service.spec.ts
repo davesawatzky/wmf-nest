@@ -1,20 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import { TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
 import {
-  describe,
-  beforeAll,
   beforeEach,
-  afterAll,
-  test,
-  it,
+  describe,
   expect,
+  it,
 } from 'vitest'
 import { CategoryService } from '../category.service'
 import { PrismaService } from '../../../prisma/prisma.service'
-import {Prisma} from '@prisma/client'
-import {CategoryInput} from '../dto/category.input'
-import {categoryStub} from './category.stub'
+import { CategoryInput } from '../dto/category.input'
 
-describe('CategoryService', () => {
+describe('categoryService', () => {
   let categoryService: CategoryService
   let prismaService: PrismaService
 
@@ -32,26 +28,24 @@ describe('CategoryService', () => {
   })
 
   describe('findAll', () => {
-    it('Returns a list of categories', async () => {
+    it('returns a list of categories', async () => {
 
     })
   })
 
   describe('findOne', () => {
-    it('Returns one category', async () => {
+    it('returns one category', async () => {
 
     })
   })
 
   describe('create', () => {
-    it('Creates a category', async () => {
-      const categoryInput:CategoryInput = {
+    it('creates a category', async () => {
+      const categoryInput: CategoryInput = {
         name: 'Baroque',
         description: '1600-1750',
-        requiredComposer: 'J.S. Bach'
+        requiredComposer: 'J.S. Bach',
       }
-
     })
   })
-
 })

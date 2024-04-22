@@ -1,10 +1,11 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql'
-import { UserError } from '../../../common.entity'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { UserError } from '@/common.entity'
 
 @ObjectType()
 export class FieldConfig {
   @Field(() => Int)
   id: number
+
   tableName: string
   fieldName: string
   submissionRequired: boolean

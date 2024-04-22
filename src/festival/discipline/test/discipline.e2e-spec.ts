@@ -1,17 +1,13 @@
 import gql from 'graphql-tag'
 import request from 'supertest-graphql'
-import {Discipline, DisciplinePayload} from '../entities/discipline.entity'
-import { DisciplineInput } from '../dto/discipline.input'
-
-
+import { Discipline, DisciplinePayload } from '../entities/discipline.entity'
 
 describe('Discipline', () => {
-
   describe('Listing Disciplines', () => {
     let response: any
 
     it('Can provide a list of all disciplines when no arguments given', async () => {
-      response = await request<{disciplines: Discipline[]}>(global.httpServer)
+      response = await request<{ disciplines: Discipline[] }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query Disciplines($performerType: PerformerType, $instrument: String, ) {
@@ -23,14 +19,14 @@ describe('Discipline', () => {
         `)
         .variables({
           performerType: null,
-          instrument: null
+          instrument: null,
         })
         // .expectNoErrors()
       expect(response.data.disciplines.length).toBe(17)
     })
 
     it('Can provide a list of disciplines with given PerformerType', async () => {
-      response = await request<{disciplines: Discipline[]}>(global.httpServer)
+      response = await request<{ disciplines: Discipline[] }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query Disciplines($performerType: PerformerType, $instrument: String){
@@ -41,13 +37,13 @@ describe('Discipline', () => {
           }
         `)
         .variables({
-        performerType: "COMMUNITY"
+          performerType: 'COMMUNITY',
         })
       expect(response.data.disciplines.length).toBeGreaterThanOrEqual(1)
     })
 
     it('Can provide a list of disciplines with given instrument', async () => {
-      const response2:any = await request<{disciplines: Discipline[]}>(global.httpServer)
+      const response2: any = await request<{ disciplines: Discipline[] }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query Disciplines($performerType: PerformerType, $instrument: String){
@@ -59,14 +55,14 @@ describe('Discipline', () => {
         `)
         .variables({
           performerType: null,
-          instrument: "Trumpet"
+          instrument: 'Trumpet',
         })
       expect(response2.data.disciplines.length).toBe(1)
       expect(response2.data.disciplines).not.toEqual(response.data.disciplines)
     })
 
     it('Can provide a list of disciplines with performerType and instrument arguments', async () => {
-      response = await request<{disciplines: Discipline[]}>(global.httpServer)
+      response = await request<{ disciplines: Discipline[] }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query Disciplines($performerType: PerformerType, $instrument: String){
@@ -77,14 +73,14 @@ describe('Discipline', () => {
           }
         `)
         .variables({
-          performerType: "SOLO",
-          instrument: "Clarinet"
+          performerType: 'SOLO',
+          instrument: 'Clarinet',
         })
       expect(response.data.disciplines[0].name).toBe('WOODWINDS')
     })
 
     it('Can return instruments in the disciplines list', async () => {
-      response = await request<{disciplines: Discipline[]}>(global.httpServer)
+      response = await request<{ disciplines: Discipline[] }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query Disciplines($instrument: String, $performerType: PerformerType) {
@@ -101,7 +97,7 @@ describe('Discipline', () => {
     })
 
     it('Can return subdisciplines in the disciplines list', async () => {
-      response = await request<{disciplines: Discipline[]}>(global.httpServer)
+      response = await request<{ disciplines: Discipline[] }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query Disciplines($instrument: String, $performerType: PerformerType) {
@@ -118,7 +114,7 @@ describe('Discipline', () => {
     })
 
     it('Returns empty array if nothing is found', async () => {
-      response = await request<{disciplines: Discipline[]}>(global.httpServer)
+      response = await request<{ disciplines: Discipline[] }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query Disciplines($performerType: PerformerType, $instrument: String){
@@ -129,8 +125,8 @@ describe('Discipline', () => {
           }
         `)
         .variables({
-          performerType: "SCHOOL",
-          instrument: "Clarinet"
+          performerType: 'SCHOOL',
+          instrument: 'Clarinet',
         })
       expect(response.data.disciplines.length).toBe(0)
     })
@@ -140,7 +136,7 @@ describe('Discipline', () => {
     let response: any
 
     it('Find discipline using proper ID', async () => {
-      response = await request<{discipline: Discipline}>(global.httpServer)
+      response = await request<{ discipline: Discipline }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query Discipline($disciplineId: Int!) {
@@ -151,14 +147,14 @@ describe('Discipline', () => {
           }
         `)
         .variables({
-          disciplineId:9
+          disciplineId: 9,
         })
       expectTypeOf(response.data.discipline.name).toBeString
       expect(response.data.discipline.name).toBeTruthy()
     })
 
     it('Returns error when nothing found', async () => {
-      response = await request<{discipline: Discipline}>(global.httpServer)
+      response = await request<{ discipline: Discipline }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .query(gql`
           query Discipline($disciplineId: Int!) {
@@ -169,7 +165,7 @@ describe('Discipline', () => {
           }
         `)
         .variables({
-          disciplineId: 10000
+          disciplineId: 10000,
         })
       expectTypeOf(response.errors[0].message).toBeString
       expect(response.errors).toBeTruthy()
@@ -183,13 +179,13 @@ describe('Discipline', () => {
     afterAll(async () => {
       await global.prisma.tbl_discipline.delete({
         where: {
-          name: "Sticks"
-        }
+          name: 'Sticks',
+        },
       })
     })
 
     it('Successfully creates a discipline using DisciplineInput', async () => {
-      response = await request<{disciplineCreate: DisciplinePayload}>(global.httpServer)
+      response = await request<{ disciplineCreate: DisciplinePayload }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .mutate(gql`
           mutation CreateDiscipline($disciplineInput: DisciplineInput!) {
@@ -205,8 +201,8 @@ describe('Discipline', () => {
       }`)
         .variables({
           disciplineInput: {
-            name: "Sticks",
-        }
+            name: 'Sticks',
+          },
         })
       disciplineId = response.data.disciplineCreate.discipline.id
       expect(response.data.disciplineCreate.discipline.name).toBe('Sticks')
@@ -214,7 +210,7 @@ describe('Discipline', () => {
     })
 
     it('Returns error if trying to add duplicate discipline name', async () => {
-      response = await request<{disciplineCreate: DisciplinePayload}>(global.httpServer)
+      response = await request<{ disciplineCreate: DisciplinePayload }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .mutate(gql`
           mutation CreateDiscipline($disciplineInput: DisciplineInput!) {
@@ -230,15 +226,15 @@ describe('Discipline', () => {
       }`)
         .variables({
           disciplineInput: {
-            name: "Sticks",
-        }
+            name: 'Sticks',
+          },
         })
       expect(response.data.disciplineCreate.userErrors[0]).toBeTruthy()
       expect(response.data.disciplineCreate.discipline).toBeNull()
     })
 
     it('Improper input returns error', async () => {
-      response = await request<{disciplineCreate: DisciplinePayload}>(global.httpServer)
+      response = await request<{ disciplineCreate: DisciplinePayload }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .mutate(gql`
           mutation CreateDiscipline($disciplineInput: DisciplineInput!) {
@@ -255,7 +251,7 @@ describe('Discipline', () => {
         .variables({
           disciplineInput: {
             name: null,
-        }
+          },
         })
       expect(response.errors[0]).toBeTruthy()
     })
@@ -266,7 +262,7 @@ describe('Discipline', () => {
     let disciplineId: number
 
     beforeEach(async () => {
-      response = await request<{disciplineCreate: DisciplinePayload}>(global.httpServer)
+      response = await request<{ disciplineCreate: DisciplinePayload }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .mutate(gql`
           mutation CreateDiscipline($disciplineInput: DisciplineInput!) {
@@ -282,25 +278,24 @@ describe('Discipline', () => {
       }`)
         .variables({
           disciplineInput: {
-            name: "Sticks",
-        }
+            name: 'Sticks',
+          },
         })
       disciplineId = await response.data.disciplineCreate.discipline.id
-
     })
 
     afterEach(async () => {
       await global.prisma.tbl_discipline.delete({
         where: {
-          id: disciplineId
-        }
+          id: disciplineId,
+        },
       })
     })
 
     it('Update details of existing discipline', async () => {
-      response = await request<{disciplineUpdate: DisciplinePayload}>(global.httpServer)
-      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-      .mutate(gql`
+      response = await request<{ disciplineUpdate: DisciplinePayload }>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .mutate(gql`
         mutation DisciplineUpdate($disciplineId: Int!, $disciplineInput: DisciplineInput!){
           disciplineUpdate(disciplineID: $disciplineId, disciplineInput: $disciplineInput) {
             userErrors {
@@ -316,16 +311,16 @@ describe('Discipline', () => {
           disciplineId,
           disciplineInput: {
             name: 'Stones',
-          }
+          },
         })
       expect(response.data.disciplineUpdate.discipline.name).toBe('Stones')
       expect(response.errors).not.toBeDefined()
     })
 
     it('Returns error if discipline not found', async () => {
-      response = await request<{disciplineUpdate: DisciplinePayload}>(global.httpServer)
-      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-      .mutate(gql`
+      response = await request<{ disciplineUpdate: DisciplinePayload }>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .mutate(gql`
         mutation DisciplineUpdate($disciplineId: Int!, $disciplineInput: DisciplineInput!){
           disciplineUpdate(disciplineID: $disciplineId, disciplineInput: $disciplineInput) {
             userErrors {
@@ -341,16 +336,16 @@ describe('Discipline', () => {
           disciplineId: disciplineId + 1,
           disciplineInput: {
             name: 'Sticks',
-          }
+          },
         })
       expect(response.data.disciplineUpdate.discipline).toBeNull()
       expect(response.data.disciplineUpdate.userErrors[0].message).toBeTruthy()
     })
 
     it('Returns error if name is null or undefined in update', async () => {
-      response = await request<{disciplineUpdate: DisciplinePayload}>(global.httpServer)
-      .set('Cookie', `diatonicToken=${global.diatonicToken}`)
-      .mutate(gql`
+      response = await request<{ disciplineUpdate: DisciplinePayload }>(global.httpServer)
+        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+        .mutate(gql`
         mutation DisciplineUpdate($disciplineId: Int!, $disciplineInput: DisciplineInput!){
           disciplineUpdate(disciplineID: $disciplineId, disciplineInput: $disciplineInput) {
             userErrors {
@@ -366,7 +361,7 @@ describe('Discipline', () => {
           disciplineId,
           disciplineInput: {
             name: null,
-          }
+          },
         })
       expect(response.data).toBeFalsy()
       expect(response.errors[0]).toBeTruthy()
@@ -378,7 +373,7 @@ describe('Discipline', () => {
     let disciplineId: number
 
     beforeEach(async () => {
-      response = await request<{disciplineCreate: DisciplinePayload}>(global.httpServer)
+      response = await request<{ disciplineCreate: DisciplinePayload }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .mutate(gql`
           mutation CreateDiscipline($disciplineInput: DisciplineInput!) {
@@ -394,8 +389,8 @@ describe('Discipline', () => {
       }`)
         .variables({
           disciplineInput: {
-            name: "Sticks",
-        }
+            name: 'Sticks',
+          },
         })
       disciplineId = await response.data.disciplineCreate.discipline.id
     })
@@ -404,14 +399,15 @@ describe('Discipline', () => {
       try {
         await global.prisma.tbl_discipline.delete({
           where: {
-            id: disciplineId
-          }
+            id: disciplineId,
+          },
         })
-      } catch(error) {}
+      }
+      catch (error) {}
     })
 
-    it('Deletes a discipline using the disciplineID', async() => {
-      response = await request<{disciplineDelete: DisciplinePayload}>(global.httpServer)
+    it('Deletes a discipline using the disciplineID', async () => {
+      response = await request<{ disciplineDelete: DisciplinePayload }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .mutate(gql`
         mutation DisciplineDelete($disciplineId: Int!) {
@@ -426,17 +422,17 @@ describe('Discipline', () => {
         }
       }`)
         .variables({
-        disciplineId
+          disciplineId,
         })
       const deleteCheck = await global.prisma.tbl_discipline.findUnique({
-        where: {id: disciplineId}
+        where: { id: disciplineId },
       })
       expect(deleteCheck).toBeNull()
       expect(response.data.disciplineDelete.discipline.name).toBe('Sticks')
-     })
+    })
 
-    it('Returns error message if discipline not found', async() => {
-      response = await request<{disciplineDelete: DisciplinePayload}>(global.httpServer)
+    it('Returns error message if discipline not found', async () => {
+      response = await request<{ disciplineDelete: DisciplinePayload }>(global.httpServer)
         .set('Cookie', `diatonicToken=${global.diatonicToken}`)
         .mutate(gql`
         mutation DisciplineDelete($disciplineId: Int!) {
@@ -451,7 +447,7 @@ describe('Discipline', () => {
         }
       }`)
         .variables({
-        disciplineId: disciplineId + 1
+          disciplineId: disciplineId + 1,
         })
       expect(response.data.disciplineDelete.discipline).toBeNull()
       expect(response.data.disciplineDelete.userErrors[0].message).toBeTruthy()

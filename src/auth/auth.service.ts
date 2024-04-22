@@ -1,22 +1,20 @@
 import {
-  Injectable,
   BadRequestException,
-  UnauthorizedException,
+  Injectable,
 } from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
+import * as bcrypt from 'bcrypt'
+import { User } from '../user/entities/user.entity'
+import { PrismaService } from '@/prisma/prisma.service'
 import { AuthPayload } from './entities/auth.entity'
 import { CredentialsSignup } from './dto/credentials-signup.input'
 import { CredentialsSignin } from './dto/credentials-signin.input'
-import { User } from '../user/entities/user.entity'
-import { JwtService } from '@nestjs/jwt'
-import { PrismaService } from '../prisma/prisma.service'
-import * as bcrypt from 'bcrypt'
-import { UserError } from '../common.entity'
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
   ) {}
 
   async signup(credentialsSignup: CredentialsSignup): Promise<AuthPayload> {
@@ -35,10 +33,11 @@ export class AuthService {
           diatonicToken: null,
           user: null,
         }
-      } else if (
-        !!user &&
-        !credentialsSignup.privateTeacher &&
-        !credentialsSignup.schoolTeacher
+      }
+      else if (
+        !!user
+        && !credentialsSignup.privateTeacher
+        && !credentialsSignup.schoolTeacher
       ) {
         return {
           userErrors: [
@@ -50,14 +49,15 @@ export class AuthService {
           diatonicToken: null,
           user: null,
         }
-      } else if (
-        !user ||
-        credentialsSignup.privateTeacher ||
-        credentialsSignup.schoolTeacher
+      }
+      else if (
+        !user
+        || credentialsSignup.privateTeacher
+        || credentialsSignup.schoolTeacher
       ) {
         const hashedPassword = await bcrypt.hash(
           credentialsSignup.password.trim(),
-          15
+          15,
         )
         const {
           firstName,
@@ -73,7 +73,7 @@ export class AuthService {
           create: {
             firstName: firstName.trim(),
             lastName: lastName.trim(),
-            instrument: !!instrument ? instrument.trim() : null,
+            instrument: instrument ? instrument.trim() : null,
             email: email.trim().toLowerCase(),
             password: hashedPassword,
             staff: false,
@@ -84,7 +84,7 @@ export class AuthService {
           update: {
             firstName: firstName.trim(),
             lastName: lastName.trim(),
-            instrument: !!instrument ? instrument.trim() : null,
+            instrument: instrument ? instrument.trim() : null,
             password: hashedPassword,
             staff: false,
             admin: false,
@@ -100,7 +100,8 @@ export class AuthService {
           user: result,
         }
       }
-    } catch (err) {
+    }
+    catch (err) {
       throw new BadRequestException('Be sure to provide all fields')
     }
   }
@@ -132,25 +133,28 @@ export class AuthService {
             lastName: signedInUser.lastName,
           },
         }
-        } else if (!signedInUser) {
-          return {
-            userErrors: [
-              {
-                message: 'Incorrect Email or Password',
-                field: [],
-              },
-            ],
-            diatonicToken: null,
-            user: null,
-          }
-      } else {
+      }
+      else if (!signedInUser) {
+        return {
+          userErrors: [
+            {
+              message: 'Incorrect Email or Password',
+              field: [],
+            },
+          ],
+          diatonicToken: null,
+          user: null,
+        }
+      }
+      else {
         return {
           userErrors: [],
           diatonicToken: this.jwtService.sign(payload),
           user: this.stripProperties(user),
         }
       }
-    } catch (err) {
+    }
+    catch (err) {
       console.log(err)
       throw new BadRequestException('Error searching for user')
     }
@@ -162,22 +166,26 @@ export class AuthService {
         const user = await this.prisma.tbl_user.findUnique({
           where: { email },
         })
-        if (!!user) {
+        if (user) {
           if (user.password !== null) {
             const pass = true
             const { password, ...userProps } = user
             return userProps
-          } else {
+          }
+          else {
             const pass = false
             return user
           }
-        } else {
+        }
+        else {
           return null
         }
-      } else {
+      }
+      else {
         throw new BadRequestException('No email given')
       }
-    } catch (err) {
+    }
+    catch (err) {
       throw new BadRequestException('No one found with those details')
     }
   }
@@ -187,29 +195,31 @@ export class AuthService {
       const user = await this.prisma.tbl_user.findUnique({
         where: { id },
       })
-      if (!!user) {
+      if (user) {
         const pass = !!user.password
         return { id, pass }
-      } else {
+      }
+      else {
         throw new BadRequestException('No user found')
       }
-    } catch (err) {
+    }
+    catch (err) {
       throw new BadRequestException('No valid user given')
     }
   }
 
   async validateUser(
     username: CredentialsSignin['email'],
-    password: CredentialsSignin['password']
+    password: CredentialsSignin['password'],
   ) {
     const user = await this.prisma.tbl_user.findUnique({
       where: { email: username.trim().toLowerCase() },
     })
-    if (!user) {
+    if (!user)
       return null
-    } else if (!user.password) {
+    else if (!user.password)
       return null
-    }
+
     const valid = await bcrypt.compare(password, user.password)
     if (user && valid) {
       const result = await this.stripProperties(user)
@@ -228,7 +238,8 @@ export class AuthService {
         return result
       }
       return null
-    } catch (err) {
+    }
+    catch (err) {
       console.log(err)
     }
   }

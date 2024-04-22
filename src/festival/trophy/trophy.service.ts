@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { tbl_trophy } from '@prisma/client'
+import { UserError } from 'src/common.entity'
 import { PrismaService } from '../../prisma/prisma.service'
 import { TrophyInput } from './dto/trophy.input'
-import {UserError} from 'src/common.entity'
-import { Trophy } from './entities/trophy.entity'
 
 @Injectable()
 export class TrophyService {
@@ -13,32 +12,34 @@ export class TrophyService {
     let trophy: tbl_trophy
     let userErrors: UserError[]
     try {
-      userErrors = [],
-        trophy = await this.prisma.tbl_trophy.create({
-          data: {...trophyInput},
-        })
-    } catch (error: any) {
+      userErrors = []
+      trophy = await this.prisma.tbl_trophy.create({
+        data: { ...trophyInput },
+      })
+    }
+    catch (error: any) {
       if (error.code === 'P2002') {
         userErrors = [
           {
             message: 'Trophy name already exists',
-            field: ['name']
-          }
+            field: ['name'],
+          },
         ]
         trophy = null
-      } else {
+      }
+      else {
         userErrors = [
           {
             message: 'Cannot create trophy',
-            field: []
-          }
+            field: [],
+          },
         ]
         trophy = null
       }
     }
-      return {
-        userErrors,
-        trophy
+    return {
+      userErrors,
+      trophy,
     }
   }
 
@@ -51,7 +52,7 @@ export class TrophyService {
       where: {
         tbl_class_trophy: {
           some: {
-            trophyID: trophyID,
+            trophyID,
           },
         },
       },
@@ -61,41 +62,43 @@ export class TrophyService {
   async findOne(id: tbl_trophy['id']) {
     let response: any
     return await this.prisma.tbl_trophy.findUnique({
-        where: {id}
-      })
+      where: { id },
+    })
   }
 
   async update(id: tbl_trophy['id'], trophyInput: TrophyInput) {
     let trophy: tbl_trophy
     let userErrors: UserError[]
     try {
-      userErrors = [],
+      userErrors = []
       trophy = await this.prisma.tbl_trophy.update({
         where: { id },
         data: { ...trophyInput },
       })
-    } catch (error: any) {
+    }
+    catch (error: any) {
       if (error.code === 'P2025') {
         userErrors = [
           {
             message: 'Trophy to update not found',
-            field: ['id']
-          }
+            field: ['id'],
+          },
         ]
         trophy = null
-      } else {
+      }
+      else {
         userErrors = [
           {
             message: 'Cannot update trophy',
-            field: []
-          }
+            field: [],
+          },
         ]
         trophy = null
       }
     }
     return {
       userErrors,
-      trophy
+      trophy,
     }
   }
 
@@ -103,32 +106,34 @@ export class TrophyService {
     let trophy: tbl_trophy
     let userErrors: UserError[]
     try {
-      userErrors = [],
+      userErrors = []
       trophy = await this.prisma.tbl_trophy.delete({
         where: { id },
       })
-    } catch (error: any) {
+    }
+    catch (error: any) {
       if (error.code === 'P2025') {
         userErrors = [
           {
             message: 'Trophy to delete not found',
-            field: ['id']
-          }
+            field: ['id'],
+          },
         ]
         trophy = null
-      } else {
+      }
+      else {
         userErrors = [
           {
             message: 'Cannot delete level',
-            field: []
-          }
+            field: [],
+          },
         ]
         trophy = null
       }
     }
     return {
       userErrors,
-      trophy
+      trophy,
     }
   }
 }

@@ -1,7 +1,7 @@
 import { CredentialsSignup } from '../../../auth/dto/credentials-signup.input'
 import { User } from '../../entities/user.entity'
 
-export const userStub = (): User & CredentialsSignup => {
+export function userStub(): User & CredentialsSignup {
   return {
     id: 5,
     firstName: 'David',

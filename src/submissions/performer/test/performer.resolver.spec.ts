@@ -1,20 +1,17 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import { TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
 import {
-  describe,
-  beforeAll,
   beforeEach,
-  afterAll,
-  test,
-  it,
+  describe,
   expect,
+  it,
 } from 'vitest'
 import { PerformerResolver } from '../performer.resolver'
 import { PerformerService } from '../performer.service'
-import { performerStub } from '../stubs/performer.stub'
 
 // vi.mock('../performer.service.ts')
 
-describe('PerformerResolver', () => {
+describe('performerResolver', () => {
   let performerResolver: PerformerResolver
   let performerService: PerformerService
 

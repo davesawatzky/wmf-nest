@@ -1,11 +1,11 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
-import { Registration } from '../registration/entities/registration.entity'
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
-import { SubmissionService } from '../submission/submission.service'
 import { SubmissionPayload } from './entities/submission.entity'
-import { PerformerType } from '../../common.entity'
-import { EmailConfirmationGuard } from '../../email-confirmation/email-confirmation.guard'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
+import { Registration } from '@/submissions/registration/entities/registration.entity'
+import { SubmissionService } from '@/submissions/submission/submission.service'
+import { PerformerType } from '@/common.entity'
+import { EmailConfirmationGuard } from '@/email-confirmation/email-confirmation.guard'
 
 @Resolver(() => Registration)
 @UseGuards(JwtAuthGuard)
@@ -15,7 +15,7 @@ export class SubmissionResolver {
   @Query(() => [Registration])
   async submissions(
     @Args('performerType', { type: () => PerformerType })
-    performerType?: Registration['performerType']
+    performerType?: Registration['performerType'],
   ) {
     return await this.submissionService.submissions(performerType)
   }
@@ -24,7 +24,7 @@ export class SubmissionResolver {
   @UseGuards(EmailConfirmationGuard)
   async submitRegistration(
     @Args('registrationID', { type: () => Int })
-    registrationID: Registration['id']
+    registrationID: Registration['id'],
   ) {
     return await this.submissionService.submit(registrationID)
   }

@@ -1,18 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import { TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
 import {
-  describe,
-  beforeAll,
   beforeEach,
-  afterAll,
-  test,
-  it,
+  describe,
   expect,
+  it,
 } from 'vitest'
-import { EmailService } from './email.service'
-import { PrismaService } from '../prisma/prisma.service'
 import { MailerService } from '@nestjs-modules/mailer'
+import { EmailService } from './email.service'
+import { PrismaService } from '@/prisma/prisma.service'
 
-describe('EmailService', () => {
+describe('emailService', () => {
   let emailService: EmailService
   let prisma: PrismaService
   let mailer: MailerService

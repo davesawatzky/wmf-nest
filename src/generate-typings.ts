@@ -1,5 +1,5 @@
+import { join } from 'node:path'
 import { GraphQLDefinitionsFactory } from '@nestjs/graphql'
-import { join } from 'path'
 
 const definitionsFactory = new GraphQLDefinitionsFactory()
 definitionsFactory.generate({

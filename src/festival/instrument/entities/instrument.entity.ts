@@ -6,6 +6,7 @@ import { Discipline } from '@/festival/discipline/entities/discipline.entity'
 export class Instrument {
   @Field(() => Int)
   id: number
+
   name: string
   mozart?: boolean
   discipline?: Discipline

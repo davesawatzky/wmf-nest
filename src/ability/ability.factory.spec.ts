@@ -1,15 +1,11 @@
-import { AbilityFactory } from './ability.factory'
 import {
   describe,
-  beforeAll,
-  beforeEach,
-  afterAll,
-  test,
-  it,
   expect,
+  it,
 } from 'vitest'
+import { AbilityFactory } from './ability.factory'
 
-describe('AbilityFactory', () => {
+describe('abilityFactory', () => {
   it('should be defined', () => {
     expect(new AbilityFactory()).toBeDefined()
   })

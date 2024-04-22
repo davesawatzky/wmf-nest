@@ -1,13 +1,11 @@
-import { InputType, ObjectType } from '@nestjs/graphql'
-import { UserError } from '../../../common.entity'
-import { User } from '../../../user/entities/user.entity'
+import { InputType } from '@nestjs/graphql'
 import {
-  IsPostalCode,
-  IsEmail,
-  IsPhoneNumber,
   IsBoolean,
-  IsString,
+  IsEmail,
   IsOptional,
+  IsPhoneNumber,
+  IsPostalCode,
+  IsString,
 } from 'class-validator'
 
 @InputType()

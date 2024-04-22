@@ -2,7 +2,7 @@ import { Module, forwardRef } from '@nestjs/common'
 import { CategoryService } from './category.service'
 import { CategoryResolver } from './category.resolver'
 import { FestivalClassModule } from '@/festival/festival-class/festival-class.module'
-import {AbilityModule} from '@/ability/ability.module'
+import { AbilityModule } from '@/ability/ability.module'
 
 @Module({
   providers: [CategoryResolver, CategoryService],

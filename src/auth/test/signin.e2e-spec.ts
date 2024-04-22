@@ -4,9 +4,7 @@ import { AuthPayload } from '../entities/auth.entity'
 import { userSignup } from '../stubs/signup'
 
 describe('Signin', () => {
-
   beforeAll(async () => {
-    
     await request<{ signup: AuthPayload }>(global.httpServer)
       .mutate(gql`
         mutation SignUp($credentials: CredentialsSignup!) {
@@ -41,7 +39,7 @@ describe('Signin', () => {
 
       beforeAll(async () => {
         response = await request<{ signin: AuthPayload }>(
-          global.httpServer
+          global.httpServer,
         )
           .mutate(gql`
             mutation SignIn($credentials: CredentialsSignin!) {
@@ -83,7 +81,7 @@ describe('Signin', () => {
 
       beforeAll(async () => {
         response = await request<{ signin: AuthPayload }>(
-          global.httpServer
+          global.httpServer,
         )
           .mutate(gql`
             mutation SignIn($credentials: CredentialsSignin!) {
@@ -138,7 +136,7 @@ describe('Signin', () => {
 
       beforeAll(async () => {
         response = await request<{ signin: AuthPayload }>(
-          global.httpServer
+          global.httpServer,
         )
           .mutate(gql`
             mutation SignIn($credentials: CredentialsSignin!) {
@@ -158,8 +156,8 @@ describe('Signin', () => {
           .variables({
             credentials: {
               email: userSignup()[0].email,
-              password: userSignup()[0].password
-            }
+              password: userSignup()[0].password,
+            },
           })
         signedInUser = response.data.signin
       })
@@ -200,7 +198,7 @@ describe('Signin', () => {
 
       beforeAll(async () => {
         response = await request<{ signin: AuthPayload }>(
-          global.httpServer
+          global.httpServer,
         )
           .mutate(gql`
             mutation SignIn($credentials: CredentialsSignin!) {
@@ -223,7 +221,7 @@ describe('Signin', () => {
           .variables({
             credentials: {
               email: userSignup()[0].email,
-              password: userSignup()[0].password
+              password: userSignup()[0].password,
             },
           })
         signedInUser = response.data.signin

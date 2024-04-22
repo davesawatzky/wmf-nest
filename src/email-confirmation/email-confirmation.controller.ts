@@ -1,28 +1,25 @@
 import {
-  Controller,
-  ClassSerializerInterceptor,
-  UseInterceptors,
-  Post,
   Body,
-  UseGuards,
-  Req,
+  ClassSerializerInterceptor,
+  Controller,
+  Post,
+  UseInterceptors,
 } from '@nestjs/common'
 import ConfirmEmailDto from './dto/confirm-email.dto'
 import { EmailConfirmationService } from './email-confirmation.service'
-import { RestJwtAuthGuard } from '../auth/jwt-auth.guard'
-import RequestWithUser from '../auth/requestWithUser.interface'
+import RequestWithUser from '@/auth/requestWithUser.interface'
 
 @Controller('email-confirmation')
 @UseInterceptors(ClassSerializerInterceptor)
 export class EmailConfirmationController {
   constructor(
-    private readonly emailConfirmationService: EmailConfirmationService
+    private readonly emailConfirmationService: EmailConfirmationService,
   ) {}
 
   @Post('confirm')
   async confirm(@Body() confirmationData: ConfirmEmailDto) {
     const email = await this.emailConfirmationService.decodeConfirmationToken(
-      confirmationData.token
+      confirmationData.token,
     )
     await this.emailConfirmationService.confirmEmail(email)
   }
@@ -33,7 +30,7 @@ export class EmailConfirmationController {
     const userName = `${request.user.firstName} ${request.user.lastName}`
     await this.emailConfirmationService.resendConfirmationLink(
       userName,
-      request.user.email
+      request.user.email,
     )
   }
 }

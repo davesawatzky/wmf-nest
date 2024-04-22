@@ -1,14 +1,13 @@
-import { Test, TestingModule } from '@nestjs/testing'
-import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
+import { TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
+import { beforeEach, describe, expect, it } from 'vitest'
+import { ConfigService } from '@nestjs/config'
+import { GqlExecutionContext } from '@nestjs/graphql'
 import { AuthResolver } from '../auth.resolver'
 import { AuthService } from '../auth.service'
 import { EmailConfirmationService } from '../../email-confirmation/email-confirmation.service'
-import { ConfigService } from '@nestjs/config'
 import { userSignup } from '../stubs/signup'
 import { userSignin } from '../stubs/signin'
-import { ExecutionContext } from '@nestjs/common'
-import { GqlExecutionContext } from '@nestjs/graphql'
-import { EmailConfirmationModule } from 'src/email-confirmation/email-confirmation.module'
 import { AuthPayload } from '../entities/auth.entity'
 import { CredentialsSignup } from '../dto/credentials-signup.input'
 import { UserError } from '../../common.entity'
@@ -19,10 +18,10 @@ vi.mock('../auth.service')
 // vi.mock('../gql-auth.guard.ts')
 // vi.mock('../../email-confirmation/email-confirmation.service.ts')
 
-describe('AuthResolver', () => {
+describe('authResolver', () => {
   let authResolver: AuthResolver
   let authService: AuthService
-  let emailConfirmationService: Partial<EmailConfirmationService> = {
+  const emailConfirmationService: Partial<EmailConfirmationService> = {
     sendVerificationLink: vi.fn().mockReturnValue(true),
   }
   let configService: ConfigService
@@ -62,8 +61,8 @@ describe('AuthResolver', () => {
     expect(authResolver).toBeDefined()
   })
 
-  describe('Signup', () => {
-    describe('When Signup Method is called with normal user', () => {
+  describe('signup', () => {
+    describe('when Signup Method is called with normal user', () => {
       let userErrors: UserError[]
       let user: Partial<User>
       let userName: string
@@ -72,7 +71,7 @@ describe('AuthResolver', () => {
       beforeEach(async () => {
         result = await authResolver.signup(
           userSignup()[0],
-          context.switchToHttp().getResponse()
+          context.switchToHttp().getResponse(),
         )
         userErrors = result.userErrors
         user = result.user
@@ -82,10 +81,10 @@ describe('AuthResolver', () => {
         expect(authService.signup).toHaveBeenCalledWith(userSignup()[0])
       })
 
-      it('Should return a username with first and last name', () => {
+      it('should return a username with first and last name', () => {
         userName = `${user.firstName} ${user.lastName}`
         expect(userName).toEqual(
-          `${userSignup()[0].firstName} ${userSignup()[0].lastName}`
+          `${userSignup()[0].firstName} ${userSignup()[0].lastName}`,
         )
       })
 
@@ -99,29 +98,29 @@ describe('AuthResolver', () => {
         expect(userErrors).toEqual([])
         expect(user).toEqual(userSignup()[0])
       })
-      it('Should return type AuthPayload', () => {
+      it('should return type AuthPayload', () => {
         expectTypeOf(result).toEqualTypeOf<AuthPayload>()
       })
     })
   })
 
-  describe('CheckUser', () => {
+  describe('checkUser', () => {
     let result: any
 
-    describe('When checkuser is called', () => {
+    describe('when checkuser is called', () => {
       beforeEach(async () => {})
 
-      it('Should call authservice findOne with the email address', async () => {
+      it('should call authservice findOne with the email address', async () => {
         result = await authResolver.checkUser(userSignup()[0].email)
         expect(authService.findOne).toHaveBeenCalledWith(userSignup()[0].email)
       })
 
-      it('Should return the user instance', async () => {
+      it('should return the user instance', async () => {
         result = await authResolver.checkUser(userSignup()[0].email)
         expect(result).toEqual({ user: userSignup()[0] })
       })
 
-      it('Should return null if user not found', async () => {
+      it('should return null if user not found', async () => {
         authService.findOne = vi.fn().mockResolvedValue(null)
         result = await authResolver.checkUser('test@test.email')
         expect(result).toBeNull()
@@ -129,13 +128,13 @@ describe('AuthResolver', () => {
     })
   })
 
-  describe('Signin', () => {
+  describe('signin', () => {
     let result: AuthPayload
     let userErrors: UserError[]
     let user: Partial<User>
     let diatonicToken: string
 
-    describe('When Signin is called', () => {
+    describe('when Signin is called', () => {
       beforeEach(async () => {
         result = await authResolver.signin(userSignin(), context)
         userErrors = result.userErrors
@@ -143,11 +142,11 @@ describe('AuthResolver', () => {
         diatonicToken = result.diatonicToken
       })
 
-      it('Should call the authservice signin method with user info', () => {
+      it('should call the authservice signin method with user info', () => {
         expect(authService.signin).toHaveBeenCalled()
       })
 
-      it('Should return the userErrors, diatonicToken, and user', () => {
+      it('should return the userErrors, diatonicToken, and user', () => {
         expect(result).toEqual({ userErrors, diatonicToken, user })
         expectTypeOf(result).toEqualTypeOf<AuthPayload>()
       })

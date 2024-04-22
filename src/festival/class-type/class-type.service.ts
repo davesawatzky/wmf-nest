@@ -1,48 +1,49 @@
 import { Injectable } from '@nestjs/common'
 import { tbl_class_type } from '@prisma/client'
-import {PrismaService} from '@/prisma/prisma.service'
-import {UserError} from '@/common.entity'
-import {ClassType, ClassTypePayload} from './entities/class-type.entity'
 import { ClassTypeInput } from './dto/class-type.input'
+import { PrismaService } from '@/prisma/prisma.service'
+import { UserError } from '@/common.entity'
 
 @Injectable()
 export class ClassTypeService {
   constructor(private prisma: PrismaService) {}
 
-    async create(classTypeInput: ClassTypeInput) {
+  async create(classTypeInput: ClassTypeInput) {
     let classType: tbl_class_type
     let userErrors: UserError[]
     try {
-      userErrors = [],
-        classType = await this.prisma.tbl_class_type.create({
-          data: {...classTypeInput},
-        })
-    } catch (error: any) {
+      userErrors = []
+      classType = await this.prisma.tbl_class_type.create({
+        data: { ...classTypeInput },
+      })
+    }
+    catch (error: any) {
       if (error.code === 'P2002') {
         userErrors = [
           {
             message: 'Class type already exists',
-            field: ['name']
-          }
+            field: ['name'],
+          },
         ]
         classType = null
-      } else {
+      }
+      else {
         console.log(error)
         userErrors = [
           {
             message: 'Cannot create class type',
-            field: []
-          }
+            field: [],
+          },
         ]
         classType = null
       }
     }
     return {
       userErrors,
-      classType
+      classType,
     }
   }
-  
+
   async findAll() {
     return await this.prisma.tbl_class_type.findMany()
   }
@@ -53,37 +54,39 @@ export class ClassTypeService {
     })
   }
 
-  async update(id: tbl_class_type['id'], classTypeInput: ClassTypeInput){
+  async update(id: tbl_class_type['id'], classTypeInput: ClassTypeInput) {
     let classType: tbl_class_type
     let userErrors: UserError[]
     try {
       userErrors = []
       classType = await this.prisma.tbl_class_type.update({
-        where: {id},
-        data: {...classTypeInput}
+        where: { id },
+        data: { ...classTypeInput },
       })
-    } catch (error: any) {
+    }
+    catch (error: any) {
       if (error.code === 'P2025') {
         userErrors = [
           {
             message: 'Class type to update not found',
-            field: ['id']
-          }
+            field: ['id'],
+          },
         ]
         classType = null
-      } else {
+      }
+      else {
         userErrors = [
           {
             message: 'Cannot update class type',
-            field: []
-          }
+            field: [],
+          },
         ]
-        classType =null
+        classType = null
       }
     }
     return {
       userErrors,
-      classType
+      classType,
     }
   }
 
@@ -93,30 +96,32 @@ export class ClassTypeService {
     try {
       userErrors = []
       classType = await this.prisma.tbl_class_type.delete({
-        where: {id},
+        where: { id },
       })
-    } catch (error: any) {
+    }
+    catch (error: any) {
       if (error.code === 'P2025') {
         userErrors = [
           {
             message: 'Class type to delete not found',
-            field: ['id']
-          }
+            field: ['id'],
+          },
         ]
         classType = null
-      } else {
+      }
+      else {
         userErrors = [
           {
             message: 'Cannot delete class type',
-            field: []
-          }
+            field: [],
+          },
         ]
-        classType =null
+        classType = null
       }
     }
     return {
       userErrors,
-      classType
+      classType,
     }
   }
 }

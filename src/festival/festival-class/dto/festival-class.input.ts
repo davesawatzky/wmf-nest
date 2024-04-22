@@ -1,17 +1,13 @@
-import { InputType, Field, Int, registerEnumType } from '@nestjs/graphql'
-import { Type, Transform } from 'class-transformer'
+import { Field, InputType, Int } from '@nestjs/graphql'
+import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator'
 import { PerformerType } from '@/common.entity'
-import { IsDecimal, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Min, isNotEmpty } from 'class-validator'
-
-
 
 @InputType()
 export class FestivalClassInput {
-  
   @IsString()
   @IsNotEmpty()
   classNumber: string
-  
+
   @IsInt()
   @Min(1)
   @Field(() => Int)
@@ -47,15 +43,13 @@ export class FestivalClassInput {
   @IsNotEmpty()
   performerType: PerformerType
 
-  @IsNumber({maxDecimalPlaces: 2})
+  @IsNumber({ maxDecimalPlaces: 2 })
   @IsOptional()
   price?: number
 
   @IsString()
   @IsNotEmpty()
   description: string
-
-
 }
 
 @InputType()

@@ -1,19 +1,17 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import { TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
 import {
-  describe,
-  beforeAll,
   beforeEach,
-  afterAll,
-  test,
-  it,
+  describe,
   expect,
+  it,
 } from 'vitest'
 import { RegisteredClassResolver } from './registered-class.resolver'
 import { RegisteredClassService } from './registered-class.service'
-import { SelectionService } from '../selection/selection.service'
-import { PrismaService } from '../../prisma/prisma.service'
+import { SelectionService } from '@/submissions/selection/selection.service'
+import { PrismaService } from '@/prisma/prisma.service'
 
-describe('RegisteredClassResolver', () => {
+describe('registeredClassResolver', () => {
   let resolver: RegisteredClassResolver
 
   beforeEach(async () => {

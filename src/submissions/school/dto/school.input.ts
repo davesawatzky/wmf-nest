@@ -1,8 +1,8 @@
 import { InputType } from '@nestjs/graphql'
 import {
-  IsPostalCode,
-  IsPhoneNumber,
   IsOptional,
+  IsPhoneNumber,
+  IsPostalCode,
   IsString,
 } from 'class-validator'
 

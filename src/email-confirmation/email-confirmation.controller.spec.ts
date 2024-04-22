@@ -1,23 +1,21 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import { TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
 import {
-  describe,
-  beforeAll,
   beforeEach,
-  afterAll,
-  test,
-  it,
+  describe,
   expect,
+  it,
 } from 'vitest'
-import { EmailConfirmationController } from './email-confirmation.controller'
-import { EmailConfirmationService } from './email-confirmation.service'
 import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
-import { EmailService } from '../email/email.service'
-import { UserService } from '../user/user.service'
 import { MailerService } from '@nestjs-modules/mailer'
-import { PrismaService } from '../prisma/prisma.service'
+import { EmailConfirmationService } from './email-confirmation.service'
+import { EmailConfirmationController } from './email-confirmation.controller'
+import { EmailService } from '@/email/email.service'
+import { UserService } from '@/user/user.service'
+import { PrismaService } from '@/prisma/prisma.service'
 
-describe('EmailConfirmationController', () => {
+describe('emailConfirmationController', () => {
   let controller: EmailConfirmationController
   let jwtService: JwtService
   let configService: ConfigService
@@ -59,7 +57,7 @@ describe('EmailConfirmationController', () => {
     }).compile()
 
     controller = module.get<EmailConfirmationController>(
-      EmailConfirmationController
+      EmailConfirmationController,
     )
   })
 

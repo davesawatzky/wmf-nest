@@ -1,6 +1,6 @@
-import { HttpException, Injectable, RawBodyRequest } from '@nestjs/common'
-import { StripeService } from '../stripe/stripe.service'
-import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util'
+import { RawBodyRequest } from '@nestjs/common'
+import { HttpException, Injectable } from '@nestjs/common'
+import { StripeService } from '@/stripe/stripe.service'
 
 @Injectable()
 export class PaymentService {
@@ -16,7 +16,7 @@ export class PaymentService {
   async webhook(
     req: RawBodyRequest<Request>,
     signature: string,
-    endpointSecret: string
+    endpointSecret: string,
   ) {
     let event
 
@@ -24,9 +24,10 @@ export class PaymentService {
       event = this.stripeService.stripe.webhooks.constructEvent(
         req.rawBody,
         signature,
-        endpointSecret
+        endpointSecret,
       )
-    } catch (err: any) {
+    }
+    catch (err: any) {
       throw new HttpException(`Webhook Error: ${err.message}`, 400)
     }
     // Handle the event
@@ -47,6 +48,5 @@ export class PaymentService {
         console.log(`Unhandled event type ${event.type} switch`)
         break
     }
-    return
   }
 }

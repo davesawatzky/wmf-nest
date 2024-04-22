@@ -1,17 +1,15 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import { TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
 import {
-  describe,
-  beforeAll,
   beforeEach,
-  afterAll,
-  test,
-  it,
+  describe,
   expect,
+  it,
 } from 'vitest'
 import { TrophyService } from '../trophy.service'
 import { PrismaService } from '@/prisma/prisma.service'
 
-describe('TrophyService', () => {
+describe('trophyService', () => {
   let service: TrophyService
 
   beforeEach(async () => {

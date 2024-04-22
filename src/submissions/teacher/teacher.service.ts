@@ -1,8 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { tbl_user } from '@prisma/client'
 import { TeacherInput } from './dto/teacher.input'
-import { UserInput } from '../../user/dto/user.input'
-import { PrismaService } from '../../prisma/prisma.service'
+import { PrismaService } from '@/prisma/prisma.service'
 
 @Injectable()
 export class TeacherService {
@@ -11,7 +10,7 @@ export class TeacherService {
   async create(
     privateTeacher: boolean,
     schoolTeacher: boolean,
-    teacherInput: Partial<TeacherInput>
+    teacherInput: Partial<TeacherInput>,
   ) {
     try {
       if (privateTeacher === true || schoolTeacher === true) {
@@ -25,13 +24,15 @@ export class TeacherService {
             },
           }),
         }
-      } else {
+      }
+      else {
         return {
           userErrors: [{ message: 'Not a teacher' }],
           teacher: null,
         }
       }
-    } catch (err) {
+    }
+    catch (err) {
       console.log(err)
       throw new BadRequestException('Error creating Teacher')
     }
@@ -58,10 +59,12 @@ export class TeacherService {
           return teacherProps
         })
         return teachersFiltered
-      } else {
+      }
+      else {
         return { userErrors: [{ message: 'Not teachers' }] }
       }
-    } catch (err) {
+    }
+    catch (err) {
       console.log(err)
       throw new BadRequestException('Error searching for teachers')
     }
@@ -78,19 +81,22 @@ export class TeacherService {
         if (teacher.privateTeacher === true || teacher.schoolTeacher === true) {
           const { password, staff, admin, ...teacherProps } = teacher
           return teacherProps
-        } else {
+        }
+        else {
           return { teacher: null }
         }
-      } else if (email) {
+      }
+      else if (email) {
         const teacher = await this.prisma.tbl_user.findUnique({
           where: { email },
         })
-        if (!!teacher) {
+        if (teacher) {
           const { password, staff, admin, ...teacherProps } = teacher
           return teacherProps
         }
       }
-    } catch (err) {
+    }
+    catch (err) {
       console.log(err)
       throw new BadRequestException('No teacher found with that ID or email.')
     }
@@ -115,10 +121,11 @@ export class TeacherService {
           data: { ...teacherInput },
         }),
       }
-    } catch (err) {
+    }
+    catch (err) {
       console.log(err)
       throw new BadRequestException(
-        `Cannot update teacher with id: ${teacherID}`
+        `Cannot update teacher with id: ${teacherID}`,
       )
     }
   }
@@ -134,10 +141,11 @@ export class TeacherService {
           },
         }),
       }
-    } catch (err) {
+    }
+    catch (err) {
       console.log(err)
       throw new BadRequestException(
-        `Cannot remove teacher with id: ${teacherID}`
+        `Cannot remove teacher with id: ${teacherID}`,
       )
     }
   }

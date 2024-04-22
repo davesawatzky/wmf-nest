@@ -1,8 +1,7 @@
-import { InputType, Field, Int, registerEnumType } from '@nestjs/graphql'
-import { PerformerType } from '../../../common.entity'
+import { Field, InputType, Int } from '@nestjs/graphql'
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
-import { IsNumber, IsInt, IsString, IsOptional } from 'class-validator'
-
+import { IsInt, IsNumber, IsOptional, IsString } from 'class-validator'
+import { PerformerType } from '@/common.entity'
 
 @InputType()
 export class RegistrationInput {

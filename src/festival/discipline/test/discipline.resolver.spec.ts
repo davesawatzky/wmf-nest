@@ -1,12 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import { TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
 import {
-  describe,
-  beforeAll,
   beforeEach,
-  afterAll,
-  test,
-  it,
+  describe,
   expect,
+  it,
 } from 'vitest'
 import { DisciplineResolver } from '../discipline.resolver'
 import { DisciplineService } from '../discipline.service'
@@ -14,7 +12,7 @@ import { InstrumentService } from '@/festival/instrument/instrument.service'
 import { SubdisciplineService } from '@/festival/subdiscipline/subdiscipline.service'
 import { PrismaService } from '@/prisma/prisma.service'
 
-describe('DisciplineResolver', () => {
+describe('disciplineResolver', () => {
   let resolver: DisciplineResolver
 
   beforeEach(async () => {

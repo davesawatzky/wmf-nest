@@ -1,19 +1,15 @@
 import gql from 'graphql-tag'
 import request from 'supertest-graphql'
-import { AuthPayload } from '../entities/auth.entity'
 import { userSignup } from '../stubs/signup'
-import {EmailConfirmationService} from 'src/email-confirmation/email-confirmation.service'
-import {response} from 'express'
-import {getGqlErrorStatus} from 'src/test/gqlStatus'
+import { AuthPayload } from '../entities/auth.entity'
 
 describe('Signup', () => {
-
   describe('When a signUp mutation is executed with a normal user', () => {
     let response: any
 
     beforeAll(async () => {
       response = await request<{ signup: AuthPayload }>(
-        global.httpServer
+        global.httpServer,
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -30,14 +26,13 @@ describe('Signup', () => {
           }
         `)
         .variables({
-          credentials: userSignup()[0]
+          credentials: userSignup()[0],
         })
         .expectNoErrors()
-      
     })
 
     afterAll(async () => {
-      if (!!response.data.signup) {
+      if (response.data.signup) {
         await global.prisma.tbl_user.delete({
           where: {
             email: userSignup()[0].email,
@@ -53,7 +48,7 @@ describe('Signup', () => {
         user: {
           email: userSignup()[0].email,
         },
-        diatonicToken: null
+        diatonicToken: null,
       })
     })
 
@@ -72,7 +67,7 @@ describe('Signup', () => {
 
     beforeAll(async () => {
       response = await request<{ signup: AuthPayload }>(
-        global.httpServer
+        global.httpServer,
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -92,11 +87,11 @@ describe('Signup', () => {
         .variables({
           credentials: userSignup()[1],
         })
-      .expectNoErrors()
+        .expectNoErrors()
     })
 
     afterAll(async () => {
-      if (!!response.data.signup) {
+      if (response.data.signup) {
         await global.prisma.tbl_user.delete({
           where: {
             email: userSignup()[1].email,
@@ -112,7 +107,7 @@ describe('Signup', () => {
           email: userSignup()[1].email,
           instrument: null,
         },
-        diatonicToken: null
+        diatonicToken: null,
       })
     })
 
@@ -132,7 +127,7 @@ describe('Signup', () => {
 
     beforeAll(async () => {
       response = await request<{ signup: AuthPayload }>(
-        global.httpServer
+        global.httpServer,
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -190,7 +185,7 @@ describe('Signup', () => {
 
     beforeAll(async () => {
       response = await request<{ signup: AuthPayload }>(
-        global.httpServer
+        global.httpServer,
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -247,7 +242,7 @@ describe('Signup', () => {
 
     beforeAll(async () => {
       response = await request<{ signup: AuthPayload }>(
-        global.httpServer
+        global.httpServer,
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -266,11 +261,11 @@ describe('Signup', () => {
         .variables({
           credentials: userSignup()[2],
         })
-      .expectNoErrors()
+        .expectNoErrors()
     })
 
     afterAll(async () => {
-      if (!!response) {
+      if (response) {
         await global.prisma.tbl_user.delete({
           where: {
             email: userSignup()[2].email,
@@ -285,7 +280,7 @@ describe('Signup', () => {
         user: {
           email: userSignup()[2].email,
         },
-        diatonicToken: null
+        diatonicToken: null,
       })
     })
 
@@ -304,7 +299,7 @@ describe('Signup', () => {
 
     beforeAll(async () => {
       response = await request<{ signup: AuthPayload }>(
-        global.httpServer
+        global.httpServer,
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -323,12 +318,11 @@ describe('Signup', () => {
         .variables({
           credentials: userSignup()[3],
         })
-      .expectNoErrors()
-
+        .expectNoErrors()
     })
 
     afterAll(async () => {
-      if (!!response) {
+      if (response) {
         await global.prisma.tbl_user.delete({
           where: {
             email: userSignup()[3].email,
@@ -337,13 +331,13 @@ describe('Signup', () => {
       }
     })
 
-    it('should return the user email in an AuthPayload object', async() => {
+    it('should return the user email in an AuthPayload object', async () => {
       expect(await response.data.signup).toMatchObject({
         userErrors: [],
         user: {
           email: userSignup()[3].email,
         },
-        diatonicToken: null
+        diatonicToken: null,
       })
     })
 
@@ -392,7 +386,7 @@ describe('Signup', () => {
 
     it('Should be able to add the password to the existing account', async () => {
       const response = await request<{ signup: AuthPayload }>(
-        global.httpServer
+        global.httpServer,
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -411,7 +405,7 @@ describe('Signup', () => {
         .variables({
           credentials: userSignup()[2],
         })
-      .expectNoErrors()
+        .expectNoErrors()
 
       const result = await global.prisma.tbl_user.findUnique({
         where: {
@@ -423,10 +417,9 @@ describe('Signup', () => {
   })
 
   describe('If user already exists in database', () => {
-
     beforeAll(async () => {
       await request<{ signup: AuthPayload }>(
-        global.httpServer
+        global.httpServer,
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -445,9 +438,9 @@ describe('Signup', () => {
         .variables({
           credentials: userSignup()[0],
         })
-      .expectNoErrors()
+        .expectNoErrors()
     })
-    
+
     afterAll(async () => {
       await global.prisma.tbl_user.delete({
         where: {
@@ -458,7 +451,7 @@ describe('Signup', () => {
 
     it('should return an Error in an AuthPayload object', async () => {
       const response = await request<{ signup: AuthPayload }>(
-        global.httpServer
+        global.httpServer,
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -480,9 +473,8 @@ describe('Signup', () => {
       expect(response.data.signup).toMatchObject({
         userErrors: [{ message: 'User already exists', field: [] }],
         user: null,
-        diatonicToken: null
+        diatonicToken: null,
       })
     })
   })
 })
-

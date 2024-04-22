@@ -1,5 +1,3 @@
-import { Mock } from 'vitest'
-import type { Performer } from '../entities/performer.entity'
 import { performerStub } from '../stubs/performer.stub'
 import { PerformerService } from '../performer.service'
 

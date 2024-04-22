@@ -1,6 +1,6 @@
 import { Performer } from '../entities/performer.entity'
 
-export const performerStub = (): Performer => {
+export function performerStub(): Performer {
   return {
     id: 1,
     firstName: 'John',

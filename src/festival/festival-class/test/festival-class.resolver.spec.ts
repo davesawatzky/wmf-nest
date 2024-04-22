@@ -1,12 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import { TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
 import {
-  describe,
-  beforeAll,
   beforeEach,
-  afterAll,
-  test,
-  it,
+  describe,
   expect,
+  it,
 } from 'vitest'
 import { FestivalClassResolver } from '../festival-class.resolver'
 import { FestivalClassService } from '../festival-class.service'
@@ -16,7 +14,7 @@ import { CategoryService } from '@/festival/category/category.service'
 import { ClassTypeService } from '@/festival/class-type/class-type.service'
 import { PrismaService } from '@/prisma/prisma.service'
 
-describe('FestivalClassResolver', () => {
+describe('festivalClassResolver', () => {
   let resolver: FestivalClassResolver
 
   beforeEach(async () => {

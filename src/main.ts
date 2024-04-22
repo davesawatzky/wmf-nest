@@ -1,11 +1,10 @@
+import { join } from 'node:path'
 import { ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { NestExpressApplication } from '@nestjs/platform-express'
-import { AppModule } from './app.module'
-import { join } from 'path'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
-import {GraphQLExceptionFilter} from './exceptionFilters/gql-exception.filter'
+import { AppModule } from './app.module'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -30,7 +29,7 @@ async function bootstrap() {
           frameSrc: [`'self'`, 'sandbox.embed.apollographql.com'],
         },
       },
-    })
+    }),
   )
 
   app.enableCors({
@@ -46,7 +45,7 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
-    })
+    }),
   )
 
   app.useStaticAssets(join(__dirname, '..', 'public'))

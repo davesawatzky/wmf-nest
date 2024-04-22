@@ -7,6 +7,7 @@ import { UserError } from '@/common.entity'
 export class Discipline {
   @Field(() => Int)
   id: number
+
   name: string
   instruments?: Instrument[]
   subdisciplines?: Subdiscipline[]

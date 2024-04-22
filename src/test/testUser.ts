@@ -1,6 +1,6 @@
-import {CredentialsSignup} from 'src/auth/dto/credentials-signup.input'
+import { CredentialsSignup } from 'src/auth/dto/credentials-signup.input'
 
-export const TestAdmin = (): CredentialsSignup => {
+export function TestAdmin(): CredentialsSignup {
   return {
     email: 'test_e2e_admin@test.com',
     firstName: 'Test',
@@ -12,7 +12,7 @@ export const TestAdmin = (): CredentialsSignup => {
   }
 }
 
-export const TestUser = (): CredentialsSignup => {
+export function TestUser(): CredentialsSignup {
   return {
     email: 'test_e2e_user@test.com',
     firstName: 'Test',

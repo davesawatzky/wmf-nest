@@ -1,19 +1,17 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import { TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
 import {
-  describe,
-  beforeAll,
   beforeEach,
-  afterAll,
-  test,
-  it,
+  describe,
   expect,
+  it,
 } from 'vitest'
 import { PerformerService } from '../performer.service'
-import { PrismaService } from '../../../prisma/prisma.service'
+import { PrismaService } from '@/prisma/prisma.service'
 
-vi.mock('../../../prisma/prisma.service.ts')
+vi.mock('@/prisma/prisma.service.ts')
 
-describe('PerformerService', () => {
+describe('performerService', () => {
   let performerService: PerformerService
   let prismaService: PrismaService
 

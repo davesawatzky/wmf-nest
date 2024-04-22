@@ -1,38 +1,35 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common'
-import {Test} from '@nestjs/testing'
+import { INestApplication } from '@nestjs/common'
+import { ValidationPipe } from '@nestjs/common'
+import { Test } from '@nestjs/testing'
 import gql from 'graphql-tag'
 import cookieParser from 'cookie-parser'
-import { AppModule } from '../app.module'
 import { AuthPayload } from 'src/auth/entities/auth.entity'
 import helmet from 'helmet'
-import { PrismaService } from '../prisma/prisma.service'
-import { TestUser } from './testUser'
-import {EmailConfirmationService} from 'src/email-confirmation/email-confirmation.service'
+import { EmailConfirmationService } from 'src/email-confirmation/email-confirmation.service'
 import request from 'supertest-graphql'
-
+import { PrismaService } from '../prisma/prisma.service'
+import { AppModule } from '../app.module'
+import { TestUser } from './testUser'
 
 let app: INestApplication
 
-  
 beforeAll(async () => {
-
   let httpServer: any
   let diatonicToken: string
   let prisma: PrismaService
 
-  let emailConfirmationService: Partial<EmailConfirmationService> = {
+  const emailConfirmationService: Partial<EmailConfirmationService> = {
     sendVerificationLink: vi.fn().mockReturnValue(true),
   }
 
   const moduleRef = await Test.createTestingModule({
-    imports: [AppModule]
+    imports: [AppModule],
   })
     .overrideProvider(EmailConfirmationService)
     .useValue(emailConfirmationService)
     .compile()
 
   app = moduleRef.createNestApplication()
-
 
   app.use(cookieParser())
   app.use(
@@ -53,34 +50,34 @@ beforeAll(async () => {
           frameSrc: [`'self'`, 'sandbox.embed.apollographql.com'],
         },
       },
-    })
+    }),
   )
 
   app.enableCors({
-      origin: process.env.ORIGIN_SERVER,
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-      optionsSuccessStatus: 200,
-      credentials: true,
-      preflightContinue: false,
-      maxAge: 1000 * 60 * 60 * 24, // 1 day
-    })
+    origin: process.env.ORIGIN_SERVER,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    optionsSuccessStatus: 200,
+    credentials: true,
+    preflightContinue: false,
+    maxAge: 1000 * 60 * 60 * 24, // 1 day
+  })
 
   app.useGlobalPipes(
-      new ValidationPipe({
-        transform: true,
-      })
-    )
-    // this.app.useStaticAssets(join(__dirname, '..', 'public'))
-    // this.app.setBaseViewsDir(join(__dirname, '..', 'emails'))
-    // this.app.setViewEngine('hbs')
+    new ValidationPipe({
+      transform: true,
+    }),
+  )
+  // this.app.useStaticAssets(join(__dirname, '..', 'public'))
+  // this.app.setBaseViewsDir(join(__dirname, '..', 'emails'))
+  // this.app.setViewEngine('hbs')
 
   await app.init()
-  
+
   httpServer = await app.getHttpServer()
   prisma = app.get<PrismaService>(PrismaService)
 
-  const response = await request<{signin: AuthPayload}>(
-    httpServer
+  const response = await request<{ signin: AuthPayload }>(
+    httpServer,
   ).mutate(gql`
     mutation SignIn($credentials: CredentialsSignin!) {
       signin(credentials: $credentials) {
@@ -100,12 +97,12 @@ beforeAll(async () => {
       }
     }
   `)
-  .variables({
-    credentials: {
-      email: TestUser().email,
-      password: TestUser().password
-    }
-  })
+    .variables({
+      credentials: {
+        email: TestUser().email,
+        password: TestUser().password,
+      },
+    })
   diatonicToken = response.data.signin.diatonicToken
   globalThis.diatonicToken = diatonicToken
 
@@ -125,10 +122,8 @@ afterAll(async () => {
   delete globalThis.httpServer
   delete globalThis.userId
   delete globalThis.defined
-  
+
   vi.resetAllMocks()
 
   await app.close()
 })
-
-

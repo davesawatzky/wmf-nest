@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { tbl_instruments } from '@prisma/client'
-import {PrismaService} from '@/prisma/prisma.service'
-import {Instrument, InstrumentPayload} from './entities/instrument.entity'
 import { InstrumentInput } from './dto/instrument.input'
-import {UserError} from '@/common.entity'
-import {error} from 'console'
+import { PrismaService } from '@/prisma/prisma.service'
+import { UserError } from '@/common.entity'
 
 @Injectable()
 export class InstrumentService {
@@ -14,38 +12,40 @@ export class InstrumentService {
     let instrument: tbl_instruments
     let userErrors: UserError[]
     try {
-      userErrors = [],
+      userErrors = []
       instrument = await this.prisma.tbl_instruments.create({
-        data: {...instrumentInput },
+        data: { ...instrumentInput },
       })
-    } catch (error: any) {
+    }
+    catch (error: any) {
       if (error.code === 'P2002') {
         userErrors = [
           {
             message: 'Instrument already exists',
-            field:['name']
-          }
+            field: ['name'],
+          },
         ]
         instrument = null
-      } else {
+      }
+      else {
         console.log(error)
         userErrors = [
           {
             message: 'Cannot create instrument',
-            field: []
-          }
+            field: [],
+          },
         ]
         instrument = null
       }
     }
     return {
       userErrors,
-      instrument
+      instrument,
     }
   }
 
   async findAll(disciplineID?: number) {
-    if (!!disciplineID) {
+    if (disciplineID) {
       return await this.prisma.tbl_instruments.findMany({
         where: {
           disciplineID,
@@ -54,7 +54,8 @@ export class InstrumentService {
           name: 'asc',
         },
       })
-    } else {
+    }
+    else {
       return await this.prisma.tbl_instruments.findMany({
         orderBy: {
           name: 'asc',
@@ -68,7 +69,8 @@ export class InstrumentService {
       return await this.prisma.tbl_instruments.findUnique({
         where: { id },
       })
-    } else if (name) {
+    }
+    else if (name) {
       return await this.prisma.tbl_instruments.findFirst({
         where: { name },
       })
@@ -77,12 +79,12 @@ export class InstrumentService {
 
   async update(
     instrumentID: tbl_instruments['id'],
-    inst: Partial<tbl_instruments>
+    inst: Partial<tbl_instruments>,
   ) {
     let instrument: tbl_instruments
     let userErrors: UserError[]
     try {
-      userErrors = [],
+      userErrors = []
       instrument = await this.prisma.tbl_instruments.update({
         where: {
           id: instrumentID,
@@ -91,28 +93,30 @@ export class InstrumentService {
           ...inst,
         },
       })
-    } catch (error: any) {
+    }
+    catch (error: any) {
       if (error.code === 'P2025') {
         userErrors = [
           {
             message: 'Instrument to update not found',
-            field: ['id']
-          }
+            field: ['id'],
+          },
         ]
         instrument = null
-      } else {
+      }
+      else {
         userErrors = [
           {
             message: 'Cannot update instrument',
-            field: []
-          }
+            field: [],
+          },
         ]
         instrument = null
       }
     }
     return {
       userErrors,
-      instrument
+      instrument,
     }
   }
 
@@ -120,32 +124,34 @@ export class InstrumentService {
     let instrument: tbl_instruments
     let userErrors: UserError[]
     try {
-      userErrors = [],
+      userErrors = []
       instrument = await this.prisma.tbl_instruments.delete({
         where: { id },
       })
-    } catch (error: any) {
+    }
+    catch (error: any) {
       if (error.code === 'P2025') {
         userErrors = [
           {
             message: 'Instrument to delete not found',
-            field: ['id']
-          }
+            field: ['id'],
+          },
         ]
         instrument = null
-      } else {
+      }
+      else {
         userErrors = [
           {
             message: 'Cannot delete instrument',
-            field: []
-          }
+            field: [],
+          },
         ]
         instrument = null
       }
     }
     return {
       userErrors,
-      instrument
+      instrument,
     }
   }
 }

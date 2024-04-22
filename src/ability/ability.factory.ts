@@ -1,30 +1,32 @@
 import { Injectable } from '@nestjs/common'
 import {
-  MongoAbility,
-  createMongoAbility,
-  AbilityBuilder,
   ExtractSubjectType,
   InferSubjects,
+  MongoAbility,
+} from '@casl/ability'
+import {
+  AbilityBuilder,
+  createMongoAbility,
 } from '@casl/ability'
 import { User } from '../user/entities/user.entity'
-import {ClassType} from '@/festival/class-type/entities/class-type.entity'
-import {Category} from '@/festival/category/entities/category.entity'
-import {Discipline} from '@/festival/discipline/entities/discipline.entity'
-import {FestivalClass} from '@/festival/festival-class/entities/festival-class.entity'
-import {Instrument} from '@/festival/instrument/entities/instrument.entity'
-import {Level} from '@/festival/level/entities/level.entity'
-import {Subdiscipline} from '@/festival/subdiscipline/entities/subdiscipline.entity'
-import {Trophy} from '@/festival/trophy/entities/trophy.entity'
-import {FieldConfig} from '@/submissions/field-config/entities/field-config.entity'
-import {Group} from '@/submissions/group/entities/group.entity'
-import {Community} from '@/submissions/community/entities/community.entity'
-import {Performer} from '@/submissions/performer/entities/performer.entity'
-import {RegisteredClass} from '@/submissions/registered-class/entities/registered-class.entity'
-import {Registration} from '@/submissions/registration/entities/registration.entity'
-import {School} from '@/submissions/school/entities/school.entity'
-import {SchoolGroup} from '@/submissions/school-group/entities/school-group.entity'
+import { ClassType } from '@/festival/class-type/entities/class-type.entity'
+import { Category } from '@/festival/category/entities/category.entity'
+import { Discipline } from '@/festival/discipline/entities/discipline.entity'
+import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
+import { Instrument } from '@/festival/instrument/entities/instrument.entity'
+import { Level } from '@/festival/level/entities/level.entity'
+import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity'
+import { Trophy } from '@/festival/trophy/entities/trophy.entity'
+import { FieldConfig } from '@/submissions/field-config/entities/field-config.entity'
+import { Group } from '@/submissions/group/entities/group.entity'
+import { Community } from '@/submissions/community/entities/community.entity'
+import { Performer } from '@/submissions/performer/entities/performer.entity'
+import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity'
+import { Registration } from '@/submissions/registration/entities/registration.entity'
+import { School } from '@/submissions/school/entities/school.entity'
+import { SchoolGroup } from '@/submissions/school-group/entities/school-group.entity'
 import { Selection } from '@/submissions/selection/entities/selection.entity'
-import {Teacher} from '@/submissions/teacher/entities/teacher.entity'
+import { Teacher } from '@/submissions/teacher/entities/teacher.entity'
 
 export enum Action {
   Manage = 'manage',
@@ -39,23 +41,24 @@ export type Subjects = InferSubjects<
   typeof Category |
   typeof ClassType |
   typeof Discipline |
-  typeof FestivalClass | 
+  typeof FestivalClass |
   typeof Instrument |
-  typeof Level | 
+  typeof Level |
   typeof Subdiscipline |
-  typeof Trophy | 
-  typeof Community | 
-  typeof FieldConfig | 
-  typeof Group | 
+  typeof Trophy |
+  typeof Community |
+  typeof FieldConfig |
+  typeof Group |
   typeof Performer |
   typeof RegisteredClass |
   typeof Registration |
-  typeof School | 
-  typeof SchoolGroup | 
-  typeof Selection | 
-  typeof Teacher> |
-  'all' |
-  'admin'
+  typeof School |
+  typeof SchoolGroup |
+  typeof Selection |
+  typeof Teacher
+> |
+'all' |
+'admin'
 
 export type AppAbility = MongoAbility<[Action, Subjects]>
 
@@ -63,19 +66,20 @@ export type AppAbility = MongoAbility<[Action, Subjects]>
 export class AbilityFactory {
   defineAbility(currentUser: User) {
     const { can, cannot, build } = new AbilityBuilder<AppAbility>(
-      createMongoAbility
+      createMongoAbility,
     )
     if (currentUser.admin) {
       can(Action.Manage, 'all')
-    } else {
+    }
+    else {
       console.log(currentUser)
-      cannot(Action.Manage,'admin').because('Admins only')
+      cannot(Action.Manage, 'admin').because('Admins only')
       can(Action.Manage, Teacher)
       can(Action.Manage, Selection)
       can(Action.Manage, SchoolGroup)
       can(Action.Manage, School)
       can(Action.Manage, RegisteredClass)
-      can(Action.Manage, Registration, {user: {id: currentUser.id}})
+      can(Action.Manage, Registration, { user: { id: currentUser.id } })
       can(Action.Manage, Group)
       can(Action.Manage, Performer)
       can(Action.Manage, Community)
@@ -88,7 +92,6 @@ export class AbilityFactory {
       can(Action.Read, Category)
       can(Action.Read, ClassType)
       can([Action.Read, Action.Update], User)
-
     }
     return build({
       detectSubjectType: (item): any => {
