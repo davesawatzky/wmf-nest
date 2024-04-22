@@ -8,6 +8,7 @@ import { GroupModule } from '../group/group.module'
 import { CommunityModule } from '../community/community.module'
 import { TeacherModule } from '../teacher/teacher.module'
 import { SchoolModule } from '../school/school.module'
+import {AbilityModule} from '@/ability/ability.module'
 
 @Module({
   providers: [RegistrationResolver, RegistrationService],
@@ -16,9 +17,10 @@ import { SchoolModule } from '../school/school.module'
     PerformerModule,
     RegisteredClassModule,
     GroupModule,
-    forwardRef(() => CommunityModule),
+    CommunityModule,
     forwardRef(() => TeacherModule),
     SchoolModule,
+    AbilityModule
   ],
   exports: [RegistrationService],
 })

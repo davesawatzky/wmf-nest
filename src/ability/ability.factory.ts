@@ -61,20 +61,21 @@ export type AppAbility = MongoAbility<[Action, Subjects]>
 
 @Injectable()
 export class AbilityFactory {
-  defineAbility(user: User) {
+  defineAbility(currentUser: User) {
     const { can, cannot, build } = new AbilityBuilder<AppAbility>(
       createMongoAbility
     )
-    if (user.admin) {
+    if (currentUser.admin) {
       can(Action.Manage, 'all')
     } else {
+      console.log(currentUser)
       cannot(Action.Manage,'admin').because('Admins only')
       can(Action.Manage, Teacher)
       can(Action.Manage, Selection)
       can(Action.Manage, SchoolGroup)
       can(Action.Manage, School)
       can(Action.Manage, RegisteredClass)
-      can(Action.Manage, Registration)
+      can(Action.Manage, Registration, {user: {id: currentUser.id}})
       can(Action.Manage, Group)
       can(Action.Manage, Performer)
       can(Action.Manage, Community)

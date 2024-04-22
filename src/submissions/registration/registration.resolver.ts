@@ -32,6 +32,9 @@ import { Group } from '../group/entities/group.entity'
 import { Community } from '../community/entities/community.entity'
 import { School } from '../school/entities/school.entity'
 import { Teacher } from '../teacher/entities/teacher.entity'
+import {AbilitiesGuard} from '@/ability/abilities.guard'
+import {CheckAbilities} from '@/ability/abilities.decorator'
+import {Action} from '@/ability/ability.factory'
 
 @Resolver(() => Registration)
 @UseGuards(JwtAuthGuard)
@@ -50,18 +53,23 @@ export class RegistrationResolver {
   /** Queries */
 
   @Query(() => [Registration])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Registration})
   async registrations(
     @Context() context,
     @Args('performerType', { nullable: true, type: () => PerformerType })
     performerType?: Registration['performerType'] | null
   ) {
     return await this.registrationService.findAll(
-      context.req.user.id,
+      // context.req.user.id,
+      undefined,
       performerType
     )
   }
 
   @Query(() => Registration)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Registration})
   async registration(@Args('id', { type: () => Int }) id: Registration['id']) {
     return await this.registrationService.findOne(id)
   }
@@ -69,12 +77,14 @@ export class RegistrationResolver {
   /** Mutations */
 
   @Mutation(() => RegistrationPayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Create, subject: Registration})
   async registrationCreate(
+    @Context() context,
     @Args('performerType', { type: () => PerformerType })
     performerType: PerformerType,
     @Args('label', { type: () => String })
-    label: Registration['label'],
-    @Context() context
+    label: Registration['label']
   ) {
     return await this.registrationService.create(
       context.req.user.id,
@@ -84,6 +94,8 @@ export class RegistrationResolver {
   }
 
   @Mutation(() => RegistrationPayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Update, subject: Registration})
   async registrationUpdate(
     @Args('registrationID', { type: () => Int })
     registrationID: Registration['id'],
@@ -97,6 +109,8 @@ export class RegistrationResolver {
   }
 
   @Mutation(() => RegistrationPayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Delete, subject: Registration})
   async registrationDelete(
     @Args('registrationID', { type: () => Int })
     registrationID: Registration['id']
@@ -104,43 +118,64 @@ export class RegistrationResolver {
     return await this.registrationService.remove(registrationID)
   }
 
+
   /** Field Resolvers */
 
   @ResolveField(() => User)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: User})
   async user(@Parent() registration: tbl_registration) {
     const { userID }: { userID: tbl_registration['userID'] } = registration
     return await this.userService.findOne(userID)
   }
+
   @ResolveField(() => [Performer])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Performer})
   async performers(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return await this.performerService.findAll(registrationID)
   }
+
   @ResolveField(() => [RegisteredClass])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: RegisteredClass})
   async registeredClasses(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return await this.registeredClassService.findAll(registrationID)
   }
+  
   @ResolveField(() => Group)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Group})
   async group(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return await this.groupService.findOne(registrationID)
   }
+
   @ResolveField(() => Community)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Community})
   async community(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return await this.communityService.findOne(registrationID)
   }
+
   @ResolveField(() => Teacher)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: Teacher})
   async teacher(@Parent() registration: tbl_registration) {
     const { teacherID }: { teacherID: Teacher['id'] } = registration
     return await this.teacherService.findOne(teacherID)
   }
+
   @ResolveField(() => School)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({action: Action.Read, subject: School})
   async school(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id

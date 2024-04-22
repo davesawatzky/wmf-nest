@@ -23,6 +23,7 @@ export class AbilitiesGuard implements CanActivate {
       []
     const ctx = GqlExecutionContext.create(context)
     const user = ctx.getContext().req.user
+    // console.log(user)
     const ability = this.caslAbilityFactory.defineAbility(user)
 
     try {

@@ -458,7 +458,7 @@ input RegistrationInput {
 }
 
 type RegistrationPayload {
-  registration: Registration!
+  registration: Registration
   userErrors: [UserError!]!
 }
 
