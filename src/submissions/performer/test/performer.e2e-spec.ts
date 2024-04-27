@@ -1,14 +1,14 @@
 import gql from 'graphql-tag'
 import request from 'supertest-graphql'
-import { Performer } from '../entities/performer.entity'
+import type { Performer } from '../entities/performer.entity'
 
 describe('Performer', () => {
   let regId: number
 
   beforeAll(async () => {
-    const reg = await global.prisma.tbl_registration.create({
+    const reg = await globalThis.prisma.tbl_registration.create({
       data: {
-        userID: global.userId,
+        userID: globalThis.userId,
         performerType: 'SOLO',
         label: 'Test Form',
       },
@@ -17,7 +17,7 @@ describe('Performer', () => {
   })
 
   afterAll(async () => {
-    await global.prisma.tbl_registration.delete({
+    await globalThis.prisma.tbl_registration.delete({
       where: {
         id: regId,
       },
@@ -28,8 +28,8 @@ describe('Performer', () => {
     let response: any
 
     it('Can return the full list of performers', async () => {
-      response = await request<{ performers: Performer[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ performers: Performer[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Performers{
             performers {
@@ -58,8 +58,8 @@ describe('Performer', () => {
     })
 
     it('Can return the full list of performers with associated registrations', async () => {
-      response = await request<{ performers: Performer[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ performers: Performer[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Performers{
             performers {
@@ -82,8 +82,8 @@ describe('Performer', () => {
     })
 
     it('Can return the full list of performers with optional registrationID', async () => {
-      response = await request<{ performers: Performer[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ performers: Performer[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Performers($registrationId: Int) {
             performers(registrationID: $registrationId) {
@@ -108,8 +108,8 @@ describe('Performer', () => {
     })
 
     it('Can return a single performer with performerID', async () => {
-      response = await request<{ performer: Performer }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ performer: Performer }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Performer($performerId: Int!) {
             performer(performerID: $performerId) {
@@ -134,8 +134,8 @@ describe('Performer', () => {
     })
 
     it('Returns an error if nothing is found', async () => {
-      response = await request<{ performer: Performer }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ performer: Performer }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Performer($performerId: Int) {
             performer(performerID: $performerId) {
@@ -164,7 +164,7 @@ describe('Performer', () => {
 
     afterEach(async () => {
       try {
-        await global.prisma.tbl_reg_performer.delete({
+        await globalThis.prisma.tbl_reg_performer.delete({
           where: {
             id: performerId,
           },
@@ -174,8 +174,8 @@ describe('Performer', () => {
     })
 
     it('Can create a performer', async () => {
-      response = await request<{ performerCreate: Performer }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ performerCreate: Performer }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           mutation PerformerCreate($registrationId: Int!) {
             performerCreate(registrationID: $registrationId) {
@@ -199,8 +199,8 @@ describe('Performer', () => {
     })
 
     it('Can create a performer with performer Input', async () => {
-      response = await request<{ performerCreate: Performer }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ performerCreate: Performer }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           mutation PerformerCreate($registrationId: Int!, $performerInput: PerformerInput) {
             performerCreate(registrationID: $registrationId, performerInput: $performerInput) {
@@ -230,8 +230,8 @@ describe('Performer', () => {
     })
 
     it('Returns an error if trying to create a performer without proper registrationId', async () => {
-      response = await request<{ performerCreate: Performer }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ performerCreate: Performer }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           mutation PerformerCreate($registrationId: Int!, $performerInput: PerformerInput) {
             performerCreate(registrationID: $registrationId, performerInput: $performerInput) {
@@ -264,7 +264,7 @@ describe('Performer', () => {
     let performerId: number
 
     beforeAll(async () => {
-      response = await global.prisma.tbl_reg_performer.create({
+      response = await globalThis.prisma.tbl_reg_performer.create({
         data: {
           regID: regId,
           firstName: 'Test',
@@ -276,7 +276,7 @@ describe('Performer', () => {
     })
 
     afterAll(async () => {
-      await global.prisma.tbl_reg_performer.delete({
+      await globalThis.prisma.tbl_reg_performer.delete({
         where: {
           id: performerId,
         },
@@ -284,8 +284,8 @@ describe('Performer', () => {
     })
 
     it('Can update any performer', async () => {
-      response = await request<{ performerUpdate: Performer }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ performerUpdate: Performer }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation PerformerUpdate($performerId: Int!, $performerInput: PerformerInput!) {
           performerUpdate(performerID: $performerId, performerInput: $performerInput) {
@@ -314,8 +314,8 @@ describe('Performer', () => {
     })
 
     it('Returns userError if incorrect performer id', async () => {
-      response = await request<{ performerUpdate: Performer }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ performerUpdate: Performer }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation PerformerUpdate($performerId: Int!, $performerInput: PerformerInput!) {
           performerUpdate(performerID: $performerId, performerInput: $performerInput) {
@@ -342,8 +342,8 @@ describe('Performer', () => {
     })
 
     it('Returns html status error if missing performer id', async () => {
-      response = await request<{ performerUpdate: Performer }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ performerUpdate: Performer }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation PerformerUpdate($performerId: Int!, $performerInput: PerformerInput!) {
           performerUpdate(performerID: $performerId, performerInput: $performerInput) {
@@ -369,8 +369,8 @@ describe('Performer', () => {
     })
 
     it('Returns html status error if any bad input args', async () => {
-      response = await request<{ performerUpdate: Performer }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ performerUpdate: Performer }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation PerformerUpdate($performerId: Int!, $performerInput: PerformerInput!) {
           performerUpdate(performerID: $performerId, performerInput: $performerInput) {
@@ -402,7 +402,7 @@ describe('Performer', () => {
     let performerId: number
 
     beforeEach(async () => {
-      response = await global.prisma.tbl_reg_performer.create({
+      response = await globalThis.prisma.tbl_reg_performer.create({
         data: {
           regID: regId,
           firstName: 'Test',
@@ -414,7 +414,7 @@ describe('Performer', () => {
 
     afterEach(async () => {
       try {
-        await global.prisma.tbl_reg_performer.delete({
+        await globalThis.prisma.tbl_reg_performer.delete({
           where: {
             id: performerId,
           },
@@ -424,8 +424,8 @@ describe('Performer', () => {
     })
 
     it('Can delete a performer', async () => {
-      response = await request<{ performerDelete: boolean }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ performerDelete: boolean }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation PerformerDelete($performerId: Int!) {
           performerDelete(performerID: $performerId) {
@@ -446,7 +446,7 @@ describe('Performer', () => {
         })
         .expectNoErrors()
 
-      const deleteCheck = await global.prisma.tbl_reg_performer.findUnique({
+      const deleteCheck = await globalThis.prisma.tbl_reg_performer.findUnique({
         where: { id: performerId },
       })
       expect(deleteCheck).toBeNull()
@@ -454,8 +454,8 @@ describe('Performer', () => {
     })
 
     it('Returns a userError if performer not found', async () => {
-      response = await request<{ performerDelete: boolean }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ performerDelete: boolean }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation PerformerDelete($performerId: Int!) {
           performerDelete(performerID: $performerId) {
@@ -479,8 +479,8 @@ describe('Performer', () => {
     })
 
     it('Returns status error if performer id not given', async () => {
-      response = await request<{ performerDelete: boolean }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ performerDelete: boolean }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation PerformerDelete($performerId: Int!) {
           performerDelete(performerID: $performerId) {

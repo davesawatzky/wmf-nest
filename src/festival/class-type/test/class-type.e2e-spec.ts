@@ -7,8 +7,8 @@ describe('ClassType', () => {
     let response: any
 
     it('Can provide a list of all classTypes', async () => {
-      response = await request<{ classTypes: ClassType[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ classTypes: ClassType[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query ClassTypes {
             classTypes {
@@ -23,8 +23,8 @@ describe('ClassType', () => {
     })
 
     it('Can provide a list of all classTypes with associated festival classes', async () => {
-      response = await request<{ classTypes: ClassType[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ classTypes: ClassType[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query ClassTypes {
             classTypes {
@@ -47,8 +47,8 @@ describe('ClassType', () => {
     let response: any
 
     it('Find classType using proper ID', async () => {
-      response = await request<{ classType: ClassType }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ classType: ClassType }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query ClassType($classTypeId: Int!) {
             classType(id: $classTypeId) {
@@ -61,13 +61,12 @@ describe('ClassType', () => {
         .variables({
           classTypeId: 2,
         })
-      expectTypeOf(response.data.classType.name).toBeString
       expect(response.data.classType.name).toBe('(E) CLASS')
     })
 
     it('Returns error when no individual class type found', async () => {
-      response = await request<{ classType: ClassType }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ classType: ClassType }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query ClassType($classTypeId: Int!) {
             classType(id: $classTypeId) {
@@ -80,7 +79,6 @@ describe('ClassType', () => {
         .variables({
           classTypeId: 10000,
         })
-      expectTypeOf(response.errors[0].message).toBeString
       expect(response.errors).toBeTruthy()
     })
   })
@@ -90,7 +88,7 @@ describe('ClassType', () => {
     let classTypeId: number
 
     afterAll(async () => {
-      await global.prisma.tbl_class_type.delete({
+      await globalThis.prisma.tbl_class_type.delete({
         where: {
           id: classTypeId,
         },
@@ -98,8 +96,8 @@ describe('ClassType', () => {
     })
 
     it('Successfully creates a classType using ClassTypeInput', async () => {
-      response = await request<{ classTypeCreate: ClassTypePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ classTypeCreate: ClassTypePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateClassType($classTypeInput: ClassTypeInput!) {
           classTypeCreate(classTypeInput: $classTypeInput) {
@@ -125,8 +123,8 @@ describe('ClassType', () => {
     })
 
     it('Returns error if trying to add duplicate classType name', async () => {
-      response = await request<{ classTypeCreate: ClassTypePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ classTypeCreate: ClassTypePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateClassType($classTypeInput: ClassTypeInput!) {
           classTypeCreate(classTypeInput: $classTypeInput) {
@@ -150,8 +148,8 @@ describe('ClassType', () => {
     })
 
     it('Improper input returns error', async () => {
-      response = await request<{ classTypeCreate: ClassTypePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ classTypeCreate: ClassTypePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateClassType($classTypeInput: ClassTypeInput!) {
           classTypeCreate(classTypeInput: $classTypeInput) {
@@ -179,8 +177,8 @@ describe('ClassType', () => {
     let classTypeID: number
 
     beforeEach(async () => {
-      response = await request<{ classTypeCreate: ClassTypePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ classTypeCreate: ClassTypePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateClassType($classTypeInput: ClassTypeInput!) {
           classTypeCreate(classTypeInput: $classTypeInput) {
@@ -204,7 +202,7 @@ describe('ClassType', () => {
     })
 
     afterEach(async () => {
-      await global.prisma.tbl_class_type.delete({
+      await globalThis.prisma.tbl_class_type.delete({
         where: {
           id: classTypeID,
         },
@@ -212,8 +210,8 @@ describe('ClassType', () => {
     })
 
     it('Update details of existing classType', async () => {
-      response = await request<{ classTypeUpdate: ClassTypePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ classTypeUpdate: ClassTypePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation ClassTypeUpdate($classTypeId: Int!, $classTypeInput: ClassTypeInput!){
           classTypeUpdate(classTypeID: $classTypeId, classTypeInput: $classTypeInput) {
@@ -238,8 +236,8 @@ describe('ClassType', () => {
     })
 
     it('Returns error if classType not found', async () => {
-      response = await request<{ classTypeUpdate: ClassTypePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ classTypeUpdate: ClassTypePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation ClassTypeUpdate($classTypeId: Int!, $classTypeInput: ClassTypeInput!){
           classTypeUpdate(classTypeID: $classTypeId, classTypeInput: $classTypeInput) {
@@ -264,8 +262,8 @@ describe('ClassType', () => {
     })
 
     it('Returns error if name is null in update', async () => {
-      response = await request<{ classTypeUpdate: ClassTypePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ classTypeUpdate: ClassTypePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation ClassTypeUpdate($classTypeId: Int!, $classTypeInput: ClassTypeInput!){
           classTypeUpdate(classTypeID: $classTypeId, classTypeInput: $classTypeInput) {
@@ -295,8 +293,8 @@ describe('ClassType', () => {
     let response: any
     let classTypeId: number
     beforeEach(async () => {
-      response = await request<{ classTypeCreate: ClassTypePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ classTypeCreate: ClassTypePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateClassType($classTypeInput: ClassTypeInput!) {
           classTypeCreate(classTypeInput: $classTypeInput) {
@@ -320,7 +318,7 @@ describe('ClassType', () => {
 
     afterEach(async () => {
       try {
-        await global.prisma.tbl_class_type.delete({
+        await globalThis.prisma.tbl_class_type.delete({
           where: {
             id: classTypeId,
           },
@@ -330,8 +328,8 @@ describe('ClassType', () => {
     })
 
     it('Deletes a classType using the classTypeID', async () => {
-      response = await request<{ classTypeDelete: ClassTypePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ classTypeDelete: ClassTypePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation ClassTypeDelete($classTypeDeleteId: Int!) {
           classTypeDelete(classTypeID: $classTypeDeleteId) {
@@ -348,7 +346,7 @@ describe('ClassType', () => {
         .variables({
           classTypeDeleteId: classTypeId,
         })
-      const deleteCheck = await global.prisma.tbl_class_type.findUnique({
+      const deleteCheck = await globalThis.prisma.tbl_class_type.findUnique({
         where: { id: classTypeId },
       })
       expect(deleteCheck).toBeNull()
@@ -356,8 +354,8 @@ describe('ClassType', () => {
     })
 
     it('Returns error message if classType not found', async () => {
-      response = await request<{ classTypeDelete: ClassTypePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ classTypeDelete: ClassTypePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation ClassTypeDelete($classTypeDeleteId: Int!) {
           classTypeDelete(classTypeID: $classTypeDeleteId) {

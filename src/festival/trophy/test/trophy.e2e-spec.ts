@@ -7,8 +7,8 @@ describe('Trophy', () => {
     let response: any
 
     it('Can provide a list of all trophies', async () => {
-      response = await request<{ trophies: Trophy[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ trophies: Trophy[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         query Trophies {
           trophies {
@@ -28,8 +28,8 @@ describe('Trophy', () => {
     })
 
     it('Can provide a single trophy with proper ID', async () => {
-      response = await request<{ trophy: Trophy }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ trophy: Trophy }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         query Trophy($trophyId: Int!) {
           trophy(id: $trophyId) {
@@ -51,8 +51,8 @@ describe('Trophy', () => {
     })
 
     it('Returns error if nothing found', async () => {
-      response = await request<{ trophy: Trophy }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ trophy: Trophy }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         query Trophy($trophyId: Int!) {
           trophy(id: $trophyId) {
@@ -74,10 +74,9 @@ describe('Trophy', () => {
 
   describe('Create Trophy', () => {
     let response: any
-    let trophyId: number
 
     afterAll(async () => {
-      await global.prisma.tbl_trophy.delete({
+      await globalThis.prisma.tbl_trophy.delete({
         where: {
           name: 'Best in Show',
         },
@@ -85,8 +84,8 @@ describe('Trophy', () => {
     })
 
     it('Successfully creates a trophy with TrophyInput', async () => {
-      response = await request<{ trophyCreate: TrophyPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ trophyCreate: TrophyPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateTrophy($trophyInput: TrophyInput!) {
           trophyCreate(trophyInput: $trophyInput) {
@@ -113,8 +112,8 @@ describe('Trophy', () => {
     })
 
     it('Returns error if trying to add duplicate Trophy name', async () => {
-      response = await request<{ trophyCreate: TrophyPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ trophyCreate: TrophyPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateTrophy($trophyInput: TrophyInput!) {
           trophyCreate(trophyInput: $trophyInput) {
@@ -141,8 +140,8 @@ describe('Trophy', () => {
     })
 
     it('Improper trophy input returns error', async () => {
-      response = await request<{ trophyCreate: TrophyPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ trophyCreate: TrophyPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateTrophy($trophyInput: TrophyInput!) {
           trophyCreate(trophyInput: $trophyInput) {
@@ -173,8 +172,8 @@ describe('Trophy', () => {
     let trophyId: number
 
     beforeEach(async () => {
-      response = await request<{ trophyCreate: TrophyPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ trophyCreate: TrophyPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateTrophy($trophyInput: TrophyInput!) {
           trophyCreate(trophyInput: $trophyInput) {
@@ -197,7 +196,7 @@ describe('Trophy', () => {
     })
 
     afterEach(async () => {
-      await global.prisma.tbl_trophy.delete({
+      await globalThis.prisma.tbl_trophy.delete({
         where: {
           id: trophyId,
         },
@@ -205,8 +204,8 @@ describe('Trophy', () => {
     })
 
     it('Update details of existing trophy', async () => {
-      response = await request<{ trophyUpdate: TrophyPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ trophyUpdate: TrophyPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation TrophyUpdate($trophyId: Int!, $trophyInput: TrophyInput!){
           trophyUpdate(trophyID: $trophyId, trophyInput: $trophyInput) {
@@ -232,8 +231,8 @@ describe('Trophy', () => {
     })
 
     it('Returns error if trophy not found', async () => {
-      response = await request<{ trophyUpdate: TrophyPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ trophyUpdate: TrophyPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation TrophyUpdate($trophyId: Int!, $trophyInput: TrophyInput!){
           trophyUpdate(trophyID: $trophyId, trophyInput: $trophyInput) {
@@ -258,8 +257,8 @@ describe('Trophy', () => {
     })
 
     it('Returns error if name is null or undefined in update', async () => {
-      response = await request<{ trophyUpdate: TrophyPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ trophyUpdate: TrophyPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation TrophyUpdate($trophyId: Int!, $trophyInput: TrophyInput!){
           trophyUpdate(trophyID: $trophyId, trophyInput: $trophyInput) {
@@ -290,8 +289,8 @@ describe('Trophy', () => {
     let trophyId: number
 
     beforeEach(async () => {
-      response = await request<{ trophyCreate: TrophyPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ trophyCreate: TrophyPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateTrophy($trophyInput: TrophyInput!) {
           trophyCreate(trophyInput: $trophyInput) {
@@ -315,7 +314,7 @@ describe('Trophy', () => {
 
     afterEach(async () => {
       try {
-        await global.prisma.tbl_trophy.delete({
+        await globalThis.prisma.tbl_trophy.delete({
           where: {
             name: 'Best in Show',
           },
@@ -325,8 +324,8 @@ describe('Trophy', () => {
     })
 
     it('Deletes a trophy using the trophyID', async () => {
-      response = await request<{ trophyDelete: TrophyPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ trophyDelete: TrophyPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation TrophyDelete($trophyDeleteId: Int!) {
           trophyDelete(trophyID: $trophyDeleteId) {
@@ -343,7 +342,7 @@ describe('Trophy', () => {
         .variables({
           trophyDeleteId: trophyId,
         })
-      const deleteCheck = await global.prisma.tbl_trophy.findUnique({
+      const deleteCheck = await globalThis.prisma.tbl_trophy.findUnique({
         where: { id: trophyId },
       })
       expect(deleteCheck).toBeNull()
@@ -351,8 +350,8 @@ describe('Trophy', () => {
     })
 
     it('Returns error message if trophy not found', async () => {
-      response = await request<{ trophyDelete: TrophyPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ trophyDelete: TrophyPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation TrophyDelete($trophyDeleteId: Int!) {
           trophyDelete(trophyID: $trophyDeleteId) {

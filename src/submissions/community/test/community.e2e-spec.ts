@@ -6,9 +6,9 @@ describe('Community', () => {
   let regId: number
 
   beforeAll(async () => {
-    const reg = await global.prisma.tbl_registration.create({
+    const reg = await globalThis.prisma.tbl_registration.create({
       data: {
-        userID: global.userId,
+        userID: globalThis.userId,
         performerType: 'SOLO',
         label: 'Test Form',
       },
@@ -17,7 +17,7 @@ describe('Community', () => {
   })
 
   afterAll(async () => {
-    await global.prisma.tbl_registration.delete({
+    await globalThis.prisma.tbl_registration.delete({
       where: {
         id: regId,
       },
@@ -28,8 +28,8 @@ describe('Community', () => {
     let response: any
 
     it('Can return the full list of communities', async () => {
-      response = await request<{ communities: Community[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ communities: Community[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Communities{
             communities {
@@ -52,8 +52,8 @@ describe('Community', () => {
     })
 
     it('Can return the full list of communities with associated registrations', async () => {
-      response = await request<{ communities: Community[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ communities: Community[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Communities{
             communities {
@@ -83,8 +83,8 @@ describe('Community', () => {
     })
 
     it('Can return the full list of communities with optional registrationID', async () => {
-      response = await request<{ communities: Community[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ communities: Community[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Communities($registrationId: Int) {
             communities(registrationID: $registrationId) {
@@ -116,8 +116,8 @@ describe('Community', () => {
     })
 
     it('Can return a single list of communities with optional regID', async () => {
-      response = await request<{ communities: Community[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ communities: Community[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Community($communityId: Int, $registrationId: Int) {
             community(communityID: $communityId, registrationID: $registrationId) {
@@ -150,8 +150,8 @@ describe('Community', () => {
     })
 
     it('Can return a single community with optional communityID', async () => {
-      response = await request<{ communities: Community[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ communities: Community[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Community($communityId: Int, $registrationId: Int) {
             community(communityID: $communityId, registrationID: $registrationId) {
@@ -184,8 +184,8 @@ describe('Community', () => {
     })
 
     it('Returns and error if nothing is found', async () => {
-      response = await request<{ communities: Community[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ communities: Community[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Community($communityId: Int, $registrationId: Int) {
             community(communityID: $communityId, registrationID: $registrationId) {
@@ -222,7 +222,7 @@ describe('Community', () => {
 
     afterEach(async () => {
       try {
-        await global.prisma.tbl_reg_community.delete({
+        await globalThis.prisma.tbl_reg_community.delete({
           where: {
             id: communityId,
           },
@@ -232,8 +232,8 @@ describe('Community', () => {
     })
 
     it('Can create a community', async () => {
-      response = await request<{ communityCreate: Community }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ communityCreate: Community }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           mutation CommunityCreate($registrationId: Int!) {
             communityCreate(registrationID: $registrationId) {
@@ -257,8 +257,8 @@ describe('Community', () => {
     })
 
     it('Returns an error if trying to create a community without registrationId', async () => {
-      response = await request<{ communityCreate: Community }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ communityCreate: Community }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           mutation CommunityCreate($registrationId: Int!) {
             communityCreate(registrationID: $registrationId) {
@@ -285,7 +285,7 @@ describe('Community', () => {
     let communityId: number
 
     beforeAll(async () => {
-      response = await global.prisma.tbl_reg_community.create({
+      response = await globalThis.prisma.tbl_reg_community.create({
         data: {
           regID: regId,
           name: 'TestCommunity',
@@ -295,7 +295,7 @@ describe('Community', () => {
     })
 
     afterAll(async () => {
-      await global.prisma.tbl_reg_community.delete({
+      await globalThis.prisma.tbl_reg_community.delete({
         where: {
           id: communityId,
         },
@@ -303,8 +303,8 @@ describe('Community', () => {
     })
 
     it('Can update any community', async () => {
-      response = await request<{ communityUpdate: Community }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ communityUpdate: Community }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation CommunityUpdate($communityId: Int!, $communityInput: CommunityInput!) {
           communityUpdate(communityID: $communityId, communityInput: $communityInput) {
@@ -333,8 +333,8 @@ describe('Community', () => {
     })
 
     it('Returns userError if incorrect community id', async () => {
-      response = await request<{ communityUpdate: Community }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ communityUpdate: Community }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation CommunityUpdate($communityId: Int!, $communityInput: CommunityInput!) {
           communityUpdate(communityID: $communityId, communityInput: $communityInput) {
@@ -362,8 +362,8 @@ describe('Community', () => {
     })
 
     it('Returns html status error if any missing arguments', async () => {
-      response = await request<{ communityUpdate: Community }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ communityUpdate: Community }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation CommunityUpdate($communityId: Int!, $communityInput: CommunityInput!) {
           communityUpdate(communityID: $communityId, communityInput: $communityInput) {
@@ -390,8 +390,8 @@ describe('Community', () => {
     })
 
     it('Returns html status error if any bad input args', async () => {
-      response = await request<{ communityUpdate: Community }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ communityUpdate: Community }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation CommunityUpdate($communityId: Int!, $communityInput: CommunityInput!) {
           communityUpdate(communityID: $communityId, communityInput: $communityInput) {
@@ -423,7 +423,7 @@ describe('Community', () => {
     let communityId: number
 
     beforeEach(async () => {
-      response = await global.prisma.tbl_reg_community.create({
+      response = await globalThis.prisma.tbl_reg_community.create({
         data: {
           regID: regId,
           name: 'TestCommunity',
@@ -434,7 +434,7 @@ describe('Community', () => {
 
     afterEach(async () => {
       try {
-        await global.prisma.tbl_reg_community.delete({
+        await globalThis.prisma.tbl_reg_community.delete({
           where: {
             id: communityId,
           },
@@ -444,8 +444,8 @@ describe('Community', () => {
     })
 
     it('Can delete a community', async () => {
-      response = await request<{ communityDelete: boolean }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ communityDelete: boolean }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation CommunityDelete($communityId: Int!) {
           communityDelete(communityID: $communityId) {
@@ -465,7 +465,7 @@ describe('Community', () => {
         })
         .expectNoErrors()
 
-      const deleteCheck = await global.prisma.tbl_reg_community.findUnique({
+      const deleteCheck = await globalThis.prisma.tbl_reg_community.findUnique({
         where: { id: communityId },
       })
       expect(deleteCheck).toBeNull()
@@ -473,8 +473,8 @@ describe('Community', () => {
     })
 
     it('Returns a userError if community not found', async () => {
-      response = await request<{ communityDelete: boolean }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ communityDelete: boolean }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation CommunityDelete($communityId: Int!) {
           communityDelete(communityID: $communityId) {
@@ -497,8 +497,8 @@ describe('Community', () => {
     })
 
     it('Returns status error if community id not given', async () => {
-      response = await request<{ communityDelete: boolean }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ communityDelete: boolean }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation CommunityDelete($communityId: Int!) {
           communityDelete(communityID: $communityId) {

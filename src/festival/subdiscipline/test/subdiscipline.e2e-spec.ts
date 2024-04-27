@@ -7,8 +7,8 @@ describe('Subdiscipline', () => {
     let response: any
 
     it('Can provide a list of all subdisciplines when no arguments given', async () => {
-      response = await request<{ subdisciplines: Subdiscipline[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplines: Subdiscipline[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Subdisciplines($performerType: PerformerType, $disciplineId: Int, ) {
             subdisciplines(performerType:$performerType, disciplineID: $disciplineId ) {
@@ -27,8 +27,8 @@ describe('Subdiscipline', () => {
     })
 
     it('Can provide a list of subdisciplines with disciplineID arg', async () => {
-      response = await request<{ subdisciplines: Subdiscipline[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplines: Subdiscipline[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Subdisciplines($performerType: PerformerType, $disciplineId: Int){
             subdisciplines(performerType: $performerType, disciplineID: $disciplineId) {
@@ -44,8 +44,8 @@ describe('Subdiscipline', () => {
     })
 
     it('Can provide a list of subdisciplines with given performerType arg', async () => {
-      response = await request<{ subdisciplines: Subdiscipline[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplines: Subdiscipline[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Subdisciplines($performerType: PerformerType, $disciplineId: Int){
             subdisciplines(performerType: $performerType, disciplineID: $disciplineId) {
@@ -62,8 +62,8 @@ describe('Subdiscipline', () => {
     })
 
     it('Can provide a list of subdisciplines with performerType and disciplineID args', async () => {
-      response = await request<{ subdisciplines: Subdiscipline[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplines: Subdiscipline[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Subdisciplines($performerType: PerformerType, $disciplineId: Int){
             subdisciplines(performerType: $performerType, disciplineID: $disciplineId) {
@@ -81,8 +81,8 @@ describe('Subdiscipline', () => {
     })
 
     it('Can return a list of subdisciplines with associated categories', async () => {
-      response = await request<{ subdisciplines: Subdiscipline[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplines: Subdiscipline[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Subdisciplines($performerType: PerformerType, $disciplineId: Int) {
             subdisciplines(performerType: $performerType, disciplineID: $disciplineId) {
@@ -99,8 +99,8 @@ describe('Subdiscipline', () => {
     })
 
     it('Can return a list of subdisciplines with associated levels', async () => {
-      response = await request<{ subdisciplines: Subdiscipline[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplines: Subdiscipline[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Subdisciplines($performerType: PerformerType, $disciplineId: Int) {
             subdisciplines(performerType: $performerType, disciplineID: $disciplineId) {
@@ -117,8 +117,8 @@ describe('Subdiscipline', () => {
     })
 
     it('Can return festivalClasses in the subdisciplines list with no args', async () => {
-      response = await request<{ subdisciplines: Subdiscipline[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplines: Subdiscipline[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Subdisciplines($performerType: PerformerType, $disciplineId: Int) {
             subdisciplines(performerType: $performerType, disciplineID: $disciplineId) {
@@ -135,8 +135,8 @@ describe('Subdiscipline', () => {
     })
 
     it('Can return festivalClasses in the subdisciplines list with level', async () => {
-      response = await request<{ subdisciplines: Subdiscipline[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplines: Subdiscipline[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Subdisciplines($performerType: PerformerType, $disciplineId: Int) {
             subdisciplines(performerType: $performerType, disciplineID: $disciplineId) {
@@ -161,8 +161,8 @@ describe('Subdiscipline', () => {
     })
 
     it('Can return festivalClasses in the subdisciplines list with category', async () => {
-      response = await request<{ subdisciplines: Subdiscipline[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplines: Subdiscipline[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Subdisciplines($performerType: PerformerType, $disciplineId: Int) {
             subdisciplines(performerType: $performerType, disciplineID: $disciplineId) {
@@ -187,8 +187,8 @@ describe('Subdiscipline', () => {
     })
 
     it('Can return festivalClasses in the subdisciplines list with classType', async () => {
-      response = await request<{ subdisciplines: Subdiscipline[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplines: Subdiscipline[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Subdisciplines($performerType: PerformerType, $disciplineId: Int) {
             subdisciplines(performerType: $performerType, disciplineID: $disciplineId) {
@@ -212,8 +212,8 @@ describe('Subdiscipline', () => {
     })
 
     it('Can return discipline in the subdisciplines list', async () => {
-      response = await request<{ subdisciplines: Subdiscipline[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplines: Subdiscipline[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Subdisciplines($performerType: PerformerType, $disciplineId: Int) {
             subdisciplines(performerType: $performerType, disciplineID: $disciplineId) {
@@ -236,8 +236,8 @@ describe('Subdiscipline', () => {
     let response: any
 
     it('Find subdiscipline using proper ID', async () => {
-      response = await request<{ subdiscipline: Subdiscipline }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdiscipline: Subdiscipline }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Subdiscipline($subdisciplineId: Int!) {
             subdiscipline(subdisciplineID: $subdisciplineId) {
@@ -256,8 +256,8 @@ describe('Subdiscipline', () => {
     })
 
     it('Returns error when nothing found', async () => {
-      response = await request<{ subdiscipline: Subdiscipline }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdiscipline: Subdiscipline }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Subdiscipline($subdisciplineId: Int!) {
             subdiscipline(subdisciplineID: $subdisciplineId) {
@@ -281,7 +281,7 @@ describe('Subdiscipline', () => {
     let subdisciplineId: number
 
     afterAll(async () => {
-      await global.prisma.tbl_subdiscipline.delete({
+      await globalThis.prisma.tbl_subdiscipline.delete({
         where: {
           id: subdisciplineId,
         },
@@ -289,8 +289,8 @@ describe('Subdiscipline', () => {
     })
 
     it('Successfully creates a subdiscipline using disciplineID and subdisciplineInput', async () => {
-      response = await request<{ subdisciplineCreate: SubdisciplinePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplineCreate: SubdisciplinePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateSubdiscipline($subdisciplineInput: SubdisciplineInput!) {
             subdisciplineCreate(subdisciplineInput: $subdisciplineInput) {
@@ -317,8 +317,8 @@ describe('Subdiscipline', () => {
     })
 
     it('Returns error if trying to add duplicate subdiscipline name', async () => {
-      response = await request<{ subdisciplineCreate: SubdisciplinePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplineCreate: SubdisciplinePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateSubdiscipline($subdisciplineInput: SubdisciplineInput!) {
           subdisciplineCreate(subdisciplineInput: $subdisciplineInput) {
@@ -343,8 +343,8 @@ describe('Subdiscipline', () => {
     })
 
     it('Improper input returns error', async () => {
-      response = await request<{ subdisciplineCreate: SubdisciplinePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplineCreate: SubdisciplinePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateSubdiscipline($subdisciplineInput: SubdisciplineInput!) {
           subdisciplineCreate(subdisciplineInput: $subdisciplineInput) {
@@ -372,8 +372,8 @@ describe('Subdiscipline', () => {
     let subdisciplineId: number
 
     beforeEach(async () => {
-      response = await request<{ subdisciplineCreate: SubdisciplinePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplineCreate: SubdisciplinePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateSubdiscipline($subdisciplineInput: SubdisciplineInput!) {
           subdisciplineCreate(subdisciplineInput: $subdisciplineInput) {
@@ -397,7 +397,7 @@ describe('Subdiscipline', () => {
     })
 
     afterEach(async () => {
-      await global.prisma.tbl_subdiscipline.delete({
+      await globalThis.prisma.tbl_subdiscipline.delete({
         where: {
           id: subdisciplineId,
         },
@@ -405,8 +405,8 @@ describe('Subdiscipline', () => {
     })
 
     it('Update details of existing subdiscipline', async () => {
-      response = await request<{ subdisciplineUpdate: SubdisciplinePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplineUpdate: SubdisciplinePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation SubdisciplineUpdate($subdisciplineId: Int!, $subdisciplineInput: SubdisciplineInput!){
           subdisciplineUpdate(subdisciplineID: $subdisciplineId, subdisciplineInput: $subdisciplineInput) {
@@ -432,8 +432,8 @@ describe('Subdiscipline', () => {
     })
 
     it('Returns error if subdiscipline not found', async () => {
-      response = await request<{ subdisciplineUpdate: SubdisciplinePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplineUpdate: SubdisciplinePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation SubdisciplineUpdate($subdisciplineId: Int!, $subdisciplineInput: SubdisciplineInput!){
           subdisciplineUpdate(subdisciplineID: $subdisciplineId, subdisciplineInput: $subdisciplineInput) {
@@ -459,8 +459,8 @@ describe('Subdiscipline', () => {
     })
 
     it('Returns error if name is null or undefined in update', async () => {
-      response = await request<{ subdisciplineUpdate: SubdisciplinePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplineUpdate: SubdisciplinePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation SubdisciplineUpdate($subdisciplineId: Int!, $subdisciplineInput: SubdisciplineInput!){
           subdisciplineUpdate(subdisciplineID: $subdisciplineId, subdisciplineInput: $subdisciplineInput) {
@@ -489,8 +489,8 @@ describe('Subdiscipline', () => {
     let subdisciplineId: number
 
     beforeEach(async () => {
-      response = await request<{ subdisciplineCreate: SubdisciplinePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplineCreate: SubdisciplinePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateSubdiscipline($subdisciplineInput: SubdisciplineInput!) {
           subdisciplineCreate(subdisciplineInput: $subdisciplineInput) {
@@ -515,7 +515,7 @@ describe('Subdiscipline', () => {
 
     afterEach(async () => {
       try {
-        await global.prisma.tbl_subdiscipline.delete({
+        await globalThis.prisma.tbl_subdiscipline.delete({
           where: {
             id: subdisciplineId,
           },
@@ -525,8 +525,8 @@ describe('Subdiscipline', () => {
     })
 
     it('Deletes a subdiscipline using the subdisciplineID', async () => {
-      response = await request<{ subdisciplineDelete: SubdisciplinePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplineDelete: SubdisciplinePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation SubdisciplineDelete($subdisciplineId: Int!) {
           subdisciplineDelete(subdisciplineID: $subdisciplineId) {
@@ -542,7 +542,7 @@ describe('Subdiscipline', () => {
         .variables({
           subdisciplineId,
         })
-      const deleteCheck = await global.prisma.tbl_subdiscipline.findUnique({
+      const deleteCheck = await globalThis.prisma.tbl_subdiscipline.findUnique({
         where: { id: subdisciplineId },
       })
       expect(deleteCheck).toBeNull()
@@ -550,8 +550,8 @@ describe('Subdiscipline', () => {
     })
 
     it('Returns error message if subdiscipline not found', async () => {
-      response = await request<{ subdisciplineDelete: SubdisciplinePayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ subdisciplineDelete: SubdisciplinePayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation SubdisciplineDelete($subdisciplineId: Int!) {
           subdisciplineDelete(subdisciplineID: $subdisciplineId) {

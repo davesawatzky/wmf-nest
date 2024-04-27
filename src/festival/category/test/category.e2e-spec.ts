@@ -7,8 +7,8 @@ describe('Category', () => {
     let response: any
 
     it('Can provide a list of all categories', async () => {
-      response = await request<{ categories: Category[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ categories: Category[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Categories {
             categories {
@@ -24,8 +24,8 @@ describe('Category', () => {
     })
 
     it('Can provide a list of categories with SubdisciplineID', async () => {
-      response = await request<{ categories: Category[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ categories: Category[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Categories($levelId: Int, $subdisciplineId: Int){
             categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
@@ -43,8 +43,8 @@ describe('Category', () => {
     })
 
     it('Can provide a list of categories with LevelID', async () => {
-      const response2: any = await request<{ categories: Category[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      const response2: any = await request<{ categories: Category[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Categories($levelId: Int, $subdisciplineId: Int){
             categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
@@ -63,8 +63,8 @@ describe('Category', () => {
     })
 
     it('Can provide a list of categories with LevelID and SubdisciplineID', async () => {
-      response = await request<{ categories: Category[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ categories: Category[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Categories($levelId: Int, $subdisciplineId: Int){
             categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
@@ -83,8 +83,8 @@ describe('Category', () => {
     })
 
     it('Returns empty array if nothing is found', async () => {
-      response = await request<{ categories: Category[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ categories: Category[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Categories($levelId: Int, $subdisciplineId: Int){
             categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
@@ -107,8 +107,8 @@ describe('Category', () => {
     let response: any
 
     it('Find category using proper ID', async () => {
-      response = await request<{ category: Category }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ category: Category }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Category($categoryId: Int!) {
             category(id: $categoryId) {
@@ -122,13 +122,12 @@ describe('Category', () => {
         .variables({
           categoryId: 23,
         })
-      expectTypeOf(response.data.category.name).toBeString
       expect(response.data.category.name).toBe('CANADIAN COMPOSERS')
     })
 
     it('Returns error when nothing found', async () => {
-      response = await request<{ category: Category }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ category: Category }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Category($categoryId: Int!) {
             category(id: $categoryId) {
@@ -142,7 +141,6 @@ describe('Category', () => {
         .variables({
           categoryId: 10000,
         })
-      expectTypeOf(response.errors[0].message).toBeString
       expect(response.errors).toBeTruthy()
     })
   })
@@ -152,7 +150,7 @@ describe('Category', () => {
     let categoryId: number
 
     afterAll(async () => {
-      await global.prisma.tbl_category.delete({
+      await globalThis.prisma.tbl_category.delete({
         where: {
           id: categoryId,
         },
@@ -160,8 +158,8 @@ describe('Category', () => {
     })
 
     it('Successfully creates a category using CategoryInput', async () => {
-      response = await request<{ categoryCreate: CategoryPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ categoryCreate: CategoryPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateCategory($categoryInput: CategoryInput!) {
           categoryCreate(categoryInput: $categoryInput) {
@@ -186,8 +184,8 @@ describe('Category', () => {
     })
 
     it('Returns error if trying to add duplicate category name', async () => {
-      response = await request<{ categoryCreate: CategoryPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ categoryCreate: CategoryPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateCategory($categoryInput: CategoryInput!) {
           categoryCreate(categoryInput: $categoryInput) {
@@ -211,8 +209,8 @@ describe('Category', () => {
     })
 
     it('Improper input returns error', async () => {
-      response = await request<{ categoryCreate: CategoryPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ categoryCreate: CategoryPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateCategory($categoryInput: CategoryInput!) {
           categoryCreate(categoryInput: $categoryInput) {
@@ -240,8 +238,8 @@ describe('Category', () => {
     let categoryID: number
 
     beforeEach(async () => {
-      response = await request<{ categoryCreate: CategoryPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ categoryCreate: CategoryPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateCategory($categoryInput: CategoryInput!) {
           categoryCreate(categoryInput: $categoryInput) {
@@ -264,7 +262,7 @@ describe('Category', () => {
     })
 
     afterEach(async () => {
-      await global.prisma.tbl_category.delete({
+      await globalThis.prisma.tbl_category.delete({
         where: {
           id: categoryID,
         },
@@ -272,8 +270,8 @@ describe('Category', () => {
     })
 
     it('Update details of existing category', async () => {
-      response = await request<{ categoryUpdate: CategoryPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ categoryUpdate: CategoryPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation CategoryUpdate($categoryId: Int!, $categoryInput: CategoryInput!){
           categoryUpdate(categoryID: $categoryId, categoryInput: $categoryInput) {
@@ -300,8 +298,8 @@ describe('Category', () => {
     })
 
     it('Returns error if category not found', async () => {
-      response = await request<{ categoryUpdate: CategoryPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ categoryUpdate: CategoryPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation CategoryUpdate($categoryId: Int!, $categoryInput: CategoryInput!){
           categoryUpdate(categoryID: $categoryId, categoryInput: $categoryInput) {
@@ -327,8 +325,8 @@ describe('Category', () => {
     })
 
     it('Returns error if name is null or undefined in update', async () => {
-      response = await request<{ categoryUpdate: CategoryPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ categoryUpdate: CategoryPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation CategoryUpdate($categoryId: Int!, $categoryInput: CategoryInput!){
           categoryUpdate(categoryID: $categoryId, categoryInput: $categoryInput) {
@@ -359,8 +357,8 @@ describe('Category', () => {
     let response: any
     let categoryId: number
     beforeEach(async () => {
-      response = await request<{ categoryCreate: CategoryPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ categoryCreate: CategoryPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateCategory($categoryInput: CategoryInput!) {
           categoryCreate(categoryInput: $categoryInput) {
@@ -384,7 +382,7 @@ describe('Category', () => {
 
     afterEach(async () => {
       try {
-        await global.prisma.tbl_category.delete({
+        await globalThis.prisma.tbl_category.delete({
           where: {
             id: categoryId,
           },
@@ -394,8 +392,8 @@ describe('Category', () => {
     })
 
     it('Deletes a category using the categoryID', async () => {
-      response = await request<{ categoryDelete: CategoryPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ categoryDelete: CategoryPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation CategoryDelete($categoryDeleteId: Int!) {
           categoryDelete(categoryID: $categoryDeleteId) {
@@ -412,7 +410,7 @@ describe('Category', () => {
         .variables({
           categoryDeleteId: categoryId,
         })
-      const deleteCheck = await global.prisma.tbl_category.findUnique({
+      const deleteCheck = await globalThis.prisma.tbl_category.findUnique({
         where: { id: categoryId },
       })
       expect(deleteCheck).toBeNull()
@@ -420,8 +418,8 @@ describe('Category', () => {
     })
 
     it('Returns error message if category not found', async () => {
-      response = await request<{ categoryDelete: CategoryPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ categoryDelete: CategoryPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation CategoryDelete($categoryDeleteId: Int!) {
           categoryDelete(categoryID: $categoryDeleteId) {

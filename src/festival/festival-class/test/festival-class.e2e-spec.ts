@@ -7,8 +7,8 @@ describe('FestivalClass', () => {
     let response: any
 
     it('Can return a full list of all festival classes', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses {
             festivalClasses {
@@ -33,8 +33,8 @@ describe('FestivalClass', () => {
     })
 
     it('Can return a list of all festival classes with performerType arg', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($performerType: PerformerType) {
             festivalClasses(performerType: $performerType) {
@@ -62,8 +62,8 @@ describe('FestivalClass', () => {
     })
 
     it('Can return a list of all festival classes with subdisciplineID', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
             festivalClasses(festivalClassSearch: $festivalClassSearch) {
@@ -97,8 +97,8 @@ describe('FestivalClass', () => {
     })
 
     it('Can return a list of all festival classes with levelID', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
             festivalClasses(festivalClassSearch: $festivalClassSearch) {
@@ -132,8 +132,8 @@ describe('FestivalClass', () => {
     })
 
     it('Can return a list of all festival classes with categoryID', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
             festivalClasses(festivalClassSearch: $festivalClassSearch) {
@@ -167,8 +167,8 @@ describe('FestivalClass', () => {
     })
 
     it('Can return a list of all festival classes with 2 arguments', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
             festivalClasses(festivalClassSearch: $festivalClassSearch) {
@@ -207,8 +207,8 @@ describe('FestivalClass', () => {
     })
 
     it('Can return a list of all festival classes with all 3 arguments', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
             festivalClasses(festivalClassSearch: $festivalClassSearch) {
@@ -251,8 +251,8 @@ describe('FestivalClass', () => {
     })
 
     it('Will return an empty array if nothing is found.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs, $performerType: PerformerType) {
             festivalClasses(festivalClassSearch: $festivalClassSearch, performerType: $performerType) {
@@ -291,8 +291,8 @@ describe('FestivalClass', () => {
     })
 
     it('Will return an error if input is invalid.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs, $performerType: PerformerType) {
             festivalClasses(festivalClassSearch: $festivalClassSearch, performerType: $performerType) {
@@ -328,8 +328,8 @@ describe('FestivalClass', () => {
     })
 
     it('Can return associated levels in list.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
             festivalClasses(festivalClassSearch: $festivalClassSearch) {
@@ -347,8 +347,8 @@ describe('FestivalClass', () => {
       expect(response.data.festivalClasses[0].level.name).toBeTruthy()
     })
     it('Can return associated subdisciplines in list.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
             festivalClasses(festivalClassSearch: $festivalClassSearch) {
@@ -367,8 +367,8 @@ describe('FestivalClass', () => {
     })
 
     it('Can return associated trophies in list.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
             festivalClasses(festivalClassSearch: $festivalClassSearch) {
@@ -388,8 +388,8 @@ describe('FestivalClass', () => {
     })
 
     it('Can return associated categories in list.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
             festivalClasses(festivalClassSearch: $festivalClassSearch) {
@@ -408,8 +408,8 @@ describe('FestivalClass', () => {
     })
 
     it('Can return associated class types in list.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
             festivalClasses(festivalClassSearch: $festivalClassSearch) {
@@ -433,8 +433,8 @@ describe('FestivalClass', () => {
     let response: any
 
     it('Can provide a single festival by festivalClassNumber.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClass($festivalClassNumber: String!) {
             festivalClassByNumber(festivalClassNumber: $festivalClassNumber) {
@@ -467,8 +467,8 @@ describe('FestivalClass', () => {
     })
 
     it('Will return error if number does not exist.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClass($festivalClassNumber: String!) {
             festivalClassByNumber(festivalClassNumber: $festivalClassNumber) {
@@ -502,8 +502,8 @@ describe('FestivalClass', () => {
     let response: any
 
     it('Can provide a single festival by ID.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClass($festivalClassId: Int!) {
             festivalClass(id: $festivalClassId) {
@@ -535,8 +535,8 @@ describe('FestivalClass', () => {
       expect(response.data.festivalClass.classNumber).not.toBe(1094)
     })
     it('Returns error when no festivalClass is found', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClass($festivalClassId: Int!) {
             festivalClass(id: $festivalClassId) {
@@ -572,14 +572,14 @@ describe('FestivalClass', () => {
     let festivalClassId: number
 
     afterAll(async () => {
-      await global.prisma.tbl_classlist.delete({
+      await globalThis.prisma.tbl_classlist.delete({
         where: { id: festivalClassId },
       })
     })
 
     it('Successfully creates a festivalClass using FestivalClassInput', async () => {
-      response = await request<{ festivalClassCreate: FestivalClassPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClassCreate: FestivalClassPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateFestivalClass($festivalClassInput: FestivalClassInput!) {
           festivalClassCreate(festivalClassInput: $festivalClassInput) {
@@ -631,8 +631,8 @@ describe('FestivalClass', () => {
     })
 
     it('Returns error if trying to add duplicate festivalClass number', async () => {
-      response = await request<{ festivalClassCreate: FestivalClassPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClassCreate: FestivalClassPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateFestivalClass($festivalClassInput: FestivalClassInput!) {
           festivalClassCreate(festivalClassInput: $festivalClassInput) {
@@ -682,8 +682,8 @@ describe('FestivalClass', () => {
     })
 
     it('Returns error if trying to add different number with duplicate category/level/discipline', async () => {
-      response = await request<{ festivalClassCreate: FestivalClassPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClassCreate: FestivalClassPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateFestivalClass($festivalClassInput: FestivalClassInput!) {
           festivalClassCreate(festivalClassInput: $festivalClassInput) {
@@ -733,8 +733,8 @@ describe('FestivalClass', () => {
     })
 
     it('Returns error if trying to add class with missing input fields', async () => {
-      response = await request<{ festivalClassCreate: FestivalClassPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClassCreate: FestivalClassPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateFestivalClass($festivalClassInput: FestivalClassInput!) {
           festivalClassCreate(festivalClassInput: $festivalClassInput) {
@@ -781,8 +781,8 @@ describe('FestivalClass', () => {
     })
 
     it('Returns error if trying to add class with improper data', async () => {
-      response = await request<{ festivalClassCreate: FestivalClassPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClassCreate: FestivalClassPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateFestivalClass($festivalClassInput: FestivalClassInput!) {
           festivalClassCreate(festivalClassInput: $festivalClassInput) {
@@ -834,8 +834,8 @@ describe('FestivalClass', () => {
     let festClassId: number
 
     beforeEach(async () => {
-      response = await request<{ festivalClassCreate: FestivalClassPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClassCreate: FestivalClassPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateFestivalClass($festivalClassInput: FestivalClassInput!) {
           festivalClassCreate(festivalClassInput: $festivalClassInput) {
@@ -884,14 +884,14 @@ describe('FestivalClass', () => {
     })
 
     afterEach(async () => {
-      await global.prisma.tbl_classlist.delete({
+      await globalThis.prisma.tbl_classlist.delete({
         where: { id: festClassId },
       })
     })
 
     it('Can update details of existing festival class', async () => {
-      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation FestivalClassUpdate($festivalClassId: Int!, $festivalClassInput: FestivalClassInput!) {
           festivalClassUpdate(festivalClassID: $festivalClassId, festivalClassInput: $festivalClassInput) {
@@ -929,8 +929,8 @@ describe('FestivalClass', () => {
     })
 
     it('Returns error when removing required field', async () => {
-      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation FestivalClassUpdate($festivalClassId: Int!, $festivalClassInput: FestivalClassInput!) {
           festivalClassUpdate(festivalClassID: $festivalClassId, festivalClassInput: $festivalClassInput) {
@@ -966,8 +966,8 @@ describe('FestivalClass', () => {
     })
 
     it('Returns error when entering empty class number', async () => {
-      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation FestivalClassUpdate($festivalClassId: Int!, $festivalClassInput: FestivalClassInput!) {
           festivalClassUpdate(festivalClassID: $festivalClassId, festivalClassInput: $festivalClassInput) {
@@ -1002,8 +1002,8 @@ describe('FestivalClass', () => {
     })
 
     it('Returns error if festival class not found', async () => {
-      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation FestivalClassUpdate($festivalClassId: Int!, $festivalClassInput: FestivalClassInput!) {
           festivalClassUpdate(festivalClassID: $festivalClassId, festivalClassInput: $festivalClassInput) {
@@ -1038,8 +1038,8 @@ describe('FestivalClass', () => {
     })
 
     it('Improper input returns error', async () => {
-      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation FestivalClassUpdate($festivalClassId: Int!, $festivalClassInput: FestivalClassInput!) {
           festivalClassUpdate(festivalClassID: $festivalClassId, festivalClassInput: $festivalClassInput) {
@@ -1079,8 +1079,8 @@ describe('FestivalClass', () => {
     let festClassId: number
 
     beforeEach(async () => {
-      response = await request<{ festivalClassCreate: FestivalClassPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClassCreate: FestivalClassPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateFestivalClass($festivalClassInput: FestivalClassInput!) {
           festivalClassCreate(festivalClassInput: $festivalClassInput) {
@@ -1130,7 +1130,7 @@ describe('FestivalClass', () => {
 
     afterEach(async () => {
       try {
-        await global.prisma.tbl_classlist.delete({
+        await globalThis.prisma.tbl_classlist.delete({
           where: { id: festClassId },
         })
       }
@@ -1138,8 +1138,8 @@ describe('FestivalClass', () => {
     })
 
     it('Deletes a festival class using the festivalClassID', async () => {
-      response = await request<{ festivalClassDelete: FestivalClassPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClassDelete: FestivalClassPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation FestivalClassDelete($festivalClassId: Int!) {
           festivalClassDelete(festivalClassID: $festivalClassId) {
@@ -1156,7 +1156,7 @@ describe('FestivalClass', () => {
         .variables({
           festivalClassId: festClassId,
         })
-      const deleteCheck = await global.prisma.tbl_classlist.findUnique({
+      const deleteCheck = await globalThis.prisma.tbl_classlist.findUnique({
         where: { id: festClassId },
       })
       expect(deleteCheck).toBeNull()
@@ -1164,8 +1164,8 @@ describe('FestivalClass', () => {
     })
 
     it('Return error message is festival class not found', async () => {
-      response = await request<{ festivalClassDelete: FestivalClassPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ festivalClassDelete: FestivalClassPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
         mutation FestivalClassDelete($festivalClassId: Int!) {
           festivalClassDelete(festivalClassID: $festivalClassId) {

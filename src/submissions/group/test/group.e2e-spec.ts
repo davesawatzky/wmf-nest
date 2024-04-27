@@ -6,9 +6,9 @@ describe('Group', () => {
   let regId: number
 
   beforeAll(async () => {
-    const reg = await global.prisma.tbl_registration.create({
+    const reg = await globalThis.prisma.tbl_registration.create({
       data: {
-        userID: global.userId,
+        userID: globalThis.userId,
         performerType: 'GROUP',
         label: 'Test Form',
       },
@@ -17,7 +17,7 @@ describe('Group', () => {
   })
 
   afterAll(async () => {
-    await global.prisma.tbl_registration.delete({
+    await globalThis.prisma.tbl_registration.delete({
       where: {
         id: regId,
       },
@@ -28,8 +28,8 @@ describe('Group', () => {
     let response: any
 
     it('Can return the full list of groups', async () => {
-      response = await request<{ groups: Group[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ groups: Group[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Groups{
             groups {
@@ -49,8 +49,8 @@ describe('Group', () => {
     })
 
     it('Can return the full list of groups with associated registrations', async () => {
-      response = await request<{ groups: Group[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ groups: Group[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Groups{
             groups {
@@ -76,8 +76,8 @@ describe('Group', () => {
     })
 
     it('Can return the full list of groups with optional registrationID', async () => {
-      response = await request<{ groups: Group[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ groups: Group[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Groups($registrationId: Int) {
             groups(registrationID: $registrationId) {
@@ -105,8 +105,8 @@ describe('Group', () => {
     })
 
     it('Can return a single group with optional regID', async () => {
-      response = await request<{ groups: Group[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ groups: Group[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Group($groupId: Int, $registrationId: Int) {
             group(groupID: $groupId, registrationID: $registrationId) {
@@ -135,8 +135,8 @@ describe('Group', () => {
     })
 
     it('Can return a single group with optional groupID', async () => {
-      response = await request<{ groups: Group[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ groups: Group[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Group($groupId: Int, $registrationId: Int) {
             group(groupID: $groupId, registrationID: $registrationId) {
@@ -165,8 +165,8 @@ describe('Group', () => {
     })
 
     it('Returns and error if nothing is found', async () => {
-      response = await request<{ groups: Group[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ groups: Group[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Group($groupId: Int, $registrationId: Int) {
             group(groupID: $groupId, registrationID: $registrationId) {
@@ -199,7 +199,7 @@ describe('Group', () => {
 
     afterEach(async () => {
       try {
-        await global.prisma.tbl_reg_group.delete({
+        await globalThis.prisma.tbl_reg_group.delete({
           where: {
             id: groupId,
           },
@@ -209,8 +209,8 @@ describe('Group', () => {
     })
 
     it('Admin can create a group on any existing registration', async () => {
-      response = await request<{ groupCreate: Group }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ groupCreate: Group }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           mutation GroupCreate($registrationId: Int!) {
             groupCreate(registrationID: $registrationId) {
@@ -234,8 +234,8 @@ describe('Group', () => {
     })
 
     it('Returns an error if trying to create a group without registrationId', async () => {
-      response = await request<{ groupCreate: Group }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ groupCreate: Group }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           mutation GroupCreate($registrationId: Int!) {
             groupCreate(registrationID: $registrationId) {
@@ -262,7 +262,7 @@ describe('Group', () => {
     let groupId: number
 
     beforeAll(async () => {
-      response = await global.prisma.tbl_reg_group.create({
+      response = await globalThis.prisma.tbl_reg_group.create({
         data: {
           regID: regId,
           name: 'TestGroup',
@@ -272,7 +272,7 @@ describe('Group', () => {
     })
 
     afterAll(async () => {
-      await global.prisma.tbl_reg_group.delete({
+      await globalThis.prisma.tbl_reg_group.delete({
         where: {
           id: groupId,
         },
@@ -280,8 +280,8 @@ describe('Group', () => {
     })
 
     it('Admin can update any group', async () => {
-      response = await request<{ groupUpdate: Group }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ groupUpdate: Group }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation GroupUpdate($groupId: Int!, $groupInput: GroupInput!) {
           groupUpdate(groupID: $groupId, groupInput: $groupInput) {
@@ -310,8 +310,8 @@ describe('Group', () => {
     })
 
     it('Returns userError if incorrect group id', async () => {
-      response = await request<{ groupUpdate: Group }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ groupUpdate: Group }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation GroupUpdate($groupId: Int!, $groupInput: GroupInput!) {
           groupUpdate(groupID: $groupId, groupInput: $groupInput) {
@@ -339,8 +339,8 @@ describe('Group', () => {
     })
 
     it('Returns html status error if any missing arguments', async () => {
-      response = await request<{ groupUpdate: Group }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ groupUpdate: Group }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation GroupUpdate($groupId: Int!, $groupInput: GroupInput!) {
           groupUpdate(groupID: $groupId, groupInput: $groupInput) {
@@ -367,8 +367,8 @@ describe('Group', () => {
     })
 
     it('Returns html status error if any bad input args', async () => {
-      response = await request<{ groupUpdate: Group }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ groupUpdate: Group }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation GroupUpdate($groupId: Int!, $groupInput: GroupInput!) {
           groupUpdate(groupID: $groupId, groupInput: $groupInput) {
@@ -400,7 +400,7 @@ describe('Group', () => {
     let groupId: number
 
     beforeEach(async () => {
-      response = await global.prisma.tbl_reg_group.create({
+      response = await globalThis.prisma.tbl_reg_group.create({
         data: {
           regID: regId,
           name: 'TestGroup',
@@ -411,7 +411,7 @@ describe('Group', () => {
 
     afterEach(async () => {
       try {
-        await global.prisma.tbl_reg_group.delete({
+        await globalThis.prisma.tbl_reg_group.delete({
           where: {
             id: groupId,
           },
@@ -421,8 +421,8 @@ describe('Group', () => {
     })
 
     it('Can delete a group', async () => {
-      response = await request<{ groupDelete: boolean }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ groupDelete: boolean }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation GroupDelete($groupId: Int!) {
           groupDelete(groupID: $groupId) {
@@ -442,7 +442,7 @@ describe('Group', () => {
         })
         .expectNoErrors()
 
-      const deleteCheck = await global.prisma.tbl_reg_group.findUnique({
+      const deleteCheck = await globalThis.prisma.tbl_reg_group.findUnique({
         where: { id: groupId },
       })
       expect(deleteCheck).toBeNull()
@@ -450,8 +450,8 @@ describe('Group', () => {
     })
 
     it('Returns a userError if group not found', async () => {
-      response = await request<{ groupDelete: boolean }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ groupDelete: boolean }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation GroupDelete($groupId: Int!) {
           groupDelete(groupID: $groupId) {
@@ -474,8 +474,8 @@ describe('Group', () => {
     })
 
     it('Returns status error if group id not given', async () => {
-      response = await request<{ groupDelete: boolean }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ groupDelete: boolean }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         mutation GroupDelete($groupId: Int!) {
           groupDelete(groupID: $groupId) {
