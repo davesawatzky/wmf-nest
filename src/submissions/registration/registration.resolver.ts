@@ -61,8 +61,7 @@ export class RegistrationResolver {
     performerType?: Registration['performerType'] | null,
   ) {
     return await this.registrationService.findAll(
-      // context.req.user.id,
-      undefined,
+      context.req.user.id,
       performerType,
     )
   }

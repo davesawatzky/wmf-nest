@@ -14,7 +14,7 @@ export class UserService {
   }
 
   async findOne(userID?: tbl_user['id'], email?: tbl_user['email']) {
-    let response
+    let response: tbl_user
     if (userID) {
       response = await this.prisma.tbl_user.findUnique({
         where: { id: userID },
@@ -25,8 +25,14 @@ export class UserService {
         where: { email },
       })
     }
-    const { password, ...user } = response
-    return user
+    if (Object.prototype.hasOwnProperty.call(response, 'password')) {
+      const { password, ...user } = response
+      return user
+    }
+ else {
+      const { ...user } = response
+      return user
+    }
   }
 
   async update(userID: tbl_user['id'], userInput: UserInput) {
