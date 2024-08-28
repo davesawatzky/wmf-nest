@@ -1,5 +1,4 @@
-import { INestApplication } from '@nestjs/common'
-import { ValidationPipe } from '@nestjs/common'
+import { INestApplication, ValidationPipe } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import gql from 'graphql-tag'
 import cookieParser from 'cookie-parser'

@@ -1,13 +1,12 @@
-import { TestingModule } from '@nestjs/testing'
-import { Test } from '@nestjs/testing'
+import { Test, TestingModule } from '@nestjs/testing'
 import {
   beforeEach,
   describe,
   expect,
   it,
 } from 'vitest'
-import { SchoolGroupResolver } from '../school-group.resolver'
-import { SchoolGroupService } from '../school-group.service'
+import { SchoolGroupResolver } from '@/submissions/school-group/school-group.resolver'
+import { SchoolGroupService } from '@/submissions/school-group/school-group.service'
 import { PrismaService } from '@/prisma/prisma.service'
 
 describe('schoolGroupResolver', () => {

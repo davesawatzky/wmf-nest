@@ -13,7 +13,7 @@ import { StripeModule } from '@/stripe/stripe.module'
       useFactory: (configService: ConfigService) => ({
         apiKey: configService.get<string>('STRIPE_SERVER_KEY'),
         options: {
-          apiVersion: '2023-08-16',
+          apiVersion: '2024-06-20',
         },
       }),
     }),

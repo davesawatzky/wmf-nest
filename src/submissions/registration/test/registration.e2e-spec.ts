@@ -3,10 +3,32 @@ import request from 'supertest-graphql'
 import { Registration } from '../entities/registration.entity'
 
 describe('Registration', () => {
+  let regId: number
+
+  beforeAll(async () => {
+    const reg = await globalThis.prisma.tbl_registration.create({
+      data: {
+        userID: globalThis.userId,
+        performerType: 'SOLO',
+        label: 'Test Registration 1',
+      },
+    })
+    regId = reg.id
+  })
+
+  afterAll(async () => {
+    await globalThis.prisma.tbl_registration.delete({
+      where: {
+        id: regId,
+      },
+    })
+  })
+
   describe('Read all registrations', () => {
     let response: any
-    it('Should return full registration list', () => {
-      response = request<{ registrations: Registration[] }>(globalThis.httpServer)
+
+    it('Should return full registration list', async () => {
+      response = await request<{ registrations: Registration[] }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Registrations {
@@ -21,8 +43,12 @@ describe('Registration', () => {
         `)
         .expectNoErrors()
       expect(response.data.registrations).toBeTruthy()
-      expect(response.data.registrations.length).toBeGreaterThan(0)
+      if (globalThis.admin)
+        expect(response.data.registrations.length).toBeGreaterThan(10)
+      else
+        expect(response.data.registrations.length).toBeGreaterThan(0)
     })
+
     it('Can read all registrations according to performerType', () => {})
     it('Can read all registrations according to userID', () => {})
     it('Will only return registrations for logged in user', () => {})

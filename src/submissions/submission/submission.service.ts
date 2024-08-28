@@ -1,7 +1,7 @@
 import { randomInt } from 'node:crypto'
 import { Injectable } from '@nestjs/common'
 import { tbl_registration } from '@prisma/client'
-import { Submission } from './entities/submission.entity'
+import { Submission } from '@/submissions/submission/entities/submission.entity'
 import { PerformerType } from '@/common.entity'
 import { PrismaService } from '@/prisma/prisma.service'
 import { RegistrationService } from '@/submissions/registration/registration.service'

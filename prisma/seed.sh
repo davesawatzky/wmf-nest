@@ -3,7 +3,7 @@
 # Database connection details
 DB_HOST="172.23.192.1"
 DB_PORT="5432"
-DB_NAME="wmf2024"
+DB_NAME="wmftest"
 DB_USER="David"
 DB_PASSWORD="Dt159753"
 

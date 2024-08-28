@@ -1,5 +1,4 @@
-import { TestingModule } from '@nestjs/testing'
-import { Test } from '@nestjs/testing'
+import { Test, TestingModule } from '@nestjs/testing'
 import { ClassTypeResolver } from '../class-type.resolver'
 import { ClassTypeService } from '../class-type.service'
 import { PrismaService } from '@/prisma/prisma.service'

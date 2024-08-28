@@ -5,10 +5,10 @@ import {
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
 import { User } from '../user/entities/user.entity'
-import { PrismaService } from '@/prisma/prisma.service'
 import { AuthPayload } from './entities/auth.entity'
 import { CredentialsSignup } from './dto/credentials-signup.input'
 import { CredentialsSignin } from './dto/credentials-signin.input'
+import { PrismaService } from '@/prisma/prisma.service'
 
 @Injectable()
 export class AuthService {
@@ -92,7 +92,7 @@ export class AuthService {
             schoolTeacher,
           },
         })
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
         const result = this.stripProperties(newUser)
         return {
           userErrors: [],
@@ -102,6 +102,7 @@ export class AuthService {
       }
     }
     catch (err) {
+      console.log(err)
       throw new BadRequestException('Be sure to provide all fields')
     }
   }

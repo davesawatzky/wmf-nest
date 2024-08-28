@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import {
+  AbilityBuilder,
   ExtractSubjectType,
   InferSubjects,
   MongoAbility,
-} from '@casl/ability'
-import {
-  AbilityBuilder,
   createMongoAbility,
 } from '@casl/ability'
-import { User } from '../user/entities/user.entity'
+import { User } from '@/user/entities/user.entity'
 import { ClassType } from '@/festival/class-type/entities/class-type.entity'
 import { Category } from '@/festival/category/entities/category.entity'
 import { Discipline } from '@/festival/discipline/entities/discipline.entity'
@@ -68,18 +66,18 @@ export class AbilityFactory {
     const { can, cannot, build } = new AbilityBuilder<AppAbility>(
       createMongoAbility,
     )
+    console.log(currentUser)
     if (currentUser.admin) {
       can(Action.Manage, 'all')
     }
     else {
-      console.log(currentUser)
       cannot(Action.Manage, 'admin').because('Admins only')
       can(Action.Manage, Teacher)
       can(Action.Manage, Selection)
       can(Action.Manage, SchoolGroup)
       can(Action.Manage, School)
       can(Action.Manage, RegisteredClass)
-      can(Action.Manage, Registration, { user: { id: currentUser.id } })
+      can(Action.Manage, Registration)
       can(Action.Manage, Group)
       can(Action.Manage, Performer)
       can(Action.Manage, Community)

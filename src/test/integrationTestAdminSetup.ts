@@ -1,5 +1,4 @@
-import { INestApplication } from '@nestjs/common'
-import { ValidationPipe } from '@nestjs/common'
+import { INestApplication, ValidationPipe } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import gql from 'graphql-tag'
 import cookieParser from 'cookie-parser'
@@ -14,10 +13,6 @@ import { TestAdmin } from './testUser'
 let app: INestApplication
 
 beforeAll(async () => {
-  let httpServer: any
-  let diatonicToken: string
-  let prisma: PrismaService
-
   const emailConfirmationService: Partial<EmailConfirmationService> = {
     sendVerificationLink: vi.fn().mockReturnValue(true),
   }
@@ -72,8 +67,8 @@ beforeAll(async () => {
 
   await app.init()
 
-  httpServer = await app.getHttpServer()
-  prisma = app.get<PrismaService>(PrismaService)
+  const httpServer: any = await app.getHttpServer()
+  const prisma: PrismaService = app.get<PrismaService>(PrismaService)
 
   const response = await request<{ signin: AuthPayload }>(
     httpServer,
@@ -92,6 +87,7 @@ beforeAll(async () => {
           privateTeacher
           schoolTeacher
           hasSignedIn
+          admin
         }
       }
     }
@@ -102,25 +98,26 @@ beforeAll(async () => {
         password: TestAdmin().password,
       },
     })
-
-  diatonicToken = response.data.signin.diatonicToken
+  const diatonicToken: string = response.data.signin.diatonicToken
   globalThis.diatonicToken = diatonicToken
 
   if (!globalThis.defined) {
     globalThis.httpServer = httpServer
     globalThis.prisma = prisma
     globalThis.userId = response.data.signin.user.id
+    globalThis.admin = response.data.signin.user.admin
     globalThis.defined = true
   }
 })
 
 afterAll(async () => {
-  global.prisma = null
+  globalThis.prisma = null
 
   delete globalThis.prisma
   delete globalThis.diatonicToken
   delete globalThis.httpServer
   delete globalThis.userId
+  delete globalThis.admin
   delete globalThis.defined
 
   vi.resetAllMocks()

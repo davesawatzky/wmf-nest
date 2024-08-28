@@ -6,7 +6,9 @@ import { PerformerType } from '@/common.entity'
 
 @Injectable()
 export class RegistrationService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+  ) {}
 
   async create(
     userID: tbl_registration['userID'],

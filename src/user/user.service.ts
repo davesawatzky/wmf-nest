@@ -29,7 +29,7 @@ export class UserService {
       const { password, ...user } = response
       return user
     }
- else {
+    else {
       const { ...user } = response
       return user
     }

@@ -2,16 +2,14 @@ import { ForbiddenError } from '@casl/ability'
 import {
   CanActivate,
   ExecutionContext,
-} from '@nestjs/common'
-import {
+
   ForbiddenException,
   Injectable,
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { GqlExecutionContext } from '@nestjs/graphql'
 import { AbilityFactory } from './ability.factory'
-import { RequiredRule } from './abilities.decorator'
-import { CHECK_ABILITY } from './abilities.decorator'
+import { CHECK_ABILITY, RequiredRule } from './abilities.decorator'
 
 @Injectable()
 export class AbilitiesGuard implements CanActivate {
@@ -26,7 +24,6 @@ export class AbilitiesGuard implements CanActivate {
       || []
     const ctx = GqlExecutionContext.create(context)
     const user = ctx.getContext().req.user
-    // console.log(user)
     const ability = this.caslAbilityFactory.defineAbility(user)
 
     try {

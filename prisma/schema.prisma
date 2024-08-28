@@ -9,6 +9,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // url = "postgresql://David:Dt159753@172.23.192.1:5432/wmftest"
 }
 
 model tbl_category {

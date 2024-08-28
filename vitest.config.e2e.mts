@@ -15,23 +15,23 @@ export default defineConfig({
     globalSetup: ['./src/test/globalSetup_e2e.ts'],
     setupFiles: [
       './src/test/integrationTestAdminSetup.ts',
-      // './src/test/integrationTestUserSetup.ts'
+      // './src/test/integrationTestUserSetup.ts',
     ],
     fileParallelism: false,
     pool: 'forks',
     poolOptions: {
       threads: {
-        singleThread: true
+        singleThread: true,
       },
       forks: {
-        singleFork: true
-      }
+        singleFork: true,
+      },
     },
     server: {
       deps: {
-        fallbackCJS: true
-      }
-    }
+        fallbackCJS: true,
+      },
+    },
   },
   resolve: {
     alias: {
