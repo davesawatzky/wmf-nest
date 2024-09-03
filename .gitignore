@@ -43,3 +43,6 @@ supacert.crt
 
 #SQL Seed Files
 /prisma/*.sql
+
+#Apollo Studio Key
+apollo.config.js

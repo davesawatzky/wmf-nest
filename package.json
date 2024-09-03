@@ -1,9 +1,9 @@
 {
   "name": "wmf-nest",
   "version": "0.1.0",
+  "private": true,
   "description": "Server application for Winnipeg Music Festival online forms",
   "author": "David Sawatzky",
-  "private": true,
   "license": "UNLICENSED",
   "scripts": {
     "migrate:dev": "dotenvx run --env-file=.env.development -- prisma migrate dev",

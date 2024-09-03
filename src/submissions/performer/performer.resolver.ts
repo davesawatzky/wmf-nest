@@ -24,7 +24,7 @@ export class PerformerResolver {
 
   @Query(() => [Performer])
   @UseGuards(AbilitiesGuard)
-  @CheckAbilities({ action: Action.Read, subject: 'admin' })
+  @CheckAbilities({ action: Action.Read, subject: Performer })
   async performers(
     @Args('registrationID', { type: () => Int, nullable: true })
     registrationID: tbl_registration['id'],

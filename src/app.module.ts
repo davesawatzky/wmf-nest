@@ -1,4 +1,5 @@
 import { join } from 'node:path'
+import process from 'node:process'
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
@@ -69,7 +70,7 @@ import { ClassTypeModule } from '@/festival/class-type/class-type.module'
     SelectionModule,
     AuthModule,
     AbilityModule,
-    SubmissionModule,
+    // SubmissionModule,
     SchoolGroupModule,
     FieldConfigModule,
     EmailModule,

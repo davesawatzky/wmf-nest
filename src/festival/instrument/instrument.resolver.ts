@@ -20,7 +20,6 @@ import { CheckAbilities } from '@/ability/abilities.decorator'
 import { Action } from '@/ability/ability.factory'
 
 @Resolver(() => Instrument)
-@UseGuards(JwtAuthGuard)
 export class InstrumentResolver {
   constructor(
     private readonly instrumentService: InstrumentService,
@@ -30,7 +29,6 @@ export class InstrumentResolver {
   /** Queries */
 
   @Query(() => [Instrument])
-  @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Instrument })
   async instruments(
     @Args('disciplineID', { type: () => Int, nullable: true }) disciplineID: Discipline['id'] | null,
@@ -39,7 +37,6 @@ export class InstrumentResolver {
   }
 
   @Query(() => Instrument)
-  @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Instrument })
   async instrument(
     @Args('id', { type: () => Int, nullable: true }) id: Instrument['id'] | null,
@@ -52,6 +49,7 @@ export class InstrumentResolver {
   /** Mutations */
 
   @Mutation(() => InstrumentPayload)
+  @UseGuards(JwtAuthGuard)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Create, subject: Instrument })
   async instrumentCreate(@Args('instrumentInput') instrumentInput: InstrumentInput) {
@@ -60,12 +58,13 @@ export class InstrumentResolver {
       response = await this.instrumentService.create(instrumentInput)
     }
     catch (error) {
-      throw new HttpException('Could not create instrument', HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException('Could not create instrument', HttpStatus.INTERNAL_SERVER_ERROR, { cause: error })
     }
     return response
   }
 
   @Mutation(() => InstrumentPayload)
+  @UseGuards(JwtAuthGuard)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Update, subject: Instrument })
   async instrumentUpdate(
@@ -78,12 +77,13 @@ export class InstrumentResolver {
       response = await this.instrumentService.update(instrumentID, instrumentInput)
     }
     catch (error) {
-      throw new HttpException('Instrument to update not found', HttpStatus.BAD_REQUEST)
+      throw new HttpException('Instrument to update not found', HttpStatus.BAD_REQUEST, { cause: error })
     }
     return response
   }
 
   @Mutation(() => InstrumentPayload)
+  @UseGuards(JwtAuthGuard)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Delete, subject: Instrument })
   async instrumentDelete(
@@ -94,7 +94,7 @@ export class InstrumentResolver {
       response = await this.instrumentService.remove(instrumentID)
     }
     catch (error) {
-      throw new HttpException('Instrument to delete not found', HttpStatus.BAD_REQUEST)
+      throw new HttpException('Instrument to delete not found', HttpStatus.BAD_REQUEST, { cause: error })
     }
     return response
   }
@@ -102,6 +102,7 @@ export class InstrumentResolver {
   /** Field Resolver */
 
   @ResolveField(() => Discipline)
+  @UseGuards(JwtAuthGuard)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Discipline })
   async discipline(@Parent() instrument: tbl_instruments) {
