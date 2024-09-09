@@ -94,24 +94,26 @@ model tbl_level {
 }
 
 model tbl_reg_classes {
-  id                  Int                  @id @default(autoincrement())
-  regID               Int
-  classType           String?              @db.Text @map("class_type")
-  classNumber         String?              @map("class_number") @db.VarChar(15)
-  discipline          String?              @db.Text
-  subdiscipline       String?              @db.Text
-  level               String?              @db.Text
-  category            String?              @db.Text
-  minSelections       Int?                 @map("min_selections") @db.SmallInt
-  maxSelections       Int?                 @map("max_selections") @db.SmallInt
-  numberOfSelections  Int?                 @map("number_of_selections") @db.SmallInt
-  schoolGroupID       Int?                 @map("school_groupID")
-  price               Decimal?             @db.Decimal(7, 2)
-  createdAt           DateTime             @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt           DateTime             @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  tbl_registration    tbl_registration     @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
-  tbl_reg_schoolgroup tbl_reg_schoolgroup? @relation(fields: [schoolGroupID], references: [id], onDelete: Cascade, onUpdate: Restrict)
-  tbl_reg_selection   tbl_reg_selection[]
+  id                     Int                     @id @default(autoincrement())
+  regID                  Int
+  classType              String?                 @db.Text @map("class_type")
+  classNumber            String?                 @map("class_number") @db.VarChar(15)
+  discipline             String?                 @db.Text
+  subdiscipline          String?                 @db.Text
+  level                  String?                 @db.Text
+  category               String?                 @db.Text
+  minSelections          Int?                    @map("min_selections") @db.SmallInt
+  maxSelections          Int?                    @map("max_selections") @db.SmallInt
+  numberOfSelections     Int?                    @map("number_of_selections") @db.SmallInt
+  schoolGroupID          Int?                    @map("school_groupID")
+  communityGroupID       Int?                    @map("community_groupID")
+  price                  Decimal?                @db.Decimal(7, 2)
+  createdAt              DateTime                @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt              DateTime                @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  tbl_registration       tbl_registration        @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  tbl_reg_schoolgroup    tbl_reg_schoolgroup?    @relation(fields: [schoolGroupID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  tbl_reg_communitygroup tbl_reg_communitygroup? @relation(fields: [communityGroupID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  tbl_reg_selection      tbl_reg_selection[]
 
   @@index([regID])
 }
@@ -302,21 +304,41 @@ model tbl_user {
 }
 
 model tbl_reg_community {
-  id                 Int              @id @default(autoincrement())
-  regID              Int              @unique
-  name               String?          @db.Text
-  groupSize          Int?             @map("group_size")
-  chaperones         Int?
-  wheelchairs        Int?
-  earliestTime       String?          @map("earliest_time") @db.Text
-  latestTime         String?          @map("latest_time") @db.Text
-  unavailable        String?          @db.Text
-  conflictPerformers String?          @map("conflict_performers") @db.Text
-  createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt          DateTime         @default(now()) @map("updated_at") @db.Timestamp(3)
-  tbl_registration   tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  id                      Int         @id @default(autoincrement())
+  regID                   Int         @unique
+  name                    String?     @db.Text
+  streetNumber            String?     @map("street_number") @db.Text
+  streetName              String?     @map("street_name") @db.Text
+  city                    String?     @default("Winnipeg") @db.Text
+  province                String?     @default("MB") @db.Text
+  postalCode              String?     @map("postal_code") @db.Text
+  phone                   String?     @db.Text
+  email                   String?     @db.Text
+  createdAt               DateTime    @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt               DateTime    @default(now()) @map("updated_at") @db.Timestamp(3)
+  tbl_reg_communitygroup  tbl_reg_communitygroup[]
+  tbl_registration        tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
   @@index([regID])
+}
+
+model tbl_reg_communitygroup {
+  id                 Int               @id @default(autoincrement())
+  communityID        Int
+  name               String?           @db.Text
+  groupSize          Int?              @map("group_size")
+  chaperones         Int?
+  wheelchairs        Int?
+  earliestTime       String?           @map("earliest_time") @db.Text
+  latestTime         String?           @map("latest_time") @db.Text
+  unavailable        String?           @db.Text
+  conflictPerformers String?           @map("conflict_performers") @db.Text
+  createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt          DateTime          @default(now()) @map("updated_at") @db.Timestamp(3)
+  tbl_reg_community  tbl_reg_community @relation(fields: [communityID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  tbl_reg_classes    tbl_reg_classes[]
+
+  @@index([communityID])
 }
 
 model tbl_instruments {
