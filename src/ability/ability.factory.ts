@@ -18,6 +18,7 @@ import { Trophy } from '@/festival/trophy/entities/trophy.entity'
 import { FieldConfig } from '@/submissions/field-config/entities/field-config.entity'
 import { Group } from '@/submissions/group/entities/group.entity'
 import { Community } from '@/submissions/community/entities/community.entity'
+import { CommunityGroup } from '@/submissions/community-group/entities/community-group.entity'
 import { Performer } from '@/submissions/performer/entities/performer.entity'
 import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity'
 import { Registration } from '@/submissions/registration/entities/registration.entity'
@@ -45,6 +46,7 @@ export type Subjects = InferSubjects<
   typeof Subdiscipline |
   typeof Trophy |
   typeof Community |
+  typeof CommunityGroup |
   typeof FieldConfig |
   typeof Group |
   typeof Performer |
@@ -75,11 +77,12 @@ export class AbilityFactory {
       can(Action.Manage, Selection)
       can(Action.Manage, SchoolGroup)
       can(Action.Manage, School)
+      can(Action.Manage, Community)
+      can(Action.Manage, CommunityGroup)
       can(Action.Manage, RegisteredClass)
       can(Action.Manage, Registration)
       can(Action.Manage, Group)
       can(Action.Manage, Performer)
-      can(Action.Manage, Community)
       can(Action.Read, FestivalClass)
       can(Action.Read, Trophy)
       can(Action.Read, Subdiscipline)

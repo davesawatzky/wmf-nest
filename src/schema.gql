@@ -47,19 +47,34 @@ type ClassTypePayload {
 }
 
 type Community {
+  city: String
+  communityGroups: [CommunityGroup!]
+  email: String
+  id: Int!
+  name: String!
+  phone: String
+  postalCode: String
+  province: String
+  registration: Registration
+  streetName: String
+  streetNumber: String
+}
+
+type CommunityGroup {
   chaperones: Int
+  community: Community
   conflictPerformers: String
   earliestTime: String
   groupSize: Int
   id: Int!
   latestTime: String
   name: String
-  registration: Registration!
+  school: Community!
   unavailable: String
   wheelchairs: Int
 }
 
-input CommunityInput {
+input CommunityGroupInput {
   chaperones: Int
   conflictPerformers: String
   earliestTime: String
@@ -68,6 +83,22 @@ input CommunityInput {
   name: String
   unavailable: String
   wheelchairs: Int
+}
+
+type CommunityGroupPayload {
+  communityGroup: CommunityGroup
+  userErrors: [UserError!]!
+}
+
+input CommunityInput {
+  city: String
+  email: String
+  name: String
+  phone: String
+  postalCode: String
+  province: String
+  streetName: String
+  streetNumber: String
 }
 
 type CommunityPayload {
@@ -235,8 +266,11 @@ type Mutation {
   classTypeCreate(classTypeInput: ClassTypeInput!): ClassTypePayload!
   classTypeDelete(classTypeID: Int!): ClassTypePayload!
   classTypeUpdate(classTypeID: Int!, classTypeInput: ClassTypeInput!): ClassTypePayload!
-  communityCreate(registrationID: Int!): CommunityPayload!
+  communityCreate(communityInput: CommunityInput, registrationID: Int!): CommunityPayload!
   communityDelete(communityID: Int!): CommunityPayload!
+  communityGroupCreate(communityGroupInput: CommunityGroupInput, communityID: Int!): CommunityGroupPayload!
+  communityGroupDelete(communityGroupID: Int!): CommunityGroupPayload!
+  communityGroupUpdate(communityGroupID: Int!, communityGroupInput: CommunityGroupInput!): CommunityGroupPayload!
   communityUpdate(communityID: Int!, communityInput: CommunityInput!): CommunityPayload!
   disciplineCreate(disciplineInput: DisciplineInput!): DisciplinePayload!
   disciplineDelete(disciplineID: Int!): DisciplinePayload!
@@ -347,8 +381,10 @@ type Query {
   checkUser(email: String!): User!
   classType(id: Int!): ClassType!
   classTypes: [ClassType!]!
-  communities(registrationID: Int): [Community!]!
+  communities: [Community!]!
   community(communityID: Int, registrationID: Int): Community!
+  communityGroup(communityGroupID: Int!): CommunityGroup!
+  communityGroups(communityID: Int): [CommunityGroup!]!
   discipline(id: Int!): Discipline!
   disciplines(instrument: String, performerType: PerformerType): [Discipline!]!
   festivalClass(id: Int!): FestivalClass!

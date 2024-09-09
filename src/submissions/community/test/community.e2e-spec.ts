@@ -9,7 +9,7 @@ describe('Community', () => {
     const reg = await globalThis.prisma.tbl_registration.create({
       data: {
         userID: globalThis.userId,
-        performerType: 'SOLO',
+        performerType: 'COMMUNITY',
         label: 'Test Form',
       },
     })
@@ -35,20 +35,19 @@ describe('Community', () => {
             communities {
               id
               name
-              groupSize
-              chaperones
-              conflictPerformers
-              earliestTime
-              latestTime
-              unavailable
-              wheelchairs
-              __typename
+              city
+              phone
+              email
+              postalCode
+              province
+              streetName
+              streetNumber
             }
           }
         `)
         .expectNoErrors()
       expect(response.data.communities).toBeTruthy()
-      expect(response.data.communities.length).toBeGreaterThan(0)
+      expect(response.data.communities.length).toBeGreaterThan(1)
     })
 
     it('Can return the full list of communities with associated registrations', async () => {
@@ -59,14 +58,6 @@ describe('Community', () => {
             communities {
               id
               name
-              groupSize
-              chaperones
-              conflictPerformers
-              earliestTime
-              latestTime
-              unavailable
-              wheelchairs
-              __typename
               registration {
                 id
                 confirmation
@@ -82,55 +73,40 @@ describe('Community', () => {
       expect(response.data.communities[0].id).toBeTruthy()
     })
 
-    it('Can return the full list of communities with optional registrationID', async () => {
+    it('Can return the full list of communities with registrations and community groups', async () => {
       response = await request<{ communities: Community[] }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Communities($registrationId: Int) {
-            communities(registrationID: $registrationId) {
+          query Communities{
+            communities {
               id
               name
-              groupSize
-              chaperones
-              conflictPerformers
-              earliestTime
-              latestTime
-              unavailable
-              wheelchairs
-              __typename
               registration {
                 id
-                confirmation
                 label
-                createdAt
+              }
+              communityGroups {
+                id
+                name
               }
             }
           }
         `)
-        .variables({
-          registrationId: 1302,
-        })
         .expectNoErrors()
+      expect(response.data.communities.length).toBeGreaterThan(1)
       expect(response.data.communities[0]).toHaveProperty('registration')
-      expect(response.data.communities[0].id).toBeTruthy()
+      expect(response.data.communities[0]).toHaveProperty('communityGroups')
+      expect(response.data.communities[0].communityGroups[0].name).toBeTruthy()
     })
 
-    it('Can return a single list of communities with optional regID', async () => {
-      response = await request<{ communities: Community[] }>(globalThis.httpServer)
+    it('Can return a single community with communityID', async () => {
+      response = await request<{ community: Community }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Community($communityId: Int, $registrationId: Int) {
-            community(communityID: $communityId, registrationID: $registrationId) {
+          query Community($registrationId: Int, $communityId: Int) {
+            community(registrationID: $registrationId, communityID: $communityId) {
               id
               name
-              groupSize
-              chaperones
-              conflictPerformers
-              earliestTime
-              latestTime
-              unavailable
-              wheelchairs
-              __typename
               registration {
                 id
                 confirmation
@@ -141,30 +117,21 @@ describe('Community', () => {
           }
         `)
         .variables({
-          communityId: null,
-          registrationId: 1302,
+          communityId: 10,
         })
         .expectNoErrors()
-      expect(response.data.community.name).toContain('Louis Riel')
+      expect(response.data.community.name).toBeTruthy()
       expect(response.data.community.registration.id).toBeTruthy()
     })
 
-    it('Can return a single community with optional communityID', async () => {
-      response = await request<{ communities: Community[] }>(globalThis.httpServer)
+    it('Returns an error if nothing is found', async () => {
+      response = await request<{ community: Community }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Community($communityId: Int, $registrationId: Int) {
-            community(communityID: $communityId, registrationID: $registrationId) {
+          query Community($registrationId: Int, $communityId: Int) {
+            community(registrationID: $registrationId, communityID: $communityId) {
               id
               name
-              groupSize
-              chaperones
-              conflictPerformers
-              earliestTime
-              latestTime
-              unavailable
-              wheelchairs
-              __typename
               registration {
                 id
                 confirmation
@@ -175,42 +142,8 @@ describe('Community', () => {
           }
         `)
         .variables({
-          communityId: 18,
-          registrationId: null,
-        })
-        .expectNoErrors()
-      expect(response.data.community.name).toContain('Louis Riel')
-      expect(response.data.community.registration.id).toBeTruthy()
-    })
-
-    it('Returns and error if nothing is found', async () => {
-      response = await request<{ communities: Community[] }>(globalThis.httpServer)
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          query Community($communityId: Int, $registrationId: Int) {
-            community(communityID: $communityId, registrationID: $registrationId) {
-              id
-              name
-              groupSize
-              chaperones
-              conflictPerformers
-              earliestTime
-              latestTime
-              unavailable
-              wheelchairs
-              __typename
-              registration {
-                id
-                confirmation
-                label
-                createdAt
-              }
-            }
-          }
-        `)
-        .variables({
-          communityId: 1500,
-          registrationId: null,
+          communityId: 10,
+          registrationId: 10,
         })
       expect(response.errors).toBeTruthy()
     })
@@ -231,7 +164,7 @@ describe('Community', () => {
       catch (error) {}
     })
 
-    it('Can create a community', async () => {
+    it('Can create a community with regId', async () => {
       response = await request<{ communityCreate: Community }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
@@ -256,14 +189,44 @@ describe('Community', () => {
       expect(response.data.communityCreate.community.id).toBeTruthy()
     })
 
-    it('Returns an error if trying to create a community without registrationId', async () => {
+    it('Can create a community with community Input', async () => {
       response = await request<{ communityCreate: Community }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          mutation CommunityCreate($registrationId: Int!) {
-            communityCreate(registrationID: $registrationId) {
+          mutation CommunityCreate($registrationId: Int!, $communityInput: CommunityInput) {
+            communityCreate(registrationID: $registrationId, communityInput: $communityInput) {
               community {
                 id
+                name
+                }
+              userErrors {
+                field 
+                message
+              }
+            }
+          } 
+        `)
+        .variables({
+          registrationId: regId,
+          communityInput: {
+            name: 'Test Community',
+          },
+        })
+        .expectNoErrors()
+      communityId = await response.data.communityCreate.community.id
+      expect(response.data.communityCreate.community.id).toBeTypeOf('number')
+      expect(response.data.communityCreate.community.name).toBe('Test Community')
+    })
+
+    it('Returns an error if trying to create a community without proper registrationId', async () => {
+      response = await request<{ communityCreate: Community }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
+        .query(gql`
+          mutation CommunityCreate($registrationId: Int!, $communityInput: CommunityInput) {
+            communityCreate(registrationID: $registrationId, communityInput: $communityInput) {
+              community {
+                id
+                name
                 }
               userErrors {
                 field 
@@ -274,6 +237,9 @@ describe('Community', () => {
         `)
         .variables({
           registrationId: regId + 1,
+          communityInput: {
+            name: 'Test Community',
+          },
         })
       expect(response.data.communityCreate.userErrors[0].message).toBeTruthy()
       expect(response.data.communityCreate.community).toBeNull()
@@ -288,7 +254,7 @@ describe('Community', () => {
       response = await globalThis.prisma.tbl_reg_community.create({
         data: {
           regID: regId,
-          name: 'TestCommunity',
+          name: 'Test Community',
         },
       })
       communityId = await response.id
@@ -311,7 +277,7 @@ describe('Community', () => {
             community {
               id
               name
-              groupSize
+              streetName
               }
             userErrors {
               field 
@@ -323,13 +289,12 @@ describe('Community', () => {
         .variables({
           communityId,
           communityInput: {
-            name: 'UpdatedCommunity',
-            groupSize: 25,
+            streetName: 'Updated Street Name',
           },
         })
         .expectNoErrors()
-      expect(response.data.communityUpdate.community.name).toBe('UpdatedCommunity')
-      expect(response.data.communityUpdate.community.groupSize).toBe(25)
+      expect(response.data.communityUpdate.community.streetName).toBe('Updated Street Name')
+      expect(response.data.communityUpdate.community.name).toBe('Test Community')
     })
 
     it('Returns userError if incorrect community id', async () => {
@@ -341,7 +306,6 @@ describe('Community', () => {
             community {
               id
               name
-              groupSize
               }
             userErrors {
               field 
@@ -353,15 +317,14 @@ describe('Community', () => {
         .variables({
           communityId: communityId + 1,
           communityInput: {
-            name: 'UpdatedCommunity',
-            groupSize: 25,
+            streetName: 'Updated Street Name',
           },
         })
       expect(response.data.communityUpdate.userErrors[0].message).toBeTruthy()
       expect(response.data.communityUpdate.community).toBeNull()
     })
 
-    it('Returns html status error if any missing arguments', async () => {
+    it('Returns html status error if missing community id', async () => {
       response = await request<{ communityUpdate: Community }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
@@ -370,7 +333,7 @@ describe('Community', () => {
             community {
               id
               name
-              groupSize
+              streetName
               }
             userErrors {
               field 
@@ -382,8 +345,7 @@ describe('Community', () => {
         .variables({
           communityId: null,
           communityInput: {
-            name: 'UpdatedCommunity',
-            groupSize: 25,
+            streetName: 'Updated Street Name',
           },
         })
       expect(response.errors[0].message).toBeTruthy()
@@ -398,7 +360,7 @@ describe('Community', () => {
             community {
               id
               name
-              groupSize
+              performerType
               }
             userErrors {
               field 
@@ -408,9 +370,9 @@ describe('Community', () => {
         } 
       `)
         .variables({
-          communityId: null,
+          communityId,
           communityInput: {
-            name: 'UpdatedCommunity',
+            name: 'Updated Community',
             okeydokey: true,
           },
         })
@@ -426,7 +388,7 @@ describe('Community', () => {
       response = await globalThis.prisma.tbl_reg_community.create({
         data: {
           regID: regId,
-          name: 'TestCommunity',
+          name: 'Test Community',
         },
       })
       communityId = await response.id
@@ -469,7 +431,7 @@ describe('Community', () => {
         where: { id: communityId },
       })
       expect(deleteCheck).toBeNull()
-      expect(response.data.communityDelete.community.id).toBeTruthy()
+      expect(response.data.communityDelete.community.name).toBe('Test Community')
     })
 
     it('Returns a userError if community not found', async () => {

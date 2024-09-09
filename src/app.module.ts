@@ -12,6 +12,7 @@ import { RegistrationModule } from '@/submissions/registration/registration.modu
 import { FestivalClassModule } from '@/festival/festival-class/festival-class.module'
 import { CategoryModule } from '@/festival/category/category.module'
 import { CommunityModule } from '@/submissions/community/community.module'
+import { CommunityGroupModule } from '@/submissions/community-group/community-group.module'
 import { DisciplineModule } from '@/festival/discipline/discipline.module'
 import { InstrumentModule } from '@/festival/instrument/instrument.module'
 import { LevelModule } from '@/festival/level/level.module'
@@ -77,6 +78,7 @@ import { ClassTypeModule } from '@/festival/class-type/class-type.module'
     EmailConfirmationModule,
     PaymentModule,
     ClassTypeModule,
+    CommunityGroupModule,
   ],
 })
 export class AppModule {}

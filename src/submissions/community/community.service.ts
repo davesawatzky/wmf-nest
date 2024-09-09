@@ -8,14 +8,16 @@ import { UserError } from '@/common.entity'
 export class CommunityService {
   constructor(private prisma: PrismaService) {}
 
-  async create(registrationID: tbl_registration['id']) {
+  async create(
+    registrationID: tbl_registration['id'],
+    communityInput?: Partial<CommunityInput>) {
     let community: tbl_reg_community
     let userErrors: UserError[]
 
     try {
       userErrors = []
       community = await this.prisma.tbl_reg_community.create({
-        data: { regID: registrationID },
+        data: { regID: registrationID, ...communityInput },
       })
     }
     catch (error: any) {
@@ -44,10 +46,8 @@ export class CommunityService {
     }
   }
 
-  async findAll(registrationID?: tbl_registration['id']) {
-    return await this.prisma.tbl_reg_community.findMany({
-      where: { regID: registrationID },
-    })
+  async findAll() {
+    return await this.prisma.tbl_reg_community.findMany()
   }
 
   async findOne(
@@ -66,8 +66,8 @@ export class CommunityService {
     communityID: tbl_reg_community['id'],
     communityInput: Partial<CommunityInput>,
   ) {
-    let userErrors: UserError[]
     let community: tbl_reg_community
+    let userErrors: UserError[]
     try {
       userErrors = []
       community = await this.prisma.tbl_reg_community.update({
@@ -102,8 +102,8 @@ export class CommunityService {
   }
 
   async remove(communityID: tbl_reg_community['id']) {
-    let userErrors: UserError[]
     let community: tbl_reg_community
+    let userErrors: UserError[]
 
     try {
       userErrors = []

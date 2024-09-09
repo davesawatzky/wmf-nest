@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { CommunityGroup } from '@/submissions/community-group/entities/community-group.entity'
 import { UserError } from '@/common.entity'
 import { Registration } from '@/submissions/registration/entities/registration.entity'
 
@@ -7,23 +8,16 @@ export class Community {
   @Field(() => Int)
   id: number
 
-  name?: string
-  conflictPerformers?: string
-
-  @Field(() => Int)
-  groupSize?: number
-
-  @Field(() => Int)
-  chaperones?: number
-
-  @Field(() => Int)
-  wheelchairs?: number
-
-  earliestTime?: string
-  latestTime?: string
-  unavailable?: string
-
-  registration: Registration
+  name: string
+  streetNumber?: string
+  streetName?: string
+  city?: string
+  province?: string
+  postalCode?: string
+  phone?: string
+  email?: string
+  communityGroups?: CommunityGroup[]
+  registration?: Registration
 }
 
 @ObjectType()

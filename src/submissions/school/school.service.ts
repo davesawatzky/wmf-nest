@@ -107,6 +107,7 @@ export class SchoolService {
   async remove(schoolID: tbl_reg_school['id']) {
     let school: tbl_reg_school
     let userErrors: UserError[]
+
     try {
       userErrors = []
       school = await this.prisma.tbl_reg_school.delete({

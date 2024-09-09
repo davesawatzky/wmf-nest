@@ -4,18 +4,21 @@ import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
 import { CommunityService } from './community.service'
 import { Community, CommunityPayload } from './entities/community.entity'
 import { CommunityInput } from './dto/community.input'
+import { CommunityGroup } from '@/submissions/community-group/entities/community-group.entity'
 import { RegistrationService } from '@/submissions/registration/registration.service'
 import { Registration } from '@/submissions/registration/entities/registration.entity'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { AbilitiesGuard } from '@/ability/abilities.guard'
 import { CheckAbilities } from '@/ability/abilities.decorator'
 import { Action } from '@/ability/ability.factory'
+import { CommunityGroupService } from '@/submissions/community-group/community-group.service'
 
 @Resolver(() => Community)
 @UseGuards(JwtAuthGuard)
 export class CommunityResolver {
   constructor(
     private readonly communityService: CommunityService,
+    private readonly communityGroupService: CommunityGroupService,
     private readonly registrationService: RegistrationService,
   ) {}
 
@@ -24,15 +27,12 @@ export class CommunityResolver {
   @Query(() => [Community])
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: 'admin' })
-  async communities(
-    @Args('registrationID', { type: () => Int, nullable: true })
-    registrationID: Registration['id'],
-  ) {
+  async communities() {
     try {
-      return await this.communityService.findAll(registrationID)
+      return await this.communityService.findAll()
     }
     catch (error) {
-      throw new HttpException('Communities not found', HttpStatus.NOT_FOUND)
+      throw new HttpException('No communities found', HttpStatus.NOT_FOUND)
     }
   }
 
@@ -61,9 +61,11 @@ export class CommunityResolver {
   async communityCreate(
     @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
+    @Args('communityInput', { type: () => CommunityInput, nullable: true })
+    communityInput: Partial<CommunityInput>,
   ) {
     try {
-      return await this.communityService.create(registrationID)
+      return await this.communityService.create(registrationID, communityInput)
     }
     catch (error) {
       throw new HttpException('Cannot create community', HttpStatus.INTERNAL_SERVER_ERROR)
@@ -105,6 +107,16 @@ export class CommunityResolver {
   /**
    *  Field Resolver
    */
+
+  @ResolveField(() => [CommunityGroup])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Read, subject: CommunityGroup })
+  async communityGroups(@Parent() community: tbl_reg_community) {
+    const { id }: { id: Community['id'] } = community
+    const communityID = id
+    return await this.communityGroupService.findAll(communityID)
+  }
+
   @ResolveField(() => Registration)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Registration })
