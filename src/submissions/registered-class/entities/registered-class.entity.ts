@@ -34,6 +34,9 @@ export class RegisteredClass {
 
   @Field(() => Int)
   schoolGroupID?: number
+
+  @Field(() => Int)
+  communityGroupID?: number
 }
 
 @ObjectType()

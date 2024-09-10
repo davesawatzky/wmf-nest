@@ -118,6 +118,7 @@ describe('Instrument', () => {
           },
         })
       instrumentId = response.data.instrumentCreate.instrument.id
+      console.log(instrumentId)
       expect(response.data.instrumentCreate.instrument.name).toBe('Kazoo')
       expect(response.data.instrumentCreate.instrument.id).toBeTruthy()
     })

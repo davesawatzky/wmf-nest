@@ -14,17 +14,17 @@ export async function setup(): Promise<void> {
 
   const authService = moduleRef.get<AuthService>(AuthService)
   await authService.signup(TestAdmin())
-  await authService.signup(TestUser())
+  // await authService.signup(TestUser())
 
   const prismaService = moduleRef.get<PrismaService>(PrismaService)
   await prismaService.tbl_user.update({
     where: { email: TestAdmin().email },
     data: { emailConfirmed: true, admin: true },
   })
-  await prismaService.tbl_user.update({
-    where: { email: TestUser().email },
-    data: { emailConfirmed: true, admin: false },
-  })
+  // await prismaService.tbl_user.update({
+  //   where: { email: TestUser().email },
+  //   data: { emailConfirmed: true, admin: false },
+  // })
   await app.close()
 }
 
@@ -42,10 +42,10 @@ export async function teardown(): Promise<void> {
       email: TestAdmin().email,
     },
   })
-  await prismaService.tbl_user.delete({
-    where: {
-      email: TestUser().email,
-    },
-  })
+  // await prismaService.tbl_user.delete({
+  //   where: {
+  //     email: TestUser().email,
+  //   },
+  // })
   await app.close()
 }

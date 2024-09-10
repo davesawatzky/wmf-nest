@@ -55,4 +55,9 @@ export class RegisteredClassInput {
   @IsOptional()
   @Field(() => Int)
   schoolGroupID?: number
+
+  @IsInt()
+  @IsOptional()
+  @Field(() => Int)
+  communityGroupID?: number
 }

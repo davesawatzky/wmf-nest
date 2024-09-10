@@ -95,7 +95,7 @@ export class AbilityFactory {
     }
     return build({
       detectSubjectType: (item): any => {
-        item.constructor as ExtractSubjectType<Subjects>
+        return item.constructor as ExtractSubjectType<Subjects>
       },
     })
   }

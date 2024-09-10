@@ -9,7 +9,7 @@ describe('Signup', () => {
 
     beforeAll(async () => {
       response = await request<{ signup: AuthPayload }>(
-        global.httpServer,
+        globalThis.httpServer,
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -33,7 +33,7 @@ describe('Signup', () => {
 
     afterAll(async () => {
       if (response.data.signup) {
-        await global.prisma.tbl_user.delete({
+        await globalThis.prisma.tbl_user.delete({
           where: {
             email: userSignup()[0].email,
           },
@@ -53,7 +53,7 @@ describe('Signup', () => {
     })
 
     it('Should have created the user in the database', async () => {
-      const user = await global.prisma.tbl_user.findUnique({
+      const user = await globalThis.prisma.tbl_user.findUnique({
         where: {
           email: userSignup()[0].email,
         },
@@ -67,7 +67,7 @@ describe('Signup', () => {
 
     beforeAll(async () => {
       response = await request<{ signup: AuthPayload }>(
-        global.httpServer,
+        globalThis.httpServer,
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -92,7 +92,7 @@ describe('Signup', () => {
 
     afterAll(async () => {
       if (response.data.signup) {
-        await global.prisma.tbl_user.delete({
+        await globalThis.prisma.tbl_user.delete({
           where: {
             email: userSignup()[1].email,
           },
@@ -112,7 +112,7 @@ describe('Signup', () => {
     })
 
     it('Should have created the user in the database', async () => {
-      const user = await global.prisma.tbl_user.findUnique({
+      const user = await globalThis.prisma.tbl_user.findUnique({
         where: {
           email: userSignup()[1].email,
         },
@@ -127,7 +127,7 @@ describe('Signup', () => {
 
     beforeAll(async () => {
       response = await request<{ signup: AuthPayload }>(
-        global.httpServer,
+        globalThis.httpServer,
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -158,7 +158,7 @@ describe('Signup', () => {
 
     afterAll(async () => {
       if (!response.errors) {
-        await global.prisma.tbl_user.delete({
+        await globalThis.prisma.tbl_user.delete({
           where: {
             email: userSignup()[0].email,
           },
@@ -171,7 +171,7 @@ describe('Signup', () => {
     })
 
     it('should not write user to the database', async () => {
-      const user = await global.prisma.tbl_user.findUnique({
+      const user = await globalThis.prisma.tbl_user.findUnique({
         where: {
           email: userSignup()[1].email,
         },
@@ -185,7 +185,7 @@ describe('Signup', () => {
 
     beforeAll(async () => {
       response = await request<{ signup: AuthPayload }>(
-        global.httpServer,
+        globalThis.httpServer,
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -215,7 +215,7 @@ describe('Signup', () => {
 
     afterAll(async () => {
       if (!response.errors) {
-        await global.prisma.tbl_user.delete({
+        await globalThis.prisma.tbl_user.delete({
           where: {
             email: userSignup()[0].email,
           },
@@ -228,7 +228,7 @@ describe('Signup', () => {
     })
 
     it('should not write user to the database', async () => {
-      const user = await global.prisma.tbl_user.findUnique({
+      const user = await globalThis.prisma.tbl_user.findUnique({
         where: {
           email: userSignup()[1].email,
         },
@@ -242,7 +242,7 @@ describe('Signup', () => {
 
     beforeAll(async () => {
       response = await request<{ signup: AuthPayload }>(
-        global.httpServer,
+        globalThis.httpServer,
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -266,7 +266,7 @@ describe('Signup', () => {
 
     afterAll(async () => {
       if (response) {
-        await global.prisma.tbl_user.delete({
+        await globalThis.prisma.tbl_user.delete({
           where: {
             email: userSignup()[2].email,
           },
@@ -285,7 +285,7 @@ describe('Signup', () => {
     })
 
     it('Should have created the user in the database', async () => {
-      const user = await global.prisma.tbl_user.findUnique({
+      const user = await globalThis.prisma.tbl_user.findUnique({
         where: {
           email: userSignup()[2].email,
         },
@@ -299,7 +299,7 @@ describe('Signup', () => {
 
     beforeAll(async () => {
       response = await request<{ signup: AuthPayload }>(
-        global.httpServer,
+        globalThis.httpServer,
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -323,7 +323,7 @@ describe('Signup', () => {
 
     afterAll(async () => {
       if (response) {
-        await global.prisma.tbl_user.delete({
+        await globalThis.prisma.tbl_user.delete({
           where: {
             email: userSignup()[3].email,
           },
@@ -342,7 +342,7 @@ describe('Signup', () => {
     })
 
     it('Should have created the user in the database', async () => {
-      const user = await global.prisma.tbl_user.findUnique({
+      const user = await globalThis.prisma.tbl_user.findUnique({
         where: {
           email: userSignup()[3].email,
         },
@@ -353,7 +353,7 @@ describe('Signup', () => {
 
   describe('Teacher exists but has not created an account yet.', () => {
     beforeAll(async () => {
-      const result = await global.prisma.tbl_user.create({
+      await globalThis.prisma.tbl_user.create({
         data: {
           email: userSignup()[2].email,
           firstName: userSignup()[2].firstName,
@@ -367,7 +367,7 @@ describe('Signup', () => {
     })
 
     afterAll(async () => {
-      const result = await global.prisma.tbl_user.delete({
+      await globalThis.prisma.tbl_user.delete({
         where: {
           email: userSignup()[2].email,
         },
@@ -375,7 +375,7 @@ describe('Signup', () => {
     })
 
     it('Account should be in the database without a password', async () => {
-      const response = await global.prisma.tbl_user.findUnique({
+      const response = await globalThis.prisma.tbl_user.findUnique({
         where: {
           email: userSignup()[2].email,
         },
@@ -385,8 +385,8 @@ describe('Signup', () => {
     })
 
     it('Should be able to add the password to the existing account', async () => {
-      const response = await request<{ signup: AuthPayload }>(
-        global.httpServer,
+      await request<{ signup: AuthPayload }>(
+        globalThis.httpServer,
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -407,7 +407,7 @@ describe('Signup', () => {
         })
         .expectNoErrors()
 
-      const result = await global.prisma.tbl_user.findUnique({
+      const result = await globalThis.prisma.tbl_user.findUnique({
         where: {
           email: userSignup()[2].email,
         },
@@ -419,7 +419,7 @@ describe('Signup', () => {
   describe('If user already exists in database', () => {
     beforeAll(async () => {
       await request<{ signup: AuthPayload }>(
-        global.httpServer,
+        globalThis.httpServer,
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
@@ -442,7 +442,7 @@ describe('Signup', () => {
     })
 
     afterAll(async () => {
-      await global.prisma.tbl_user.delete({
+      await globalThis.prisma.tbl_user.delete({
         where: {
           email: userSignup()[0].email,
         },
@@ -451,7 +451,7 @@ describe('Signup', () => {
 
     it('should return an Error in an AuthPayload object', async () => {
       const response = await request<{ signup: AuthPayload }>(
-        global.httpServer,
+        globalThis.httpServer,
       )
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {

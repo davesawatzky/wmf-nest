@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { INestApplication, ValidationPipe } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import gql from 'graphql-tag'

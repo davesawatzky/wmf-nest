@@ -429,6 +429,7 @@ type RegisteredClass {
   category: String
   classNumber: String
   classType: String
+  communityGroupID: Int
   discipline: String
   id: Int!
   level: String
@@ -445,6 +446,7 @@ input RegisteredClassInput {
   category: String
   classNumber: String
   classType: String
+  communityGroupID: Int
   discipline: String
   level: String
   maxSelections: Int

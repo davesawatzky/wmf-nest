@@ -49,9 +49,9 @@ export class InstrumentResolver {
   /** Mutations */
 
   @Mutation(() => InstrumentPayload)
-  @UseGuards(JwtAuthGuard)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Create, subject: Instrument })
+  @UseGuards(JwtAuthGuard)
   async instrumentCreate(@Args('instrumentInput') instrumentInput: InstrumentInput) {
     let response: any
     try {
@@ -64,9 +64,9 @@ export class InstrumentResolver {
   }
 
   @Mutation(() => InstrumentPayload)
-  @UseGuards(JwtAuthGuard)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Update, subject: Instrument })
+  @UseGuards(JwtAuthGuard)
   async instrumentUpdate(
     @Args('instrumentID', { type: () => Int })
     instrumentID: Instrument['id'],
@@ -83,9 +83,9 @@ export class InstrumentResolver {
   }
 
   @Mutation(() => InstrumentPayload)
-  @UseGuards(JwtAuthGuard)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Delete, subject: Instrument })
+  @UseGuards(JwtAuthGuard)
   async instrumentDelete(
     @Args('instrumentID', { type: () => Int }) instrumentID: Instrument['id'],
   ) {
@@ -102,9 +102,9 @@ export class InstrumentResolver {
   /** Field Resolver */
 
   @ResolveField(() => Discipline)
-  @UseGuards(JwtAuthGuard)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Discipline })
+  @UseGuards(JwtAuthGuard)
   async discipline(@Parent() instrument: tbl_instruments) {
     const { disciplineID }: { disciplineID: tbl_instruments['disciplineID'] }
       = instrument

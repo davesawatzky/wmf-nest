@@ -7,8 +7,8 @@ describe('User', () => {
     let response: any
 
     it('Should return a list of users', async () => {
-      response = await request<{ users: User[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ users: User[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         query {
           users {
@@ -39,8 +39,8 @@ describe('User', () => {
     })
 
     it('Should return a list of users and associated registrations', async () => {
-      response = await request<{ users: User[] }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ users: User[] }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         query {
           users {
@@ -65,8 +65,8 @@ describe('User', () => {
     let response: any
 
     it('Should return ones own user details from the user id in context', async () => {
-      response = await request<{ myUser: User }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ myUser: User }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
         query {
           myUser {
@@ -85,8 +85,8 @@ describe('User', () => {
     let userId: number
 
     it('Should return a single user using user id', async () => {
-      response = await request<{ user: User }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ user: User }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query User($userId: Int!) {
             user(userID: $userId) {
@@ -104,8 +104,8 @@ describe('User', () => {
     })
 
     it('Returns a single user with associated registrations', async () => {
-      response = await request<{ user: User }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ user: User }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query User($userId: Int!) {
             user(userID: $userId) {
@@ -127,8 +127,8 @@ describe('User', () => {
     })
 
     it('Returns a single user using their email address', async () => {
-      response = await request<{ user: User }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ user: User }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query User($email: String!) {
             user(email: $email) {
@@ -138,7 +138,7 @@ describe('User', () => {
             }
           }`)
         .variables({
-          email: 'test_e2e_user@test.com',
+          email: 'test_e2e_admin@test.com',
         })
         .expectNoErrors()
       expect(response.data.user.firstName).toBeTruthy()
@@ -151,15 +151,15 @@ describe('User', () => {
     let response: any
 
     beforeAll(async () => {
-      const user = await global.prisma.tbl_user.findUnique({
-        where: { email: 'test_e2e_user@test.com' },
+      const user = await globalThis.prisma.tbl_user.findUnique({
+        where: { email: 'test_e2e_admin@test.com' },
       })
       testUserId = user.id
     })
 
     it('Should update a user', async () => {
-      response = await request<{ updateUser: UserPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ updateUser: UserPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           mutation UserUpdate($userId: Int!, $userInput: UserInput!) {
             userUpdate(userID: $userId, userInput: $userInput) {
@@ -189,8 +189,8 @@ describe('User', () => {
     })
 
     it('Should return a userError if user not found', async () => {
-      response = await request<{ updateUser: UserPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ updateUser: UserPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           mutation UserUpdate($userId: Int!, $userInput: UserInput!) {
             userUpdate(userID: $userId, userInput: $userInput) {
@@ -218,8 +218,8 @@ describe('User', () => {
     })
 
     // it('Should return a userError if new email address already used for another user', async () => {
-    //   response = await request<{updateUser: UserPayload}>(global.httpServer)
-    //     .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+    //   response = await request<{updateUser: UserPayload}>(globalThis.httpServer)
+    //     .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
     //     .query(gql`
     //       mutation UserUpdate($userId: Int!, $userInput: UserInput!) {
     //         userUpdate(userID: $userId, userInput: $userInput) {
@@ -255,7 +255,7 @@ describe('User', () => {
 
     beforeEach(async () => {
       try {
-        const newUser = await global.prisma.tbl_user.create({
+        const newUser = await globalThis.prisma.tbl_user.create({
           data: {
             email: 'test.delete@test.com',
             firstName: 'User',
@@ -274,7 +274,7 @@ describe('User', () => {
 
     afterEach(async () => {
       try {
-        await global.prisma.tbl_user.delete({
+        await globalThis.prisma.tbl_user.delete({
           where: {
             email: 'test.delete@test.com',
           },
@@ -284,8 +284,8 @@ describe('User', () => {
     })
 
     it('Should delete a user', async () => {
-      response = await request<{ deleteUser: UserPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ deleteUser: UserPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           mutation UserDelete($userId: Int!) {
             userDelete(userID: $userId) {
@@ -304,7 +304,7 @@ describe('User', () => {
         .variables({
           userId: newUserId,
         })
-      const deleteCheck = await global.prisma.tbl_user.findUnique({
+      const deleteCheck = await globalThis.prisma.tbl_user.findUnique({
         where: { id: newUserId },
       })
       expect(response.data.userDelete.user.id).toBe(newUserId)
@@ -312,8 +312,8 @@ describe('User', () => {
     })
 
     it('Should return an error if the user is not found', async () => {
-      response = await request<{ deleteUser: UserPayload }>(global.httpServer)
-        .set('Cookie', `diatonicToken=${global.diatonicToken}`)
+      response = await request<{ deleteUser: UserPayload }>(globalThis.httpServer)
+        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           mutation UserDelete($userId: Int!) {
             userDelete(userID: $userId) {

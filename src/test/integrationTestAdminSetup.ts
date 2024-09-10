@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { INestApplication, ValidationPipe } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import gql from 'graphql-tag'
@@ -8,7 +9,7 @@ import { EmailConfirmationService } from 'src/email-confirmation/email-confirmat
 import request from 'supertest-graphql'
 import { PrismaService } from '../prisma/prisma.service'
 import { AppModule } from '../app.module'
-import { TestAdmin } from './testUser'
+import { TestAdmin } from '@/test/testUser'
 
 let app: INestApplication
 
@@ -84,8 +85,6 @@ beforeAll(async () => {
           email
           firstName
           lastName
-          privateTeacher
-          schoolTeacher
           hasSignedIn
           admin
         }
