@@ -1,6 +1,6 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { UserError } from '@/common.entity'
 import { Registration } from '@/submissions/registration/entities/registration.entity'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class Performer {

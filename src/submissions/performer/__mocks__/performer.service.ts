@@ -1,5 +1,5 @@
-import { performerStub } from '../stubs/performer.stub'
 import { PerformerService } from '../performer.service'
+import { performerStub } from '../stubs/performer.stub'
 
 export const performerService: Partial<PerformerService> = {
   create: vi.fn().mockReturnValue({

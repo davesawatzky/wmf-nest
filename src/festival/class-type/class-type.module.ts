@@ -1,8 +1,8 @@
-import { Module, forwardRef } from '@nestjs/common'
-import { ClassTypeService } from './class-type.service'
-import { ClassTypeResolver } from './class-type.resolver'
-import { FestivalClassModule } from '@/festival/festival-class/festival-class.module'
 import { AbilityModule } from '@/ability/ability.module'
+import { FestivalClassModule } from '@/festival/festival-class/festival-class.module'
+import { forwardRef, Module } from '@nestjs/common'
+import { ClassTypeResolver } from './class-type.resolver'
+import { ClassTypeService } from './class-type.service'
 
 @Module({
   providers: [ClassTypeService, ClassTypeResolver],

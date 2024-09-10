@@ -1,3 +1,4 @@
+import RequestWithUser from '@/auth/requestWithUser.interface'
 import {
   Body,
   ClassSerializerInterceptor,
@@ -7,7 +8,6 @@ import {
 } from '@nestjs/common'
 import ConfirmEmailDto from './dto/confirm-email.dto'
 import { EmailConfirmationService } from './email-confirmation.service'
-import RequestWithUser from '@/auth/requestWithUser.interface'
 
 @Controller('email-confirmation')
 @UseInterceptors(ClassSerializerInterceptor)

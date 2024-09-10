@@ -1,6 +1,6 @@
+import { SchoolGroup } from '@/submissions/school-group/entities/school-group.entity'
 import gql from 'graphql-tag'
 import request from 'supertest-graphql'
-import { SchoolGroup } from '@/submissions/school-group/entities/school-group.entity'
 
 describe('SchoolGroup', () => {
   let regId: number

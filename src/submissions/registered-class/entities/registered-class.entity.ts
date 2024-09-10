@@ -1,9 +1,9 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { Decimal } from '@prisma/client/runtime/library'
-import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
-import { Transform, Type } from 'class-transformer'
 import { UserError } from '@/common.entity'
 import { Selection } from '@/submissions/selection/entities/selection.entity'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Decimal } from '@prisma/client/runtime/library'
+import { Transform, Type } from 'class-transformer'
+import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
 
 @ObjectType()
 export class RegisteredClass {

@@ -1,13 +1,14 @@
+import process from 'node:process'
 import { INestApplication, ValidationPipe } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
-import gql from 'graphql-tag'
 import cookieParser from 'cookie-parser'
-import { AuthPayload } from 'src/auth/entities/auth.entity'
+import gql from 'graphql-tag'
 import helmet from 'helmet'
+import { AuthPayload } from 'src/auth/entities/auth.entity'
 import { EmailConfirmationService } from 'src/email-confirmation/email-confirmation.service'
 import request from 'supertest-graphql'
-import { PrismaService } from '../prisma/prisma.service'
 import { AppModule } from '../app.module'
+import { PrismaService } from '../prisma/prisma.service'
 import { TestUser } from './testUser'
 
 let app: INestApplication
@@ -92,13 +93,12 @@ beforeAll(async () => {
         }
       }
     }
-  `)
-    .variables({
-      credentials: {
-        email: TestUser().email,
-        password: TestUser().password,
-      },
-    })
+  `).variables({
+    credentials: {
+      email: TestUser().email,
+      password: TestUser().password,
+    },
+  })
   const diatonicToken: string = response.data.signin.diatonicToken
   globalThis.diatonicToken = diatonicToken
 

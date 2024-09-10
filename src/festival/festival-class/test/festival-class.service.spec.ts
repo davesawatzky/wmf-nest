@@ -1,3 +1,4 @@
+import { PrismaService } from '@/prisma/prisma.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   beforeEach,
@@ -6,7 +7,6 @@ import {
   it,
 } from 'vitest'
 import { FestivalClassService } from '../festival-class.service'
-import { PrismaService } from '@/prisma/prisma.service'
 
 describe('festivalClassService', () => {
   let service: FestivalClassService

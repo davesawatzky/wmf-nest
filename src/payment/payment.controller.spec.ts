@@ -1,3 +1,5 @@
+import { StripeService } from '@/stripe/stripe.service'
+import { ConfigService } from '@nestjs/config'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   beforeEach,
@@ -5,11 +7,9 @@ import {
   expect,
   it,
 } from 'vitest'
-import { ConfigService } from '@nestjs/config'
+import { PaymentCreateDto } from './dto/payment.dto'
 import { PaymentController } from './payment.controller'
 import { PaymentService } from './payment.service'
-import { PaymentCreateDto } from './dto/payment.dto'
-import { StripeService } from '@/stripe/stripe.service'
 
 describe('paymentController', () => {
   let controller: PaymentController

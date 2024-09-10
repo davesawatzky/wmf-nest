@@ -1,7 +1,7 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { tbl_field_config } from '@prisma/client'
-import { FieldConfigService } from './field-config.service'
 import { FieldConfig } from './entities/field-config.entity'
+import { FieldConfigService } from './field-config.service'
 
 @Resolver(() => FieldConfig)
 export class FieldConfigResolver {

@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common'
-import { PassportModule } from '@nestjs/passport/dist'
-import { JwtModule } from '@nestjs/jwt/dist'
 import { ConfigModule } from '@nestjs/config'
-import { UserModule } from '../user/user.module'
+import { JwtModule } from '@nestjs/jwt/dist'
+import { PassportModule } from '@nestjs/passport/dist'
 import { EmailConfirmationModule } from '../email-confirmation/email-confirmation.module'
-import { AuthService } from './auth.service'
+import { UserModule } from '../user/user.module'
 import { AuthResolver } from './auth.resolver'
-import { LocalStrategy } from './local.strategy'
+import { AuthService } from './auth.service'
 import { JwtStrategy } from './jwt.strategy'
+import { LocalStrategy } from './local.strategy'
 
 @Module({
   providers: [AuthResolver, AuthService, LocalStrategy, JwtStrategy],

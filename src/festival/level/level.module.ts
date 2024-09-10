@@ -1,8 +1,8 @@
-import { Module, forwardRef } from '@nestjs/common'
-import { LevelService } from './level.service'
-import { LevelResolver } from './level.resolver'
-import { FestivalClassModule } from '@/festival/festival-class/festival-class.module'
 import { AbilityModule } from '@/ability/ability.module'
+import { FestivalClassModule } from '@/festival/festival-class/festival-class.module'
+import { forwardRef, Module } from '@nestjs/common'
+import { LevelResolver } from './level.resolver'
+import { LevelService } from './level.service'
 
 @Module({
   providers: [LevelResolver, LevelService],

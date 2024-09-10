@@ -1,6 +1,6 @@
+import { PerformerType } from '@/common.entity'
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator'
-import { PerformerType } from '@/common.entity'
 
 @InputType()
 export class FestivalClassInput {

@@ -1,3 +1,7 @@
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
+import { Selection } from '@/submissions/selection/entities/selection.entity'
+import { SelectionService } from '@/submissions/selection/selection.service'
+import { UseGuards } from '@nestjs/common/decorators'
 import {
   Args,
   Int,
@@ -8,13 +12,9 @@ import {
   Resolver,
 } from '@nestjs/graphql'
 import { tbl_reg_classes, tbl_registration } from '@prisma/client'
-import { UseGuards } from '@nestjs/common/decorators'
-import { RegisteredClassService } from './registered-class.service'
 import { RegisteredClassInput } from './dto/registered-class.input'
 import { RegisteredClass, RegisteredClassPayload } from './entities/registered-class.entity'
-import { SelectionService } from '@/submissions/selection/selection.service'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { Selection } from '@/submissions/selection/entities/selection.entity'
+import { RegisteredClassService } from './registered-class.service'
 
 @Resolver(() => RegisteredClass)
 @UseGuards(JwtAuthGuard)

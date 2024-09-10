@@ -1,3 +1,4 @@
+import { PrismaService } from '@/prisma/prisma.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   beforeEach,
@@ -7,7 +8,6 @@ import {
 } from 'vitest'
 import { SelectionResolver } from './selection.resolver'
 import { SelectionService } from './selection.service'
-import { PrismaService } from '@/prisma/prisma.service'
 
 describe('selectionResolver', () => {
   let resolver: SelectionResolver

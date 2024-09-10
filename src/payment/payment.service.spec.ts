@@ -1,3 +1,4 @@
+import { StripeService } from '@/stripe/stripe.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   beforeEach,
@@ -6,7 +7,6 @@ import {
   it,
 } from 'vitest'
 import { PaymentService } from './payment.service'
-import { StripeService } from '@/stripe/stripe.service'
 
 describe('paymentService', () => {
   let paymentService: PaymentService

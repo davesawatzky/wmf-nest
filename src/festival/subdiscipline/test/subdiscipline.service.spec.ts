@@ -1,3 +1,4 @@
+import { PrismaService } from '@/prisma/prisma.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   beforeEach,
@@ -6,7 +7,6 @@ import {
   it,
 } from 'vitest'
 import { SubdisciplineService } from '../subdiscipline.service'
-import { PrismaService } from '@/prisma/prisma.service'
 
 describe('subdisciplineService', () => {
   let service: SubdisciplineService

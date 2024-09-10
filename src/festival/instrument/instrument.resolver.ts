@@ -1,3 +1,10 @@
+import { CheckAbilities } from '@/ability/abilities.decorator'
+import { AbilitiesGuard } from '@/ability/abilities.guard'
+import { Action } from '@/ability/ability.factory'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
+import { DisciplineService } from '@/festival/discipline/discipline.service'
+import { Discipline } from '@/festival/discipline/entities/discipline.entity'
+import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
 import {
   Args,
   Int,
@@ -7,17 +14,10 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
 import { tbl_instruments } from '@prisma/client'
-import { Instrument, InstrumentPayload } from './entities/instrument.entity'
 import { InstrumentInput } from './dto/instrument.input'
+import { Instrument, InstrumentPayload } from './entities/instrument.entity'
 import { InstrumentService } from './instrument.service'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { Discipline } from '@/festival/discipline/entities/discipline.entity'
-import { DisciplineService } from '@/festival/discipline/discipline.service'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { Action } from '@/ability/ability.factory'
 
 @Resolver(() => Instrument)
 export class InstrumentResolver {

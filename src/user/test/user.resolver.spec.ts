@@ -1,3 +1,6 @@
+import { AbilityFactory } from '@/ability/ability.factory'
+import { PrismaService } from '@/prisma/prisma.service'
+import { RegistrationService } from '@/submissions/registration/registration.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   beforeEach,
@@ -7,9 +10,6 @@ import {
 } from 'vitest'
 import { UserResolver } from '../user.resolver'
 import { UserService } from '../user.service'
-import { AbilityFactory } from '@/ability/ability.factory'
-import { PrismaService } from '@/prisma/prisma.service'
-import { RegistrationService } from '@/submissions/registration/registration.service'
 
 describe('userResolver', () => {
   let resolver: UserResolver

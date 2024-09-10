@@ -1,9 +1,9 @@
+import { UserError } from '@/common.entity'
+import { PrismaService } from '@/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
 import { tbl_user } from '@prisma/client'
 import { UserInput } from './dto/user.input'
 import { User } from './entities/user.entity'
-import { PrismaService } from '@/prisma/prisma.service'
-import { UserError } from '@/common.entity'
 
 @Injectable()
 export class UserService {

@@ -1,12 +1,12 @@
+import { PerformerType, UserError } from '@/common.entity'
+import { PrismaService } from '@/prisma/prisma.service'
+
 import { Injectable } from '@nestjs/common'
 import {
   tbl_discipline,
   tbl_subdiscipline,
 } from '@prisma/client'
-
 import { SubdisciplineInput } from './dto/subdiscipline.input'
-import { PrismaService } from '@/prisma/prisma.service'
-import { PerformerType, UserError } from '@/common.entity'
 
 @Injectable()
 export class SubdisciplineService {

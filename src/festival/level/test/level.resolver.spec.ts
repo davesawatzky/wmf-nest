@@ -1,3 +1,5 @@
+import { FestivalClassService } from '@/festival/festival-class/festival-class.service'
+import { PrismaService } from '@/prisma/prisma.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   beforeEach,
@@ -7,8 +9,6 @@ import {
 } from 'vitest'
 import { LevelResolver } from '../level.resolver'
 import { LevelService } from '../level.service'
-import { PrismaService } from '@/prisma/prisma.service'
-import { FestivalClassService } from '@/festival/festival-class/festival-class.service'
 
 describe('levelResolver', () => {
   let resolver: LevelResolver

@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import request from 'supertest-graphql'
-import { userSignup } from '../stubs/signup'
 import { AuthPayload } from '../entities/auth.entity'
+import { userSignup } from '../stubs/signup'
 
 describe('Signup', () => {
   describe('When a signUp mutation is executed with a normal user', () => {

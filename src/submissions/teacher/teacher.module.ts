@@ -1,7 +1,7 @@
-import { Module, forwardRef } from '@nestjs/common'
-import { TeacherService } from './teacher.service'
-import { TeacherResolver } from './teacher.resolver'
 import { RegistrationModule } from '@/submissions/registration/registration.module'
+import { forwardRef, Module } from '@nestjs/common'
+import { TeacherResolver } from './teacher.resolver'
+import { TeacherService } from './teacher.service'
 
 @Module({
   providers: [TeacherResolver, TeacherService],

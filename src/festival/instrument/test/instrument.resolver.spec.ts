@@ -1,3 +1,5 @@
+import { DisciplineService } from '@/festival/discipline/discipline.service'
+import { PrismaService } from '@/prisma/prisma.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   beforeEach,
@@ -7,8 +9,6 @@ import {
 } from 'vitest'
 import { InstrumentResolver } from '../instrument.resolver'
 import { InstrumentService } from '../instrument.service'
-import { DisciplineService } from '@/festival/discipline/discipline.service'
-import { PrismaService } from '@/prisma/prisma.service'
 
 describe('instrumentResolver', () => {
   let resolver: InstrumentResolver

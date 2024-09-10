@@ -1,7 +1,7 @@
-import { Field, InputType, Int } from '@nestjs/graphql'
-import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
-import { IsInt, IsNumber, IsOptional, IsString } from 'class-validator'
 import { PerformerType } from '@/common.entity'
+import { Field, InputType, Int } from '@nestjs/graphql'
+import { IsInt, IsNumber, IsOptional, IsString } from 'class-validator'
+import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
 
 @InputType()
 export class RegistrationInput {

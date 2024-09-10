@@ -1,8 +1,8 @@
-import { Module, forwardRef } from '@nestjs/common'
-import { UserService } from './user.service'
-import { UserResolver } from './user.resolver'
 import { AbilityModule } from '@/ability/ability.module'
 import { RegistrationModule } from '@/submissions/registration/registration.module'
+import { forwardRef, Module } from '@nestjs/common'
+import { UserResolver } from './user.resolver'
+import { UserService } from './user.service'
 
 @Module({
   providers: [UserResolver, UserService],

@@ -1,7 +1,8 @@
-import { ExtractJwt, Strategy } from 'passport-jwt'
-import { Request as RequestType } from 'express'
-import { PassportStrategy } from '@nestjs/passport'
+import process from 'node:process'
 import { Injectable } from '@nestjs/common'
+import { PassportStrategy } from '@nestjs/passport'
+import { Request as RequestType } from 'express'
+import { ExtractJwt, Strategy } from 'passport-jwt'
 import { User } from '../user/entities/user.entity'
 import { AuthService } from './auth.service'
 

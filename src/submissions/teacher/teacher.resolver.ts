@@ -1,3 +1,8 @@
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
+import { Registration } from '@/submissions/registration/entities/registration.entity'
+import { RegistrationService } from '@/submissions/registration/registration.service'
+import { Teacher, TeacherPayload } from '@/submissions/teacher/entities/teacher.entity'
+import { UseGuards } from '@nestjs/common/decorators'
 import {
   Args,
   Context,
@@ -8,13 +13,8 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common/decorators'
 import { TeacherInput } from './dto/teacher.input'
 import { TeacherService } from './teacher.service'
-import { RegistrationService } from '@/submissions/registration/registration.service'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { Teacher, TeacherPayload } from '@/submissions/teacher/entities/teacher.entity'
-import { Registration } from '@/submissions/registration/entities/registration.entity'
 
 @Resolver(() => Teacher)
 @UseGuards(JwtAuthGuard)

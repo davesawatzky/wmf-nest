@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsDate, IsOptional, IsString } from 'class-validator'
 import { Decimal } from '@prisma/client/runtime/library'
+import { IsDate, IsOptional, IsString } from 'class-validator'
 
 @InputType()
 export class SubmissionInput {

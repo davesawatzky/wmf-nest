@@ -1,3 +1,13 @@
+import { CheckAbilities } from '@/ability/abilities.decorator'
+import { AbilitiesGuard } from '@/ability/abilities.guard'
+import { Action } from '@/ability/ability.factory'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
+import { Registration } from '@/submissions/registration/entities/registration.entity'
+import { RegistrationService } from '@/submissions/registration/registration.service'
+import { SchoolGroup } from '@/submissions/school-group/entities/school-group.entity'
+import { SchoolGroupService } from '@/submissions/school-group/school-group.service'
+import { HttpException, HttpStatus } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common/decorators'
 import {
   Args,
   Int,
@@ -8,19 +18,9 @@ import {
   Resolver,
 } from '@nestjs/graphql'
 import { tbl_reg_school, tbl_registration } from '@prisma/client'
-import { UseGuards } from '@nestjs/common/decorators'
-import { HttpException, HttpStatus } from '@nestjs/common'
-import { SchoolService } from './school.service'
 import { SchoolInput } from './dto/school.input'
 import { School, SchoolPayload } from './entities/school.entity'
-import { SchoolGroupService } from '@/submissions/school-group/school-group.service'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { SchoolGroup } from '@/submissions/school-group/entities/school-group.entity'
-import { RegistrationService } from '@/submissions/registration/registration.service'
-import { Registration } from '@/submissions/registration/entities/registration.entity'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { Action } from '@/ability/ability.factory'
+import { SchoolService } from './school.service'
 
 @Resolver(() => School)
 @UseGuards(JwtAuthGuard)

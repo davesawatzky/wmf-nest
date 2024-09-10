@@ -1,8 +1,8 @@
+import { UserError } from '@/common.entity'
+import { PrismaService } from '@/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
 import { tbl_reg_group, tbl_registration } from '@prisma/client'
 import { GroupInput } from './dto/group.input'
-import { PrismaService } from '@/prisma/prisma.service'
-import { UserError } from '@/common.entity'
 
 @Injectable()
 export class GroupService {

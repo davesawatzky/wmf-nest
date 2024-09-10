@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
-import { FieldConfigService } from './field-config.service'
 import { FieldConfigResolver } from './field-config.resolver'
+import { FieldConfigService } from './field-config.service'
 
 @Module({
   providers: [FieldConfigResolver, FieldConfigService],

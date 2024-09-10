@@ -1,3 +1,6 @@
+import { PrismaService } from '@/prisma/prisma.service'
+import { SchoolGroupResolver } from '@/submissions/school-group/school-group.resolver'
+import { SchoolGroupService } from '@/submissions/school-group/school-group.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   beforeEach,
@@ -5,9 +8,6 @@ import {
   expect,
   it,
 } from 'vitest'
-import { SchoolGroupResolver } from '@/submissions/school-group/school-group.resolver'
-import { SchoolGroupService } from '@/submissions/school-group/school-group.service'
-import { PrismaService } from '@/prisma/prisma.service'
 
 describe('schoolGroupResolver', () => {
   let resolver: SchoolGroupResolver

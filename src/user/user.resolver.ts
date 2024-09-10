@@ -1,3 +1,11 @@
+import { CheckAbilities } from '@/ability/abilities.decorator'
+import { AbilitiesGuard } from '@/ability/abilities.guard'
+import { Action } from '@/ability/ability.factory'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
+import { Registration } from '@/submissions/registration/entities/registration.entity'
+import { RegistrationService } from '@/submissions/registration/registration.service'
+import { ForbiddenError } from '@casl/ability'
+import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
 import {
   Args,
   Context,
@@ -8,18 +16,10 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
-import { ForbiddenError } from '@casl/ability'
 import { NotFoundError } from 'rxjs'
-import { UserService } from './user.service'
-import { User, UserPayload } from './entities/user.entity'
 import { UserInput } from './dto/user.input'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { Action } from '@/ability/ability.factory'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Registration } from '@/submissions/registration/entities/registration.entity'
-import { RegistrationService } from '@/submissions/registration/registration.service'
+import { User, UserPayload } from './entities/user.entity'
+import { UserService } from './user.service'
 
 @Resolver(() => User)
 @UseGuards(JwtAuthGuard)

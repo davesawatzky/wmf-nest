@@ -117,7 +117,7 @@ describe('Community', () => {
           }
         `)
         .variables({
-          communityId: 10,
+          communityId: 3,
         })
         .expectNoErrors()
       expect(response.data.community.name).toBeTruthy()

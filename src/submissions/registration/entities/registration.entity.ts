@@ -1,12 +1,12 @@
+import { PerformerType, UserError } from '@/common.entity'
+import { Community } from '@/submissions/community/entities/community.entity'
+import { Group } from '@/submissions/group/entities/group.entity'
+import { Performer } from '@/submissions/performer/entities/performer.entity'
+import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity'
+import { School } from '@/submissions/school/entities/school.entity'
+import { User } from '@/user/entities/user.entity'
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
-import { PerformerType, UserError } from '@/common.entity'
-import { Performer } from '@/submissions/performer/entities/performer.entity'
-import { User } from '@/user/entities/user.entity'
-import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity'
-import { Group } from '@/submissions/group/entities/group.entity'
-import { Community } from '@/submissions/community/entities/community.entity'
-import { School } from '@/submissions/school/entities/school.entity'
 
 @ObjectType()
 export class Registration {

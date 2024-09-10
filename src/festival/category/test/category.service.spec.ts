@@ -5,8 +5,8 @@ import {
   expect,
   it,
 } from 'vitest'
-import { CategoryService } from '../category.service'
 import { PrismaService } from '../../../prisma/prisma.service'
+import { CategoryService } from '../category.service'
 import { CategoryInput } from '../dto/category.input'
 
 describe('categoryService', () => {

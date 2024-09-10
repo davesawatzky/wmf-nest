@@ -69,7 +69,6 @@ type CommunityGroup {
   id: Int!
   latestTime: String
   name: String
-  school: Community!
   unavailable: String
   wheelchairs: Int
 }

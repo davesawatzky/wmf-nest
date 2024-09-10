@@ -1,11 +1,11 @@
-import { Module } from '@nestjs/common'
-import { FestivalClassService } from './festival-class.service'
-import { FestivalClassResolver } from './festival-class.resolver'
-import { SubdisciplineModule } from '@/festival/subdiscipline/subdiscipline.module'
-import { LevelModule } from '@/festival/level/level.module'
+import { AbilityModule } from '@/ability/ability.module'
 import { CategoryModule } from '@/festival/category/category.module'
 import { ClassTypeModule } from '@/festival/class-type/class-type.module'
-import { AbilityModule } from '@/ability/ability.module'
+import { LevelModule } from '@/festival/level/level.module'
+import { SubdisciplineModule } from '@/festival/subdiscipline/subdiscipline.module'
+import { Module } from '@nestjs/common'
+import { FestivalClassResolver } from './festival-class.resolver'
+import { FestivalClassService } from './festival-class.service'
 
 @Module({
   providers: [FestivalClassResolver, FestivalClassService],

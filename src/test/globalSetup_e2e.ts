@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing'
 import { AuthService } from 'src/auth/auth.service'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { AppModule } from '../app.module'
-import { TestAdmin, TestUser } from './testUser'
+import { TestAdmin } from './testUser'
 
 export async function setup(): Promise<void> {
   const moduleRef = await Test.createTestingModule({

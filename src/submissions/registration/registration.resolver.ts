@@ -1,3 +1,23 @@
+import { CheckAbilities } from '@/ability/abilities.decorator'
+import { AbilitiesGuard } from '@/ability/abilities.guard'
+import { Action } from '@/ability/ability.factory'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
+import { PerformerType } from '@/common.entity'
+import { CommunityService } from '@/submissions/community/community.service'
+import { Community } from '@/submissions/community/entities/community.entity'
+import { Group } from '@/submissions/group/entities/group.entity'
+import { GroupService } from '@/submissions/group/group.service'
+import { Performer } from '@/submissions/performer/entities/performer.entity'
+import { PerformerService } from '@/submissions/performer/performer.service'
+import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity'
+import { RegisteredClassService } from '@/submissions/registered-class/registered-class.service'
+import { School } from '@/submissions/school/entities/school.entity'
+import { SchoolService } from '@/submissions/school/school.service'
+import { Teacher } from '@/submissions/teacher/entities/teacher.entity'
+import { TeacherService } from '@/submissions/teacher/teacher.service'
+import { User } from '@/user/entities/user.entity'
+import { UserService } from '@/user/user.service'
+import { UseGuards } from '@nestjs/common/decorators'
 import {
   Args,
   Context,
@@ -9,32 +29,12 @@ import {
   Resolver,
 } from '@nestjs/graphql'
 import { tbl_registration } from '@prisma/client'
-import { UseGuards } from '@nestjs/common/decorators'
 import { RegistrationInput } from './dto/registration.input'
 import {
   Registration,
   RegistrationPayload,
 } from './entities/registration.entity'
 import { RegistrationService } from './registration.service'
-import { PerformerService } from '@/submissions/performer/performer.service'
-import { RegisteredClassService } from '@/submissions/registered-class/registered-class.service'
-import { UserService } from '@/user/user.service'
-import { GroupService } from '@/submissions/group/group.service'
-import { TeacherService } from '@/submissions/teacher/teacher.service'
-import { CommunityService } from '@/submissions/community/community.service'
-import { SchoolService } from '@/submissions/school/school.service'
-import { PerformerType } from '@/common.entity'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { User } from '@/user/entities/user.entity'
-import { Performer } from '@/submissions/performer/entities/performer.entity'
-import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity'
-import { Group } from '@/submissions/group/entities/group.entity'
-import { Community } from '@/submissions/community/entities/community.entity'
-import { School } from '@/submissions/school/entities/school.entity'
-import { Teacher } from '@/submissions/teacher/entities/teacher.entity'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { Action } from '@/ability/ability.factory'
 
 @Resolver(() => Registration)
 @UseGuards(JwtAuthGuard)

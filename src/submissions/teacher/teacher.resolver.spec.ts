@@ -1,3 +1,5 @@
+import { PrismaService } from '@/prisma/prisma.service'
+import { RegistrationService } from '@/submissions/registration/registration.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   beforeEach,
@@ -7,8 +9,6 @@ import {
 } from 'vitest'
 import { TeacherResolver } from './teacher.resolver'
 import { TeacherService } from './teacher.service'
-import { RegistrationService } from '@/submissions/registration/registration.service'
-import { PrismaService } from '@/prisma/prisma.service'
 
 describe('teacherResolver', () => {
   let resolver: TeacherResolver

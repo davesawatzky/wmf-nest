@@ -1,6 +1,6 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { UserError } from '@/common.entity'
 import { School } from '@/submissions/school/entities/school.entity'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class SchoolGroup {

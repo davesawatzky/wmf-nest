@@ -1,15 +1,15 @@
-import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { tbl_reg_community, tbl_reg_communitygroup } from '@prisma/client'
-import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
-import { CommunityGroupService } from './community-group.service'
-import { CommunityGroup, CommunityGroupPayload } from './entities/community-group.entity'
-import { CommunityGroupInput } from './dto/community-group.input'
+import { CheckAbilities } from '@/ability/abilities.decorator'
+import { AbilitiesGuard } from '@/ability/abilities.guard'
+import { Action } from '@/ability/ability.factory'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { CommunityService } from '@/submissions/community/community.service'
 import { Community } from '@/submissions/community/entities/community.entity'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { Action } from '@/ability/ability.factory'
+import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { tbl_reg_community, tbl_reg_communitygroup } from '@prisma/client'
+import { CommunityGroupService } from './community-group.service'
+import { CommunityGroupInput } from './dto/community-group.input'
+import { CommunityGroup, CommunityGroupPayload } from './entities/community-group.entity'
 
 @Resolver(() => CommunityGroup)
 @UseGuards(JwtAuthGuard)
@@ -108,7 +108,7 @@ export class CommunityGroupResolver {
   @ResolveField(() => Community)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Community })
-  async school(@Parent() communityGroup: tbl_reg_communitygroup) {
+  async community(@Parent() communityGroup: tbl_reg_communitygroup) {
     const communityID = communityGroup.communityID
     return await this.communityService.findOne(undefined, communityID)
   }

@@ -1,7 +1,7 @@
+import { PrismaService } from '@/prisma/prisma.service'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { tbl_user } from '@prisma/client'
 import { TeacherInput } from './dto/teacher.input'
-import { PrismaService } from '@/prisma/prisma.service'
 
 @Injectable()
 export class TeacherService {
@@ -137,7 +137,6 @@ export class TeacherService {
         teacher: await this.prisma.tbl_user.delete({
           where: {
             id: teacherID,
-            AND: [{ privateTeacher: true } || { schoolTeacher: true }],
           },
         }),
       }

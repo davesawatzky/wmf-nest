@@ -1,9 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
-import { ConfigService } from '@nestjs/config'
-import VerificationTokenPayload from './verificationTokenPayload.interface'
 import { EmailService } from '@/email/email.service'
 import { UserService } from '@/user/user.service'
+import { BadRequestException, Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { JwtService } from '@nestjs/jwt'
+import VerificationTokenPayload from './verificationTokenPayload.interface'
 
 @Injectable()
 export class EmailConfirmationService {

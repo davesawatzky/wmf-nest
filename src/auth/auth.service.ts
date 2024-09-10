@@ -1,3 +1,4 @@
+import { PrismaService } from '@/prisma/prisma.service'
 import {
   BadRequestException,
   Injectable,
@@ -5,10 +6,9 @@ import {
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
 import { User } from '../user/entities/user.entity'
-import { AuthPayload } from './entities/auth.entity'
-import { CredentialsSignup } from './dto/credentials-signup.input'
 import { CredentialsSignin } from './dto/credentials-signin.input'
-import { PrismaService } from '@/prisma/prisma.service'
+import { CredentialsSignup } from './dto/credentials-signup.input'
+import { AuthPayload } from './entities/auth.entity'
 
 @Injectable()
 export class AuthService {

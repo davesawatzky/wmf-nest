@@ -1,8 +1,8 @@
+import { PerformerType } from '@/common.entity'
+import { PrismaService } from '@/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
 import { tbl_registration, tbl_user } from '@prisma/client'
 import { RegistrationInput } from './dto/registration.input'
-import { PrismaService } from '@/prisma/prisma.service'
-import { PerformerType } from '@/common.entity'
 
 @Injectable()
 export class RegistrationService {

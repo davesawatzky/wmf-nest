@@ -1,9 +1,9 @@
-import { Module, forwardRef } from '@nestjs/common'
-import { SchoolService } from './school.service'
-import { SchoolResolver } from './school.resolver'
-import { SchoolGroupModule } from '@/submissions/school-group/school-group.module'
-import { RegistrationModule } from '@/submissions/registration/registration.module'
 import { AbilityModule } from '@/ability/ability.module'
+import { RegistrationModule } from '@/submissions/registration/registration.module'
+import { SchoolGroupModule } from '@/submissions/school-group/school-group.module'
+import { forwardRef, Module } from '@nestjs/common'
+import { SchoolResolver } from './school.resolver'
+import { SchoolService } from './school.service'
 
 @Module({
   providers: [SchoolResolver, SchoolService],

@@ -1,10 +1,10 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { PerformerType, UserError } from '@/common.entity'
-import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity'
-import { Level } from '@/festival/level/entities/level.entity'
 import { Category } from '@/festival/category/entities/category.entity'
-import { Trophy } from '@/festival/trophy/entities/trophy.entity'
 import { ClassType } from '@/festival/class-type/entities/class-type.entity'
+import { Level } from '@/festival/level/entities/level.entity'
+import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity'
+import { Trophy } from '@/festival/trophy/entities/trophy.entity'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class FestivalClass {

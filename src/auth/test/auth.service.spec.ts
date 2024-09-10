@@ -1,19 +1,19 @@
+import { JwtService } from '@nestjs/jwt'
 import { Test, TestingModule } from '@nestjs/testing'
+import { User } from 'src/user/entities/user.entity'
 import {
   beforeEach,
   describe,
   expect,
   it,
 } from 'vitest'
-import { JwtService } from '@nestjs/jwt'
-import { User } from 'src/user/entities/user.entity'
-import { AuthService } from '../auth.service'
 import { PrismaService } from '../../prisma/prisma.service'
-import { CredentialsSignup } from '../dto/credentials-signup.input'
-import { CredentialsSignin } from '../dto/credentials-signin.input'
-import { userSignup } from '../stubs/signup'
 import { userStub } from '../../user/test/stubs/user.stub'
+import { AuthService } from '../auth.service'
+import { CredentialsSignin } from '../dto/credentials-signin.input'
+import { CredentialsSignup } from '../dto/credentials-signup.input'
 import { AuthPayload } from '../entities/auth.entity'
+import { userSignup } from '../stubs/signup'
 
 describe('authService', () => {
   let authService: AuthService

@@ -1,5 +1,5 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { UserError } from '@/common.entity'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class FieldConfig {

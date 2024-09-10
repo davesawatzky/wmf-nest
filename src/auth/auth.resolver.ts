@@ -1,4 +1,8 @@
 import {
+  UseGuards,
+} from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import {
   Args,
   Context,
   Int,
@@ -6,16 +10,12 @@ import {
   Query,
   Resolver,
 } from '@nestjs/graphql'
-import {
-  UseGuards,
-} from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
-import { User } from '../user/entities/user.entity'
 import { EmailConfirmationService } from '../email-confirmation/email-confirmation.service'
+import { User } from '../user/entities/user.entity'
 import { AuthService } from './auth.service'
-import { AuthPayload, PasswordExists } from './entities/auth.entity'
-import { CredentialsSignup } from './dto/credentials-signup.input'
 import { CredentialsSignin } from './dto/credentials-signin.input'
+import { CredentialsSignup } from './dto/credentials-signup.input'
+import { AuthPayload, PasswordExists } from './entities/auth.entity'
 import { GqlAuthGuard } from './gql-auth.guard'
 import { JwtAuthGuard } from './jwt-auth.guard'
 

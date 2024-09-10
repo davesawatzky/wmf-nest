@@ -1,8 +1,8 @@
+import { UserError } from '@/common.entity'
+import { PrismaService } from '@/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
 import { tbl_class_type } from '@prisma/client'
 import { ClassTypeInput } from './dto/class-type.input'
-import { PrismaService } from '@/prisma/prisma.service'
-import { UserError } from '@/common.entity'
 
 @Injectable()
 export class ClassTypeService {

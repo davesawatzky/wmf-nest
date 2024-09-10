@@ -1,3 +1,11 @@
+import { PrismaService } from '@/prisma/prisma.service'
+import { CommunityService } from '@/submissions/community/community.service'
+import { GroupService } from '@/submissions/group/group.service'
+import { PerformerService } from '@/submissions/performer/performer.service'
+import { RegisteredClassService } from '@/submissions/registered-class/registered-class.service'
+import { SchoolService } from '@/submissions/school/school.service'
+import { TeacherService } from '@/submissions/teacher/teacher.service'
+import { UserService } from '@/user/user.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   beforeEach,
@@ -7,14 +15,6 @@ import {
 } from 'vitest'
 import { RegistrationResolver } from '../registration.resolver'
 import { RegistrationService } from '../registration.service'
-import { PerformerService } from '@/submissions/performer/performer.service'
-import { UserService } from '@/user/user.service'
-import { RegisteredClassService } from '@/submissions/registered-class/registered-class.service'
-import { GroupService } from '@/submissions/group/group.service'
-import { CommunityService } from '@/submissions/community/community.service'
-import { SchoolService } from '@/submissions/school/school.service'
-import { TeacherService } from '@/submissions/teacher/teacher.service'
-import { PrismaService } from '@/prisma/prisma.service'
 
 describe('registrationResolver', () => {
   let resolver: RegistrationResolver
