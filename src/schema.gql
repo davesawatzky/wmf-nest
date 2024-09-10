@@ -51,7 +51,7 @@ type Community {
   communityGroups: [CommunityGroup!]
   email: String
   id: Int!
-  name: String!
+  name: String
   phone: String
   postalCode: String
   province: String
@@ -501,7 +501,7 @@ type School {
   city: String
   division: String
   id: Int!
-  name: String!
+  name: String
   phone: String
   postalCode: String
   province: String

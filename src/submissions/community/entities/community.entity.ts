@@ -8,7 +8,7 @@ export class Community {
   @Field(() => Int)
   id: number
 
-  name: string
+  name?: string
   streetNumber?: string
   streetName?: string
   city?: string

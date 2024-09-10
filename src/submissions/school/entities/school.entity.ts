@@ -8,7 +8,7 @@ export class School {
   @Field(() => Int)
   id: number
 
-  name: string
+  name?: string
   division?: string
   streetNumber?: string
   streetName?: string
