@@ -57,5 +57,6 @@
     "yaml",
     "toml",
     "astro",
-  ]
+  ],
+  "mjml.mailer": "nodemailer"
 }

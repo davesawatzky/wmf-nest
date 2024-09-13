@@ -1,8 +1,8 @@
 /* eslint-disable perfectionist/sort-imports */
 import { join } from 'node:path'
 import process from 'node:process'
-import { AbilityModule } from '@/ability/ability.module'
 import { AuthModule } from '@/auth/auth.module'
+import { AbilityModule } from '@/ability/ability.module'
 import { FieldConfigModule } from '@/submissions/field-config/field-config.module'
 import { EmailModule } from '@/email/email.module'
 import { EmailConfirmationModule } from '@/email-confirmation/email-confirmation.module'

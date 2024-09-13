@@ -11,6 +11,7 @@ import { LocalStrategy } from './local.strategy'
 
 @Module({
   providers: [AuthResolver, AuthService, LocalStrategy, JwtStrategy],
+  exports: [AuthService],
   imports: [
     PassportModule,
     EmailConfirmationModule,

@@ -37,27 +37,32 @@ export class EmailConfirmationService {
     })
   }
 
-  public sendPasswordResetLink(userName: string, email: string) {
-    const payload: VerificationTokenPayload = { email }
-    const token = this.jwtService.sign(payload, {
-      secret: this.configService.get('JWT_PASSWORD_RESET_TOKEN_SECRET'),
-      expiresIn: `${this.configService.get(
-        'JWT_PASSWORD_RESET_TOKEN_EXPIRATION_TIME',
-      )}s`,
-    })
-    const url = `${this.configService.get(
-      'PASSWORD_RESET_URL',
-    )}?token=${token}`
-    return this.emailService.sendMail({
-      from: this.configService.get('EMAIL_USER'),
-      to: email,
-      subject: 'WMF password reset',
-      template: './password-reset-template',
-      context: {
-        name: userName,
-        resetLink: url,
-      },
-    })
+  public sendPasswordResetLink(email: string) {
+    try {
+      const payload: VerificationTokenPayload = { email }
+      const token = this.jwtService.sign(payload, {
+        secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
+        expiresIn: `${this.configService.get(
+          'JWT_VERIFICATION_TOKEN_EXPIRATION_TIME',
+        )}s`,
+      })
+      const url = `${this.configService.get(
+        'PASSWORD_RESET_URL',
+      )}?token=${token}`
+      return this.emailService.sendMail({
+        from: this.configService.get('EMAIL_USER'),
+        to: email,
+        subject: 'WMF password reset',
+        template: './password-reset-template',
+        context: {
+          email,
+          resetLink: url,
+        },
+      })
+    }
+    catch (err) {
+      console.log(err)
+    }
   }
 
   public async confirmEmail(email: string) {
@@ -67,26 +72,22 @@ export class EmailConfirmationService {
     await this.userService.update(user.id, { emailConfirmed: true })
   }
 
-  public async decodeConfirmationToken(token: string) {
-    try {
-      const payload = await this.jwtService.verify(token, {
-        secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
-      })
-      if (typeof payload === 'object' && 'email' in payload)
-        return payload.email
-      throw new BadRequestException()
-    }
-    catch (error: any) {
-      if (error?.name === 'TokenExpiredError')
-        throw new BadRequestException('Email confirmation token expired')
-      throw new BadRequestException('Bad confirmation token')
-    }
-  }
-
   public async resendConfirmationLink(userName: string, userEmail: string) {
     const user = await this.userService.findOne(null, userEmail)
     if (user.emailConfirmed)
       throw new BadRequestException('Email already confirmed')
     await this.sendVerificationLink(userName, userEmail)
+  }
+
+  public async resendPasswordLink(userEmail: string) {
+    try {
+      const user = await this.userService.findOne(null, userEmail)
+      if (!user.passwordResetPending)
+        throw new BadRequestException('No pending password reset request')
+      await this.sendPasswordResetLink(userEmail)
+    }
+    catch (err) {
+      console.log(err)
+    }
   }
 }

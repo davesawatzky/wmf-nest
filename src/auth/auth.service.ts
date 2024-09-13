@@ -3,18 +3,20 @@ import {
   BadRequestException,
   Injectable,
 } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
 import { User } from '../user/entities/user.entity'
 import { CredentialsSignin } from './dto/credentials-signin.input'
 import { CredentialsSignup } from './dto/credentials-signup.input'
-import { AuthPayload } from './entities/auth.entity'
+import { AuthPayload, PasswordChangePayload } from './entities/auth.entity'
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   async signup(credentialsSignup: CredentialsSignup): Promise<AuthPayload> {
@@ -124,6 +126,23 @@ export class AuthService {
             {
               message:
                 'Account not confirmed.  Check email account for verification link',
+              field: [],
+            },
+          ],
+          diatonicToken: null,
+          user: {
+            email: signedInUser.email,
+            firstName: signedInUser.firstName,
+            lastName: signedInUser.lastName,
+          },
+        }
+      }
+      else if (!!signedInUser && signedInUser.passwordResetPending) {
+        return {
+          userErrors: [
+            {
+              message:
+                'Cannot sign in.  Password change pending',
               field: [],
             },
           ],
@@ -246,8 +265,71 @@ export class AuthService {
   }
 
   stripProperties(user) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userDetails } = user
     return userDetails
+  }
+
+  async setPasswordChangePending(id: User['id']) {
+    await this.prisma.tbl_user.update({
+      where: { id },
+      data: {
+        passwordResetPending: true,
+      },
+    })
+  }
+
+  async checkIfPasswordResetPending(id: User['id']) {
+    try {
+      const user = await this.prisma.tbl_user.findUnique({
+        where: { id },
+      })
+      if (user.passwordResetPending) {
+        return 'pending'
+      }
+    }
+    catch (err) {
+      console.log(err)
+      return 'error'
+    }
+  }
+
+  async passwordChange(email: string, password: string): Promise<PasswordChangePayload> {
+    try {
+      const hashedPassword = await bcrypt.hash(password, 15)
+      await this.prisma.tbl_user.update({
+        where: { email },
+        data: {
+          password: hashedPassword,
+          passwordResetPending: false,
+        },
+      })
+    }
+    catch (err) {
+      console.log(err)
+      return {
+        userErrors: [{
+          message: 'Could not change password',
+          field: [],
+        }],
+        passwordChanged: false,
+      }
+    }
+    return { userErrors: [], passwordChanged: true }
+  }
+
+  public async decodeConfirmationToken(token: string) {
+    try {
+      const payload = await this.jwtService.verify(token, {
+        secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
+      })
+      if (typeof payload === 'object' && 'email' in payload)
+        return payload.email
+      throw new BadRequestException()
+    }
+    catch (error: any) {
+      if (error?.name === 'TokenExpiredError')
+        throw new BadRequestException('Email confirmation token expired')
+      throw new BadRequestException('Bad confirmation token')
+    }
   }
 }

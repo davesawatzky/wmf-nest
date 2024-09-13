@@ -278,29 +278,30 @@ model tbl_trophy {
 }
 
 model tbl_user {
-  id               Int                @id @default(autoincrement())
-  email            String?            @unique @db.Text
-  password         String?            @db.Text
-  emailConfirmed   Boolean?           @map("email_confirmed") @db.Boolean @default(false)
-  staff            Boolean?           @default(false)
-  admin            Boolean?           @default(false)
-  privateTeacher   Boolean?           @map("private_teacher") @default(false)
-  schoolTeacher    Boolean?           @map("school_teacher") @default(false)
-  firstName        String?            @map("first_name") @db.Text
-  lastName         String?            @map("last_name") @db.Text
-  apartment        String?            @db.Text
-  streetNumber     String?            @map("street_number") @db.Text
-  streetName       String?            @map("street_name") @db.Text
-  city             String?            @db.Text
-  province         String?            @db.Text
-  postalCode       String?            @map("postal_code") @db.Text
-  phone            String?            @db.Text
-  instrument       String?            @db.Text
-  hasSignedIn      Boolean?           @default(false) @map("has_signed_in") @db.Boolean
-  updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamp(3)
-  RegistrationUser  tbl_registration[] @relation("UserRelation")
-  RegistrationTeacher  tbl_registration[] @relation("TeacherRelation")
+  id                    Int                @id @default(autoincrement())
+  email                 String?            @unique @db.Text
+  password              String?            @db.Text
+  passwordResetPending  Boolean?           @map("password_reset_pending") @db.Boolean @default(false)
+  emailConfirmed        Boolean?           @map("email_confirmed") @db.Boolean @default(false)
+  staff                 Boolean?           @default(false)
+  admin                 Boolean?           @default(false)
+  privateTeacher        Boolean?           @map("private_teacher") @default(false)
+  schoolTeacher         Boolean?           @map("school_teacher") @default(false)
+  firstName             String?            @map("first_name") @db.Text
+  lastName              String?            @map("last_name") @db.Text
+  apartment             String?            @db.Text
+  streetNumber          String?            @map("street_number") @db.Text
+  streetName            String?            @map("street_name") @db.Text
+  city                  String?            @db.Text
+  province              String?            @db.Text
+  postalCode            String?            @map("postal_code") @db.Text
+  phone                 String?            @db.Text
+  instrument            String?            @db.Text
+  hasSignedIn           Boolean?           @default(false) @map("has_signed_in") @db.Boolean
+  updatedAt             DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  createdAt             DateTime           @default(now()) @map("created_at") @db.Timestamp(3)
+  RegistrationUser      tbl_registration[] @relation("UserRelation")
+  RegistrationTeacher   tbl_registration[] @relation("TeacherRelation")
 }
 
 model tbl_reg_community {

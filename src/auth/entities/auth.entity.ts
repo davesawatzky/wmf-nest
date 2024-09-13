@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { IsEmail, IsJWT, IsOptional } from 'class-validator'
+import { IsBoolean, isBoolean, IsEmail, IsJWT, IsOptional } from 'class-validator'
 import { UserError } from '../../common.entity'
 import { User } from '../../user/entities/user.entity'
 
@@ -7,9 +7,11 @@ import { User } from '../../user/entities/user.entity'
 export class AuthPayload {
   userErrors: UserError[]
 
+  @IsOptional()
   @IsJWT()
   diatonicToken?: string
 
+  @IsOptional()
   @Field(() => User)
   user?: Partial<User>
 }
@@ -27,4 +29,12 @@ export class EmailExists {
   @IsOptional()
   @IsEmail()
   email?: string
+}
+
+@ObjectType()
+export class PasswordChangePayload {
+  userErrors: UserError[]
+
+  @IsBoolean()
+  passwordChanged: boolean
 }
