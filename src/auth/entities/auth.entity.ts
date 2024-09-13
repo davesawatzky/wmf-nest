@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { IsJWT } from 'class-validator'
+import { IsEmail, IsJWT, IsOptional } from 'class-validator'
 import { UserError } from '../../common.entity'
 import { User } from '../../user/entities/user.entity'
 
@@ -20,4 +20,11 @@ export class PasswordExists {
   id: number
 
   pass: boolean
+}
+
+@ObjectType()
+export class EmailExists {
+  @IsOptional()
+  @IsEmail()
+  email?: string
 }

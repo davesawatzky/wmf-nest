@@ -1,5 +1,5 @@
+import process from 'node:process'
 import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
 import { JwtModule } from '@nestjs/jwt/dist'
 import { PassportModule } from '@nestjs/passport/dist'
 import { EmailConfirmationModule } from '../email-confirmation/email-confirmation.module'
@@ -12,7 +12,6 @@ import { LocalStrategy } from './local.strategy'
 @Module({
   providers: [AuthResolver, AuthService, LocalStrategy, JwtStrategy],
   imports: [
-    ConfigModule,
     PassportModule,
     EmailConfirmationModule,
     UserModule,

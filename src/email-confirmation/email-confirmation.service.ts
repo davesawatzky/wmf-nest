@@ -22,13 +22,9 @@ export class EmailConfirmationService {
         'JWT_VERIFICATION_TOKEN_EXPIRATION_TIME',
       )}s`,
     })
-
     const url = `${this.configService.get(
       'EMAIL_CONFIRMATION_URL',
     )}?token=${token}`
-
-    // const text = `Welcome to the Winnipeg Music Festival Registration application.  To confirm your email address, click here: ${url}`
-
     return this.emailService.sendMail({
       from: this.configService.get('EMAIL_USER'),
       to: email,
@@ -41,11 +37,33 @@ export class EmailConfirmationService {
     })
   }
 
+  public sendPasswordResetLink(userName: string, email: string) {
+    const payload: VerificationTokenPayload = { email }
+    const token = this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_PASSWORD_RESET_TOKEN_SECRET'),
+      expiresIn: `${this.configService.get(
+        'JWT_PASSWORD_RESET_TOKEN_EXPIRATION_TIME',
+      )}s`,
+    })
+    const url = `${this.configService.get(
+      'PASSWORD_RESET_URL',
+    )}?token=${token}`
+    return this.emailService.sendMail({
+      from: this.configService.get('EMAIL_USER'),
+      to: email,
+      subject: 'WMF password reset',
+      template: './password-reset-template',
+      context: {
+        name: userName,
+        resetLink: url,
+      },
+    })
+  }
+
   public async confirmEmail(email: string) {
     const user = await this.userService.findOne(null, email)
     if (user.emailConfirmed)
       throw new BadRequestException('Email already confirmed')
-
     await this.userService.update(user.id, { emailConfirmed: true })
   }
 
@@ -56,13 +74,11 @@ export class EmailConfirmationService {
       })
       if (typeof payload === 'object' && 'email' in payload)
         return payload.email
-
       throw new BadRequestException()
     }
     catch (error: any) {
       if (error?.name === 'TokenExpiredError')
         throw new BadRequestException('Email confirmation token expired')
-
       throw new BadRequestException('Bad confirmation token')
     }
   }
@@ -71,7 +87,6 @@ export class EmailConfirmationService {
     const user = await this.userService.findOne(null, userEmail)
     if (user.emailConfirmed)
       throw new BadRequestException('Email already confirmed')
-
     await this.sendVerificationLink(userName, userEmail)
   }
 }

@@ -15,7 +15,7 @@ import { User } from '../user/entities/user.entity'
 import { AuthService } from './auth.service'
 import { CredentialsSignin } from './dto/credentials-signin.input'
 import { CredentialsSignup } from './dto/credentials-signup.input'
-import { AuthPayload, PasswordExists } from './entities/auth.entity'
+import { AuthPayload, EmailExists, PasswordExists } from './entities/auth.entity'
 import { GqlAuthGuard } from './gql-auth.guard'
 import { JwtAuthGuard } from './jwt-auth.guard'
 
@@ -41,6 +41,17 @@ export class AuthResolver {
       )
     }
     return { userErrors, user }
+  }
+
+  @Query(() => EmailExists)
+  async emailVerification(@Args('email', { type: () => String }) email: User['email']) {
+    const user = await this.authService.findOne(email)
+    if (user) {
+      const userName = `${user.firstName} ${user.lastName}`
+      await this.emailConfirmationService.sendPasswordResetLink(userName, user.email)
+      return { email: user.email }
+    }
+    return null
   }
 
   @Query(() => User || null)

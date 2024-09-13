@@ -183,7 +183,7 @@ export class AuthService {
         }
       }
       else {
-        throw new BadRequestException('No email given')
+        throw new BadRequestException('No email given.')
       }
     }
     catch (err) {

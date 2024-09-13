@@ -144,6 +144,10 @@ type DisciplinePayload {
   userErrors: [UserError!]!
 }
 
+type EmailExists {
+  email: String
+}
+
 type FestivalClass {
   category: Category!
   classNumber: String!
@@ -386,6 +390,7 @@ type Query {
   communityGroups(communityID: Int): [CommunityGroup!]!
   discipline(id: Int!): Discipline!
   disciplines(instrument: String, performerType: PerformerType): [Discipline!]!
+  emailVerification(email: String!): EmailExists!
   festivalClass(id: Int!): FestivalClass!
   festivalClassByNumber(festivalClassNumber: String!): FestivalClass!
   festivalClassSearch(festivalClassSearch: FestivalClassSearchArgs!): [FestivalClass!]!
