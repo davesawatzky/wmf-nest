@@ -1,31 +1,30 @@
-import { InputType, Field, Int, registerEnumType } from '@nestjs/graphql'
-import { Decimal } from '@prisma/client/runtime/library'
-import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
-import { Type, Transform } from 'class-transformer'
-import { PerformerType } from '../../../common.entity'
-import { IsInt, IsNumber } from 'class-validator'
-
-registerEnumType(PerformerType, {
-  name: 'PerformerType',
-  description: 'SOLO, GROUP, SCHOOL, COMMUNITY',
-})
+import { PerformerType } from '@/common.entity'
+import { Field, InputType, Int } from '@nestjs/graphql'
+import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator'
 
 @InputType()
 export class FestivalClassInput {
-  @IsInt()
-  @Field(() => Int)
-  classTypeID: number
+  @IsString()
+  @IsNotEmpty()
   classNumber: string
 
   @IsInt()
+  @Min(1)
+  @Field(() => Int)
+  classTypeID: number
+
+  @IsInt()
+  @Min(1)
   @Field(() => Int)
   subdisciplineID: number
 
   @IsInt()
+  @Min(1)
   @Field(() => Int)
   levelID: number
 
   @IsInt()
+  @Min(1)
   @Field(() => Int)
   categoryID: number
 
@@ -36,30 +35,37 @@ export class FestivalClassInput {
   @IsInt()
   @Field(() => Int)
   minSelections: number
+
+  @IsString()
+  @IsOptional()
   requiredSelection?: string
 
-  @Field(() => PerformerType)
+  @IsNotEmpty()
   performerType: PerformerType
 
-  @IsNumber()
-  @Field(() => GraphQLDecimal)
-  @Type(() => Object)
-  @Transform(transformToDecimal)
-  price?: Decimal
-  description?: string
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsOptional()
+  price?: number
+
+  @IsString()
+  @IsNotEmpty()
+  description: string
 }
 
 @InputType()
 export class FestivalClassSearchArgs {
   @IsInt()
+  @IsOptional()
   @Field(() => Int)
   subdisciplineID?: number
 
   @IsInt()
+  @IsOptional()
   @Field(() => Int)
   levelID?: number
 
   @IsInt()
+  @IsOptional()
   @Field(() => Int)
   categoryID?: number
 }

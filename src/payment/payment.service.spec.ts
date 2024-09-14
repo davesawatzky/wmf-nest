@@ -1,41 +1,62 @@
+import { StripeService } from '@/stripe/stripe.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
-  describe,
-  beforeAll,
   beforeEach,
-  afterAll,
-  test,
-  it,
+  describe,
   expect,
+  it,
 } from 'vitest'
 import { PaymentService } from './payment.service'
-import { StripeService } from 'src/stripe/stripe.service'
-import { StripeModule } from 'src/stripe/stripe.module'
-import { StripeModuleOptions } from 'src/stripe/stripeOptions.interface'
-import {
-  ConfigurableModuleClass,
-  MODULE_OPTIONS_TOKEN,
-} from 'src/stripe/stripe.module-definition'
 
-describe('PaymentService', () => {
-  let service: PaymentService
-  let config: StripeModuleOptions
+describe('paymentService', () => {
+  let paymentService: PaymentService
+  let stripeService: StripeService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [PaymentService, StripeService],
-      imports: [
-        StripeModule.forRootAsync({
-          useClass: ConfigurableModuleClass,
-          inject: [MODULE_OPTIONS_TOKEN],
-        }),
-      ],
+      providers: [PaymentService, {
+        provide: StripeService,
+        useValue: stripeService,
+      }],
+
+      // imports: [
+      //   StripeModule.forRootAsync({
+      //     useClass: ConfigurableModuleClass,
+      //     inject: [MODULE_OPTIONS_TOKEN],
+      //   }),
+      // ],
     }).compile()
 
-    service = await module.resolve<PaymentService>(PaymentService)
+    paymentService = await module.resolve<PaymentService>(PaymentService)
+    stripeService = await module.resolve<StripeService>(StripeService)
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
   })
 
   it('should be defined', () => {
-    expect(service).toBeDefined()
+    expect(paymentService).toBeDefined()
   })
+
+  // describe('Webhook', () => {
+  //   let req:RawBodyRequest<Request> = null
+  //   let signature = 'testing'
+  //   let endpointSecret = 'the code'
+
+  //   beforeEach(() => {
+  //     stripeService.stripe.webhooks.constructEvent = vi.fn().mockResolvedValue({
+  //       type: 'payment_intent.payment_failed',
+  //       data: {
+  //         object: 'payment object'
+  //       }
+  //     })
+  //   })
+
+  //   it('Should log different case depending on event object', async () => {
+  //     const result = paymentService.webhook(req, signature, endpointSecret)
+  //     expect(console.log).toBeCalledWith('Payment failed')
+
+  //   })
+  // })
 })

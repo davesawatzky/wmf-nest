@@ -1,44 +1,112 @@
 import {
-  Resolver,
-  Mutation,
+  UseGuards,
+} from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import {
   Args,
-  Int,
   Context,
+  Int,
+  Mutation,
   Query,
-  GqlExecutionContext,
-  GqlContextType,
+  Resolver,
 } from '@nestjs/graphql'
-import { AuthService } from './auth.service'
-import { AuthPayload, PasswordExists } from './entities/auth.entity'
-import { CredentialsSignup } from './dto/credentials-signup.input'
-import { CredentialsSignin } from './dto/credentials-signin.input'
+import { EmailConfirmationService } from '../email-confirmation/email-confirmation.service'
 import { User } from '../user/entities/user.entity'
-import { UseGuards, Res } from '@nestjs/common'
+import { AuthService } from './auth.service'
+import { CredentialsSignin } from './dto/credentials-signin.input'
+import { CredentialsSignup } from './dto/credentials-signup.input'
+import { PasswordChangeInput } from './dto/password-change.input'
+import { AuthPayload, EmailExists, PasswordChangePayload, PasswordExists } from './entities/auth.entity'
 import { GqlAuthGuard } from './gql-auth.guard'
 import { JwtAuthGuard } from './jwt-auth.guard'
-import { EmailConfirmationService } from '../email-confirmation/email-confirmation.service'
-import { ConfigService } from '@nestjs/config'
 
 @Resolver(() => User)
 export class AuthResolver {
   constructor(
     private readonly authService: AuthService,
     private readonly emailConfirmationService: EmailConfirmationService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
   ) {}
 
   @Mutation(() => AuthPayload)
   async signup(
     @Args('credentials') credentials: CredentialsSignup,
-    @Context('res') res: Response
+    @Context('res') res: Response,
   ): Promise<AuthPayload> {
     const { userErrors, user } = await this.authService.signup(credentials)
-    const userName = `${user.firstName} ${user.lastName}`
-    await this.emailConfirmationService.sendVerificationLink(
-      userName,
-      user.email
-    )
+    if (user) {
+      const userName = `${user.firstName} ${user.lastName}`
+      await this.emailConfirmationService.sendVerificationLink(
+        userName,
+        user.email,
+      )
+    }
     return { userErrors, user }
+  }
+
+  @Mutation(() => AuthPayload)
+  @UseGuards(GqlAuthGuard)
+  async signin(
+    @Args('credentials') credentials: CredentialsSignin,
+    @Context() context,
+  ): Promise<AuthPayload> {
+    const { userErrors, diatonicToken, user } = await this.authService.signin(
+      context.user,
+    )
+    if (diatonicToken) {
+      context.res.cookie('diatonicToken', diatonicToken, {
+        httpOnly: true,
+        sameSite: 'lax',
+        domain: this.configService.get('COOKIE_DOMAIN'),
+        path: '/',
+        maxAge: 1000 * 60 * 60 * 24, // 1 day
+      })
+    }
+    return { userErrors, diatonicToken, user }
+  }
+
+  @Query(() => EmailExists)
+  async passwordChangeEmailVerification(@Args('email', { type: () => String }) email: User['email']) {
+    const user = await this.authService.findOne(email)
+    if (user) {
+      await this.authService.setPasswordChangePending(user.id)
+      await this.emailConfirmationService.sendPasswordResetLink(user.email)
+      return { email: user.email }
+    }
+    return { email }
+  }
+
+  @Mutation(() => PasswordChangePayload)
+  async passwordChange(
+    @Args('passwordChangeInput') passwordChangeInput: PasswordChangeInput,
+  ): Promise<PasswordChangePayload> {
+    if (passwordChangeInput.password1 !== passwordChangeInput.password2) {
+      return {
+        userErrors: [{
+          message: 'Passwords do not match',
+          field: [],
+        }],
+        passwordChanged: false,
+      }
+    }
+    else {
+      const email = await this.authService.decodeConfirmationToken(
+        passwordChangeInput.resetToken,
+      )
+      if (email) {
+        const { userErrors, passwordChanged } = await this.authService.passwordChange(email, passwordChangeInput.password1)
+        return { userErrors, passwordChanged }
+      }
+      else {
+        return {
+          userErrors: [{
+            message: 'Could not change password',
+            field: [],
+          }],
+          passwordChanged: false,
+        }
+      }
+    }
   }
 
   @Query(() => User || null)
@@ -49,27 +117,6 @@ export class AuthResolver {
   @Query(() => PasswordExists)
   async checkIfPasswordExists(@Args('id', { type: () => Int }) id: User['id']) {
     return await this.authService.checkIfPasswordExists(id)
-  }
-
-  @Mutation(() => AuthPayload)
-  @UseGuards(GqlAuthGuard)
-  async signin(
-    @Args('credentials') credentials: CredentialsSignin,
-    @Context() context
-  ): Promise<AuthPayload> {
-    const { userErrors, diatonicToken, user } = await this.authService.signin(
-      context.user
-    )
-    if (!!diatonicToken) {
-      context.res.cookie('diatonicToken', diatonicToken, {
-        httpOnly: true,
-        sameSite: 'lax',
-        domain: this.configService.get('COOKIE_DOMAIN'),
-        path: '/',
-        maxAge: 1000 * 60 * 60 * 24, // 1 day
-      })
-    }
-    return { userErrors, diatonicToken, user }
   }
 
   @Query(() => Boolean)

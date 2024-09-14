@@ -1,11 +1,12 @@
-import { ObjectType, Field } from '@nestjs/graphql'
-import { UserError } from '../../../common.entity'
+import { UserError } from '@/common.entity'
+import { Field, ObjectType } from '@nestjs/graphql'
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
 
 @ObjectType()
 export class Submission {
   @Field(() => Date)
   submittedAt: Date
+
   confirmation: string
 
   @Field(() => GraphQLDecimal)

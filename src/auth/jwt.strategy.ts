@@ -1,10 +1,10 @@
-import { ExtractJwt, Strategy } from 'passport-jwt'
-import { Request as RequestType } from 'express'
-import { PassportStrategy } from '@nestjs/passport'
+import process from 'node:process'
 import { Injectable } from '@nestjs/common'
-import { AuthService } from './auth.service'
+import { PassportStrategy } from '@nestjs/passport'
+import { Request as RequestType } from 'express'
+import { ExtractJwt, Strategy } from 'passport-jwt'
 import { User } from '../user/entities/user.entity'
-import { JwtSecretRequestType } from '@nestjs/jwt'
+import { AuthService } from './auth.service'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -20,13 +20,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   private static extractJWTFromCookie(req: RequestType) {
-    if (req.cookies && 'diatonicToken' in req.cookies) {
+    if (req.cookies && 'diatonicToken' in req.cookies)
       return req.cookies.diatonicToken
-    }
+
     return null
   }
 
-  //payload = decoded JWT
+  // payload = decoded JWT
   async validate(payload: any): Promise<User> {
     const user = await this.authService.findAuthenticatedUser(payload.sub)
     return user

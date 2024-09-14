@@ -41,5 +41,9 @@ lerna-debug.log*
 # certs
 supacert.crt
 
-# sql files
+#SQL Seed Files
 /prisma/*.sql
+
+#Apollo Studio Key
+apollo.config.js
+

@@ -1,10 +1,12 @@
-import { Field, ObjectType, Int } from '@nestjs/graphql'
-import { UserError } from '../../../common.entity'
+import { UserError } from '@/common.entity'
+import { Registration } from '@/submissions/registration/entities/registration.entity'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class Group {
   @Field(() => Int)
   id: number
+
   name?: string
   groupType?: string
 
@@ -13,11 +15,13 @@ export class Group {
 
   @Field(() => Int)
   age?: number
+
   instruments?: string
+  registration?: Registration
 }
 
 @ObjectType()
 export class GroupPayload {
   userErrors: UserError[]
-  group: Group
+  group?: Group
 }

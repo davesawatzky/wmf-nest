@@ -1,8 +1,7 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
-import { FieldConfigService } from './field-config.service'
-import { FieldConfig } from './entities/field-config.entity'
-import { FieldConfigInput } from './dto/field-config.input'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { tbl_field_config } from '@prisma/client'
+import { FieldConfig } from './entities/field-config.entity'
+import { FieldConfigService } from './field-config.service'
 
 @Resolver(() => FieldConfig)
 export class FieldConfigResolver {
@@ -26,7 +25,7 @@ export class FieldConfigResolver {
     @Args('tableName', { type: () => String })
     tableName: tbl_field_config['tableName'],
     @Args('fieldName', { type: () => String })
-    fieldName: tbl_field_config['fieldName']
+    fieldName: tbl_field_config['fieldName'],
   ) {
     return this.fieldConfigService.findOne(tableName, fieldName)
   }

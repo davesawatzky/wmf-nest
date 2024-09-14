@@ -1,19 +1,21 @@
+import { PerformerType } from '@/common.entity'
+import { PrismaService } from '@/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
+import { tbl_registration, tbl_user } from '@prisma/client'
 import { RegistrationInput } from './dto/registration.input'
-import { PrismaService } from '../../prisma/prisma.service'
-import { PerformerType } from '../../common.entity'
-import { tbl_user, tbl_registration } from '@prisma/client'
 
 @Injectable()
 export class RegistrationService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+  ) {}
 
   async create(
     userID: tbl_registration['userID'],
     performerType: PerformerType,
-    label: tbl_registration['label']
+    label: tbl_registration['label'],
   ) {
-    label === '' ? 'Registration Form' : label
+    label === '' ? label = 'Registration Form' : label
     return {
       userErrors: [],
       registration: this.prisma.tbl_registration.create({
@@ -29,7 +31,7 @@ export class RegistrationService {
   async findAll(
     userID?: tbl_user['id'],
     performerType?: PerformerType,
-    teacherID?: tbl_user['id']
+    teacherID?: tbl_user['id'],
   ) {
     return await this.prisma.tbl_registration.findMany({
       where: { userID, performerType, teacherID },
@@ -44,7 +46,7 @@ export class RegistrationService {
 
   async update(
     registrationID: tbl_registration['id'],
-    registrationInput: Partial<RegistrationInput>
+    registrationInput: Partial<RegistrationInput>,
   ) {
     return {
       userErrors: [],

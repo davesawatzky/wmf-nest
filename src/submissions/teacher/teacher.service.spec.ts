@@ -1,17 +1,14 @@
+import { PrismaService } from '@/prisma/prisma.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
-  describe,
-  beforeAll,
   beforeEach,
-  afterAll,
-  test,
-  it,
+  describe,
   expect,
+  it,
 } from 'vitest'
 import { TeacherService } from './teacher.service'
-import { PrismaService } from 'src/prisma/prisma.service'
 
-describe('TeacherService', () => {
+describe('teacherService', () => {
   let service: TeacherService
 
   beforeEach(async () => {

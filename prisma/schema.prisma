@@ -9,11 +9,12 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // url = "postgresql://David:Dt159753@172.23.192.1:5432/wmftest"
 }
 
 model tbl_category {
   id               Int             @id @default(autoincrement())
-  name             String          @db.VarChar(100)
+  name             String          @unique @db.VarChar(100)
   description      String?         @db.Text
   requiredComposer String?         @map("required_composer") @db.Text
   tbl_classlist    tbl_classlist[]
@@ -52,18 +53,19 @@ model tbl_classlist {
   @@index([categoryID])
   @@index([levelID])
   @@index([subdisciplineID])
+  @@unique([subdisciplineID, categoryID, levelID])
 }
 
 model tbl_class_type {
   id            Int     @id @default(autoincrement())
-  name          String  @db.VarChar(100)
+  name          String  @db.VarChar(100) @unique
   description   String? @db.Text
   tbl_classlist tbl_classlist[]
 }
 
 model tbl_discipline {
   id                  Int                 @id @default(autoincrement())
-  name                String              @db.Text
+  name                String              @db.Text @unique
   tbl_subdiscipline   tbl_subdiscipline[]
   tbl_instruments     tbl_instruments[]
 }
@@ -85,31 +87,33 @@ model tbl_field_config {
 
 model tbl_level {
   id            Int             @id @default(autoincrement())
-  name          String          @db.Text
+  name          String          @db.Text @unique
   description   String?         @db.Text
   sortOrder     Int?            @map("sort_order")
   tbl_classlist tbl_classlist[]
 }
 
 model tbl_reg_classes {
-  id                  Int                  @id @default(autoincrement())
-  regID               Int
-  classType           String?              @db.Text @map("class_type")
-  classNumber         String?              @map("class_number") @db.VarChar(15)
-  discipline          String?              @db.Text
-  subdiscipline       String?              @db.Text
-  level               String?              @db.Text
-  category            String?              @db.Text
-  minSelections       Int?                 @map("min_selections") @db.SmallInt
-  maxSelections       Int?                 @map("max_selections") @db.SmallInt
-  numberOfSelections  Int?                 @map("number_of_selections") @db.SmallInt
-  schoolGroupID       Int?                 @map("school_groupID")
-  price               Decimal?             @db.Decimal(7, 2)
-  createdAt           DateTime             @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt           DateTime             @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  tbl_registration    tbl_registration     @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
-  tbl_reg_schoolgroup tbl_reg_schoolgroup? @relation(fields: [schoolGroupID], references: [id], onDelete: Cascade, onUpdate: Restrict)
-  tbl_reg_selection   tbl_reg_selection[]
+  id                     Int                     @id @default(autoincrement())
+  regID                  Int
+  classType              String?                 @db.Text @map("class_type")
+  classNumber            String?                 @map("class_number") @db.VarChar(15)
+  discipline             String?                 @db.Text
+  subdiscipline          String?                 @db.Text
+  level                  String?                 @db.Text
+  category               String?                 @db.Text
+  minSelections          Int?                    @map("min_selections") @db.SmallInt
+  maxSelections          Int?                    @map("max_selections") @db.SmallInt
+  numberOfSelections     Int?                    @map("number_of_selections") @db.SmallInt
+  schoolGroupID          Int?                    @map("school_groupID")
+  communityGroupID       Int?                    @map("community_groupID")
+  price                  Decimal?                @db.Decimal(7, 2)
+  createdAt              DateTime                @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt              DateTime                @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  tbl_registration       tbl_registration        @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  tbl_reg_schoolgroup    tbl_reg_schoolgroup?    @relation(fields: [schoolGroupID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  tbl_reg_communitygroup tbl_reg_communitygroup? @relation(fields: [communityGroupID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  tbl_reg_selection      tbl_reg_selection[]
 
   @@index([regID])
 }
@@ -254,7 +258,7 @@ model tbl_sacred {
 model tbl_subdiscipline {
   id             Int                        @id @default(autoincrement())
   disciplineID   Int
-  name           String                     @db.Text
+  name           String                     @db.Text @unique
   description    String?                    @db.Text
   maxPerformers  Int?                       @map("max_performers")
   minPerformers  Int?                       @map("min_performers")
@@ -268,58 +272,79 @@ model tbl_subdiscipline {
 
 model tbl_trophy {
   id               Int                @id @default(autoincrement())
-  name             String             @db.Text
+  name             String             @db.Text @unique
   description      String?            @db.Text
   tbl_class_trophy tbl_class_trophy[]
 }
 
 model tbl_user {
-  id               Int                @id @default(autoincrement())
-  email            String?            @unique @db.Text
-  password         String?            @db.Text
-  emailConfirmed   Boolean?           @map("email_confirmed") @db.Boolean @default(false)
-  staff            Boolean?           @default(false)
-  admin            Boolean?           @default(false)
-  privateTeacher   Boolean?           @map("private_teacher") @default(false)
-  schoolTeacher    Boolean?           @map("school_teacher") @default(false)
-  firstName        String?            @map("first_name") @db.Text
-  lastName         String?            @map("last_name") @db.Text
-  apartment        String?            @db.Text
-  streetNumber     String?            @map("street_number") @db.Text
-  streetName       String?            @map("street_name") @db.Text
-  city             String?            @db.Text
-  province         String?            @db.Text
-  postalCode       String?            @map("postal_code") @db.Text
-  phone            String?            @db.Text
-  instrument       String?            @db.Text
-  hasSignedIn      Boolean?           @default(false) @map("has_signed_in") @db.Boolean
-  updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamp(3)
-  RegistrationUser  tbl_registration[] @relation("UserRelation")
-  RegistrationTeacher  tbl_registration[] @relation("TeacherRelation")
+  id                    Int                @id @default(autoincrement())
+  email                 String?            @unique @db.Text
+  password              String?            @db.Text
+  passwordResetPending  Boolean?           @map("password_reset_pending") @db.Boolean @default(false)
+  emailConfirmed        Boolean?           @map("email_confirmed") @db.Boolean @default(false)
+  staff                 Boolean?           @default(false)
+  admin                 Boolean?           @default(false)
+  privateTeacher        Boolean?           @map("private_teacher") @default(false)
+  schoolTeacher         Boolean?           @map("school_teacher") @default(false)
+  firstName             String?            @map("first_name") @db.Text
+  lastName              String?            @map("last_name") @db.Text
+  apartment             String?            @db.Text
+  streetNumber          String?            @map("street_number") @db.Text
+  streetName            String?            @map("street_name") @db.Text
+  city                  String?            @db.Text
+  province              String?            @db.Text
+  postalCode            String?            @map("postal_code") @db.Text
+  phone                 String?            @db.Text
+  instrument            String?            @db.Text
+  hasSignedIn           Boolean?           @default(false) @map("has_signed_in") @db.Boolean
+  updatedAt             DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  createdAt             DateTime           @default(now()) @map("created_at") @db.Timestamp(3)
+  RegistrationUser      tbl_registration[] @relation("UserRelation")
+  RegistrationTeacher   tbl_registration[] @relation("TeacherRelation")
 }
 
 model tbl_reg_community {
-  id                 Int              @id @default(autoincrement())
-  regID              Int              @unique
-  name               String?          @db.Text
-  groupSize          Int?             @map("group_size")
-  chaperones         Int?
-  wheelchairs        Int?
-  earliestTime       String?          @map("earliest_time") @db.Text
-  latestTime         String?          @map("latest_time") @db.Text
-  unavailable        String?          @db.Text
-  conflictPerformers String?          @map("conflict_performers") @db.Text
-  createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt          DateTime         @default(now()) @map("updated_at") @db.Timestamp(3)
-  tbl_registration   tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  id                      Int         @id @default(autoincrement())
+  regID                   Int         @unique
+  name                    String?     @db.Text
+  streetNumber            String?     @map("street_number") @db.Text
+  streetName              String?     @map("street_name") @db.Text
+  city                    String?     @default("Winnipeg") @db.Text
+  province                String?     @default("MB") @db.Text
+  postalCode              String?     @map("postal_code") @db.Text
+  phone                   String?     @db.Text
+  email                   String?     @db.Text
+  createdAt               DateTime    @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt               DateTime    @default(now()) @map("updated_at") @db.Timestamp(3)
+  tbl_reg_communitygroup  tbl_reg_communitygroup[]
+  tbl_registration        tbl_registration @relation(fields: [regID], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
   @@index([regID])
 }
 
+model tbl_reg_communitygroup {
+  id                 Int               @id @default(autoincrement())
+  communityID        Int
+  name               String?           @db.Text
+  groupSize          Int?              @map("group_size")
+  chaperones         Int?
+  wheelchairs        Int?
+  earliestTime       String?           @map("earliest_time") @db.Text
+  latestTime         String?           @map("latest_time") @db.Text
+  unavailable        String?           @db.Text
+  conflictPerformers String?           @map("conflict_performers") @db.Text
+  createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt          DateTime          @default(now()) @map("updated_at") @db.Timestamp(3)
+  tbl_reg_community  tbl_reg_community @relation(fields: [communityID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  tbl_reg_classes    tbl_reg_classes[]
+
+  @@index([communityID])
+}
+
 model tbl_instruments {
   id              Int             @id @default(autoincrement())
-  name            String          @default("0") @db.Text
+  name            String          @db.Text @unique
   mozart          Boolean?        @default(false)
   disciplineID    Int?       
   tbl_discipline  tbl_discipline? @relation(fields: [disciplineID], references:[id], onDelete: Restrict, onUpdate: Restrict)

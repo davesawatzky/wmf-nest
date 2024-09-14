@@ -1,23 +1,26 @@
+import { CheckAbilities } from '@/ability/abilities.decorator'
+import { AbilitiesGuard } from '@/ability/abilities.guard'
+import { Action } from '@/ability/ability.factory'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
+import { PerformerType } from '@/common.entity'
+import { Instrument } from '@/festival/instrument/entities/instrument.entity'
+import { InstrumentService } from '@/festival/instrument/instrument.service'
+import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity'
+import { SubdisciplineService } from '@/festival/subdiscipline/subdiscipline.service'
+import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
 import {
-  Resolver,
-  Query,
-  Mutation,
   Args,
   Int,
+  Mutation,
   Parent,
+  Query,
   ResolveField,
+  Resolver,
 } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard'
-import { DisciplineService } from './discipline.service'
-import { Discipline, DisciplinePayload } from './entities/discipline.entity'
-import { SubdisciplineService } from '../subdiscipline/subdiscipline.service'
-import { DisciplineInput } from './dto/discipline.input'
-import { PerformerType } from '../../common.entity'
-import { InstrumentService } from '../instrument/instrument.service'
-import { Instrument } from '../instrument/entities/instrument.entity'
-import { Subdiscipline } from '../subdiscipline/entities/subdiscipline.entity'
 import { tbl_discipline } from '@prisma/client'
+import { DisciplineService } from './discipline.service'
+import { DisciplineInput } from './dto/discipline.input'
+import { Discipline, DisciplinePayload } from './entities/discipline.entity'
 
 @Resolver(() => Discipline)
 @UseGuards(JwtAuthGuard)
@@ -25,22 +28,26 @@ export class DisciplineResolver {
   constructor(
     private readonly disciplineService: DisciplineService,
     private readonly subdisciplineService: SubdisciplineService,
-    private readonly instrumentService: InstrumentService
+    private readonly instrumentService: InstrumentService,
   ) {}
 
   /** Queries */
 
   @Query(() => [Discipline])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Read, subject: Discipline })
   async disciplines(
     @Args('performerType', { type: () => PerformerType, nullable: true })
-    performerType: PerformerType,
+    performerType: PerformerType | null,
     @Args('instrument', { type: () => String, nullable: true })
-    instrument: Instrument['name']
+    instrument: Instrument['name'] | null,
   ) {
     return await this.disciplineService.findAll(performerType, instrument)
   }
 
   @Query(() => Discipline)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Read, subject: Discipline })
   async discipline(@Args('id', { type: () => Int }) id: Discipline['id']) {
     return await this.disciplineService.findOne(id)
   }
@@ -48,41 +55,72 @@ export class DisciplineResolver {
   /** Mutations */
 
   @Mutation(() => DisciplinePayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Create, subject: Discipline })
   async disciplineCreate(
-    @Args('disciplineInput') disciplineInput: DisciplineInput
+    @Args('disciplineInput') disciplineInput: DisciplineInput,
   ) {
-    return this.disciplineService.create(disciplineInput)
+    let response: DisciplinePayload
+    try {
+      response = await this.disciplineService.create(disciplineInput)
+    }
+    catch (error) {
+      throw new HttpException('Could not create discipline', HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+    return response
   }
 
   @Mutation(() => DisciplinePayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Update, subject: Discipline })
   async disciplineUpdate(
-    @Args('id', { type: () => Int }) id: Discipline['id'],
-    @Args('disciplineInput') disciplineInput: DisciplineInput
+    @Args('disciplineID', { type: () => Int }) disciplineID: Discipline['id'],
+    @Args('disciplineInput') disciplineInput: DisciplineInput,
   ) {
-    return await this.disciplineService.update(id, disciplineInput)
+    let response: DisciplinePayload
+    try {
+      response = await this.disciplineService.update(disciplineID, disciplineInput)
+    }
+    catch (error) {
+      throw new HttpException('Discipline to update not found', HttpStatus.BAD_REQUEST)
+    }
+    return response
   }
 
   @Mutation(() => DisciplinePayload)
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Delete, subject: Discipline })
   async disciplineDelete(
-    @Args('id', { type: () => Int }) id: Discipline['id']
+    @Args('disciplineID', { type: () => Int }) disciplineID: Discipline['id'],
   ) {
-    return await this.disciplineService.remove(id)
+    let response: DisciplinePayload
+    try {
+      response = await this.disciplineService.remove(disciplineID)
+    }
+    catch (error) {
+      throw new HttpException('Discipline to delete not found', HttpStatus.BAD_REQUEST)
+    }
+    return response
   }
 
   /**
    * Field Resolvers
    */
   @ResolveField(() => [Subdiscipline])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Read, subject: Subdiscipline })
   async subdisciplines(
     @Parent() discipline: Discipline,
     @Args('performerType', { type: () => PerformerType, nullable: true })
-    performerType: PerformerType
+    performerType: PerformerType | null,
   ) {
     const { id } = discipline
     return await this.subdisciplineService.findAll(id, performerType)
   }
 
   @ResolveField(() => [Instrument])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Read, subject: Instrument })
   async instruments(@Parent() { id }: tbl_discipline) {
     const disciplineID = id
     return await this.instrumentService.findAll(disciplineID)

@@ -1,35 +1,37 @@
-import { Module } from '@nestjs/common'
-import { GraphQLModule } from '@nestjs/graphql'
-import { join } from 'path'
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
+/* eslint-disable perfectionist/sort-imports */
+import { join } from 'node:path'
+import process from 'node:process'
+import { AuthModule } from '@/auth/auth.module'
+import { AbilityModule } from '@/ability/ability.module'
+import { FieldConfigModule } from '@/submissions/field-config/field-config.module'
+import { EmailModule } from '@/email/email.module'
+import { EmailConfirmationModule } from '@/email-confirmation/email-confirmation.module'
+import { FestivalClassModule } from '@/festival/festival-class/festival-class.module'
+import { ClassTypeModule } from '@/festival/class-type/class-type.module'
+import { DisciplineModule } from '@/festival/discipline/discipline.module'
+import { SubdisciplineModule } from '@/festival/subdiscipline/subdiscipline.module'
+import { CategoryModule } from '@/festival/category/category.module'
+import { LevelModule } from '@/festival/level/level.module'
+import { RegisteredClassModule } from '@/submissions/registered-class/registered-class.module'
+import { RegistrationModule } from '@/submissions/registration/registration.module'
+import { SelectionModule } from '@/submissions/selection/selection.module'
+import { InstrumentModule } from '@/festival/instrument/instrument.module'
+import { TrophyModule } from '@/festival/trophy/trophy.module'
+import { PaymentModule } from '@/payment/payment.module'
+import { PrismaModule } from '@/prisma/prisma.module'
+import { CommunityModule } from '@/submissions/community/community.module'
+import { CommunityGroupModule } from '@/submissions/community-group/community-group.module'
+import { GroupModule } from '@/submissions/group/group.module'
+import { PerformerModule } from '@/submissions/performer/performer.module'
+import { SchoolModule } from '@/submissions/school/school.module'
+import { SchoolGroupModule } from '@/submissions/school-group/school-group.module'
+import { TeacherModule } from '@/submissions/teacher/teacher.module'
+import { UserModule } from '@/user/user.module'
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default'
-import { PrismaModule } from './prisma/prisma.module'
-import { UserModule } from './user/user.module'
-import { RegistrationModule } from './submissions/registration/registration.module'
-import { FestivalClassModule } from './festival/festival-class/festival-class.module'
-import { CategoryModule } from './festival/category/category.module'
-import { CommunityModule } from './submissions/community/community.module'
-import { DisciplineModule } from './festival/discipline/discipline.module'
-import { InstrumentModule } from './festival/instrument/instrument.module'
-import { LevelModule } from './festival/level/level.module'
-import { PerformerModule } from './submissions/performer/performer.module'
-import { GroupModule } from './submissions/group/group.module'
-import { SchoolModule } from './submissions/school/school.module'
-import { SubdisciplineModule } from './festival/subdiscipline/subdiscipline.module'
-import { TrophyModule } from './festival/trophy/trophy.module'
-import { RegisteredClassModule } from './submissions/registered-class/registered-class.module'
-import { TeacherModule } from './submissions/teacher/teacher.module'
-import { SelectionModule } from './submissions/selection/selection.module'
-import { AuthModule } from './auth/auth.module'
-import { ConfigModule, ConfigService } from '@nestjs/config'
-import { AbilityModule } from './ability/ability.module'
-// import { SubmissionModule } from './submissions/submission/submission.module'
-import { SchoolGroupModule } from './submissions/school-group/school-group.module'
-import { FieldConfigModule } from './submissions/field-config/field-config.module'
-import { EmailModule } from './email/email.module'
-import { EmailConfirmationModule } from './email-confirmation/email-confirmation.module'
-import { PaymentModule } from './payment/payment.module'
-import { ClassTypeModule } from './festival/class-type/class-type.module'
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { GraphQLModule } from '@nestjs/graphql'
 import metadata from './metadata'
 
 @Module({
@@ -51,31 +53,32 @@ import metadata from './metadata'
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
     PrismaModule,
-    UserModule,
-    RegistrationModule,
+    AuthModule,
+    FieldConfigModule,
+    ClassTypeModule,
     FestivalClassModule,
-    CategoryModule,
-    CommunityModule,
     DisciplineModule,
-    InstrumentModule,
+    SubdisciplineModule,
+    CategoryModule,
     LevelModule,
+    RegisteredClassModule,
+    RegistrationModule,
+    SelectionModule,
+    CommunityModule,
+    CommunityGroupModule,
+    InstrumentModule,
     PerformerModule,
     GroupModule,
     SchoolModule,
-    SubdisciplineModule,
+    SchoolGroupModule,
     TrophyModule,
-    RegisteredClassModule,
+    UserModule,
     TeacherModule,
-    SelectionModule,
-    AuthModule,
     AbilityModule,
     // SubmissionModule,
-    SchoolGroupModule,
-    FieldConfigModule,
     EmailModule,
     EmailConfirmationModule,
     PaymentModule,
-    ClassTypeModule,
   ],
 })
 export class AppModule {}

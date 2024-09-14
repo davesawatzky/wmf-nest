@@ -1,7 +1,7 @@
+import { SelectionModule } from '@/submissions/selection/selection.module'
 import { Module } from '@nestjs/common'
-import { RegisteredClassService } from './registered-class.service'
 import { RegisteredClassResolver } from './registered-class.resolver'
-import { SelectionModule } from '../selection/selection.module'
+import { RegisteredClassService } from './registered-class.service'
 
 @Module({
   providers: [RegisteredClassResolver, RegisteredClassService],

@@ -1,15 +1,16 @@
-import { Module, forwardRef } from '@nestjs/common'
-import { DisciplineService } from './discipline.service'
+import { AbilityModule } from '@/ability/ability.module'
+import { InstrumentModule } from '@/festival/instrument/instrument.module'
+import { SubdisciplineModule } from '@/festival/subdiscipline/subdiscipline.module'
+import { forwardRef, Module } from '@nestjs/common'
 import { DisciplineResolver } from './discipline.resolver'
-import { SubdisciplineService } from '../subdiscipline/subdiscipline.service'
-import { SubdisciplineModule } from '../subdiscipline/subdiscipline.module'
-import { InstrumentModule } from '../instrument/instrument.module'
+import { DisciplineService } from './discipline.service'
 
 @Module({
   providers: [DisciplineResolver, DisciplineService],
   imports: [
     forwardRef(() => InstrumentModule),
     forwardRef(() => SubdisciplineModule),
+    AbilityModule,
   ],
   exports: [DisciplineService],
 })

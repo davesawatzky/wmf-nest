@@ -1,25 +1,19 @@
-import { Field, ObjectType, Int, registerEnumType } from '@nestjs/graphql'
-import { Decimal } from '@prisma/client/runtime/library'
-import { PerformerType, UserError } from '../../../common.entity'
-import { Subdiscipline } from '../../subdiscipline/entities/subdiscipline.entity'
-import { Level } from '../../level/entities/level.entity'
-import { Category } from '../../category/entities/category.entity'
-import { Trophy } from '../../trophy/entities/trophy.entity'
-import { ClassType } from '../../class-type/entities/class-type.entity'
-import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
-import { Type, Transform } from 'class-transformer'
-
-registerEnumType(PerformerType, {
-  name: 'PerformerType',
-})
+import { PerformerType, UserError } from '@/common.entity'
+import { Category } from '@/festival/category/entities/category.entity'
+import { ClassType } from '@/festival/class-type/entities/class-type.entity'
+import { Level } from '@/festival/level/entities/level.entity'
+import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity'
+import { Trophy } from '@/festival/trophy/entities/trophy.entity'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class FestivalClass {
   @Field(() => Int)
   id: number
 
-  classType: ClassType
   classNumber: string
+
+  classType: ClassType
   subdiscipline: Subdiscipline
   level: Level
   category: Category
@@ -27,17 +21,14 @@ export class FestivalClass {
   @Field(() => Int)
   maxSelections: number
 
-  @Field(() => Int)
+  @Field(type => Int)
   minSelections: number
+
   requiredSelection?: string
 
-  @Field(() => PerformerType)
   performerType: PerformerType
 
-  @Field(() => GraphQLDecimal)
-  @Type(() => Object)
-  @Transform(transformToDecimal)
-  price?: Decimal
+  price?: number
   description?: string
   trophies?: Trophy[]
 }

@@ -1,17 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import {
-  describe,
-  beforeAll,
   beforeEach,
-  afterAll,
-  test,
-  it,
+  describe,
   expect,
+  it,
 } from 'vitest'
+import { PrismaService } from '../../prisma/prisma.service'
 import { FieldConfigService } from './field-config.service'
-import { PrismaService } from 'src/prisma/prisma.service'
 
-describe('FieldConfigService', () => {
+describe('fieldConfigService', () => {
   let service: FieldConfigService
 
   beforeEach(async () => {

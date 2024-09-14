@@ -1,10 +1,11 @@
-import { Field, ObjectType, Int } from '@nestjs/graphql'
-import { UserError } from '../../../common.entity'
+import { UserError } from '@/common.entity'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class Selection {
   @Field(() => Int)
   id: number
+
   title?: string
   largerWork?: string
   movement?: string

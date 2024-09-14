@@ -1,21 +1,18 @@
-import { Field, ObjectType, Int, registerEnumType } from '@nestjs/graphql'
+import { PerformerType, UserError } from '@/common.entity'
+import { Community } from '@/submissions/community/entities/community.entity'
+import { Group } from '@/submissions/group/entities/group.entity'
+import { Performer } from '@/submissions/performer/entities/performer.entity'
+import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity'
+import { School } from '@/submissions/school/entities/school.entity'
+import { User } from '@/user/entities/user.entity'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
-import { UserError, PerformerType } from '../../../common.entity'
-import { Performer } from '../../performer/entities/performer.entity'
-import { User } from '../../../user/entities/user.entity'
-import { RegisteredClass } from '../../registered-class/entities/registered-class.entity'
-import { Group } from '../../group/entities/group.entity'
-import { Community } from '../../community/entities/community.entity'
-import { School } from '../../school/entities/school.entity'
-
-registerEnumType(PerformerType, {
-  name: 'PerformerType',
-})
 
 @ObjectType()
 export class Registration {
   @Field(() => Int)
   id: number
+
   label?: string
   user: User
   performers?: Performer[]
@@ -25,7 +22,6 @@ export class Registration {
   teacher?: User
   school?: School
 
-  @Field(() => PerformerType)
   performerType: PerformerType
 
   @Field(() => GraphQLDecimal)
@@ -33,6 +29,7 @@ export class Registration {
 
   @Field(() => GraphQLDecimal)
   payedAmt?: number
+
   transactionInfo?: string
   confirmation?: string
   submittedAt?: Date
@@ -43,5 +40,5 @@ export class Registration {
 @ObjectType()
 export class RegistrationPayload {
   userErrors: UserError[]
-  registration: Registration
+  registration?: Registration
 }

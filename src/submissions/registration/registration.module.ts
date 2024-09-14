@@ -1,13 +1,14 @@
-import { Module, forwardRef } from '@nestjs/common'
-import { RegistrationService } from './registration.service'
+import { AbilityModule } from '@/ability/ability.module'
+import { CommunityModule } from '@/submissions/community/community.module'
+import { GroupModule } from '@/submissions/group/group.module'
+import { PerformerModule } from '@/submissions/performer/performer.module'
+import { RegisteredClassModule } from '@/submissions/registered-class/registered-class.module'
+import { SchoolModule } from '@/submissions/school/school.module'
+import { TeacherModule } from '@/submissions/teacher/teacher.module'
+import { UserModule } from '@/user/user.module'
+import { forwardRef, Module } from '@nestjs/common'
 import { RegistrationResolver } from './registration.resolver'
-import { UserModule } from '../../user/user.module'
-import { PerformerModule } from '../performer/performer.module'
-import { RegisteredClassModule } from '../registered-class/registered-class.module'
-import { GroupModule } from '../group/group.module'
-import { CommunityModule } from '../community/community.module'
-import { TeacherModule } from '../teacher/teacher.module'
-import { SchoolModule } from '../school/school.module'
+import { RegistrationService } from './registration.service'
 
 @Module({
   providers: [RegistrationResolver, RegistrationService],
@@ -19,6 +20,7 @@ import { SchoolModule } from '../school/school.module'
     CommunityModule,
     forwardRef(() => TeacherModule),
     SchoolModule,
+    AbilityModule,
   ],
   exports: [RegistrationService],
 })

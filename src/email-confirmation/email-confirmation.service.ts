@@ -1,9 +1,9 @@
+import { EmailService } from '@/email/email.service'
+import { UserService } from '@/user/user.service'
 import { BadRequestException, Injectable } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
+import { JwtService } from '@nestjs/jwt'
 import VerificationTokenPayload from './verificationTokenPayload.interface'
-import { EmailService } from '../email/email.service'
-import { UserService } from '../user/user.service'
 
 @Injectable()
 export class EmailConfirmationService {
@@ -11,7 +11,7 @@ export class EmailConfirmationService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly emailService: EmailService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
   ) {}
 
   public sendVerificationLink(userName: string, email: string) {
@@ -19,16 +19,12 @@ export class EmailConfirmationService {
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
       expiresIn: `${this.configService.get(
-        'JWT_VERIFICATION_TOKEN_EXPIRATION_TIME'
+        'JWT_VERIFICATION_TOKEN_EXPIRATION_TIME',
       )}s`,
     })
-
     const url = `${this.configService.get(
-      'EMAIL_CONFIRMATION_URL'
+      'EMAIL_CONFIRMATION_URL',
     )}?token=${token}`
-
-    // const text = `Welcome to the Winnipeg Music Festival Registration application.  To confirm your email address, click here: ${url}`
-
     return this.emailService.sendMail({
       from: this.configService.get('EMAIL_USER'),
       to: email,
@@ -41,36 +37,57 @@ export class EmailConfirmationService {
     })
   }
 
-  public async confirmEmail(email: string) {
-    const user = await this.userService.findOne(null, email)
-    if (user.emailConfirmed) {
-      throw new BadRequestException('Email already confirmed')
+  public sendPasswordResetLink(email: string) {
+    try {
+      const payload: VerificationTokenPayload = { email }
+      const token = this.jwtService.sign(payload, {
+        secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
+        expiresIn: `${this.configService.get(
+          'JWT_VERIFICATION_TOKEN_EXPIRATION_TIME',
+        )}s`,
+      })
+      const url = `${this.configService.get(
+        'PASSWORD_RESET_URL',
+      )}?token=${token}`
+      return this.emailService.sendMail({
+        from: this.configService.get('EMAIL_USER'),
+        to: email,
+        subject: 'WMF password reset',
+        template: './password-reset-template',
+        context: {
+          email,
+          resetLink: url,
+        },
+      })
     }
-    await this.userService.update(user.id, { emailConfirmed: true })
+    catch (err) {
+      console.log(err)
+    }
   }
 
-  public async decodeConfirmationToken(token: string) {
-    try {
-      const payload = await this.jwtService.verify(token, {
-        secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
-      })
-      if (typeof payload === 'object' && 'email' in payload) {
-        return payload.email
-      }
-      throw new BadRequestException()
-    } catch (error: any) {
-      if (error?.name === 'TokenExpiredError') {
-        throw new BadRequestException('Email confirmation token expired')
-      }
-      throw new BadRequestException('Bad confirmation token')
-    }
+  public async confirmEmail(email: string) {
+    const user = await this.userService.findOne(null, email)
+    if (user.emailConfirmed)
+      throw new BadRequestException('Email already confirmed')
+    await this.userService.update(user.id, { emailConfirmed: true })
   }
 
   public async resendConfirmationLink(userName: string, userEmail: string) {
     const user = await this.userService.findOne(null, userEmail)
-    if (user.emailConfirmed) {
+    if (user.emailConfirmed)
       throw new BadRequestException('Email already confirmed')
-    }
     await this.sendVerificationLink(userName, userEmail)
+  }
+
+  public async resendPasswordLink(userEmail: string) {
+    try {
+      const user = await this.userService.findOne(null, userEmail)
+      if (!user.passwordResetPending)
+        throw new BadRequestException('No pending password reset request')
+      await this.sendPasswordResetLink(userEmail)
+    }
+    catch (err) {
+      console.log(err)
+    }
   }
 }

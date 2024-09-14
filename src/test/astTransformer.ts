@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line ts/no-require-imports
 const transformer = require('@nestjs/graphql/plugin')
 
 module.exports.name = 'nestjs-graphql-transformer'
@@ -10,6 +10,6 @@ module.exports.factory = (cs) => {
     {
       // @nestjs/graphql/plugin options (can be empty)
     },
-    cs.program // "cs.tsCompiler.program" for older versions of Jest (<= v27)
+    cs.program, // "cs.tsCompiler.program" for older versions of Jest (<= v27)
   )
 }

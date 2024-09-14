@@ -1,20 +1,48 @@
+import { UserError } from '@/common.entity'
+import { PrismaService } from '@/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
-import { tbl_registration, tbl_reg_group } from '@prisma/client'
+import { tbl_reg_group, tbl_registration } from '@prisma/client'
 import { GroupInput } from './dto/group.input'
-import { PrismaService } from '../../prisma/prisma.service'
 
 @Injectable()
 export class GroupService {
   constructor(private prisma: PrismaService) {}
 
   async create(registrationID: tbl_registration['id']) {
-    return {
-      userErrors: [],
-      group: await this.prisma.tbl_reg_group.create({
+    let group: tbl_reg_group
+    let userErrors: UserError[]
+
+    try {
+      userErrors = []
+      group = await this.prisma.tbl_reg_group.create({
         data: {
           regID: registrationID,
         },
-      }),
+      })
+    }
+    catch (error: any) {
+      if (error.code === 'P2003') {
+        userErrors = [
+          {
+            message: 'Cannot create group. Missing registration',
+            field: ['registrationId'],
+          },
+        ]
+        group = null
+      }
+      else {
+        userErrors = [
+          {
+            message: 'Cannot create group',
+            field: [],
+          },
+        ]
+        group = null
+      }
+    }
+    return {
+      userErrors,
+      group,
     }
   }
 
@@ -24,28 +52,87 @@ export class GroupService {
     })
   }
 
-  async findOne(registrationID: tbl_registration['id']) {
+  async findOne(
+    registrationID?: tbl_registration['id'],
+    groupID?: tbl_reg_group['id'],
+  ) {
     return await this.prisma.tbl_reg_group.findUnique({
-      where: { regID: registrationID },
+      where: {
+        regID: registrationID ?? undefined,
+        id: groupID ?? undefined,
+      },
     })
   }
 
   async update(groupID: tbl_reg_group['id'], groupInput: Partial<GroupInput>) {
-    return {
-      userErrors: [],
-      group: await this.prisma.tbl_reg_group.update({
+    let userErrors: UserError[]
+    let group: tbl_reg_group
+    try {
+      userErrors = []
+      group = await this.prisma.tbl_reg_group.update({
         where: { id: groupID },
         data: { ...groupInput },
-      }),
+      })
+    }
+    catch (error: any) {
+      if (error.code === 'P2025') {
+        userErrors = [
+          {
+            message: 'Group to update not found',
+            field: ['id'],
+          },
+        ]
+        group = null
+      }
+      else {
+        userErrors = [
+          {
+            message: 'Cannot update group',
+            field: [],
+          },
+        ]
+        group = null
+      }
+    }
+    return {
+      userErrors,
+      group,
     }
   }
 
   async remove(groupID: tbl_reg_group['id']) {
-    return {
-      userErrors: [],
-      group: await this.prisma.tbl_reg_group.delete({
+    let userErrors: UserError[]
+    let group: tbl_reg_group
+
+    try {
+      userErrors = []
+      group = await this.prisma.tbl_reg_group.delete({
         where: { id: groupID },
-      }),
+      })
+    }
+    catch (error: any) {
+      if (error.code === 'P2025') {
+        userErrors = [
+          {
+            message: 'Group to delete not found',
+            field: ['id'],
+          },
+        ]
+        group = null
+      }
+      else {
+        userErrors = [
+          {
+            message: 'Cannot delete group',
+            field: [],
+          },
+        ]
+        group = null
+      }
+    }
+    return {
+      userErrors,
+      group,
     }
   }
 }

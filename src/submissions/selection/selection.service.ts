@@ -1,7 +1,7 @@
+import { PrismaService } from '@/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
 import { tbl_reg_classes, tbl_reg_selection } from '@prisma/client'
 import { SelectionInput } from './dto/selection.input'
-import { PrismaService } from '../../prisma/prisma.service'
 
 @Injectable()
 export class SelectionService {
@@ -32,7 +32,7 @@ export class SelectionService {
 
   async update(
     selectionID: tbl_reg_selection['id'],
-    selectionInput: Partial<SelectionInput>
+    selectionInput: Partial<SelectionInput>,
   ) {
     return {
       userErrors: [],

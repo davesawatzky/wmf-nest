@@ -1,9 +1,12 @@
-import { InputType, Field, Int } from '@nestjs/graphql'
-import { IsInt } from 'class-validator'
+import { Field, InputType, Int } from '@nestjs/graphql'
+import { IsInt, IsString } from 'class-validator'
 
 @InputType()
 export class SchoolGroupInput {
+  @IsString()
   name?: string
+
+  @IsString()
   conflictPerformers?: string
 
   @IsInt()
@@ -17,7 +20,13 @@ export class SchoolGroupInput {
   @IsInt()
   @Field(() => Int)
   wheelchairs?: number
+
+  @IsString()
   earliestTime?: string
+
+  @IsString()
   latestTime?: string
+
+  @IsString()
   unavailable?: string
 }

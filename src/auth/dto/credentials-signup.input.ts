@@ -1,10 +1,11 @@
 import { InputType } from '@nestjs/graphql'
 import {
-  IsEmail,
-  IsStrongPassword,
-  IsString,
-  IsNotEmpty,
   IsBoolean,
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsStrongPassword,
 } from 'class-validator'
 
 @InputType()
@@ -32,5 +33,6 @@ export class CredentialsSignup {
   schoolTeacher: boolean
 
   @IsString()
+  @IsOptional()
   instrument?: string
 }

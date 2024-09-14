@@ -1,18 +1,15 @@
+import { PrismaService } from '@/prisma/prisma.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
-  describe,
-  beforeAll,
   beforeEach,
-  afterAll,
-  test,
-  it,
+  describe,
   expect,
+  it,
 } from 'vitest'
 import { SelectionResolver } from './selection.resolver'
 import { SelectionService } from './selection.service'
-import { PrismaService } from 'src/prisma/prisma.service'
 
-describe('SelectionResolver', () => {
+describe('selectionResolver', () => {
   let resolver: SelectionResolver
 
   beforeEach(async () => {

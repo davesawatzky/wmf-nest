@@ -1,23 +1,37 @@
-import { InputType, Field, Int } from '@nestjs/graphql'
-import { IsInt } from 'class-validator'
+import { InputType } from '@nestjs/graphql'
+import { IsEmail, IsOptional, IsPhoneNumber, IsPostalCode, IsString } from 'class-validator'
 
 @InputType()
 export class CommunityInput {
+  @IsString()
+  @IsOptional()
   name?: string
-  conflictPerformers?: string
 
-  @IsInt()
-  @Field(() => Int)
-  groupSize?: number
+  @IsString()
+  @IsOptional()
+  streetNumber?: string
 
-  @IsInt()
-  @Field(() => Int)
-  chaperones?: number
+  @IsString()
+  @IsOptional()
+  streetName?: string
 
-  @IsInt()
-  @Field(() => Int)
-  wheelchairs?: number
-  earliestTime?: string
-  latestTime?: string
-  unavailable?: string
+  @IsString()
+  @IsOptional()
+  city?: string
+
+  @IsString()
+  @IsOptional()
+  province?: string
+
+  @IsPostalCode('CA')
+  @IsOptional()
+  postalCode?: string
+
+  @IsPhoneNumber('CA')
+  @IsOptional()
+  phone?: string
+
+  @IsEmail()
+  @IsOptional()
+  email?: string
 }

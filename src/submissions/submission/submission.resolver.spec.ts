@@ -1,19 +1,16 @@
+import { PrismaService } from '@/prisma/prisma.service'
+import { RegistrationService } from '@/submissions/registration/registration.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
-  describe,
-  beforeAll,
   beforeEach,
-  afterAll,
-  test,
-  it,
+  describe,
   expect,
+  it,
 } from 'vitest'
 import { SubmissionResolver } from './submission.resolver'
 import { SubmissionService } from './submission.service'
-import { PrismaService } from 'src/prisma/prisma.service'
-import { RegistrationService } from '../registration/registration.service'
 
-describe('SubmissionResolver', () => {
+describe('submissionResolver', () => {
   let resolver: SubmissionResolver
 
   beforeEach(async () => {

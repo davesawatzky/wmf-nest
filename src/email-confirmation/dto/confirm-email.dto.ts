@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsJWT } from 'class-validator'
+import { IsNotEmpty, IsString } from 'class-validator'
 
 export class ConfirmationEmailDto {
   @IsString()

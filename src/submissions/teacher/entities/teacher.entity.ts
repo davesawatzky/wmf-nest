@@ -1,12 +1,13 @@
-import { Field, ObjectType, Int } from '@nestjs/graphql'
-import { UserError } from '../../../common.entity'
-import { User } from '../../../user/entities/user.entity'
-import { Registration } from '../../../submissions/registration/entities/registration.entity'
+import { UserError } from '@/common.entity'
+import { Registration } from '@/submissions/registration/entities/registration.entity'
+import { User } from '@/user/entities/user.entity'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class Teacher {
   @Field(() => Int)
   id: User['id']
+
   email?: User['email']
   privateTeacher?: User['privateTeacher']
   schoolTeacher?: User['schoolTeacher']

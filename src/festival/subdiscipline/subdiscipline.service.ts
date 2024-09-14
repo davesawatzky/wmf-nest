@@ -1,43 +1,64 @@
+import { PerformerType, UserError } from '@/common.entity'
+import { PrismaService } from '@/prisma/prisma.service'
+
 import { Injectable } from '@nestjs/common'
 import {
-  tbl_subdiscipline,
-  // tbl_category,
-  // tbl_level,
   tbl_discipline,
+  tbl_subdiscipline,
 } from '@prisma/client'
 import { SubdisciplineInput } from './dto/subdiscipline.input'
-import { PrismaService } from '../../prisma/prisma.service'
-import { PerformerType } from '../../common.entity'
-// import { CreateSubdisciplineInput } from './dto/create-subdiscipline.input'
-// import { UpdateSubdisciplineInput } from './dto/update-subdiscipline.input'
 
 @Injectable()
 export class SubdisciplineService {
   constructor(private prisma: PrismaService) {}
 
   async create(
-    disciplineID: tbl_discipline['id'],
-    subdisciplineInput: SubdisciplineInput
+    subdisciplineInput: SubdisciplineInput,
   ) {
-    return {
-      userErrors: [],
-      subdiscipline: await this.prisma.tbl_subdiscipline.create({
+    let subdiscipline: tbl_subdiscipline
+    let userErrors: UserError[]
+    try {
+      userErrors = []
+      subdiscipline = await this.prisma.tbl_subdiscipline.create({
         data: {
-          disciplineID: disciplineID,
           ...subdisciplineInput,
         },
-      }),
+      })
+    }
+    catch (error: any) {
+      if (error.code === 'P2002') {
+        userErrors = [
+          {
+            message: 'Subdiscipline already exists',
+            field: ['name'],
+          },
+        ]
+        subdiscipline = null
+      }
+      else {
+        userErrors = [
+          {
+            message: 'Cannot create subdiscipline',
+            field: [],
+          },
+        ]
+        subdiscipline = null
+      }
+    }
+    return {
+      userErrors,
+      subdiscipline,
     }
   }
 
   async findAll(
-    disciplineID?: tbl_discipline['id'],
-    performerType?: PerformerType
+    disciplineID?: tbl_discipline['id'] | null,
+    performerType?: PerformerType | null,
   ) {
     return await this.prisma.tbl_subdiscipline.findMany({
       where: {
-        performerType,
-        disciplineID,
+        performerType: performerType ?? undefined,
+        disciplineID: disciplineID ?? undefined,
       },
     })
   }
@@ -48,37 +69,77 @@ export class SubdisciplineService {
     })
   }
 
-  async findSubByName(name: tbl_subdiscipline['name']) {
-    return await this.prisma.tbl_subdiscipline.findMany({
-      where: { name },
-    })
-  }
-
-  // async findClasses(subdisciplineID: tbl_subdiscipline['id']) {
-  //   return this.prisma.tbl_classlist.findMany({
-  //     where: { subdisciplineID },
-  //   })
-  // }
-
   async update(
     id: tbl_subdiscipline['id'],
-    subdisciplineInput: SubdisciplineInput
+    subdisciplineInput: SubdisciplineInput,
   ) {
-    return {
-      userErrors: [],
-      subdiscipline: await this.prisma.tbl_subdiscipline.update({
+    let subdiscipline: tbl_subdiscipline
+    let userErrors: UserError[]
+    try {
+      userErrors = []
+      subdiscipline = await this.prisma.tbl_subdiscipline.update({
         where: { id },
         data: { ...subdisciplineInput },
-      }),
+      })
+    }
+    catch (error: any) {
+      if (error.code === 'P2025') {
+        userErrors = [
+          {
+            message: 'Subdiscipline details to update not found',
+            field: ['id'],
+          },
+        ]
+        subdiscipline = null
+      }
+      else {
+        userErrors = [
+          {
+            message: 'Cannot update subdiscipline',
+            field: [],
+          },
+        ]
+        subdiscipline = null
+      }
+    }
+    return {
+      userErrors,
+      subdiscipline,
     }
   }
 
   async remove(id: tbl_subdiscipline['id']) {
-    return {
-      userErrors: [],
-      subdiscipline: await this.prisma.tbl_subdiscipline.delete({
+    let subdiscipline: tbl_subdiscipline
+    let userErrors: UserError[]
+    try {
+      userErrors = []
+      subdiscipline = await this.prisma.tbl_subdiscipline.delete({
         where: { id },
-      }),
+      })
+    }
+    catch (error: any) {
+      if (error.code === 'P2025') {
+        userErrors = [
+          {
+            message: 'Subdiscipline details to delete not found',
+            field: ['id'],
+          },
+        ]
+        subdiscipline = null
+      }
+      else {
+        userErrors = [
+          {
+            message: 'Cannot delete subdiscipline',
+            field: [],
+          },
+        ]
+        subdiscipline = null
+      }
+    }
+    return {
+      userErrors,
+      subdiscipline,
     }
   }
 }

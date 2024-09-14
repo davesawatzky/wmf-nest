@@ -1,8 +1,8 @@
+import { PrismaService } from '@/prisma/prisma.service'
+import { Registration } from '@/submissions/registration/entities/registration.entity'
 import { Injectable } from '@nestjs/common'
-import { tbl_registration, tbl_reg_classes } from '@prisma/client'
+import { tbl_reg_classes, tbl_registration } from '@prisma/client'
 import { RegisteredClassInput } from './dto/registered-class.input'
-import { Registration } from '../registration/entities/registration.entity'
-import { PrismaService } from '../../prisma/prisma.service'
 
 @Injectable()
 export class RegisteredClassService {
@@ -10,7 +10,7 @@ export class RegisteredClassService {
 
   async create(
     registrationID: Registration['id'],
-    registeredClass: Partial<RegisteredClassInput>
+    registeredClass: Partial<RegisteredClassInput>,
   ) {
     return {
       userErrors: [],
@@ -34,10 +34,10 @@ export class RegisteredClassService {
 
   async update(
     registeredClassID: tbl_reg_classes['id'],
-    registeredClassInput: RegisteredClassInput
+    registeredClassInput: RegisteredClassInput,
   ) {
-    const classEntryExists: tbl_reg_classes | null =
-      await this.prisma.tbl_reg_classes.findUnique({
+    const classEntryExists: tbl_reg_classes | null
+      = await this.prisma.tbl_reg_classes.findUnique({
         where: {
           id: registeredClassID,
         },
@@ -62,8 +62,8 @@ export class RegisteredClassService {
   }
 
   async remove(registeredClassID: tbl_reg_classes['id']) {
-    const classEntryExists: tbl_reg_classes | null =
-      await this.prisma.tbl_reg_classes.findUnique({
+    const classEntryExists: tbl_reg_classes | null
+      = await this.prisma.tbl_reg_classes.findUnique({
         where: {
           id: registeredClassID,
         },
