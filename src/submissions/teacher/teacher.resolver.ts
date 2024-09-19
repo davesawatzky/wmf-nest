@@ -14,6 +14,7 @@ import {
   Resolver,
 } from '@nestjs/graphql'
 import { TeacherInput } from './dto/teacher.input'
+import { TeacherTypeInput } from './dto/teacherType.input'
 import { TeacherService } from './teacher.service'
 
 @Resolver(() => Teacher)
@@ -28,12 +29,9 @@ export class TeacherResolver {
 
   @Query(() => [Teacher])
   async teachers(
-    @Args('privateTeacher', { type: () => Boolean })
-    privateTeacher: Teacher['privateTeacher'],
-    @Args('schoolTeacher', { type: () => Boolean })
-    schoolTeacher: Teacher['schoolTeacher'],
+    @Args('teacherType', { type: () => String }) teacherType: TeacherTypeInput['teacherType'],
   ) {
-    return await this.teacherService.findAll(privateTeacher, schoolTeacher)
+    return await this.teacherService.findAll(teacherType)
   }
 
   @Query(() => Teacher)

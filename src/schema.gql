@@ -433,7 +433,7 @@ type Query {
   subdiscipline(subdisciplineID: Int!): Subdiscipline!
   subdisciplines(disciplineID: Int, performerType: PerformerType): [Subdiscipline!]!
   teacher(teacherEmail: String, teacherID: Int): Teacher!
-  teachers(privateTeacher: Boolean!, schoolTeacher: Boolean!): [Teacher!]!
+  teachers(teacherType: String!): [Teacher!]!
   tokenCheck: Boolean!
   trophies: [Trophy!]!
   trophy(id: Int!): Trophy!

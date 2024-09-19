@@ -2,6 +2,7 @@ import { PrismaService } from '@/prisma/prisma.service'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { tbl_user } from '@prisma/client'
 import { TeacherInput } from './dto/teacher.input'
+import { TeacherTypeInput } from './dto/teacherType.input'
 
 @Injectable()
 export class TeacherService {
@@ -38,15 +39,22 @@ export class TeacherService {
     }
   }
 
-  async findAll(privateTeacher: boolean, schoolTeacher: boolean) {
+  async findAll(teacherType: TeacherTypeInput['teacherType']) {
     try {
-      if (privateTeacher === true || schoolTeacher === true) {
-        const teachersData = await this.prisma.tbl_user.findMany({
-          where: {
-            OR: [{ privateTeacher }, { schoolTeacher }],
-          },
+      let teachersData = []
+      if (teacherType === 'privateTeacher') {
+        teachersData = await this.prisma.tbl_user.findMany({
+          where: { privateTeacher: true },
           orderBy: { lastName: 'asc' },
         })
+      }
+      else if (teacherType === 'schoolTeacher') {
+        teachersData = await this.prisma.tbl_user.findMany({
+          where: { schoolTeacher: true },
+          orderBy: { lastName: 'asc' },
+        })
+      }
+      if (teachersData) {
         const teachersFiltered = teachersData.map((obj) => {
           const {
             password,
@@ -58,6 +66,12 @@ export class TeacherService {
           } = obj
           return teacherProps
         })
+        const noTeacherIndex = teachersFiltered.findIndex(el => el.firstName === 'No' && el.lastName === 'Teacher')
+        if (noTeacherIndex !== -1) {
+          const noTeacher = teachersFiltered.splice(noTeacherIndex, 1)
+          teachersFiltered.unshift(noTeacher[0])
+        }
+        teachersFiltered.unshift({ id: 1, firstName: 'Unlisted', lastName: 'Teacher', instrument: '' })
         return teachersFiltered
       }
       else {
@@ -108,16 +122,6 @@ export class TeacherService {
         userErrors: [],
         teacher: await this.prisma.tbl_user.update({
           where: { id: teacherID },
-          // where: {
-          //   AND: [
-          //     {
-          //       id: { equals: teacherID },
-          //     },
-          //     {
-          //       OR: [{ privateTeacher: true }, { schoolTeacher: true }],
-          //     },
-          //   ],
-          // },
           data: { ...teacherInput },
         }),
       }
