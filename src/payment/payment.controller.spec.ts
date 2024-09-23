@@ -48,7 +48,7 @@ describe('paymentController', () => {
       body = {
         amount: 25.00,
         currency: 'cad',
-      },
+      }
       payment.createPaymentIntent = vi.fn().mockResolvedValue({
         client_secret: 'newClientSecret',
       })

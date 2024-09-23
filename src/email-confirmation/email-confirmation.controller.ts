@@ -7,10 +7,10 @@ import {
   Post,
   UseInterceptors,
 } from '@nestjs/common'
-import ConfirmEmailDto from './dto/confirm-email.dto'
 import { EmailConfirmationService } from './email-confirmation.service'
 import { AuthService } from '@/auth/auth.service'
 import { PasswordChangeResend } from './dto/password-change-resend.input'
+import ConfirmationEmailDto from './dto/confirm-email.dto'
 
 @Controller('email-confirmation')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -21,10 +21,12 @@ export class EmailConfirmationController {
   ) {}
 
   @Post('confirm')
-  async confirm(@Body() confirmationData: ConfirmEmailDto) {
+  async confirm(@Body() request: ConfirmationEmailDto) {
+    console.log(request)
     const email = await this.authService.decodeConfirmationToken(
-      confirmationData.token,
+      request.token,
     )
+    console.log(email)
     await this.emailConfirmationService.confirmEmail(email)
   }
 

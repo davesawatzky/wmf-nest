@@ -12,6 +12,10 @@ import {
 export class PerformerInput {
   @IsString()
   @IsOptional()
+  pronouns?: string
+
+  @IsString()
+  @IsOptional()
   firstName?: string
 
   @IsString()
@@ -66,4 +70,8 @@ export class PerformerInput {
   @IsString()
   @IsOptional()
   level?: string
+
+  @IsString()
+  @IsOptional()
+  unavailable?: string
 }

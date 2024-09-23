@@ -353,10 +353,12 @@ type Performer {
   otherClasses: String
   phone: String
   postalCode: String
+  pronouns: String
   province: String
   registration: Registration
   streetName: String
   streetNumber: String
+  unavailable: String
 }
 
 input PerformerInput {
@@ -371,9 +373,11 @@ input PerformerInput {
   otherClasses: String
   phone: String
   postalCode: String
+  pronouns: String
   province: String
   streetName: String
   streetNumber: String
+  unavailable: String
 }
 
 type PerformerPayload {

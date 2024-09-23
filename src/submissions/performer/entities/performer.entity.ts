@@ -7,6 +7,7 @@ export class Performer {
   @Field(() => Int)
   id: number
 
+  pronouns?: string
   firstName?: string
   lastName?: string
   apartment?: string
@@ -24,6 +25,7 @@ export class Performer {
   otherClasses?: string
   instrument?: string
   level?: string
+  unavailable?: string
   registration?: Registration
 }
 

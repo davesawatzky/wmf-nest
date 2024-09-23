@@ -137,6 +137,7 @@ model tbl_reg_group {
 model tbl_reg_performer {
   id               Int              @id @default(autoincrement())
   regID            Int
+  pronouns         String?          @db.Text
   lastName         String?          @map("last_name") @db.Text
   firstName        String?          @map("first_name") @db.Text
   apartment        String?          @db.Text
@@ -150,6 +151,7 @@ model tbl_reg_performer {
   age              Int?             @db.SmallInt
   instrument       String?          @db.Text
   level            String?          @db.Text
+  unavailable      String?          @db.Text
   otherClasses     String?          @map("other_classes") @db.Text
   createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)

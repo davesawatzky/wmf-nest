@@ -1,8 +1,10 @@
+import { hrtime } from 'node:process'
 import { Performer } from '../entities/performer.entity'
 
 export function performerStub(): Performer {
   return {
     id: 1,
+    pronouns: 'he/him',
     firstName: 'John',
     lastName: 'Malkovich',
     age: 18,
@@ -15,6 +17,7 @@ export function performerStub(): Performer {
     email: 'performer@test.com',
     instrument: 'clarinet',
     level: '8th level',
+    unavailable: null,
     otherClasses: null,
     phone: '(204) 243-6875',
   }

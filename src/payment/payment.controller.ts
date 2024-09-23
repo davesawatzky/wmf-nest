@@ -1,11 +1,12 @@
+import { RestJwtAuthGuard } from '@/auth/jwt-auth.guard'
 import {
   Body,
-
   Controller,
   Headers,
   Post,
   RawBodyRequest,
   Req,
+  UseGuards,
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PaymentCreateDto } from './dto/payment.dto'
@@ -19,15 +20,26 @@ export class PaymentController {
     private readonly configService: ConfigService,
   ) {}
 
-  @Post('create-payment-intent')
-  async createPaymentIntent(@Body() body: PaymentCreateDto) {
-    const calculateOrderAmount = body.amount
+  @Post('/summarize-payment')
+  // @UseGuards(RestJwtAuthGuard)
+  async summarizePayment(@Body() body) {
+    const { regId, tokenId } = body
+    const paymentDetails = await this.paymentService.summarizePayment(regId, tokenId)
+    return paymentDetails
+  }
 
+  @Post('create-payment-intent')
+  @UseGuards(RestJwtAuthGuard)
+  async createPaymentIntent(@Body() body: PaymentCreateDto) {
     const paymentIntent = await this.paymentService.createPaymentIntent(
-      calculateOrderAmount,
-      'cad',
+      body.amount,
+      body.currency,
+      body.confirm,
     )
-    return { clientSecret: paymentIntent.client_secret }
+    console.log(paymentIntent)
+    return {
+      clientSecret: paymentIntent.client_secret,
+    }
   }
 
   @Post('webhook')

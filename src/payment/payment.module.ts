@@ -1,4 +1,5 @@
 import { StripeModule } from '@/stripe/stripe.module'
+import {RegistrationModule} from '@/submissions/registration/registration.module'
 import { Module } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PaymentController } from './payment.controller'
@@ -8,6 +9,7 @@ import { PaymentService } from './payment.service'
   controllers: [PaymentController],
   providers: [PaymentModule, PaymentService],
   imports: [
+    RegistrationModule,
     StripeModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({

@@ -1,15 +1,50 @@
 import { StripeService } from '@/stripe/stripe.service'
+import { RegistrationService } from '@/submissions/registration/registration.service'
 import { HttpException, Injectable, RawBodyRequest } from '@nestjs/common'
 
 @Injectable()
 export class PaymentService {
-  constructor(private readonly stripeService: StripeService) {}
+  constructor(
+    private readonly stripeService: StripeService,
+    private readonly registrationService: RegistrationService,
+  ) {}
 
-  async createPaymentIntent(amount: number, currency: string) {
+  async createPaymentIntent(regID: number, currency: string, confirm: boolean) {
+    const { totalAmt } = await this.registrationService.findOne(regID)
+    const amount: number = Math.round(+totalAmt * 100)
     return await this.stripeService.stripe.paymentIntents.create({
       amount,
-      currency,
+      currency: 'cad',
+      confirm,
     })
+  }
+
+  async summarizePayment(regID: number, tokenId: any) {
+    const { totalAmt } = await this.registrationService.findOne(regID)
+    const confirmationToken = await this.stripeService.stripe.confirmationTokens.retrieve(tokenId)
+    const { amount, stripeFee, totalAmount } = this.findPaymentDetails(Number(totalAmt), confirmationToken)
+    return { amount, stripeFee, totalAmount, confirmationToken }
+  }
+
+  private findPaymentDetails(amount: number, token: any): { amount: number, stripeFee: string, totalAmount: number } {
+    const domesticFeePercent: number = 0.029
+    const internationalFeePercent: number = 0.008
+    const transactionFee: number = 0.3
+
+    const country: string = token.payment_method_preview.card.country
+    let stripeFee: string
+    if (country === 'CA') {
+      stripeFee = (
+        Number(amount + transactionFee) / (1 - domesticFeePercent) - amount
+      ).toFixed(2)
+    }
+    else {
+      stripeFee = (
+        Number(amount + transactionFee) / (1 - (domesticFeePercent + internationalFeePercent)) - amount
+      ).toFixed(2)
+    }
+    const totalAmount = amount + Number(stripeFee)
+    return { amount, stripeFee, totalAmount }
   }
 
   async webhook(
