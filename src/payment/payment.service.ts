@@ -9,17 +9,20 @@ export class PaymentService {
     private readonly registrationService: RegistrationService,
   ) {}
 
-  async createPaymentIntent(regID: number, currency: string, confirm: boolean) {
+  async createPaymentIntent(regID: number, WMFconfirmationId: string, tokenId: string) {
     const { totalAmt } = await this.registrationService.findOne(regID)
-    const amount: number = Math.round(+totalAmt * 100)
+    const confirmationToken = await this.stripeService.stripe.confirmationTokens.retrieve(tokenId)
+    const { totalAmount } = this.findPaymentDetails(Number(totalAmt), confirmationToken)
     return await this.stripeService.stripe.paymentIntents.create({
-      amount,
+      amount: Math.round(totalAmount * 100),
       currency: 'cad',
-      confirm,
+      metadata: {
+        WMF_Confirmation_ID: WMFconfirmationId,
+      }
     })
   }
 
-  async summarizePayment(regID: number, tokenId: any) {
+  async summarizePayment(regID: number, tokenId: string) {
     const { totalAmt } = await this.registrationService.findOne(regID)
     const confirmationToken = await this.stripeService.stripe.confirmationTokens.retrieve(tokenId)
     const { amount, stripeFee, totalAmount } = this.findPaymentDetails(Number(totalAmt), confirmationToken)

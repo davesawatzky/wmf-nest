@@ -29,16 +29,14 @@ export class PaymentController {
   }
 
   @Post('create-payment-intent')
-  @UseGuards(RestJwtAuthGuard)
-  async createPaymentIntent(@Body() body: PaymentCreateDto) {
-    const paymentIntent = await this.paymentService.createPaymentIntent(
-      body.amount,
-      body.currency,
-      body.confirm,
-    )
+  // @UseGuards(RestJwtAuthGuard)
+  async createPaymentIntent(@Body() body) {
+    const { regId, WMFconfirmationId, tokenId } = body
+    const paymentIntent = await this.paymentService.createPaymentIntent(regId, WMFconfirmationId, tokenId)
     console.log(paymentIntent)
     return {
-      clientSecret: paymentIntent.client_secret,
+      totalPayment: paymentIntent.amount,
+      client_secret: paymentIntent.client_secret,
     }
   }
 
