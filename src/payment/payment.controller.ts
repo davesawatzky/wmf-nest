@@ -33,7 +33,6 @@ export class PaymentController {
   async createPaymentIntent(@Body() body) {
     const { regId, WMFconfirmationId, tokenId } = body
     const paymentIntent = await this.paymentService.createPaymentIntent(regId, WMFconfirmationId, tokenId)
-    console.log(paymentIntent)
     return {
       totalPayment: paymentIntent.amount,
       client_secret: paymentIntent.client_secret,
