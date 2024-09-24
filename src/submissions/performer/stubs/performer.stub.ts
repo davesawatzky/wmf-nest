@@ -4,7 +4,7 @@ import { Performer } from '../entities/performer.entity'
 export function performerStub(): Performer {
   return {
     id: 1,
-    pronouns: 'he/him',
+    pronouns: 'He/Him',
     firstName: 'John',
     lastName: 'Malkovich',
     age: 18,

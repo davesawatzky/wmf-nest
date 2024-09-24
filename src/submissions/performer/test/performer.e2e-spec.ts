@@ -1,6 +1,6 @@
+import type { Performer } from '../entities/performer.entity'
 import gql from 'graphql-tag'
 import request from 'supertest-graphql'
-import type { Performer } from '../entities/performer.entity'
 
 describe('Performer', () => {
   let regId: number
@@ -34,6 +34,7 @@ describe('Performer', () => {
           query Performers{
             performers {
               id
+              pronouns
               firstName
               lastName
               age
@@ -42,6 +43,7 @@ describe('Performer', () => {
               email
               instrument
               level
+              unavailable
               otherClasses
               phone
               postalCode
@@ -170,7 +172,9 @@ describe('Performer', () => {
           },
         })
       }
-      catch (error) {}
+      catch (error) {
+        console.log(error)
+      }
     })
 
     it('Can create a performer', async () => {
