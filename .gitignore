@@ -47,3 +47,7 @@ supacert.crt
 #Apollo Studio Key
 apollo.config.js
 
+# DB data
+*.sql
+*.sh
+
