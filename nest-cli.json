@@ -9,7 +9,6 @@
         "swcrcPath": "./.swcrc"
       }
     },
-    "typeCheck": true,
     "assets": ["email/templates/**/*"],
     "watchAssets": true,
     "plugins": [
