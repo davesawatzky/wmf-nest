@@ -1,4 +1,5 @@
 import { UserError } from '@/common.entity'
+import { Order } from '@/submissions/orders/entities/order.entity'
 import { Registration } from '@/submissions/registration/entities/registration.entity'
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 
@@ -25,6 +26,7 @@ export class User {
   postalCode?: string
   phone?: string
   registrations?: Registration[]
+  orders?: Order[]
 }
 
 @ObjectType()

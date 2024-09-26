@@ -243,6 +243,33 @@ type InstrumentPayload {
   userErrors: [UserError!]!
 }
 
+type Item {
+  createdAt: DateTime
+  description: String
+  endDate: DateTime
+  id: Int!
+  name: String
+  notes: String
+  orderItems: [OrderItem!]
+  orders: [Order!]
+  price: Float
+  starDate: DateTime
+  taxable: Boolean
+  transferable: Boolean
+  updatedAt: DateTime
+}
+
+input ItemInput {
+  description: String
+  endDate: DateTime
+  name: String
+  notes: String
+  price: Float
+  starDate: DateTime
+  taxable: Boolean
+  transferable: Boolean
+}
+
 type Level {
   categories: [Category!]
   description: String
@@ -275,6 +302,9 @@ type Mutation {
   communityGroupDelete(communityGroupID: Int!): CommunityGroupPayload!
   communityGroupUpdate(communityGroupID: Int!, communityGroupInput: CommunityGroupInput!): CommunityGroupPayload!
   communityUpdate(communityID: Int!, communityInput: CommunityInput!): CommunityPayload!
+  createItem(createItemInput: ItemInput!): Item!
+  createOrder(orderInput: OrderInput!): Order!
+  createOrderItem(orderItemInput: OrderItemInput!): OrderItem!
   disciplineCreate(disciplineInput: DisciplineInput!): DisciplinePayload!
   disciplineDelete(disciplineID: Int!): DisciplinePayload!
   disciplineUpdate(disciplineID: Int!, disciplineInput: DisciplineInput!): DisciplinePayload!
@@ -300,6 +330,9 @@ type Mutation {
   registrationCreate(label: String!, performerType: PerformerType!): RegistrationPayload!
   registrationDelete(registrationID: Int!): RegistrationPayload!
   registrationUpdate(registrationID: Int!, registrationInput: RegistrationInput!): RegistrationPayload!
+  removeItem(id: Int!): Item!
+  removeOrder(id: Int!): Order!
+  removeOrderItem(id: Int!): OrderItem!
   schoolCreate(registrationID: Int!, schoolInput: SchoolInput): SchoolPayload!
   schoolDelete(schoolID: Int!): SchoolPayload!
   schoolGroupCreate(schoolGroupInput: SchoolGroupInput, schoolID: Int!): SchoolGroupPayload!
@@ -320,8 +353,51 @@ type Mutation {
   trophyCreate(trophyInput: TrophyInput!): TrophyPayload!
   trophyDelete(trophyID: Int!): TrophyPayload!
   trophyUpdate(trophyID: Int!, trophyInput: TrophyInput!): TrophyPayload!
+  updateItem(updateItemInput: ItemInput!): Item!
+  updateOrder(orderInput: OrderInput!): Order!
+  updateOrderItem(orderItemInput: OrderItemInput!): OrderItem!
   userDelete(userID: Int!): UserPayload!
   userUpdate(userID: Int!, userInput: UserInput!): UserPayload!
+}
+
+type Order {
+  createdAt: DateTime
+  deliveryDate: DateTime
+  id: Int!
+  items: [Item!]
+  methodDelivered: String
+  orderItems: [OrderItem!]
+  payedAmount: Float
+  purchaseDate: DateTime
+  totalAmount: Float
+  updatedAt: DateTime
+  user: User
+}
+
+input OrderInput {
+  deliveryDate: DateTime
+  methodDelivered: String
+  payedAmount: Float
+  purchaseDate: DateTime
+  totalAmount: Float
+}
+
+type OrderItem {
+  createdAt: DateTime
+  item: Item
+  itemID: Int!
+  nameOnItem: String
+  notes: String
+  order: Order
+  orderID: Int!
+  updatedAt: DateTime
+}
+
+input OrderItemInput {
+  itemID: Int!
+  nameOnItem: String
+  notes: String
+  orderID: Int!
 }
 
 input PasswordChangeInput {
@@ -416,11 +492,17 @@ type Query {
   groups(registrationID: Int): [Group!]!
   instrument(id: Int, name: String): Instrument!
   instruments(disciplineID: Int): [Instrument!]!
+  item(id: Int!): Item!
+  items: [Item!]!
   level(id: Int!): Level!
   levels(categoryID: Int, subdisciplineID: Int): [Level!]!
   logout: String!
   myStudents: Teacher!
   myUser: User!
+  order(id: Int!): Order!
+  orderItem(id: Int!): OrderItem!
+  orderItems: [OrderItem!]!
+  orders: [Order!]!
   passwordChangeEmailVerification(email: String!): EmailExists!
   performer(performerID: Int!): Performer!
   performers(registrationID: Int): [Performer!]!
@@ -472,7 +554,7 @@ input RegisteredClassInput {
   maxSelections: Int
   minSelections: Int
   numberOfSelections: Int
-  price: Decimal
+  price: Float
   schoolGroupID: Int
   subdiscipline: String
 }
@@ -489,14 +571,14 @@ type Registration {
   group: Group
   id: Int!
   label: String
-  payedAmt: Decimal
+  payedAmt: Float
   performerType: PerformerType!
   performers: [Performer!]
   registeredClasses: [RegisteredClass!]
   school: School
   submittedAt: DateTime
   teacher: User
-  totalAmt: Decimal
+  totalAmt: Float
   transactionInfo: String
   updatedAt: DateTime
   user: User!
@@ -505,11 +587,11 @@ type Registration {
 input RegistrationInput {
   confirmation: String
   label: String
-  payedAmt: Decimal
+  payedAmt: Float
   performerType: PerformerType
   submittedAt: DateTime
   teacherID: Int
-  totalAmt: Decimal
+  totalAmt: Float
   transactionInfo: String
 }
 
@@ -701,6 +783,7 @@ type User {
   id: Int!
   instrument: String
   lastName: String
+  orders: [Order!]
   phone: String
   postalCode: String
   privateTeacher: Boolean
