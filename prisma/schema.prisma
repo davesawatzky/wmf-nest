@@ -304,6 +304,7 @@ model tbl_user {
   createdAt             DateTime           @default(now()) @map("created_at") @db.Timestamp(3)
   RegistrationUser      tbl_registration[] @relation("UserRelation")
   RegistrationTeacher   tbl_registration[] @relation("TeacherRelation")
+  tbl_orders            tbl_orders[]
 }
 
 model tbl_reg_community {
@@ -350,6 +351,48 @@ model tbl_instruments {
   mozart          Boolean?        @default(false)
   disciplineID    Int?       
   tbl_discipline  tbl_discipline? @relation(fields: [disciplineID], references:[id], onDelete: Restrict, onUpdate: Restrict)
+}
+
+model tbl_orders {
+  id                Int            @id @default(autoincrement())
+  userID            Int       
+  totalAmount       Decimal?       @map("total_amount") @db.Decimal(10, 2)
+  payedAmount       Decimal?       @map("payed_amount") @db.Decimal(10, 2)
+  purchaseDate      DateTime?      @map("purchase_date") @db.Timestamp(3)
+  deliveryDate      DateTime?      @map("delivery_date") @db.Timestamp(3)
+  methodDelivered   String?        @map("method_delivered") @db.Text
+  updatedAt         DateTime       @default(now()) @map("updated_at") @db.Timestamp(3)
+  createdAt         DateTime       @default(now()) @map("created_at") @db.Timestamp(3)
+  tbl_user          tbl_user       @relation(fields: [userID], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  tbl_order_items   tbl_order_items[]
+}
+
+model tbl_order_items {
+  orderID        Int
+  itemID         Int
+  nameOnItem     String?        @map("name_on_item") @db.Text
+  notes          String?        @db.Text
+  updatedAt      DateTime       @default(now()) @map("updated_at") @db.Timestamp(3)
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamp(3)
+  tbl_orders     tbl_orders     @relation(fields: [orderID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  tbl_items      tbl_items      @relation(fields: [itemID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@id([orderID, itemID])
+}
+
+model tbl_items {
+  id               Int          @id @default(autoincrement())
+  name             String       @db.Text
+  description      String?      @db.Text
+  price            Decimal?     @db.Decimal(10,2)
+  taxable          Boolean?     @db.Boolean @default(false)
+  transferable     Boolean?     @db.Boolean @default(false)
+  startDate        DateTime?    @map("start_date") @db.Date
+  endDate          DateTime?    @map("end_date") @db.Date
+  notes            String?      @db.Text
+  updatedAt        DateTime     @default(now()) @map("updated_at") @db.Timestamp(3)
+  createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamp(3)
+  tbl_order_items  tbl_order_items[]
 }
 
 enum tbl_performer_type {
