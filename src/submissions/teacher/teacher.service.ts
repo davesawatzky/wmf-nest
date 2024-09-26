@@ -3,6 +3,7 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import { tbl_user } from '@prisma/client'
 import { TeacherInput } from './dto/teacher.input'
 import { TeacherTypeInput } from './dto/teacherType.input'
+import { Teacher } from './entities/teacher.entity'
 
 @Injectable()
 export class TeacherService {
@@ -84,7 +85,7 @@ export class TeacherService {
     }
   }
 
-  async findOne(teacherID?: tbl_user['id'], email?: tbl_user['email']) {
+  async findOne(teacherID?: tbl_user['id'], email?: tbl_user['email']): Promise<Teacher | null> {
     try {
       if (teacherID) {
         const teacher = await this.prisma.tbl_user.findUnique({
@@ -97,7 +98,7 @@ export class TeacherService {
           return teacherProps
         }
         else {
-          return { teacher: null }
+          return null
         }
       }
       else if (email) {
@@ -107,6 +108,9 @@ export class TeacherService {
         if (teacher) {
           const { password, staff, admin, ...teacherProps } = teacher
           return teacherProps
+        }
+        else {
+          return null
         }
       }
     }

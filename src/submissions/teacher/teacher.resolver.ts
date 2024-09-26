@@ -34,7 +34,7 @@ export class TeacherResolver {
     return await this.teacherService.findAll(teacherType)
   }
 
-  @Query(() => Teacher)
+  @Query(() => Teacher, { nullable: true })
   async teacher(
     @Args('teacherID', { type: () => Int, nullable: true })
     teacherID: Teacher['id'] | null,
