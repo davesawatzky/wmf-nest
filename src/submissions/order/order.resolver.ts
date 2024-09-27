@@ -8,7 +8,7 @@ import { UseGuards } from '@nestjs/common'
 import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { tbl_order } from '@prisma/client'
 import { OrderItem } from '../order-item/entities/order-item.entity'
-import {OrderItemService} from '../order-item/order-item.service'
+import { OrderItemService } from '../order-item/order-item.service'
 import { OrderInput } from './dto/order.input'
 import { Order, OrderPayload } from './entities/order.entity'
 import { OrderService } from './order.service'
@@ -19,8 +19,8 @@ export class OrderResolver {
   constructor(
     private readonly orderService: OrderService,
     private readonly orderItemService: OrderItemService,
-    private readonly userService: UserService
-) {}
+    private readonly userService: UserService,
+  ) {}
 
   // Queries
   @Query(() => [Order])
@@ -43,7 +43,7 @@ export class OrderResolver {
   @CheckAbilities({ action: Action.Create, subject: Order })
   async orderCreate(
     @Context() context,
-    @Args('orderInput') orderInput: Partial<OrderInput>,
+    @Args('orderInput', { type: () => OrderInput }) orderInput: Partial<OrderInput>,
   ) {
     return await this.orderService.create(context.req.user.id, orderInput)
   }
@@ -53,7 +53,7 @@ export class OrderResolver {
   @CheckAbilities({ action: Action.Update, subject: Order })
   async orderUpdate(
     @Args('orderID', { type: () => Int }) orderID: Order['id'],
-    @Args('orderInput') orderInput: Partial<OrderInput>,
+    @Args('orderInput', { type: () => OrderInput }) orderInput: Partial<OrderInput>,
   ) {
     return await this.orderService.update(orderID, orderInput)
   }

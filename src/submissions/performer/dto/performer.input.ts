@@ -1,5 +1,6 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
 import {
+  IsBoolean,
   IsEmail,
   IsInt,
   IsOptional,
@@ -74,4 +75,8 @@ export class PerformerInput {
   @IsString()
   @IsOptional()
   unavailable?: string
+
+  @IsBoolean()
+  @IsOptional()
+  photoPermission?: boolean
 }

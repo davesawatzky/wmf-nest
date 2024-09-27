@@ -25,6 +25,7 @@ export class OrderItem {
   item?: Item
 }
 
+@ObjectType()
 export class OrderItemPayload {
   userErrors: UserError[]
   orderItem?: OrderItem

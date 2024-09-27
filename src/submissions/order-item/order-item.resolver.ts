@@ -46,7 +46,7 @@ export class OrderItemResolver {
   @CheckAbilities({ action: Action.Read, subject: OrderItem })
   async orderItemCreate(
     @Args('orderID', { type: () => Int }) orderID: Order['id'],
-    @Args('orderItemInput') orderItemInput: OrderItemInput,
+    @Args('orderItemInput', { type: () => OrderItemInput }) orderItemInput: OrderItemInput,
   ) {
     return await this.orderItemsService.create(orderID, orderItemInput)
   }

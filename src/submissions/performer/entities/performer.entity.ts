@@ -26,6 +26,7 @@ export class Performer {
   instrument?: string
   level?: string
   unavailable?: string
+  photoPermission?: boolean
   registration?: Registration
 }
 

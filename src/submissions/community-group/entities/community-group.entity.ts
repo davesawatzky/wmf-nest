@@ -22,6 +22,7 @@ export class CommunityGroup {
   earliestTime?: string
   latestTime?: string
   unavailable?: string
+  photoPermission?: boolean
   community?: Community
 }
 
