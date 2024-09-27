@@ -11,7 +11,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { tbl_reg_classes, tbl_registration } from '@prisma/client'
+import { tbl_reg_class, tbl_registration } from '@prisma/client'
 import { RegisteredClassInput } from './dto/registered-class.input'
 import { RegisteredClass, RegisteredClassPayload } from './entities/registered-class.entity'
 import { RegisteredClassService } from './registered-class.service'
@@ -84,7 +84,7 @@ export class RegisteredClassResolver {
   /** Field Resolvers */
 
   @ResolveField(() => [Selection])
-  async selections(@Parent() registeredClass: tbl_reg_classes) {
+  async selections(@Parent() registeredClass: tbl_reg_class) {
     const { id }: { id: RegisteredClass['id'] } = registeredClass
     const registeredClassID = id
     return await this.selectionService.findAll(registeredClassID)

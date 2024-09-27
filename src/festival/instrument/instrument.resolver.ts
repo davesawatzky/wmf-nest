@@ -14,7 +14,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { tbl_instruments } from '@prisma/client'
+import { tbl_instrument } from '@prisma/client'
 import { InstrumentInput } from './dto/instrument.input'
 import { Instrument, InstrumentPayload } from './entities/instrument.entity'
 import { InstrumentService } from './instrument.service'
@@ -105,8 +105,8 @@ export class InstrumentResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Discipline })
   @UseGuards(JwtAuthGuard)
-  async discipline(@Parent() instrument: tbl_instruments) {
-    const { disciplineID }: { disciplineID: tbl_instruments['disciplineID'] }
+  async discipline(@Parent() instrument: tbl_instrument) {
+    const { disciplineID }: { disciplineID: tbl_instrument['disciplineID'] }
       = instrument
     return await this.disciplineService.findOne(disciplineID)
   }

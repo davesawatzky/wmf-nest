@@ -1,5 +1,5 @@
 import { UserError } from '@/common.entity'
-import { Order } from '@/submissions/orders/entities/order.entity'
+import { Order } from '@/submissions/order/entities/order.entity'
 import { Registration } from '@/submissions/registration/entities/registration.entity'
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 

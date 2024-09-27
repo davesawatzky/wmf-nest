@@ -1,13 +1,13 @@
 import { PrismaService } from '@/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
-import { tbl_reg_classes, tbl_reg_selection } from '@prisma/client'
+import { tbl_reg_class, tbl_reg_selection } from '@prisma/client'
 import { SelectionInput } from './dto/selection.input'
 
 @Injectable()
 export class SelectionService {
   constructor(private prisma: PrismaService) {}
 
-  async create(registeredClassID: tbl_reg_classes['id']) {
+  async create(registeredClassID: tbl_reg_class['id']) {
     return {
       userErrors: [],
       selection: await this.prisma.tbl_reg_selection.create({
@@ -18,7 +18,7 @@ export class SelectionService {
     }
   }
 
-  async findAll(registeredClassID?: tbl_reg_classes['id']) {
+  async findAll(registeredClassID?: tbl_reg_class['id']) {
     return await this.prisma.tbl_reg_selection.findMany({
       where: { classpickID: registeredClassID },
     })

@@ -33,9 +33,9 @@ describe('User', () => {
           }
         }`)
         .expectNoErrors()
-      expect(response.data.users[0].firstName).toBeTruthy()
-      expect(response.data.users[0].lastName).toBeTruthy()
-      expect(response.data.users[0].id).toBeTruthy()
+      expect(response.data.users[1].firstName).toBeTruthy()
+      expect(response.data.users[1].lastName).toBeTruthy()
+      expect(response.data.users[1].id).toBeTruthy()
     })
 
     it('Should return a list of users and associated registrations', async () => {
@@ -55,9 +55,9 @@ describe('User', () => {
           }
         }`)
         .expectNoErrors()
-      expect(response.data.users[0].firstName).toBeTruthy()
-      expect(response.data.users[0].lastName).toBeTruthy()
-      expect(response.data.users[0]).toHaveProperty('registrations')
+      expect(response.data.users[1].firstName).toBeTruthy()
+      expect(response.data.users[1].lastName).toBeTruthy()
+      expect(response.data.users[1]).toHaveProperty('registrations')
     })
   })
 

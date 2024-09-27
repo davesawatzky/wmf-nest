@@ -67,7 +67,7 @@ model tbl_discipline {
   id                  Int                 @id @default(autoincrement())
   name                String              @db.Text @unique
   tbl_subdiscipline   tbl_subdiscipline[]
-  tbl_instruments     tbl_instruments[]
+  tbl_instrument      tbl_instrument[]
 }
 
 model tbl_field_config {
@@ -93,7 +93,7 @@ model tbl_level {
   tbl_classlist tbl_classlist[]
 }
 
-model tbl_reg_classes {
+model tbl_reg_class {
   id                     Int                     @id @default(autoincrement())
   regID                  Int
   classType              String?                 @db.Text @map("class_type")
@@ -149,6 +149,7 @@ model tbl_reg_performer {
   phone            String?          @db.Text
   email            String?          @db.Text
   age              Int?             @db.SmallInt
+  photoPermission  Boolean?         @map("photo_permission") @db.Boolean @default(false)
   instrument       String?          @db.Text
   level            String?          @db.Text
   unavailable      String?          @db.Text
@@ -189,11 +190,12 @@ model tbl_reg_schoolgroup {
   earliestTime       String?           @map("earliest_time") @db.Text
   latestTime         String?           @map("latest_time") @db.Text
   unavailable        String?           @db.Text
+  photoPermission    Boolean?          @map("photo_permission") @db.Boolean @default(false)
   conflictPerformers String?           @map("conflict_performers") @db.Text
   createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt          DateTime          @default(now()) @map("updated_at") @db.Timestamp(3)
   tbl_reg_school     tbl_reg_school    @relation(fields: [schoolID], references: [id], onDelete: Cascade, onUpdate: Restrict)
-  tbl_reg_classes    tbl_reg_classes[]
+  tbl_reg_class      tbl_reg_class[]
 
   @@index([schoolID])
 }
@@ -208,7 +210,7 @@ model tbl_reg_selection {
   duration        String?         @db.Text
   createdAt       DateTime        @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt       DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  tbl_reg_classes tbl_reg_classes @relation(fields: [classpickID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  tbl_reg_class   tbl_reg_class   @relation(fields: [classpickID], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
   @@index([classpickID])
 }
@@ -240,7 +242,7 @@ model tbl_registration {
   updatedAt         DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   User              tbl_user?           @relation("UserRelation", fields: [userID], references: [id], onUpdate: Restrict)
   Teacher           tbl_user?           @relation("TeacherRelation", fields: [teacherID], references: [id], onUpdate: Restrict)
-  tbl_reg_classes   tbl_reg_classes[]
+  tbl_reg_class     tbl_reg_class[]
   tbl_reg_community tbl_reg_community?
   tbl_reg_group     tbl_reg_group?
   tbl_reg_performer tbl_reg_performer[]
@@ -304,7 +306,7 @@ model tbl_user {
   createdAt             DateTime           @default(now()) @map("created_at") @db.Timestamp(3)
   RegistrationUser      tbl_registration[] @relation("UserRelation")
   RegistrationTeacher   tbl_registration[] @relation("TeacherRelation")
-  tbl_orders            tbl_orders[]
+  tbl_order             tbl_order[]
 }
 
 model tbl_reg_community {
@@ -336,16 +338,17 @@ model tbl_reg_communitygroup {
   earliestTime       String?           @map("earliest_time") @db.Text
   latestTime         String?           @map("latest_time") @db.Text
   unavailable        String?           @db.Text
+  photoPermission    Boolean?          @map("photo_permission") @db.Boolean @default(false)
   conflictPerformers String?           @map("conflict_performers") @db.Text
   createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt          DateTime          @default(now()) @map("updated_at") @db.Timestamp(3)
   tbl_reg_community  tbl_reg_community @relation(fields: [communityID], references: [id], onDelete: Cascade, onUpdate: Restrict)
-  tbl_reg_classes    tbl_reg_classes[]
+  tbl_reg_class      tbl_reg_class[]
 
   @@index([communityID])
 }
 
-model tbl_instruments {
+model tbl_instrument {
   id              Int             @id @default(autoincrement())
   name            String          @db.Text @unique
   mozart          Boolean?        @default(false)
@@ -353,7 +356,7 @@ model tbl_instruments {
   tbl_discipline  tbl_discipline? @relation(fields: [disciplineID], references:[id], onDelete: Restrict, onUpdate: Restrict)
 }
 
-model tbl_orders {
+model tbl_order {
   id                Int            @id @default(autoincrement())
   userID            Int       
   totalAmount       Decimal?       @map("total_amount") @db.Decimal(10, 2)
@@ -364,25 +367,26 @@ model tbl_orders {
   updatedAt         DateTime       @default(now()) @map("updated_at") @db.Timestamp(3)
   createdAt         DateTime       @default(now()) @map("created_at") @db.Timestamp(3)
   tbl_user          tbl_user       @relation(fields: [userID], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  tbl_order_items   tbl_order_items[]
+  tbl_order_item    tbl_order_item[]
 }
 
-model tbl_order_items {
+model tbl_order_item {
   orderID        Int
   itemID         Int
-  nameOnItem     String?        @map("name_on_item") @db.Text
-  notes          String?        @db.Text
-  updatedAt      DateTime       @default(now()) @map("updated_at") @db.Timestamp(3)
-  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamp(3)
-  tbl_orders     tbl_orders     @relation(fields: [orderID], references: [id], onDelete: Cascade, onUpdate: Restrict)
-  tbl_items      tbl_items      @relation(fields: [itemID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  namesOnItems   String[]      @map("names_on_items") @db.Text
+  quantity       Int?          @default(1)
+  notes          String?       @db.Text
+  updatedAt      DateTime      @default(now()) @map("updated_at") @db.Timestamp(3)
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamp(3)
+  tbl_order      tbl_order     @relation(fields: [orderID], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  tbl_item       tbl_item      @relation(fields: [itemID], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
   @@id([orderID, itemID])
 }
 
-model tbl_items {
+model tbl_item {
   id               Int          @id @default(autoincrement())
-  name             String       @db.Text
+  name             String?      @db.Text
   description      String?      @db.Text
   price            Decimal?     @db.Decimal(10,2)
   taxable          Boolean?     @db.Boolean @default(false)
@@ -392,7 +396,7 @@ model tbl_items {
   notes            String?      @db.Text
   updatedAt        DateTime     @default(now()) @map("updated_at") @db.Timestamp(3)
   createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamp(3)
-  tbl_order_items  tbl_order_items[]
+  tbl_order_item   tbl_order_item[]
 }
 
 enum tbl_performer_type {

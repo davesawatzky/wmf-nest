@@ -33,9 +33,9 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
 import metadata from './metadata'
-import { OrdersModule } from './submissions/orders/orders.module'
-import { ItemsModule } from './festival/items/items.module'
-import { OrderItemsModule } from './submissions/order-items/order-items.module'
+import { OrderModule } from './submissions/order/order.module'
+import { ItemModule } from './festival/item/item.module'
+import { OrderItemModule } from './submissions/order-item/order-item.module'
 
 @Module({
   imports: [
@@ -82,9 +82,9 @@ import { OrderItemsModule } from './submissions/order-items/order-items.module'
     EmailModule,
     EmailConfirmationModule,
     PaymentModule,
-    OrdersModule,
-    ItemsModule,
-    OrderItemsModule,
+    ItemModule,
+    OrderModule,
+    OrderItemModule,
   ],
 })
 export class AppModule {}

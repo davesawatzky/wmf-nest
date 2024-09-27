@@ -3,6 +3,7 @@ import { ClassType } from '@/festival/class-type/entities/class-type.entity'
 import { Discipline } from '@/festival/discipline/entities/discipline.entity'
 import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
 import { Instrument } from '@/festival/instrument/entities/instrument.entity'
+import { Item } from '@/festival/item/entities/item.entity'
 import { Level } from '@/festival/level/entities/level.entity'
 import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity'
 import { Trophy } from '@/festival/trophy/entities/trophy.entity'
@@ -10,6 +11,8 @@ import { Community } from '@/submissions/community/entities/community.entity'
 import { CommunityGroup } from '@/submissions/community-group/entities/community-group.entity'
 import { FieldConfig } from '@/submissions/field-config/entities/field-config.entity'
 import { Group } from '@/submissions/group/entities/group.entity'
+import { Order } from '@/submissions/order/entities/order.entity'
+import { OrderItem } from '@/submissions/order-item/entities/order-item.entity'
 import { Performer } from '@/submissions/performer/entities/performer.entity'
 import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity'
 import { Registration } from '@/submissions/registration/entities/registration.entity'
@@ -55,7 +58,10 @@ export type Subjects = InferSubjects<
   typeof School |
   typeof SchoolGroup |
   typeof Selection |
-  typeof Teacher
+  typeof Teacher |
+  typeof Order |
+  typeof OrderItem |
+  typeof Item
 > |
 'all' |
 'admin'
@@ -83,6 +89,9 @@ export class AbilityFactory {
       can(Action.Manage, Registration)
       can(Action.Manage, Group)
       can(Action.Manage, Performer)
+      can(Action.Manage, Order)
+      can(Action.Manage, OrderItem)
+      can(Action.Read, Item)
       can(Action.Read, FestivalClass)
       can(Action.Read, Trophy)
       can(Action.Read, Subdiscipline)

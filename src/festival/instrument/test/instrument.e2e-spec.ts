@@ -88,7 +88,7 @@ describe('Instrument', () => {
     let instrumentId: number
 
     afterAll(async () => {
-      await globalThis.prisma.tbl_instruments.delete({
+      await globalThis.prisma.tbl_instrument.delete({
         where: {
           id: instrumentId,
         },
@@ -204,7 +204,7 @@ describe('Instrument', () => {
     })
 
     afterEach(async () => {
-      await globalThis.prisma.tbl_instruments.delete({
+      await globalThis.prisma.tbl_instrument.delete({
         where: {
           id: instrumentID,
         },
@@ -321,7 +321,7 @@ describe('Instrument', () => {
 
     afterEach(async () => {
       try {
-        await globalThis.prisma.tbl_instruments.delete({
+        await globalThis.prisma.tbl_instrument.delete({
           where: {
             id: instrumentId,
           },
@@ -349,7 +349,7 @@ describe('Instrument', () => {
         .variables({
           instrumentDeleteId: instrumentId,
         })
-      const deleteCheck = await globalThis.prisma.tbl_instruments.findUnique({
+      const deleteCheck = await globalThis.prisma.tbl_instrument.findUnique({
         where: { id: instrumentId },
       })
       expect(deleteCheck).toBeNull()

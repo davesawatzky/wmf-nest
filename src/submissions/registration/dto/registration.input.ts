@@ -1,6 +1,6 @@
 import { PerformerType } from '@/common.entity'
 import { Field, Float, InputType, Int } from '@nestjs/graphql'
-import { IsInt, IsNumber, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsInt, IsNumber, IsOptional, IsString } from 'class-validator'
 
 @InputType()
 export class RegistrationInput {
@@ -24,6 +24,11 @@ export class RegistrationInput {
   @IsOptional()
   @Field(() => Int)
   teacherID?: number
+
+  @IsBoolean()
+  @IsOptional()
+  @Field(() => Boolean)
+  photoPermission?: boolean
 
   @Field(() => Float)
   @IsNumber({ maxDecimalPlaces: 2 })

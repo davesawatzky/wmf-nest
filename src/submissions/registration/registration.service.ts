@@ -15,14 +15,15 @@ export class RegistrationService {
     performerType: PerformerType,
     label: tbl_registration['label'],
   ) {
-    label === '' ? label = 'Registration Form' : label
+    let newLabel: string
+    label === '' ? newLabel = 'Registration Form' : newLabel = label
     return {
       userErrors: [],
       registration: this.prisma.tbl_registration.create({
         data: {
           userID,
           performerType,
-          label,
+          label: newLabel,
         },
       }),
     }
