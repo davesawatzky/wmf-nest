@@ -25,7 +25,7 @@ export class Item {
   transferable?: boolean
 
   @IsDate()
-  starDate?: Date
+  startDate?: Date
 
   @IsDate()
   endDate?: Date

@@ -22,7 +22,7 @@ export class ItemInput {
   transferable?: boolean
 
   @IsDate()
-  starDate?: Date
+  startDate?: Date
 
   @IsDate()
   endDate?: Date

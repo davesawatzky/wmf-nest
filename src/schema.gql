@@ -255,7 +255,7 @@ type Item {
   orderItems: [OrderItem!]
   orders: [Order!]
   price: Float
-  starDate: DateTime
+  startDate: DateTime
   taxable: Boolean
   transferable: Boolean
   updatedAt: DateTime
@@ -267,7 +267,7 @@ input ItemInput {
   name: String
   notes: String
   price: Float
-  starDate: DateTime
+  startDate: DateTime
   taxable: Boolean
   transferable: Boolean
 }
