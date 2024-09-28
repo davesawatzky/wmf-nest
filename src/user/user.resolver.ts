@@ -2,6 +2,8 @@ import { CheckAbilities } from '@/ability/abilities.decorator'
 import { AbilitiesGuard } from '@/ability/abilities.guard'
 import { Action } from '@/ability/ability.factory'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
+import {Order} from '@/submissions/order/entities/order.entity'
+import {OrderService} from '@/submissions/order/order.service'
 import { Registration } from '@/submissions/registration/entities/registration.entity'
 import { RegistrationService } from '@/submissions/registration/registration.service'
 import { ForbiddenError } from '@casl/ability'
@@ -27,6 +29,7 @@ export class UserResolver {
   constructor(
     private readonly userService: UserService,
     private readonly registrationService: RegistrationService,
+    private readonly orderService: OrderService,
   ) {}
 
   /** Queries */
@@ -92,5 +95,13 @@ export class UserResolver {
   async registrations(@Parent() user: User) {
     const { id }: { id: User['id'] } = user
     return await this.registrationService.findAll(id)
+  }
+
+  @ResolveField(() => [Order])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Read, subject: Order })
+  async orders(@Parent() user: User) {
+    const { id: userID }: { id: User['id'] } = user
+    return await this.orderService.findAll(userID)
   }
 }

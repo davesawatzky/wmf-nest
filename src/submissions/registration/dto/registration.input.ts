@@ -1,7 +1,6 @@
 import { PerformerType } from '@/common.entity'
-import { Field, InputType, Int } from '@nestjs/graphql'
-import { IsInt, IsNumber, IsOptional, IsString } from 'class-validator'
-import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
+import { Field, Float, InputType, Int } from '@nestjs/graphql'
+import { IsBoolean, IsInt, IsNumber, IsOptional, IsString } from 'class-validator'
 
 @InputType()
 export class RegistrationInput {
@@ -16,9 +15,9 @@ export class RegistrationInput {
   @IsOptional()
   performerType?: PerformerType
 
-  @IsNumber()
+  @Field(() => Float)
+  @IsNumber({ maxDecimalPlaces: 2 })
   @IsOptional()
-  @Field(() => GraphQLDecimal)
   payedAmt?: number
 
   @IsInt()
@@ -26,9 +25,14 @@ export class RegistrationInput {
   @Field(() => Int)
   teacherID?: number
 
-  @IsNumber()
+  @IsBoolean()
   @IsOptional()
-  @Field(() => GraphQLDecimal)
+  @Field(() => Boolean)
+  photoPermission?: boolean
+
+  @Field(() => Float)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsOptional()
   totalAmt?: number
 
   @IsString()

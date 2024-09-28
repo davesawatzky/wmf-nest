@@ -22,6 +22,7 @@ export class SchoolGroup {
   earliestTime?: string
   latestTime?: string
   unavailable?: string
+  photoPermission?: boolean
   school?: School
 }
 

@@ -1,7 +1,7 @@
 import { UserError } from '@/common.entity'
 import { PrismaService } from '@/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
-import { tbl_instruments } from '@prisma/client'
+import { tbl_instrument } from '@prisma/client'
 import { InstrumentInput } from './dto/instrument.input'
 
 @Injectable()
@@ -9,11 +9,11 @@ export class InstrumentService {
   constructor(private prisma: PrismaService) {}
 
   async create(instrumentInput: InstrumentInput) {
-    let instrument: tbl_instruments
+    let instrument: tbl_instrument
     let userErrors: UserError[]
     try {
       userErrors = []
-      instrument = await this.prisma.tbl_instruments.create({
+      instrument = await this.prisma.tbl_instrument.create({
         data: { ...instrumentInput },
       })
     }
@@ -46,7 +46,7 @@ export class InstrumentService {
 
   async findAll(disciplineID?: number) {
     if (disciplineID) {
-      return await this.prisma.tbl_instruments.findMany({
+      return await this.prisma.tbl_instrument.findMany({
         where: {
           disciplineID,
         },
@@ -56,7 +56,7 @@ export class InstrumentService {
       })
     }
     else {
-      return await this.prisma.tbl_instruments.findMany({
+      return await this.prisma.tbl_instrument.findMany({
         orderBy: {
           name: 'asc',
         },
@@ -64,28 +64,28 @@ export class InstrumentService {
     }
   }
 
-  async findOne(id?: tbl_instruments['id'], name?: tbl_instruments['name']) {
+  async findOne(id?: tbl_instrument['id'], name?: tbl_instrument['name']) {
     if (id) {
-      return await this.prisma.tbl_instruments.findUnique({
+      return await this.prisma.tbl_instrument.findUnique({
         where: { id },
       })
     }
     else if (name) {
-      return await this.prisma.tbl_instruments.findFirst({
+      return await this.prisma.tbl_instrument.findFirst({
         where: { name },
       })
     }
   }
 
   async update(
-    instrumentID: tbl_instruments['id'],
-    inst: Partial<tbl_instruments>,
+    instrumentID: tbl_instrument['id'],
+    inst: Partial<tbl_instrument>,
   ) {
-    let instrument: tbl_instruments
+    let instrument: tbl_instrument
     let userErrors: UserError[]
     try {
       userErrors = []
-      instrument = await this.prisma.tbl_instruments.update({
+      instrument = await this.prisma.tbl_instrument.update({
         where: {
           id: instrumentID,
         },
@@ -120,12 +120,12 @@ export class InstrumentService {
     }
   }
 
-  async remove(id: tbl_instruments['id']) {
-    let instrument: tbl_instruments
+  async remove(id: tbl_instrument['id']) {
+    let instrument: tbl_instrument
     let userErrors: UserError[]
     try {
       userErrors = []
-      instrument = await this.prisma.tbl_instruments.delete({
+      instrument = await this.prisma.tbl_instrument.delete({
         where: { id },
       })
     }

@@ -69,6 +69,7 @@ type CommunityGroup {
   id: Int!
   latestTime: String
   name: String
+  photoPermission: Boolean
   unavailable: String
   wheelchairs: Int
 }
@@ -80,6 +81,7 @@ input CommunityGroupInput {
   groupSize: Int
   latestTime: String
   name: String
+  photoPermission: Boolean
   unavailable: String
   wheelchairs: Int
 }
@@ -243,6 +245,38 @@ type InstrumentPayload {
   userErrors: [UserError!]!
 }
 
+type Item {
+  createdAt: DateTime
+  description: String
+  endDate: DateTime
+  id: Int!
+  name: String
+  notes: String
+  orderItems: [OrderItem!]
+  orders: [Order!]
+  price: Float
+  startDate: DateTime
+  taxable: Boolean
+  transferable: Boolean
+  updatedAt: DateTime
+}
+
+input ItemInput {
+  description: String
+  endDate: DateTime
+  name: String
+  notes: String
+  price: Float
+  startDate: DateTime
+  taxable: Boolean
+  transferable: Boolean
+}
+
+type ItemPayload {
+  item: Item
+  userErrors: [UserError!]!
+}
+
 type Level {
   categories: [Category!]
   description: String
@@ -287,9 +321,18 @@ type Mutation {
   instrumentCreate(instrumentInput: InstrumentInput!): InstrumentPayload!
   instrumentDelete(instrumentID: Int!): InstrumentPayload!
   instrumentUpdate(instrumentID: Int!, instrumentInput: InstrumentInput!): InstrumentPayload!
+  itemCreate(ItemInput: ItemInput!): ItemPayload!
+  itemDelete(id: Int!): ItemPayload!
+  itemUpdate(id: Int!, itemInput: ItemInput!): ItemPayload!
   levelCreate(levelInput: LevelInput!): LevelPayload!
   levelDelete(levelID: Int!): LevelPayload!
   levelUpdate(levelID: Int!, levelInput: LevelInput!): LevelPayload!
+  orderCreate(orderInput: OrderInput!): OrderPayload!
+  orderDelete(orderID: Int!): OrderPayload!
+  orderItemCreate(orderID: Int!, orderItemInput: OrderItemInput!): OrderItemPayload!
+  orderItemDelete(itemID: Int!, orderID: Int!): OrderItemPayload!
+  orderItemUpdate(itemID: Int!, orderID: Int!, orderItemInput: OrderItemInput!): OrderItemPayload!
+  orderUpdate(orderID: Int!, orderInput: OrderInput!): OrderPayload!
   passwordChange(passwordChangeInput: PasswordChangeInput!): PasswordChangePayload!
   performerCreate(performerInput: PerformerInput, registrationID: Int!): PerformerPayload!
   performerDelete(performerID: Int!): PerformerPayload!
@@ -324,6 +367,58 @@ type Mutation {
   userUpdate(userID: Int!, userInput: UserInput!): UserPayload!
 }
 
+type Order {
+  createdAt: DateTime
+  deliveryDate: DateTime
+  id: Int!
+  items: [Item!]
+  methodDelivered: String
+  orderItems: [OrderItem!]
+  payedAmount: Float
+  purchaseDate: DateTime
+  totalAmount: Float
+  updatedAt: DateTime
+  user: User
+}
+
+input OrderInput {
+  deliveryDate: DateTime
+  methodDelivered: String
+  payedAmount: Float
+  purchaseDate: DateTime
+  totalAmount: Float
+}
+
+type OrderItem {
+  createdAt: DateTime
+  item: Item
+  itemID: Int!
+  namesOnItems: [String!]!
+  notes: String
+  order: Order
+  orderID: Int!
+  quantity: Int!
+  updatedAt: DateTime
+}
+
+input OrderItemInput {
+  itemID: Int!
+  namesOnItems: [String!]
+  notes: String
+  orderID: Int!
+  quantity: Int
+}
+
+type OrderItemPayload {
+  orderItem: OrderItem
+  userErrors: [UserError!]!
+}
+
+type OrderPayload {
+  order: Order
+  userErrors: [UserError!]!
+}
+
 input PasswordChangeInput {
   password1: String!
   password2: String!
@@ -352,6 +447,7 @@ type Performer {
   level: String
   otherClasses: String
   phone: String
+  photoPermission: Boolean
   postalCode: String
   pronouns: String
   province: String
@@ -372,6 +468,7 @@ input PerformerInput {
   level: String
   otherClasses: String
   phone: String
+  photoPermission: Boolean
   postalCode: String
   pronouns: String
   province: String
@@ -416,11 +513,17 @@ type Query {
   groups(registrationID: Int): [Group!]!
   instrument(id: Int, name: String): Instrument!
   instruments(disciplineID: Int): [Instrument!]!
+  item(id: Int!): Item!
+  items: [Item!]!
   level(id: Int!): Level!
   levels(categoryID: Int, subdisciplineID: Int): [Level!]!
   logout: String!
   myStudents: Teacher!
   myUser: User!
+  order(id: Int!): Order!
+  orderItem(itemID: Int!, orderID: Int!): OrderItem!
+  orderItems(orderID: Int!): [OrderItem!]!
+  orders: [Order!]!
   passwordChangeEmailVerification(email: String!): EmailExists!
   performer(performerID: Int!): Performer!
   performers(registrationID: Int): [Performer!]!
@@ -472,7 +575,7 @@ input RegisteredClassInput {
   maxSelections: Int
   minSelections: Int
   numberOfSelections: Int
-  price: Decimal
+  price: Float
   schoolGroupID: Int
   subdiscipline: String
 }
@@ -489,14 +592,15 @@ type Registration {
   group: Group
   id: Int!
   label: String
-  payedAmt: Decimal
+  payedAmt: Float
   performerType: PerformerType!
   performers: [Performer!]
+  photoPermission: Boolean
   registeredClasses: [RegisteredClass!]
   school: School
   submittedAt: DateTime
   teacher: User
-  totalAmt: Decimal
+  totalAmt: Float
   transactionInfo: String
   updatedAt: DateTime
   user: User!
@@ -505,11 +609,12 @@ type Registration {
 input RegistrationInput {
   confirmation: String
   label: String
-  payedAmt: Decimal
+  payedAmt: Float
   performerType: PerformerType
+  photoPermission: Boolean
   submittedAt: DateTime
   teacherID: Int
-  totalAmt: Decimal
+  totalAmt: Float
   transactionInfo: String
 }
 
@@ -540,6 +645,7 @@ type SchoolGroup {
   id: Int!
   latestTime: String
   name: String
+  photoPermission: Boolean
   school: School
   unavailable: String
   wheelchairs: Int
@@ -552,6 +658,7 @@ input SchoolGroupInput {
   groupSize: Int
   latestTime: String
   name: String
+  photoPermission: Boolean
   unavailable: String
   wheelchairs: Int
 }
@@ -701,6 +808,7 @@ type User {
   id: Int!
   instrument: String
   lastName: String
+  orders: [Order!]
   phone: String
   postalCode: String
   privateTeacher: Boolean

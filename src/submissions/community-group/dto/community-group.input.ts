@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { IsInt, IsString } from 'class-validator'
+import { IsBoolean, IsInt, IsString } from 'class-validator'
 
 @InputType()
 export class CommunityGroupInput {
@@ -29,4 +29,7 @@ export class CommunityGroupInput {
 
   @IsString()
   unavailable?: string
+
+  @IsBoolean()
+  photoPermission?: boolean
 }

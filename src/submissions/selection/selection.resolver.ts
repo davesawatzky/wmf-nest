@@ -2,7 +2,7 @@ import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity'
 import { UseGuards } from '@nestjs/common/decorators'
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { tbl_reg_classes } from '@prisma/client'
+import { tbl_reg_class } from '@prisma/client'
 import { SelectionInput } from './dto/selection.input'
 import { Selection, SelectionPayload } from './entities/selection.entity'
 import { SelectionService } from './selection.service'
@@ -35,7 +35,7 @@ export class SelectionResolver {
   @Mutation(() => SelectionPayload)
   async selectionCreate(
     @Args('registeredClassID', { type: () => Int })
-    registeredClassID: tbl_reg_classes['id'],
+    registeredClassID: tbl_reg_class['id'],
   ) {
     return await this.selectionService.create(registeredClassID)
   }

@@ -5,8 +5,8 @@ import { Performer } from '@/submissions/performer/entities/performer.entity'
 import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity'
 import { School } from '@/submissions/school/entities/school.entity'
 import { User } from '@/user/entities/user.entity'
-import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql'
+import { IsNumber } from 'class-validator'
 
 @ObjectType()
 export class Registration {
@@ -21,13 +21,16 @@ export class Registration {
   community?: Community
   teacher?: User
   school?: School
+  photoPermission?: boolean
 
   performerType: PerformerType
 
-  @Field(() => GraphQLDecimal)
+  @Field(() => Float)
+  @IsNumber({ maxDecimalPlaces: 2 })
   totalAmt?: number
 
-  @Field(() => GraphQLDecimal)
+  @Field(() => Float)
+  @IsNumber({ maxDecimalPlaces: 2 })
   payedAmt?: number
 
   transactionInfo?: string

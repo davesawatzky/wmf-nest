@@ -69,7 +69,7 @@ export class DisciplineService {
     else if (!!instrument && !performerType) {
       return await this.prisma.tbl_discipline.findMany({
         where: {
-          tbl_instruments: {
+          tbl_instrument: {
             some: {
               name: instrument,
             },
@@ -83,7 +83,7 @@ export class DisciplineService {
     else if (!!instrument && !!performerType) {
       return await this.prisma.tbl_discipline.findMany({
         where: {
-          tbl_instruments: {
+          tbl_instrument: {
             some: {
               name: instrument,
             },

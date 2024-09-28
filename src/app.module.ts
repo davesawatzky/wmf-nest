@@ -33,6 +33,9 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
 import metadata from './metadata'
+import { OrderModule } from './submissions/order/order.module'
+import { ItemModule } from './festival/item/item.module'
+import { OrderItemModule } from './submissions/order-item/order-item.module'
 
 @Module({
   imports: [
@@ -79,6 +82,9 @@ import metadata from './metadata'
     EmailModule,
     EmailConfirmationModule,
     PaymentModule,
+    ItemModule,
+    OrderModule,
+    OrderItemModule,
   ],
 })
 export class AppModule {}
