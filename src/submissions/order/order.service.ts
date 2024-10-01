@@ -18,7 +18,7 @@ export class OrderService {
     })
   }
 
-  async findOne(orderID: tbl_order['id'], userID?: tbl_user['id']) {
+  async findOne(userID: tbl_user['id'], orderID: tbl_order['id']) {
     return await this.prisma.tbl_order.findUnique({
       where: { userID, id: orderID },
     })

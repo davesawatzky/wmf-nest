@@ -36,8 +36,8 @@ export class OrderResolver {
   async order(
     @Context() context,
     @Args('orderID', { type: () => Int }) orderID: Order['id'],
-) {
-    return await this.orderService.findOne(orderID, context.req.user.id ? undefined : context.req.user.id)
+  ) {
+    return await this.orderService.findOne(context.req.user.admin ? undefined : context.req.user.id, orderID)
   }
 
   // Mutations
