@@ -38,7 +38,7 @@ describe('Performer', () => {
               firstName
               lastName
               age
-              apartment
+              address
               city
               email
               instrument
@@ -48,8 +48,6 @@ describe('Performer', () => {
               phone
               postalCode
               province
-              streetName
-              streetNumber
               __typename
             }
           }

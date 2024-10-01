@@ -10,8 +10,7 @@ export class School {
 
   name?: string
   division?: string
-  streetNumber?: string
-  streetName?: string
+  address?: string
   city?: string
   province?: string
   postalCode?: string

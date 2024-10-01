@@ -18,11 +18,7 @@ export class SchoolInput {
 
   @IsString()
   @IsOptional()
-  streetNumber?: string
-
-  @IsString()
-  @IsOptional()
-  streetName?: string
+  address?: string
 
   @IsString()
   @IsOptional()

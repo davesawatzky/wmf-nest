@@ -47,6 +47,7 @@ type ClassTypePayload {
 }
 
 type Community {
+  address: String
   city: String
   communityGroups: [CommunityGroup!]
   email: String
@@ -56,8 +57,6 @@ type Community {
   postalCode: String
   province: String
   registration: Registration
-  streetName: String
-  streetNumber: String
 }
 
 type CommunityGroup {
@@ -92,14 +91,13 @@ type CommunityGroupPayload {
 }
 
 input CommunityInput {
+  address: String
   city: String
   email: String
   name: String
   phone: String
   postalCode: String
   province: String
-  streetName: String
-  streetNumber: String
 }
 
 type CommunityPayload {
@@ -436,8 +434,8 @@ type PasswordExists {
 }
 
 type Performer {
+  address: String
   age: Int
-  apartment: String
   city: String
   email: String
   firstName: String
@@ -452,14 +450,12 @@ type Performer {
   pronouns: String
   province: String
   registration: Registration
-  streetName: String
-  streetNumber: String
   unavailable: String
 }
 
 input PerformerInput {
+  address: String
   age: Int
-  apartment: String
   city: String
   email: String
   firstName: String
@@ -472,8 +468,6 @@ input PerformerInput {
   postalCode: String
   pronouns: String
   province: String
-  streetName: String
-  streetNumber: String
   unavailable: String
 }
 
@@ -624,6 +618,7 @@ type RegistrationPayload {
 }
 
 type School {
+  address: String
   city: String
   division: String
   id: Int!
@@ -633,8 +628,6 @@ type School {
   province: String
   registration: Registration
   schoolGroups: [SchoolGroup!]
-  streetName: String
-  streetNumber: String
 }
 
 type SchoolGroup {
@@ -669,14 +662,13 @@ type SchoolGroupPayload {
 }
 
 input SchoolInput {
+  address: String
   city: String
   division: String
   name: String
   phone: String
   postalCode: String
   province: String
-  streetName: String
-  streetNumber: String
 }
 
 type SchoolPayload {
@@ -742,7 +734,7 @@ type Submission {
 }
 
 type Teacher {
-  apartment: String
+  address: String
   city: String
   email: String
   firstName: String
@@ -755,12 +747,10 @@ type Teacher {
   province: String
   registrations: [Registration!]
   schoolTeacher: Boolean
-  streetName: String
-  streetNumber: String
 }
 
 input TeacherInput {
-  apartment: String
+  address: String
   city: String
   email: String
   firstName: String
@@ -771,8 +761,6 @@ input TeacherInput {
   privateTeacher: Boolean
   province: String
   schoolTeacher: Boolean
-  streetName: String
-  streetNumber: String
 }
 
 type TeacherPayload {
@@ -798,8 +786,8 @@ type TrophyPayload {
 }
 
 type User {
+  address: String
   admin: Boolean
-  apartment: String
   city: String
   email: String
   emailConfirmed: Boolean
@@ -816,8 +804,6 @@ type User {
   registrations: [Registration!]
   schoolTeacher: Boolean
   staff: Boolean
-  streetName: String
-  streetNumber: String
 }
 
 type UserError {
@@ -826,8 +812,8 @@ type UserError {
 }
 
 input UserInput {
+  address: String
   admin: Boolean
-  apartment: String
   city: String
   emailConfirmed: Boolean
   firstName: String
@@ -840,8 +826,6 @@ input UserInput {
   province: String
   schoolTeacher: Boolean
   staff: Boolean
-  streetName: String
-  streetNumber: String
 }
 
 type UserPayload {

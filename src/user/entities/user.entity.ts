@@ -18,9 +18,7 @@ export class User {
   hasSignedIn?: boolean
   firstName?: string
   lastName?: string
-  apartment?: string
-  streetNumber?: string
-  streetName?: string
+  address?: string
   city?: string
   province?: string
   postalCode?: string

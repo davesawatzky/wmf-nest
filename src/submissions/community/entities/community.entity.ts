@@ -9,8 +9,7 @@ export class Community {
   id: number
 
   name?: string
-  streetNumber?: string
-  streetName?: string
+  address?: string
   city?: string
   province?: string
   postalCode?: string

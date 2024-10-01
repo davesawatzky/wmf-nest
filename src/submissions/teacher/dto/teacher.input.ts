@@ -20,15 +20,7 @@ export class TeacherInput {
 
   @IsString()
   @IsOptional()
-  apartment?: string
-
-  @IsString()
-  @IsOptional()
-  streetNumber?: string
-
-  @IsString()
-  @IsOptional()
-  streetName?: string
+  address?: string
 
   @IsString()
   @IsOptional()

@@ -40,8 +40,7 @@ describe('Community', () => {
               email
               postalCode
               province
-              streetName
-              streetNumber
+              address
             }
           }
         `)

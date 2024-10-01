@@ -9,11 +9,7 @@ export class CommunityInput {
 
   @IsString()
   @IsOptional()
-  streetNumber?: string
-
-  @IsString()
-  @IsOptional()
-  streetName?: string
+  address?: string
 
   @IsString()
   @IsOptional()

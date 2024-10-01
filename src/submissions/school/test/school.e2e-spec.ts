@@ -36,12 +36,11 @@ describe('School', () => {
               id
               name
               division
+              address
               city
               phone
               postalCode
               province
-              streetName
-              streetNumber
             }
           }
         `)
@@ -161,7 +160,9 @@ describe('School', () => {
           },
         })
       }
-      catch (error) {}
+      catch (error) {
+        console.log(error)
+      }
     })
 
     it('Can create a school with regId', async () => {

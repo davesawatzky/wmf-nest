@@ -19,9 +19,7 @@ describe('User', () => {
             privateTeacher
             schoolTeacher
             instrument
-            apartment
-            streetNumber
-            streetName
+            address
             city
             province
             postalCode
