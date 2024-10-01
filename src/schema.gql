@@ -520,7 +520,7 @@ type Query {
   logout: String!
   myStudents: Teacher!
   myUser: User!
-  order(id: Int!): Order!
+  order(orderID: Int!): Order!
   orderItem(itemID: Int!, orderID: Int!): OrderItem!
   orderItems(orderID: Int!): [OrderItem!]!
   orders: [Order!]!

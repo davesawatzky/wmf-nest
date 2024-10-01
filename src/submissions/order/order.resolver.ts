@@ -33,8 +33,11 @@ export class OrderResolver {
   @Query(() => Order)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Order })
-  async order(@Args('id', { type: () => Int }) id: Order['id']) {
-    return await this.orderService.findOne(id)
+  async order(
+    @Context() context,
+    @Args('orderID', { type: () => Int }) orderID: Order['id'],
+) {
+    return await this.orderService.findOne(orderID, context.req.user.id ? undefined : context.req.user.id)
   }
 
   // Mutations

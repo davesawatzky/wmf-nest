@@ -140,9 +140,7 @@ model tbl_reg_performer {
   pronouns         String?          @db.Text
   lastName         String?          @map("last_name") @db.Text
   firstName        String?          @map("first_name") @db.Text
-  apartment        String?          @db.Text
-  streetNumber     String?          @map("street_number") @db.Text
-  streetName       String?          @map("street_name") @db.Text
+  address          String?          @db.Text
   city             String?          @default("Winnipeg") @db.Text
   province         String?          @default("MB") @db.Text
   postalCode       String?          @map("postal_code") @db.Text
@@ -166,8 +164,7 @@ model tbl_reg_school {
   regID               Int                   @unique
   name                String?               @default("") @db.Text
   division            String?               @db.Text
-  streetNumber        String?               @map("street_number") @db.Text
-  streetName          String?               @map("street_name") @db.Text
+  address             String?               @db.Text
   city                String?               @default("Winnipeg") @db.Text
   province            String?               @default("MB") @db.Text
   postalCode          String?               @map("postal_code") @db.Text
@@ -293,9 +290,7 @@ model tbl_user {
   schoolTeacher         Boolean?           @map("school_teacher") @default(false)
   firstName             String?            @map("first_name") @db.Text
   lastName              String?            @map("last_name") @db.Text
-  apartment             String?            @db.Text
-  streetNumber          String?            @map("street_number") @db.Text
-  streetName            String?            @map("street_name") @db.Text
+  address               String?            @db.Text
   city                  String?            @db.Text
   province              String?            @db.Text
   postalCode            String?            @map("postal_code") @db.Text
@@ -313,8 +308,7 @@ model tbl_reg_community {
   id                      Int         @id @default(autoincrement())
   regID                   Int         @unique
   name                    String?     @db.Text
-  streetNumber            String?     @map("street_number") @db.Text
-  streetName              String?     @map("street_name") @db.Text
+  address                 String?     @db.Text
   city                    String?     @default("Winnipeg") @db.Text
   province                String?     @default("MB") @db.Text
   postalCode              String?     @map("postal_code") @db.Text
