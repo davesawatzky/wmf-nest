@@ -31,5 +31,5 @@ export class SchoolGroupInput {
   unavailable?: string
 
   @IsBoolean()
-  photoPermission?: boolean
+  photoPermission?: string
 }

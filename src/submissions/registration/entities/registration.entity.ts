@@ -21,7 +21,7 @@ export class Registration {
   community?: Community
   teacher?: User
   school?: School
-  photoPermission?: boolean
+  photoPermission?: string
 
   performerType: PerformerType
 

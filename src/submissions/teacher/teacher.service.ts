@@ -67,12 +67,14 @@ export class TeacherService {
           } = obj
           return teacherProps
         })
-        const noTeacherIndex = teachersFiltered.findIndex(el => el.firstName === 'No' && el.lastName === 'Teacher')
+        const noTeacherIndex = teachersFiltered.findIndex(el => el.firstName === 'Teacher' && el.lastName === 'No')
         if (noTeacherIndex !== -1) {
           const noTeacher = teachersFiltered.splice(noTeacherIndex, 1)
-          teachersFiltered.unshift(noTeacher[0])
+          if (teacherType === 'privateTeacher') {
+            teachersFiltered.unshift(noTeacher[0])
+          }
         }
-        teachersFiltered.unshift({ id: 1, firstName: 'Unlisted', lastName: 'Teacher', instrument: '' })
+        teachersFiltered.unshift({ id: 1, firstName: 'Teacher', lastName: 'Unlisted', instrument: '' })
         return teachersFiltered
       }
       else {

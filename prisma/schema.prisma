@@ -147,7 +147,7 @@ model tbl_reg_performer {
   phone            String?          @db.Text
   email            String?          @db.Text
   age              Int?             @db.SmallInt
-  photoPermission  Boolean?         @map("photo_permission") @db.Boolean @default(false)
+  photoPermission  String?          @map("photo_permission") @db.Text
   instrument       String?          @db.Text
   level            String?          @db.Text
   unavailable      String?          @db.Text
@@ -187,7 +187,7 @@ model tbl_reg_schoolgroup {
   earliestTime       String?           @map("earliest_time") @db.Text
   latestTime         String?           @map("latest_time") @db.Text
   unavailable        String?           @db.Text
-  photoPermission    Boolean?          @map("photo_permission") @db.Boolean @default(false)
+  photoPermission    String?           @map("photo_permission") @db.Text
   conflictPerformers String?           @map("conflict_performers") @db.Text
   createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt          DateTime          @default(now()) @map("updated_at") @db.Timestamp(3)
@@ -332,7 +332,7 @@ model tbl_reg_communitygroup {
   earliestTime       String?           @map("earliest_time") @db.Text
   latestTime         String?           @map("latest_time") @db.Text
   unavailable        String?           @db.Text
-  photoPermission    Boolean?          @map("photo_permission") @db.Boolean @default(false)
+  photoPermission    String?           @map("photo_permission") @db.Text
   conflictPerformers String?           @map("conflict_performers") @db.Text
   createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt          DateTime          @default(now()) @map("updated_at") @db.Timestamp(3)

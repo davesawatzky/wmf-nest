@@ -25,10 +25,8 @@ export class RegistrationInput {
   @Field(() => Int)
   teacherID?: number
 
-  @IsBoolean()
   @IsOptional()
-  @Field(() => Boolean)
-  photoPermission?: boolean
+  photoPermission?: string
 
   @Field(() => Float)
   @IsNumber({ maxDecimalPlaces: 2 })

@@ -70,5 +70,5 @@ export class PerformerInput {
 
   @IsBoolean()
   @IsOptional()
-  photoPermission?: boolean
+  photoPermission?: string
 }
