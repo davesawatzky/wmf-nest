@@ -276,7 +276,7 @@ describe('Community', () => {
             community {
               id
               name
-              streetName
+              address
               }
             userErrors {
               field 
@@ -288,11 +288,11 @@ describe('Community', () => {
         .variables({
           communityId,
           communityInput: {
-            streetName: 'Updated Street Name',
+            address: 'Updated Address',
           },
         })
         .expectNoErrors()
-      expect(response.data.communityUpdate.community.streetName).toBe('Updated Street Name')
+      expect(response.data.communityUpdate.community.address).toBe('Updated Address')
       expect(response.data.communityUpdate.community.name).toBe('Test Community')
     })
 
@@ -316,7 +316,7 @@ describe('Community', () => {
         .variables({
           communityId: communityId + 1,
           communityInput: {
-            streetName: 'Updated Street Name',
+            address: 'Updated Address',
           },
         })
       expect(response.data.communityUpdate.userErrors[0].message).toBeTruthy()
@@ -332,7 +332,7 @@ describe('Community', () => {
             community {
               id
               name
-              streetName
+              address
               }
             userErrors {
               field 
@@ -344,7 +344,7 @@ describe('Community', () => {
         .variables({
           communityId: null,
           communityInput: {
-            streetName: 'Updated Street Name',
+            address: 'Updated Address',
           },
         })
       expect(response.errors[0].message).toBeTruthy()

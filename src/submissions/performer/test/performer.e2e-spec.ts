@@ -271,7 +271,7 @@ describe('Performer', () => {
           regID: regId,
           firstName: 'Test',
           lastName: 'Performer',
-          streetName: 'Test Street',
+          address: 'Test Address',
         },
       })
       performerId = await response.id
@@ -295,7 +295,7 @@ describe('Performer', () => {
               id
               firstName
               lastName
-              streetName              
+              address              
               }
             userErrors {
               field 
@@ -307,11 +307,11 @@ describe('Performer', () => {
         .variables({
           performerId,
           performerInput: {
-            streetName: 'Updated Test Street',
+            address: 'Updated Address',
           },
         })
         .expectNoErrors()
-      expect(response.data.performerUpdate.performer.streetName).toBe('Updated Test Street')
+      expect(response.data.performerUpdate.performer.address).toBe('Updated Address')
       expect(response.data.performerUpdate.performer.firstName).toBe('Test')
     })
 
