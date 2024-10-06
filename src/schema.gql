@@ -488,7 +488,7 @@ type Query {
   categories(levelID: Int, subdisciplineID: Int): [Category!]!
   category(id: Int!): Category!
   checkIfPasswordExists(id: Int!): PasswordExists!
-  checkUser(email: String!): User!
+  checkUser(email: String!): User
   classType(id: Int!): ClassType!
   classTypes: [ClassType!]!
   communities: [Community!]!

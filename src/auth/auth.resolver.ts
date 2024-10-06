@@ -10,6 +10,7 @@ import {
   Query,
   Resolver,
 } from '@nestjs/graphql'
+import { isNullableType } from 'graphql'
 import { EmailConfirmationService } from '../email-confirmation/email-confirmation.service'
 import { User } from '../user/entities/user.entity'
 import { AuthService } from './auth.service'
@@ -109,7 +110,7 @@ export class AuthResolver {
     }
   }
 
-  @Query(() => User || null)
+  @Query(() => User, { nullable: true })
   async checkUser(@Args('email', { type: () => String }) email: User['email']) {
     return await this.authService.findOne(email)
   }

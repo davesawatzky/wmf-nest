@@ -23,7 +23,7 @@ export class AuthService {
     try {
       const user = await this.prisma.tbl_user.findUnique({
         where: { email: credentialsSignup.email.trim().toLowerCase() },
-      })
+      }) ?? null
       if (!!user && !!user.password) {
         return {
           userErrors: [
@@ -180,33 +180,30 @@ export class AuthService {
     }
   }
 
-  async findOne(email: User['email']): Promise<User> {
-    try {
-      if (email) {
-        const user = await this.prisma.tbl_user.findUnique({
-          where: { email },
-        })
-        if (user) {
-          if (user.password !== null) {
-            const pass = true
-            const { password, ...userProps } = user
-            return userProps
-          }
-          else {
-            const pass = false
-            return user
-          }
+  async findOne(email: User['email']) {
+    if (email) {
+      console.log(email)
+      const user = await this.prisma.tbl_user.findUnique({
+        where: { email },
+      })
+      console.log(user)
+      if (user) {
+        if (user.password !== null) {
+          const pass = true
+          const { password, ...userProps } = user
+          return userProps
         }
         else {
-          return null
+          const pass = false
+          return user
         }
       }
       else {
-        throw new BadRequestException('No email given.')
+        return null
       }
     }
-    catch (err) {
-      throw new BadRequestException('No one found with those details')
+    else {
+      throw new BadRequestException('No email given.')
     }
   }
 
