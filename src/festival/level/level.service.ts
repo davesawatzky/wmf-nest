@@ -58,6 +58,9 @@ export class LevelService {
           },
         },
       },
+      orderBy: {
+        sortOrder: 'asc',
+      },
     })
   }
 

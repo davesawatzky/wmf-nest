@@ -11,6 +11,10 @@ export class Level {
 
   name: string
   description?: string
+
+  @Field(() => Int)
+  sortOrder?: number
+
   categories?: Category[]
   subdisciplines?: Subdiscipline[]
   festivalClasses?: FestivalClass[]

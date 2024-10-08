@@ -281,12 +281,14 @@ type Level {
   festivalClasses(categoryID: Int!, performerType: PerformerType!, subdisciplineID: Int!): [FestivalClass!]
   id: Int!
   name: String!
+  sortOrder: Int
   subdisciplines: [Subdiscipline!]
 }
 
 input LevelInput {
   description: String
   name: String!
+  sortOrder: Int
 }
 
 type LevelPayload {

@@ -1,5 +1,5 @@
 import { InputType } from '@nestjs/graphql'
-import { IsOptional, IsString } from 'class-validator'
+import { IsInt, IsOptional, IsString } from 'class-validator'
 
 @InputType()
 export class LevelInput {
@@ -9,4 +9,8 @@ export class LevelInput {
   @IsString()
   @IsOptional()
   description?: string
+
+  @IsInt()
+  @IsOptional()
+  sortOrder?: number
 }
