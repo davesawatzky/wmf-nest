@@ -28,6 +28,7 @@ import { SchoolGroupModule } from '@/submissions/school-group/school-group.modul
 import { TeacherModule } from '@/submissions/teacher/teacher.module'
 import { UserModule } from '@/user/user.module'
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default'
+import { ApolloServerPluginUsageReportingDisabled } from '@apollo/server/plugin/disabled'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
@@ -53,7 +54,7 @@ import { OrderItemModule } from './submissions/order-item/order-item.module'
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
       playground: false,
-      plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      plugins: [ApolloServerPluginLandingPageLocalDefault(), ApolloServerPluginUsageReportingDisabled()],
     }),
     PrismaModule,
     AuthModule,
