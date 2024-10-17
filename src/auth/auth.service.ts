@@ -182,11 +182,9 @@ export class AuthService {
 
   async findOne(email: User['email']) {
     if (email) {
-      console.log(email)
       const user = await this.prisma.tbl_user.findUnique({
         where: { email },
       })
-      console.log(user)
       if (user) {
         if (user.password !== null) {
           const pass = true

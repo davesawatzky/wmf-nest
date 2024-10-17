@@ -22,11 +22,9 @@ export class EmailConfirmationController {
 
   @Post('confirm')
   async confirm(@Body() request: ConfirmationEmailDto) {
-    console.log(request)
     const email = await this.authService.decodeConfirmationToken(
       request.token,
     )
-    console.log(email)
     await this.emailConfirmationService.confirmEmail(email)
   }
 
