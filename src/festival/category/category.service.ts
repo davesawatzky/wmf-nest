@@ -57,6 +57,7 @@ export class CategoryService {
           },
         },
       },
+      orderBy: { name: 'asc' },
     })
   }
 
