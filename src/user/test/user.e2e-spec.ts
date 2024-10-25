@@ -80,7 +80,6 @@ describe('User', () => {
 
   describe('Return single user', () => {
     let response: any
-    let userId: number
 
     it('Should return a single user using user id', async () => {
       response = await request<{ user: User }>(globalThis.httpServer)
@@ -267,7 +266,9 @@ describe('User', () => {
         })
         newUserId = newUser.id
       }
-      catch (error) {}
+      catch (error) {
+        console.log(error)
+      }
     })
 
     afterEach(async () => {
@@ -278,7 +279,9 @@ describe('User', () => {
           },
         })
       }
-      catch (error) {}
+      catch (error) {
+        console.log(error)
+      }
     })
 
     it('Should delete a user', async () => {

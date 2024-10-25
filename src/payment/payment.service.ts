@@ -18,7 +18,7 @@ export class PaymentService {
       currency: 'cad',
       metadata: {
         WMF_Confirmation_ID: WMFconfirmationId,
-      }
+      },
     })
   }
 
