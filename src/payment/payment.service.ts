@@ -12,7 +12,7 @@ export class PaymentService {
   async createPaymentIntent(regID: number, WMFconfirmationId: string, tokenId: string) {
     const { totalAmt } = await this.registrationService.findOne(regID)
     const confirmationToken = await this.stripeService.stripe.confirmationTokens.retrieve(tokenId)
-    const { totalAmount } = this.findPaymentDetails(Number(totalAmt), confirmationToken)
+    const { totalAmount } = await this.findPaymentDetails(Number(totalAmt), confirmationToken)
     return await this.stripeService.stripe.paymentIntents.create({
       amount: Math.round(totalAmount * 100),
       currency: 'cad',
@@ -25,16 +25,16 @@ export class PaymentService {
   async summarizePayment(regID: number, tokenId: string) {
     const { totalAmt } = await this.registrationService.findOne(regID)
     const confirmationToken = await this.stripeService.stripe.confirmationTokens.retrieve(tokenId)
-    const { amount, stripeFee, totalAmount } = this.findPaymentDetails(Number(totalAmt), confirmationToken)
+    const { amount, stripeFee, totalAmount } = await this.findPaymentDetails(Number(totalAmt), confirmationToken)
     return { amount, stripeFee, totalAmount, confirmationToken }
   }
 
-  private findPaymentDetails(amount: number, token: any): { amount: number, stripeFee: string, totalAmount: number } {
+  private async findPaymentDetails(amount: number, token: any): Promise<{ amount: number, stripeFee: string, totalAmount: number }> {
     const domesticFeePercent: number = 0.029
     const internationalFeePercent: number = 0.008
     const transactionFee: number = 0.3
 
-    const country: string = token.payment_method_preview.card.country
+    const country: string = await token?.payment_method_preview.card.country ?? null
     let stripeFee: string
     if (country === 'CA') {
       stripeFee = (
