@@ -114,6 +114,7 @@ export class AuthService {
       const payload = {
         username: user.email,
         sub: user.id,
+        admin: user.admin,
         // privateTeacher: user.privateTeacher,
         // schoolTeacher: user.schoolTeacher,
       }
@@ -187,12 +188,10 @@ export class AuthService {
       })
       if (user) {
         if (user.password !== null) {
-          const pass = true
           const { password, ...userProps } = user
           return userProps
         }
         else {
-          const pass = false
           return user
         }
       }
