@@ -1,4 +1,5 @@
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
+import { ApplySearchFilters } from '@/common/search-filters'
 import { Selection } from '@/submissions/selection/entities/selection.entity'
 import { SelectionService } from '@/submissions/selection/selection.service'
 import { UseGuards } from '@nestjs/common/decorators'
@@ -14,7 +15,7 @@ import {
 import { tbl_reg_class, tbl_registration } from '@prisma/client'
 import { RegisteredClassInput } from './dto/registered-class.input'
 import { RegisteredClass, RegisteredClassPayload } from './entities/registered-class.entity'
-import { RegisteredClassService } from './registered-class.service'
+import {RegisteredClassService} from './registered-class.service'
 
 @Resolver(() => RegisteredClass)
 @UseGuards(JwtAuthGuard)
@@ -28,8 +29,7 @@ export class RegisteredClassResolver {
 
   @Query(() => [RegisteredClass])
   async registeredClasses(
-    @Args('registrationID', { type: () => Int })
-    registrationID: tbl_registration['id'],
+    @Args('registrationID', { type: () => Int }) registrationID: tbl_registration['id'],
   ) {
     return await this.registeredClassService.findAll(registrationID)
   }

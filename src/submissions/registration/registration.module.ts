@@ -1,4 +1,5 @@
 import { AbilityModule } from '@/ability/ability.module'
+import { SearchFiltersModule } from '@/common/search-filters'
 import { CommunityModule } from '@/submissions/community/community.module'
 import { GroupModule } from '@/submissions/group/group.module'
 import { PerformerModule } from '@/submissions/performer/performer.module'
@@ -21,6 +22,7 @@ import { RegistrationService } from './registration.service'
     forwardRef(() => TeacherModule),
     SchoolModule,
     AbilityModule,
+    SearchFiltersModule,
   ],
   exports: [RegistrationService],
 })

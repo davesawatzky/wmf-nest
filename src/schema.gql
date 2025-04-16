@@ -202,6 +202,21 @@ type FieldConfig {
   tableName: String!
 }
 
+input FieldFilterInput {
+  constraints: [FilterConstraintsInput!]!
+  operator: OperatorTypeScalar! = "and"
+}
+
+input FilterConstraintsInput {
+  matchMode: MatchModeScalar! = "contains"
+  value: GenericScalar
+}
+
+"""
+The GenericScalar type handles multiple data types: string, number, boolean
+"""
+scalar GenericScalar
+
 type Group {
   age: Int
   groupType: String
@@ -296,6 +311,9 @@ type LevelPayload {
   userErrors: [UserError!]!
 }
 
+"""Custom scalar for MatchMode that handles lowercase values"""
+scalar MatchModeScalar
+
 type Mutation {
   categoryCreate(categoryInput: CategoryInput!): CategoryPayload!
   categoryDelete(categoryID: Int!): CategoryPayload!
@@ -366,6 +384,9 @@ type Mutation {
   userDelete(userID: Int!): UserPayload!
   userUpdate(userID: Int!, userInput: UserInput!): UserPayload!
 }
+
+"""Custom scalar for OperatorType that handles lowercase values"""
+scalar OperatorTypeScalar
 
 type Order {
   createdAt: DateTime
@@ -526,7 +547,7 @@ type Query {
   registeredClass(registeredClassID: Int!): RegisteredClass!
   registeredClasses(registrationID: Int!): [RegisteredClass!]!
   registration(id: Int!): Registration!
-  registrations(performerType: PerformerType): [Registration!]!
+  registrations(limit: Int, page: Int, performerType: PerformerType, searchFilters: RegistrationSearchFilters, sortField: String, sortOrder: String): [Registration!]!
   school(registrationID: Int, schoolID: Int): School!
   schoolGroup(schoolGroupID: Int!): SchoolGroup!
   schoolGroups(schoolID: Int): [SchoolGroup!]!
@@ -617,6 +638,22 @@ input RegistrationInput {
 type RegistrationPayload {
   registration: Registration
   userErrors: [UserError!]!
+}
+
+input RegistrationSearchFilters {
+  confirmation: FieldFilterInput
+  createdAt: FieldFilterInput
+  id: FieldFilterInput
+  label: FieldFilterInput
+  payedAmt: FieldFilterInput
+  performerType: FieldFilterInput
+  photoPermission: FieldFilterInput
+  submittedAt: FieldFilterInput
+  teacherID: FieldFilterInput
+  totalAmt: FieldFilterInput
+  transactionInfo: FieldFilterInput
+  updatedAt: FieldFilterInput
+  userID: FieldFilterInput
 }
 
 type School {

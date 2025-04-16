@@ -3,6 +3,7 @@ import { AbilitiesGuard } from '@/ability/abilities.guard'
 import { Action } from '@/ability/ability.factory'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { PerformerType } from '@/common.entity'
+import { ApplySearchFilters, SearchFilter } from '@/common/search-filters'
 import { CommunityService } from '@/submissions/community/community.service'
 import { Community } from '@/submissions/community/entities/community.entity'
 import { Group } from '@/submissions/group/entities/group.entity'
@@ -18,8 +19,10 @@ import { TeacherService } from '@/submissions/teacher/teacher.service'
 import { User } from '@/user/entities/user.entity'
 import { UserService } from '@/user/user.service'
 import { UseGuards } from '@nestjs/common/decorators'
+import { ContextCreator } from '@nestjs/core/helpers/context-creator'
 import {
   Args,
+  ArgsType,
   Context,
   Int,
   Mutation,
@@ -29,6 +32,7 @@ import {
   Resolver,
 } from '@nestjs/graphql'
 import { tbl_registration } from '@prisma/client'
+import { RegistrationSearchFilters } from './dto/registration-search-filters.input'
 import { RegistrationInput } from './dto/registration.input'
 import {
   Registration,
@@ -55,14 +59,36 @@ export class RegistrationResolver {
   @Query(() => [Registration])
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Registration })
+  @ApplySearchFilters('Registration', [
+    'id',
+    'userID',
+    'label',
+    'performerType',
+    'teacherID',
+    'createdAt',
+    'updatedAt',
+  ])
   async registrations(
     @Context() context,
     @Args('performerType', { nullable: true, type: () => PerformerType })
     performerType?: Registration['performerType'] | null,
+    @Args('page', { type: () => Int, nullable: true }) page?: number,
+    @Args('limit', { type: () => Int, nullable: true }) take?: number,
+    @Args('sortField', { type: () => String, nullable: true }) sortField?: string,
+    @Args('sortOrder', { type: () => String, nullable: true }) sortOrder?: 'asc' | 'desc',
+    @Args('searchFilters', { type: () => RegistrationSearchFilters, nullable: true })
+    searchFilters?: RegistrationSearchFilters,
   ) {
+    const skip = (page - 1) * take
     return await this.registrationService.findAll(
       context.req.user.admin ? undefined : context.req.user.id,
       performerType,
+      undefined,
+      skip,
+      take,
+      sortField,
+      sortOrder,
+      searchFilters,
     )
   }
 

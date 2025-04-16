@@ -1,4 +1,4 @@
-import {join} from 'node:path'
+import { join } from 'node:path'
 import process from 'node:process'
 import { ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
@@ -23,7 +23,7 @@ async function bootstrap() {
             'data:',
             'apollo-server-landing-page.cdn.apollographql.com',
           ],
-          scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+          scriptSrc: [`'self'`, `'unsafe-inline'`, `https:`],
           manifestSrc: [
             `'self'`,
             'apollo-server-landing-page.cdn.apollographql.com',
