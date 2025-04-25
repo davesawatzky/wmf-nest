@@ -1,7 +1,7 @@
 import { UserError } from '@/common.entity'
 import { PrismaService } from '@/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
-import { tbl_reg_performer, tbl_registration } from '@prisma/client'
+import { tbl_reg_class, tbl_reg_performer, tbl_registration } from '@prisma/client'
 import { PerformerInput } from './dto/performer.input'
 
 @Injectable()
@@ -43,10 +43,44 @@ export class PerformerService {
     return { userErrors, performer }
   }
 
-  async findAll(registrationID?: tbl_registration['id']) {
-    return await this.prisma.tbl_reg_performer.findMany({
-      where: { regID: registrationID },
-    })
+  async findAll(
+    registrationID?: tbl_registration['id'],
+    classNumber?: tbl_reg_class['classNumber'],
+  ) {
+    if (registrationID) {
+      return await this.prisma.tbl_reg_performer.findMany({
+        where: { regID: registrationID },
+      })
+    }
+    else if (classNumber) {
+      const registeredClassIds = await this.prisma.tbl_reg_class.findMany({
+        where: {
+          classNumber,
+        },
+        select: { regID: true },
+      })
+      const performerIds = registeredClassIds.map(item => item.regID).filter(item => !!item)
+      return await this.prisma.tbl_reg_performer.findMany({
+        where: {
+          regID: { in: performerIds },
+        },
+      })
+    }
+    else {
+      const confirmedRegistrations = await this.prisma.tbl_registration.findMany({
+        where: {
+          confirmation: {
+            not: null,
+          },
+        },
+      })
+      const performerIds = confirmedRegistrations.map(item => item.id)
+      return await this.prisma.tbl_reg_performer.findMany({
+        where: {
+          regID: { in: performerIds },
+        },
+      })
+    }
   }
 
   async findOne(

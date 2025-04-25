@@ -1,10 +1,15 @@
+import { CheckAbilities } from '@/ability/abilities.decorator'
+import { AbilitiesGuard } from '@/ability/abilities.guard'
+import { Action } from '@/ability/ability.factory'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { ApplySearchFilters } from '@/common/search-filters'
+import { Performer } from '@/submissions/performer/entities/performer.entity'
 import { Selection } from '@/submissions/selection/entities/selection.entity'
 import { SelectionService } from '@/submissions/selection/selection.service'
 import { UseGuards } from '@nestjs/common/decorators'
 import {
   Args,
+  Context,
   Int,
   Mutation,
   Parent,
@@ -13,9 +18,10 @@ import {
   Resolver,
 } from '@nestjs/graphql'
 import { tbl_reg_class, tbl_registration } from '@prisma/client'
+import { PerformerService } from '../performer/performer.service'
 import { RegisteredClassInput } from './dto/registered-class.input'
 import { RegisteredClass, RegisteredClassPayload } from './entities/registered-class.entity'
-import {RegisteredClassService} from './registered-class.service'
+import { RegisteredClassService } from './registered-class.service'
 
 @Resolver(() => RegisteredClass)
 @UseGuards(JwtAuthGuard)
@@ -23,15 +29,21 @@ export class RegisteredClassResolver {
   constructor(
     private readonly registeredClassService: RegisteredClassService,
     private readonly selectionService: SelectionService,
+    private readonly performerService: PerformerService,
   ) {}
 
   /** Queries */
 
   @Query(() => [RegisteredClass])
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Manage, subject: RegisteredClass })
   async registeredClasses(
-    @Args('registrationID', { type: () => Int }) registrationID: tbl_registration['id'],
+    @Context() context,
+    @Args('registrationID', { nullable: true, type: () => Int }) registrationID: tbl_registration['id'] | null,
   ) {
-    return await this.registeredClassService.findAll(registrationID)
+    return await this.registeredClassService.findAll(
+      context.req.user.admin ? null : registrationID,
+    )
   }
 
   @Query(() => RegisteredClass)
@@ -88,5 +100,17 @@ export class RegisteredClassResolver {
     const { id }: { id: RegisteredClass['id'] } = registeredClass
     const registeredClassID = id
     return await this.selectionService.findAll(registeredClassID)
+  }
+
+  @ResolveField(() => [Performer])
+  async performers(@Parent() registeredClass: tbl_reg_class) {
+    const { classNumber }: { classNumber: RegisteredClass['classNumber'] } = registeredClass
+    if (!classNumber) {
+      return []
+    }
+    else {
+      const registeredClassNumber = classNumber
+      return await this.performerService.findAll(null, registeredClassNumber)
+    }
   }
 }

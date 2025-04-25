@@ -21,9 +21,27 @@ export class RegisteredClassService {
   }
 
   async findAll(registrationID?: tbl_registration['id']) {
-    return await this.prisma.tbl_reg_class.findMany({
-      where: { regID: registrationID },
-    })
+    if (!registrationID) {
+      const confirmedRegistrations = await this.prisma.tbl_registration.findMany({
+        where: {
+          confirmation: {
+            not: null,
+          },
+        },
+      })
+      const registrationIDs = confirmedRegistrations.map(registration => registration.id)
+      return await this.prisma.tbl_reg_class.findMany({
+        where: {
+          regID: { in: registrationIDs },
+        },
+        distinct: ['classNumber', 'discipline', 'subdiscipline', 'level', 'category'],
+      })
+    }
+    else {
+      return await this.prisma.tbl_reg_class.findMany({
+        where: { regID: registrationID },
+      })
+    }
   }
 
   async findOne(registeredClassID: tbl_reg_class['id']) {

@@ -1,4 +1,5 @@
 import { UserError } from '@/common.entity'
+import { Performer } from '@/submissions/performer/entities/performer.entity'
 import { Selection } from '@/submissions/selection/entities/selection.entity'
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { Decimal } from '@prisma/client/runtime/library'
@@ -9,6 +10,8 @@ import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
 export class RegisteredClass {
   @Field(() => Int)
   id: number
+
+  regID: number
 
   selections?: Selection[]
   classType?: string
@@ -37,10 +40,12 @@ export class RegisteredClass {
 
   @Field(() => Int)
   communityGroupID?: number
+
+  performers?: Performer[]
 }
 
 @ObjectType()
 export class RegisteredClassPayload {
   userErrors: UserError[]
-  registeredClass: RegisteredClass
+  registeredClass?: RegisteredClass
 }
