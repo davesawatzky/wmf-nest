@@ -104,7 +104,7 @@ export class AuthService {
       }
     }
     catch (err) {
-      console.log(err)
+      console.error(err)
       throw new BadRequestException('Be sure to provide all fields')
     }
   }
@@ -176,7 +176,7 @@ export class AuthService {
       }
     }
     catch (err) {
-      console.log(err)
+      console.error(err)
       throw new BadRequestException('Error searching for user')
     }
   }
@@ -218,6 +218,7 @@ export class AuthService {
       }
     }
     catch (err) {
+      console.error(err)
       throw new BadRequestException('No valid user given')
     }
   }
@@ -254,7 +255,7 @@ export class AuthService {
       return null
     }
     catch (err) {
-      console.log(err)
+      console.error(err)
     }
   }
 
@@ -282,7 +283,7 @@ export class AuthService {
       }
     }
     catch (err) {
-      console.log(err)
+      console.error(err)
       return 'error'
     }
   }
@@ -299,7 +300,7 @@ export class AuthService {
       })
     }
     catch (err) {
-      console.log(err)
+      console.error(err)
       return {
         userErrors: [{
           message: 'Could not change password',

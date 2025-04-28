@@ -8,11 +8,11 @@ import { HttpException, HttpStatus } from '@nestjs/common'
 import { UseGuards } from '@nestjs/common/decorators'
 import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { tbl_reg_performer, tbl_registration } from '@prisma/client'
+import { Selection } from '../selection/entities/selection.entity'
+import {SelectionService} from '../selection/selection.service'
 import { PerformerInput } from './dto/performer.input'
 import { Performer, PerformerPayload } from './entities/performer.entity'
 import {PerformerService} from './performer.service'
-import {SelectionService} from '../selection/selection.service'
-import { Selection } from '../selection/entities/selection.entity'
 
 @Resolver(() => Performer)
 @UseGuards(JwtAuthGuard)
@@ -27,10 +27,10 @@ export class PerformerResolver {
 
   @Query(() => [Performer])
   @UseGuards(AbilitiesGuard)
-  @CheckAbilities({action: Action.Read, subject: Performer})
+  @CheckAbilities({ action: Action.Read, subject: Performer })
   async performers(
     @Context() context,
-    @Args('registrationID', {type: () => Int, nullable: true})
+    @Args('registrationID', { type: () => Int, nullable: true })
     registrationID: tbl_registration['id'],
   ) {
     try {
@@ -46,9 +46,9 @@ export class PerformerResolver {
 
   @Query(() => Performer)
   @UseGuards(AbilitiesGuard)
-  @CheckAbilities({action: Action.Read, subject: Performer})
+  @CheckAbilities({ action: Action.Read, subject: Performer })
   async performer(
-    @Args('performerID', {type: () => Int})
+    @Args('performerID', { type: () => Int })
     performerID: Performer['id'],
   ) {
     try {
@@ -63,11 +63,11 @@ export class PerformerResolver {
 
   @Mutation(() => PerformerPayload)
   @UseGuards(AbilitiesGuard)
-  @CheckAbilities({action: Action.Create, subject: Performer})
+  @CheckAbilities({ action: Action.Create, subject: Performer })
   async performerCreate(
-    @Args('registrationID', {type: () => Int})
+    @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
-    @Args('performerInput', {type: () => PerformerInput, nullable: true})
+    @Args('performerInput', { type: () => PerformerInput, nullable: true })
     performerInput: Partial<PerformerInput>,
   ) {
     try {
@@ -80,11 +80,11 @@ export class PerformerResolver {
 
   @Mutation(() => PerformerPayload)
   @UseGuards(AbilitiesGuard)
-  @CheckAbilities({action: Action.Update, subject: Performer})
+  @CheckAbilities({ action: Action.Update, subject: Performer })
   async performerUpdate(
-    @Args('performerID', {type: () => Int})
+    @Args('performerID', { type: () => Int })
     performerID: Performer['id'],
-    @Args('performerInput', {type: () => PerformerInput})
+    @Args('performerInput', { type: () => PerformerInput })
     performerInput: Partial<PerformerInput>,
   ) {
     try {
@@ -97,9 +97,9 @@ export class PerformerResolver {
 
   @Mutation(() => PerformerPayload)
   @UseGuards(AbilitiesGuard)
-  @CheckAbilities({action: Action.Delete, subject: Performer})
+  @CheckAbilities({ action: Action.Delete, subject: Performer })
   async performerDelete(
-    @Args('performerID', {type: () => Int})
+    @Args('performerID', { type: () => Int })
     performerID: Performer['id'],
   ) {
     try {
@@ -115,17 +115,17 @@ export class PerformerResolver {
    */
   @ResolveField(() => Registration)
   @UseGuards(AbilitiesGuard)
-  @CheckAbilities({action: Action.Read, subject: Registration})
+  @CheckAbilities({ action: Action.Read, subject: Registration })
   async registration(@Parent() performer: tbl_reg_performer) {
     const regID = performer.regID
     return await this.registrationService.findOne(regID)
   }
 
-  @ResolveField(() => [Selection])
-  @UseGuards(AbilitiesGuard)
-  // @CheckAbilities({action: Action.Read, subject: Selection})
-  async selections(@Parent() performer: tbl_reg_performer) {
-    const {regID}: {regID: tbl_reg_performer['regID']} = performer
-    return await this.selectionService.findAll(regID)
-  }
+  // @ResolveField(() => [Selection])
+  // @UseGuards(AbilitiesGuard)
+  // // @CheckAbilities({action: Action.Read, subject: Selection})
+  // async selections(@Parent() performer: tbl_reg_performer) {
+  //   const {regID}: {regID: tbl_reg_performer['regID']} = performer
+  //   return await this.selectionService.findAll(regID)
+  // }
 }

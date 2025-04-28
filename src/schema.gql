@@ -452,7 +452,6 @@ type Performer {
   pronouns: String
   province: String
   registration: Registration
-  selections: [Selection!]!
   unavailable: String
 }
 
