@@ -7,9 +7,9 @@ import helmet from 'helmet'
 import { AuthPayload } from 'src/auth/entities/auth.entity'
 import { EmailConfirmationService } from 'src/email-confirmation/email-confirmation.service'
 import request from 'supertest-graphql'
+import { TestUser } from '@/test/testUser'
 import { AppModule } from '../app.module'
 import { PrismaService } from '../prisma/prisma.service'
-import { TestUser } from './testUser'
 
 let app: INestApplication
 

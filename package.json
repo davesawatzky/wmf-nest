@@ -24,11 +24,11 @@
     "test:cov": "cross-env NODE_ENV=test jest --coverage",
     "test:debug": "cross-env NODE_ENV=test node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json",
-    "testvi": "cross-env NODE_ENV=test vitest run",
-    "testvi:watch": "cross-env NODE_ENV=test vitest --watch",
+    "testvi": "cross-env NODE_ENV=test vitest --ui run",
+    "testvi:watch": "cross-env NODE_ENV=test vitest --watch --ui",
     "testvi:cov": "cross-env NODE_ENV=test vitest --run --coverage",
     "testvi:debug": "cross-env NODE_ENV=test vitest --inspect-brk --inspect --logHeapUsage --threads=false",
-    "testvi:e2e": "cross-env NODE_ENV=test vitest --config ./vitest.config.e2e.mts",
+    "testvi:e2e": "cross-env NODE_ENV=test vitest --ui --config ./vitest.config.e2e.mts",
     "types": "ts-node ./src/generate-typings"
   },
   "dependencies": {
