@@ -202,11 +202,18 @@ describe('ClassType', () => {
     })
 
     afterEach(async () => {
-      await globalThis.prisma.tbl_class_type.delete({
-        where: {
-          id: classTypeID,
-        },
-      })
+      try {
+        await globalThis.prisma.tbl_class_type.delete({
+          where: {
+            id: classTypeID,
+          },
+        })
+      }
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Update details of existing classType', async () => {
@@ -324,7 +331,11 @@ describe('ClassType', () => {
           },
         })
       }
-      catch (error) {}
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Deletes a classType using the classTypeID', async () => {

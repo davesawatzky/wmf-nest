@@ -160,8 +160,10 @@ describe('School', () => {
           },
         })
       }
-      catch (error) {
-        console.error(error)
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
       }
     })
 
@@ -404,7 +406,11 @@ describe('School', () => {
           },
         })
       }
-      catch (error) {}
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Can delete a school', async () => {

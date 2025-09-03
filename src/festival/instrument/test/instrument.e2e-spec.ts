@@ -118,7 +118,6 @@ describe('Instrument', () => {
           },
         })
       instrumentId = response.data.instrumentCreate.instrument.id
-      console.log(instrumentId)
       expect(response.data.instrumentCreate.instrument.name).toBe('Kazoo')
       expect(response.data.instrumentCreate.instrument.id).toBeTruthy()
     })
@@ -204,11 +203,18 @@ describe('Instrument', () => {
     })
 
     afterEach(async () => {
-      await globalThis.prisma.tbl_instrument.delete({
-        where: {
-          id: instrumentID,
-        },
-      })
+      try {
+        await globalThis.prisma.tbl_instrument.delete({
+          where: {
+            id: instrumentID,
+          },
+        })
+      }
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Update details of existing instrument', async () => {
@@ -327,7 +333,11 @@ describe('Instrument', () => {
           },
         })
       }
-      catch (error) {}
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Deletes an instrument using the instrumentID', async () => {

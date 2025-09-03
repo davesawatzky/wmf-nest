@@ -279,8 +279,10 @@ describe('User', () => {
           },
         })
       }
-      catch (error) {
-        console.error(error)
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
       }
     })
 

@@ -109,6 +109,7 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
+  globalThis.prisma.$disconnect()
   globalThis.prisma = null
 
   delete globalThis.prisma

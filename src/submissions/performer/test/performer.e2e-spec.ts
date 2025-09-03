@@ -170,8 +170,10 @@ describe('Performer', () => {
           },
         })
       }
-      catch (error) {
-        console.error(error)
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
       }
     })
 
@@ -422,8 +424,10 @@ describe('Performer', () => {
           },
         })
       }
-      catch (error) {
-        console.error(error)
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
       }
     })
 

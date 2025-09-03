@@ -884,9 +884,16 @@ describe('FestivalClass', () => {
     })
 
     afterEach(async () => {
-      await globalThis.prisma.tbl_classlist.delete({
-        where: { id: festClassId },
-      })
+      try {
+        await globalThis.prisma.tbl_classlist.delete({
+          where: { id: festClassId },
+        })
+      }
+      catch (error: any) {
+        if (error.code === 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Can update details of existing festival class', async () => {
@@ -1134,7 +1141,11 @@ describe('FestivalClass', () => {
           where: { id: festClassId },
         })
       }
-      catch (error) {}
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Deletes a festival class using the festivalClassID', async () => {

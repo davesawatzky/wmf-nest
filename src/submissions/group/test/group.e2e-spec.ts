@@ -17,11 +17,18 @@ describe('Group', () => {
   })
 
   afterAll(async () => {
-    await globalThis.prisma.tbl_registration.delete({
-      where: {
-        id: regId,
-      },
-    })
+    try {
+      await globalThis.prisma.tbl_registration.delete({
+        where: {
+          id: regId,
+        },
+      })
+    }
+    catch (error: any) {
+      if (error.code !== 'P2025') {
+        console.error(error)
+      }
+    }
   })
 
   describe('Read full groups list', () => {
@@ -205,7 +212,11 @@ describe('Group', () => {
           },
         })
       }
-      catch (error) {}
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Admin can create a group on any existing registration', async () => {
@@ -417,7 +428,11 @@ describe('Group', () => {
           },
         })
       }
-      catch (error) {}
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Can delete a group', async () => {

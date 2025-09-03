@@ -196,11 +196,18 @@ describe('Trophy', () => {
     })
 
     afterEach(async () => {
-      await globalThis.prisma.tbl_trophy.delete({
-        where: {
-          id: trophyId,
-        },
-      })
+      try {
+        await globalThis.prisma.tbl_trophy.delete({
+          where: {
+            id: trophyId,
+          },
+        })
+      }
+ catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Update details of existing trophy', async () => {
@@ -320,7 +327,11 @@ describe('Trophy', () => {
           },
         })
       }
-      catch (error) {}
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Deletes a trophy using the trophyID', async () => {

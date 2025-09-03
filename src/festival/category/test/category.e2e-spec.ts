@@ -262,11 +262,17 @@ describe('Category', () => {
     })
 
     afterEach(async () => {
-      await globalThis.prisma.tbl_category.delete({
-        where: {
-          id: categoryID,
-        },
-      })
+      try {
+        await globalThis.prisma.tbl_category.delete({
+          where: {
+            id: categoryID,
+          },
+        })
+      }catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Update details of existing category', async () => {
@@ -388,7 +394,11 @@ describe('Category', () => {
           },
         })
       }
-      catch (error) {}
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Deletes a category using the categoryID', async () => {

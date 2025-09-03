@@ -251,7 +251,6 @@ describe('Subdiscipline', () => {
         .variables({
           subdisciplineId: 155,
         })
-      expectTypeOf(response.data.subdiscipline.name).toBeString
       expect(response.data.subdiscipline.name).toBeTruthy()
     })
 
@@ -271,7 +270,6 @@ describe('Subdiscipline', () => {
         .variables({
           subdisciplineId: 10000,
         })
-      expectTypeOf(response.errors[0].message).toBeString
       expect(response.errors).toBeTruthy()
     })
   })
@@ -397,11 +395,18 @@ describe('Subdiscipline', () => {
     })
 
     afterEach(async () => {
-      await globalThis.prisma.tbl_subdiscipline.delete({
-        where: {
-          id: subdisciplineId,
-        },
-      })
+      try {
+        await globalThis.prisma.tbl_subdiscipline.delete({
+          where: {
+            id: subdisciplineId,
+          },
+        })
+      }
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Update details of existing subdiscipline', async () => {
@@ -521,7 +526,11 @@ describe('Subdiscipline', () => {
           },
         })
       }
-      catch (error) {}
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Deletes a subdiscipline using the subdisciplineID', async () => {

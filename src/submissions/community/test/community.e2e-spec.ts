@@ -160,7 +160,11 @@ describe('Community', () => {
           },
         })
       }
-      catch (error) {}
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Can create a community with regId', async () => {
@@ -401,7 +405,11 @@ describe('Community', () => {
           },
         })
       }
-      catch (error) {}
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Can delete a community', async () => {

@@ -116,7 +116,6 @@ describe('Level', () => {
         .variables({
           levelId: 37,
         })
-      expectTypeOf(response.data.level.name).toBeString
       expect(response.data.level.name).toBe('GRADE C')
     })
 
@@ -135,7 +134,6 @@ describe('Level', () => {
         .variables({
           levelId: 10000,
         })
-      expectTypeOf(response.errors[0].message).toBeString
       expect(response.errors).toBeTruthy()
     })
   })
@@ -257,11 +255,18 @@ describe('Level', () => {
     })
 
     afterEach(async () => {
-      await globalThis.prisma.tbl_level.delete({
-        where: {
-          id: levelId,
-        },
-      })
+      try {
+        await globalThis.prisma.tbl_level.delete({
+          where: {
+            id: levelId,
+          },
+        })
+      }
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Update details of existing level', async () => {
@@ -381,7 +386,11 @@ describe('Level', () => {
           },
         })
       }
-      catch (error) {}
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Deletes a level using the levelID', async () => {

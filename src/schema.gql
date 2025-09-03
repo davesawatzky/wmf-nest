@@ -555,8 +555,9 @@ type RegisteredClass {
   maxSelections: Int
   minSelections: Int
   numberOfSelections: Int
-  performers: [Performer!]!
+  performers: [Performer!]
   price: Decimal
+  regID: Int!
   schoolGroupID: Int
   selections: [Selection!]
   subdiscipline: String
@@ -578,7 +579,7 @@ input RegisteredClassInput {
 }
 
 type RegisteredClassPayload {
-  registeredClass: RegisteredClass!
+  registeredClass: RegisteredClass
   userErrors: [UserError!]!
 }
 

@@ -166,7 +166,11 @@ describe('CommunityGroup', () => {
           },
         })
       }
-      catch (error) {}
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Can create a communityGroup', async () => {
@@ -411,7 +415,11 @@ describe('CommunityGroup', () => {
           },
         })
       }
-      catch (error) {}
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Can delete a communityGroup', async () => {

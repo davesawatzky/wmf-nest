@@ -172,7 +172,6 @@ describe('Discipline', () => {
 
   describe('Create', () => {
     let response: any
-    let disciplineId: number
 
     afterAll(async () => {
       await globalThis.prisma.tbl_discipline.delete({
@@ -202,7 +201,6 @@ describe('Discipline', () => {
             name: 'Sticks',
           },
         })
-      disciplineId = response.data.disciplineCreate.discipline.id
       expect(response.data.disciplineCreate.discipline.name).toBe('Sticks')
       expect(response.data.disciplineCreate.discipline.id).toBeTruthy()
     })
@@ -283,11 +281,18 @@ describe('Discipline', () => {
     })
 
     afterEach(async () => {
-      await globalThis.prisma.tbl_discipline.delete({
-        where: {
-          id: disciplineId,
-        },
-      })
+      try {
+        await globalThis.prisma.tbl_discipline.delete({
+          where: {
+            id: disciplineId,
+          },
+        })
+      }
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Update details of existing discipline', async () => {
@@ -401,7 +406,11 @@ describe('Discipline', () => {
           },
         })
       }
-      catch (error) {}
+      catch (error: any) {
+        if (error.code !== 'P2025') {
+          console.error(error)
+        }
+      }
     })
 
     it('Deletes a discipline using the disciplineID', async () => {

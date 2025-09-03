@@ -10,6 +10,8 @@ export default defineConfig({
       '@test': './test',
     },
     root: './',
+    fileParallelism: false,
+    // maxConcurrency: 1,
   },
   resolve: {
     alias: {
