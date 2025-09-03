@@ -1,5 +1,5 @@
-import { SearchFilterInputFactory } from '@/common/search-filters';
-import { Field, InputType } from '@nestjs/graphql';
+import { InputType } from '@nestjs/graphql'
+import { SearchFilterInputFactory } from '@/common/search-filters'
 import { Registration } from '../entities/registration.entity'
 
 // Create a Registration-specific search filter input type
@@ -21,7 +21,7 @@ const RegistrationSearchFiltersBase = SearchFilterInputFactory.create<Registrati
     'updatedAt',
     'submittedAt',
   ],
-);
+)
 
 @InputType()
 export class RegistrationSearchFilters extends RegistrationSearchFiltersBase {}

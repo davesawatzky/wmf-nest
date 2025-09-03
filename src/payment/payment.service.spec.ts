@@ -1,4 +1,3 @@
-import { StripeService } from '@/stripe/stripe.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   beforeEach,
@@ -6,6 +5,7 @@ import {
   expect,
   it,
 } from 'vitest'
+import { StripeService } from '@/stripe/stripe.service'
 import { PaymentService } from './payment.service'
 
 describe('paymentService', () => {

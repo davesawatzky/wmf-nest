@@ -1,6 +1,6 @@
-import { CommunityGroup } from '@/submissions/community-group/entities/community-group.entity'
 import gql from 'graphql-tag'
 import request from 'supertest-graphql'
+import { CommunityGroup } from '@/submissions/community-group/entities/community-group.entity'
 
 describe('CommunityGroup', () => {
   let regId: number

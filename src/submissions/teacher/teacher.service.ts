@@ -1,6 +1,6 @@
-import { PrismaService } from '@/prisma/prisma.service'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { tbl_user } from '@prisma/client'
+import { PrismaService } from '@/prisma/prisma.service'
 import { TeacherInput } from './dto/teacher.input'
 import { TeacherTypeInput } from './dto/teacherType.input'
 import { Teacher } from './entities/teacher.entity'
@@ -35,7 +35,7 @@ export class TeacherService {
       }
     }
     catch (err) {
-      console.log(err)
+      console.error(err)
       throw new BadRequestException('Error creating Teacher')
     }
   }
@@ -82,7 +82,7 @@ export class TeacherService {
       }
     }
     catch (err) {
-      console.log(err)
+      console.error(err)
       throw new BadRequestException('Error searching for teachers')
     }
   }
@@ -117,7 +117,7 @@ export class TeacherService {
       }
     }
     catch (err) {
-      console.log(err)
+      console.error(err)
       throw new BadRequestException('No teacher found with that ID or email.')
     }
   }
@@ -133,7 +133,7 @@ export class TeacherService {
       }
     }
     catch (err) {
-      console.log(err)
+      console.error(err)
       throw new BadRequestException(
         `Cannot update teacher with id: ${teacherID}`,
       )
@@ -152,7 +152,7 @@ export class TeacherService {
       }
     }
     catch (err) {
-      console.log(err)
+      console.error(err)
       throw new BadRequestException(
         `Cannot remove teacher with id: ${teacherID}`,
       )

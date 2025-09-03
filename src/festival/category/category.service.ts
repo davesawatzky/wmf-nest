@@ -1,7 +1,7 @@
-import { UserError } from '@/common.entity'
-import { PrismaService } from '@/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
 import { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
+import { UserError } from '@/common.entity'
+import { PrismaService } from '@/prisma/prisma.service'
 import { CategoryInput } from './dto/category.input'
 
 @Injectable()
@@ -28,7 +28,7 @@ export class CategoryService {
         category = null
       }
       else {
-        console.log(error)
+        console.error(error)
         userErrors = [
           {
             message: 'Cannot create category',
@@ -88,7 +88,7 @@ export class CategoryService {
         category = null
       }
       else {
-        console.log(error)
+        console.error(error)
         userErrors = [
           {
             message: 'Cannot update category',
@@ -124,7 +124,7 @@ export class CategoryService {
         category = null
       }
       else {
-        console.log(error)
+        console.error(error)
         userErrors = [
           {
             message: 'Cannot delete category',

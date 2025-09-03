@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { MatchMode, OperatorType, PrismaWhereClause, SearchFilters, FilterConstraints } from './types'
+import { MatchMode, OperatorType, PrismaWhereClause, SearchFilters } from './types'
 
 @Injectable()
 export class SearchFilterService {
@@ -20,53 +20,59 @@ export class SearchFilterService {
 
     for (const [field, filterOptions] of Object.entries(searchFilters)) {
       // Skip if filterOptions is null or undefined
-      if (!filterOptions) continue
-      
+      if (!filterOptions)
+        continue
+
       const { operator, constraints } = filterOptions
-      
+
       // Skip if constraints is null, undefined, or empty array
-      if (!constraints || !Array.isArray(constraints) || constraints.length === 0) continue
-      
+      if (!constraints || !Array.isArray(constraints) || constraints.length === 0)
+        continue
+
       // Process each constraint for this field
       const fieldConditions: Record<string, any>[] = []
-      
+
       for (const constraint of constraints) {
         const { value, matchMode } = constraint
-        
+
         // Skip if value is null, undefined, or empty string
         if (value === undefined || value === null || (typeof value === 'string' && value.trim() === '')) {
           continue
         }
-        
+
         // Build condition for this specific constraint
         const condition = this.buildConditionForField(field, value, matchMode)
         fieldConditions.push(condition)
       }
-      
+
       // Skip if no valid conditions were created
-      if (fieldConditions.length === 0) continue
-      
+      if (fieldConditions.length === 0)
+        continue
+
       // If we have multiple conditions for the same field, combine them based on the operator
       let combinedFieldCondition: Record<string, any>
-      
+
       if (fieldConditions.length === 1) {
         // Just one condition, use it directly
         combinedFieldCondition = fieldConditions[0]
-      } else {
+      }
+      else {
         // Multiple conditions for the same field
         if (operator === OperatorType.AND) {
           // All conditions must be true
           combinedFieldCondition = { AND: fieldConditions }
-        } else {
+        }
+        else {
           // Any condition can be true
           combinedFieldCondition = { OR: fieldConditions }
         }
       }
-      
+
       // Add the combined field condition to the main conditions
       if (operator === OperatorType.AND) {
         andConditions.push(combinedFieldCondition)
-      } else {
+      }
+      else {
         orConditions.push(combinedFieldCondition)
       }
     }

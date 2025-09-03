@@ -1,4 +1,3 @@
-import { PrismaService } from '@/prisma/prisma.service'
 import {
   BadRequestException,
   Injectable,
@@ -6,6 +5,7 @@ import {
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
+import { PrismaService } from '@/prisma/prisma.service'
 import { User } from '../user/entities/user.entity'
 import { CredentialsSignin } from './dto/credentials-signin.input'
 import { CredentialsSignup } from './dto/credentials-signup.input'

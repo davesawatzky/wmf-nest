@@ -1,6 +1,6 @@
-import { PerformerType } from '@/common.entity'
 import { Field, Float, InputType, Int } from '@nestjs/graphql'
-import { IsBoolean, IsInt, IsNumber, IsOptional, IsString } from 'class-validator'
+import { IsInt, IsNumber, IsOptional, IsString } from 'class-validator'
+import { PerformerType } from '@/common.entity'
 
 @InputType()
 export class RegistrationInput {

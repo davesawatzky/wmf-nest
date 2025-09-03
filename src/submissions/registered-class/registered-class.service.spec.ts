@@ -1,4 +1,3 @@
-import { PrismaService } from '@/prisma/prisma.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   beforeEach,
@@ -6,6 +5,7 @@ import {
   expect,
   it,
 } from 'vitest'
+import { PrismaService } from '@/prisma/prisma.service'
 import { RegisteredClassService } from './registered-class.service'
 
 describe('registeredClassService', () => {

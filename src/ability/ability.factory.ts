@@ -1,3 +1,11 @@
+import {
+  AbilityBuilder,
+  createMongoAbility,
+  ExtractSubjectType,
+  InferSubjects,
+  MongoAbility,
+} from '@casl/ability'
+import { Injectable } from '@nestjs/common'
 import { Category } from '@/festival/category/entities/category.entity'
 import { ClassType } from '@/festival/class-type/entities/class-type.entity'
 import { Discipline } from '@/festival/discipline/entities/discipline.entity'
@@ -7,28 +15,20 @@ import { Item } from '@/festival/item/entities/item.entity'
 import { Level } from '@/festival/level/entities/level.entity'
 import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity'
 import { Trophy } from '@/festival/trophy/entities/trophy.entity'
-import { Community } from '@/submissions/community/entities/community.entity'
 import { CommunityGroup } from '@/submissions/community-group/entities/community-group.entity'
+import { Community } from '@/submissions/community/entities/community.entity'
 import { FieldConfig } from '@/submissions/field-config/entities/field-config.entity'
 import { Group } from '@/submissions/group/entities/group.entity'
-import { Order } from '@/submissions/order/entities/order.entity'
 import { OrderItem } from '@/submissions/order-item/entities/order-item.entity'
+import { Order } from '@/submissions/order/entities/order.entity'
 import { Performer } from '@/submissions/performer/entities/performer.entity'
 import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity'
 import { Registration } from '@/submissions/registration/entities/registration.entity'
-import { School } from '@/submissions/school/entities/school.entity'
 import { SchoolGroup } from '@/submissions/school-group/entities/school-group.entity'
+import { School } from '@/submissions/school/entities/school.entity'
 import { Selection } from '@/submissions/selection/entities/selection.entity'
 import { Teacher } from '@/submissions/teacher/entities/teacher.entity'
 import { User } from '@/user/entities/user.entity'
-import {
-  AbilityBuilder,
-  createMongoAbility,
-  ExtractSubjectType,
-  InferSubjects,
-  MongoAbility,
-} from '@casl/ability'
-import { Injectable } from '@nestjs/common'
 
 export enum Action {
   Manage = 'manage',
@@ -39,32 +39,32 @@ export enum Action {
 }
 
 export type Subjects = InferSubjects<
-  typeof User |
-  typeof Category |
-  typeof ClassType |
-  typeof Discipline |
-  typeof FestivalClass |
-  typeof Instrument |
-  typeof Level |
-  typeof Subdiscipline |
-  typeof Trophy |
-  typeof Community |
-  typeof CommunityGroup |
-  typeof FieldConfig |
-  typeof Group |
-  typeof Performer |
-  typeof RegisteredClass |
-  typeof Registration |
-  typeof School |
-  typeof SchoolGroup |
-  typeof Selection |
-  typeof Teacher |
-  typeof Order |
-  typeof OrderItem |
-  typeof Item
-> |
-'all' |
-'admin'
+  typeof User
+  | typeof Category
+  | typeof ClassType
+  | typeof Discipline
+  | typeof FestivalClass
+  | typeof Instrument
+  | typeof Level
+  | typeof Subdiscipline
+  | typeof Trophy
+  | typeof Community
+  | typeof CommunityGroup
+  | typeof FieldConfig
+  | typeof Group
+  | typeof Performer
+  | typeof RegisteredClass
+  | typeof Registration
+  | typeof School
+  | typeof SchoolGroup
+  | typeof Selection
+  | typeof Teacher
+  | typeof Order
+  | typeof OrderItem
+  | typeof Item
+>
+| 'all'
+| 'admin'
 
 export type AppAbility = MongoAbility<[Action, Subjects]>
 

@@ -1,9 +1,7 @@
-import { PerformerType } from '@/common.entity'
-import { SearchFilters, SearchFilterService } from '@/common/search-filters'
-import { PrismaService } from '@/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
 import { tbl_registration, tbl_user } from '@prisma/client'
-import { RegistrationSearchFilters } from './dto/registration-search-filters.input'
+import { PerformerType } from '@/common.entity'
+import { PrismaService } from '@/prisma/prisma.service'
 import { RegistrationInput } from './dto/registration.input'
 
 @Injectable()

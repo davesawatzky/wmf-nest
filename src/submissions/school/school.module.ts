@@ -1,7 +1,7 @@
+import { forwardRef, Module } from '@nestjs/common'
 import { AbilityModule } from '@/ability/ability.module'
 import { RegistrationModule } from '@/submissions/registration/registration.module'
 import { SchoolGroupModule } from '@/submissions/school-group/school-group.module'
-import { forwardRef, Module } from '@nestjs/common'
 import { SchoolResolver } from './school.resolver'
 import { SchoolService } from './school.service'
 

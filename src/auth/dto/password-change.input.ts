@@ -1,5 +1,5 @@
 import { InputType } from '@nestjs/graphql'
-import { IsEmail, IsJWT, IsNotEmpty, IsStrongPassword } from 'class-validator'
+import { IsJWT, IsNotEmpty, IsStrongPassword } from 'class-validator'
 
 @InputType()
 export class PasswordChangeInput {

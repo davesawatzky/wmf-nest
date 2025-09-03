@@ -1,11 +1,3 @@
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { ApplySearchFilters } from '@/common/search-filters'
-import { Performer } from '@/submissions/performer/entities/performer.entity'
-import { Selection } from '@/submissions/selection/entities/selection.entity'
-import { SelectionService } from '@/submissions/selection/selection.service'
 import { UseGuards } from '@nestjs/common/decorators'
 import {
   Args,
@@ -18,6 +10,13 @@ import {
   Resolver,
 } from '@nestjs/graphql'
 import { tbl_reg_class, tbl_registration } from '@prisma/client'
+import { CheckAbilities } from '@/ability/abilities.decorator'
+import { AbilitiesGuard } from '@/ability/abilities.guard'
+import { Action } from '@/ability/ability.factory'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
+import { Performer } from '@/submissions/performer/entities/performer.entity'
+import { Selection } from '@/submissions/selection/entities/selection.entity'
+import { SelectionService } from '@/submissions/selection/selection.service'
 import { PerformerService } from '../performer/performer.service'
 import { RegisteredClassInput } from './dto/registered-class.input'
 import { RegisteredClass, RegisteredClassPayload } from './entities/registered-class.entity'

@@ -1,7 +1,7 @@
-import { UserError } from '@/common.entity'
-import { PrismaService } from '@/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
 import { tbl_reg_school, tbl_reg_schoolgroup } from '@prisma/client'
+import { UserError } from '@/common.entity'
+import { PrismaService } from '@/prisma/prisma.service'
 import { SchoolGroupInput } from './dto/school-group.input'
 
 @Injectable()
@@ -31,7 +31,7 @@ export class SchoolGroupService {
         schoolGroup = null
       }
       else {
-        console.log(error)
+        console.error(error)
         userErrors = [
           {
             message: 'Cannot create school group',

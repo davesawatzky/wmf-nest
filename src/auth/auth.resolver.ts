@@ -10,7 +10,6 @@ import {
   Query,
   Resolver,
 } from '@nestjs/graphql'
-import { isNullableType } from 'graphql'
 import { EmailConfirmationService } from '../email-confirmation/email-confirmation.service'
 import { User } from '../user/entities/user.entity'
 import { AuthService } from './auth.service'

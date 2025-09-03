@@ -1,7 +1,7 @@
-import { StripeModule } from '@/stripe/stripe.module'
-import {RegistrationModule} from '@/submissions/registration/registration.module'
 import { Module } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import { StripeModule } from '@/stripe/stripe.module'
+import { RegistrationModule } from '@/submissions/registration/registration.module'
 import { PaymentController } from './payment.controller'
 import { PaymentService } from './payment.service'
 

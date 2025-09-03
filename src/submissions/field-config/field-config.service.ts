@@ -1,5 +1,5 @@
-import { PrismaService } from '@/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
+import { PrismaService } from '@/prisma/prisma.service'
 import { FieldConfigInput } from './dto/field-config.input'
 
 @Injectable()

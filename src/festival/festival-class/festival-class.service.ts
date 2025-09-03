@@ -1,5 +1,3 @@
-import { PerformerType, UserError } from '@/common.entity'
-import { PrismaService } from '@/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
 import {
   tbl_category,
@@ -9,6 +7,8 @@ import {
   tbl_level,
   tbl_subdiscipline,
 } from '@prisma/client'
+import { PerformerType, UserError } from '@/common.entity'
+import { PrismaService } from '@/prisma/prisma.service'
 
 import { FestivalClassInput, FestivalClassSearchArgs } from './dto/festival-class.input'
 

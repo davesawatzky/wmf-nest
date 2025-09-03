@@ -1,5 +1,3 @@
-import { FestivalClassService } from '@/festival/festival-class/festival-class.service'
-import { PrismaService } from '@/prisma/prisma.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   beforeEach,
@@ -7,6 +5,8 @@ import {
   expect,
   it,
 } from 'vitest'
+import { FestivalClassService } from '@/festival/festival-class/festival-class.service'
+import { PrismaService } from '@/prisma/prisma.service'
 import { SubdisciplineResolver } from '../subdiscipline.resolver'
 import { SubdisciplineService } from '../subdiscipline.service'
 

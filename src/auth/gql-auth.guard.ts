@@ -10,18 +10,18 @@ export class GqlAuthGuard extends AuthGuard('local') {
   }
 
   getRequest(context: ExecutionContext) {
-    // console.log(context)
+    // console.error(context)
     const ctx = GqlExecutionContext.create(context)
 
-    // console.log(ctx)
+    // console.error(ctx)
 
     const request = ctx.getContext()
 
-    // console.log(request)
+    // console.error(request)
 
     request.body = ctx.getArgs().credentials
 
-    // console.log(ctx.getContext().body)
+    // console.error(ctx.getContext().body)
 
     return request
   }

@@ -171,7 +171,7 @@ describe('Performer', () => {
         })
       }
       catch (error) {
-        console.log(error)
+        console.error(error)
       }
     })
 
@@ -422,7 +422,9 @@ describe('Performer', () => {
           },
         })
       }
-      catch (error) {}
+      catch (error) {
+        console.error(error)
+      }
     })
 
     it('Can delete a performer', async () => {

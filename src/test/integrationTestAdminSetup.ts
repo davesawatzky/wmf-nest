@@ -1,5 +1,4 @@
 import process from 'node:process'
-import { TestAdmin } from '@/test/testUser'
 import { INestApplication, ValidationPipe } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import cookieParser from 'cookie-parser'
@@ -8,6 +7,7 @@ import helmet from 'helmet'
 import { AuthPayload } from 'src/auth/entities/auth.entity'
 import { EmailConfirmationService } from 'src/email-confirmation/email-confirmation.service'
 import request from 'supertest-graphql'
+import { TestAdmin } from '@/test/testUser'
 import { AppModule } from '../app.module'
 import { PrismaService } from '../prisma/prisma.service'
 

@@ -1,4 +1,3 @@
-import { RestJwtAuthGuard } from '@/auth/jwt-auth.guard'
 import {
   Body,
   Controller,
@@ -6,10 +5,8 @@ import {
   Post,
   RawBodyRequest,
   Req,
-  UseGuards,
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { PaymentCreateDto } from './dto/payment.dto'
 import { PaymentService } from './payment.service'
 
 @Controller('payment')

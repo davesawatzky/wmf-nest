@@ -1,5 +1,5 @@
-import { AbilityModule } from '@/ability/ability.module'
 import { forwardRef, Module } from '@nestjs/common'
+import { AbilityModule } from '@/ability/ability.module'
 import { FestivalClassModule } from '../festival-class/festival-class.module'
 import { TrophyResolver } from './trophy.resolver'
 import { TrophyService } from './trophy.service'

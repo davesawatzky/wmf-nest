@@ -1,3 +1,5 @@
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql'
+import { IsNumber } from 'class-validator'
 import { PerformerType, UserError } from '@/common.entity'
 import { Community } from '@/submissions/community/entities/community.entity'
 import { Group } from '@/submissions/group/entities/group.entity'
@@ -5,8 +7,6 @@ import { Performer } from '@/submissions/performer/entities/performer.entity'
 import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity'
 import { School } from '@/submissions/school/entities/school.entity'
 import { User } from '@/user/entities/user.entity'
-import { Field, Float, Int, ObjectType } from '@nestjs/graphql'
-import { IsNumber } from 'class-validator'
 
 @ObjectType()
 export class Registration {

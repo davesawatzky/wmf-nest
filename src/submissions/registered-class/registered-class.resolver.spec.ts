@@ -1,5 +1,3 @@
-import { PrismaService } from '@/prisma/prisma.service'
-import { SelectionService } from '@/submissions/selection/selection.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   beforeEach,
@@ -7,6 +5,8 @@ import {
   expect,
   it,
 } from 'vitest'
+import { PrismaService } from '@/prisma/prisma.service'
+import { SelectionService } from '@/submissions/selection/selection.service'
 import { RegisteredClassResolver } from './registered-class.resolver'
 import { RegisteredClassService } from './registered-class.service'
 

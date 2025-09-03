@@ -1,6 +1,5 @@
-import { OrderItemInput } from '@/submissions/order-item/dto/order-item.input'
-import { Field, Float, InputType, Int } from '@nestjs/graphql'
-import { IsArray, IsDate, IsNumber, IsOptional, IsString } from 'class-validator'
+import { Field, Float, InputType } from '@nestjs/graphql'
+import { IsDate, IsNumber, IsOptional, IsString } from 'class-validator'
 
 @InputType()
 export class OrderInput {

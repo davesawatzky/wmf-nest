@@ -1,4 +1,3 @@
-import { StripeService } from '@/stripe/stripe.service'
 import { ConfigService } from '@nestjs/config'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
@@ -7,6 +6,7 @@ import {
   expect,
   it,
 } from 'vitest'
+import { StripeService } from '@/stripe/stripe.service'
 import { PaymentCreateDto } from './dto/payment.dto'
 import { PaymentController } from './payment.controller'
 import { PaymentService } from './payment.service'

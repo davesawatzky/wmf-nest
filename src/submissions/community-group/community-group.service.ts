@@ -1,7 +1,7 @@
-import { UserError } from '@/common.entity'
-import { PrismaService } from '@/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
 import { tbl_reg_community, tbl_reg_communitygroup } from '@prisma/client'
+import { UserError } from '@/common.entity'
+import { PrismaService } from '@/prisma/prisma.service'
 import { CommunityGroupInput } from './dto/community-group.input'
 
 @Injectable()
@@ -31,7 +31,7 @@ export class CommunityGroupService {
         communityGroup = null
       }
       else {
-        console.log(error)
+        console.error(error)
         userErrors = [
           {
             message: 'Cannot create community group',

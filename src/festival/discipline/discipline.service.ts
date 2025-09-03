@@ -1,8 +1,8 @@
+import { Injectable } from '@nestjs/common'
+import { tbl_discipline } from '@prisma/client'
 import { PerformerType, UserError } from '@/common.entity'
 import { Instrument } from '@/festival/instrument/entities/instrument.entity'
 import { PrismaService } from '@/prisma/prisma.service'
-import { Injectable } from '@nestjs/common'
-import { tbl_discipline } from '@prisma/client'
 import { DisciplineInput } from './dto/discipline.input'
 
 @Injectable()
@@ -173,7 +173,7 @@ export class DisciplineService {
         discipline = null
       }
       else {
-        console.log(error)
+        console.error(error)
         userErrors = [
           {
             message: 'Cannot delete discipline',

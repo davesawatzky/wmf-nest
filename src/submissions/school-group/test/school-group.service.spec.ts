@@ -1,5 +1,3 @@
-import { PrismaService } from '@/prisma/prisma.service'
-import { SchoolGroupService } from '@/submissions/school-group/school-group.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   beforeEach,
@@ -7,6 +5,8 @@ import {
   expect,
   it,
 } from 'vitest'
+import { PrismaService } from '@/prisma/prisma.service'
+import { SchoolGroupService } from '@/submissions/school-group/school-group.service'
 
 describe('schoolGroupService', () => {
   let service: SchoolGroupService

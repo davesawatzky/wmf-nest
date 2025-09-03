@@ -1,5 +1,3 @@
-import { PrismaService } from '@/prisma/prisma.service'
-import { RegistrationService } from '@/submissions/registration/registration.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   beforeEach,
@@ -7,6 +5,8 @@ import {
   expect,
   it,
 } from 'vitest'
+import { PrismaService } from '@/prisma/prisma.service'
+import { RegistrationService } from '@/submissions/registration/registration.service'
 import { SubmissionResolver } from './submission.resolver'
 import { SubmissionService } from './submission.service'
 

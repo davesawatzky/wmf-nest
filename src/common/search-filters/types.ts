@@ -35,7 +35,7 @@ export type SearchFilters<T> = {
 }
 
 export interface PrismaWhereClause {
-  AND?: any[];
-  OR?: any[];
-  [key: string]: any;
+  AND?: any[]
+  OR?: any[]
+  [key: string]: any
 }

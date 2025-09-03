@@ -1,6 +1,6 @@
+import { HttpException, Injectable, RawBodyRequest } from '@nestjs/common'
 import { StripeService } from '@/stripe/stripe.service'
 import { RegistrationService } from '@/submissions/registration/registration.service'
-import { HttpException, Injectable, RawBodyRequest } from '@nestjs/common'
 
 @Injectable()
 export class PaymentService {

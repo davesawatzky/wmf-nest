@@ -1,7 +1,7 @@
-import { UserError } from '@/common.entity'
-import { PrismaService } from '@/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
 import { tbl_instrument } from '@prisma/client'
+import { UserError } from '@/common.entity'
+import { PrismaService } from '@/prisma/prisma.service'
 import { InstrumentInput } from './dto/instrument.input'
 
 @Injectable()
@@ -28,7 +28,7 @@ export class InstrumentService {
         instrument = null
       }
       else {
-        console.log(error)
+        console.error(error)
         userErrors = [
           {
             message: 'Cannot create instrument',

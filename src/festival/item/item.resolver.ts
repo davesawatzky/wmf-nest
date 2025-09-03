@@ -1,11 +1,11 @@
+import { UseGuards } from '@nestjs/common'
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { CheckAbilities } from '@/ability/abilities.decorator'
 import { AbilitiesGuard } from '@/ability/abilities.guard'
 import { Action } from '@/ability/ability.factory'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { OrderItem } from '@/submissions/order-item/entities/order-item.entity'
 import { OrderItemService } from '@/submissions/order-item/order-item.service'
-import { UseGuards } from '@nestjs/common'
-import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { ItemInput } from './dto/item.input'
 import { Item, ItemPayload } from './entities/item.entity'
 import { ItemService } from './item.service'
@@ -38,8 +38,8 @@ export class ItemResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Create, subject: Item })
   async itemCreate(
-    @Args('ItemInput', { type: () => ItemInput }) itemInput: Partial<ItemInput>
-) {
+    @Args('ItemInput', { type: () => ItemInput }) itemInput: Partial<ItemInput>,
+  ) {
     return this.itemService.create(itemInput)
   }
 

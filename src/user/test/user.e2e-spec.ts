@@ -267,7 +267,7 @@ describe('User', () => {
         newUserId = newUser.id
       }
       catch (error) {
-        console.log(error)
+        console.error(error)
       }
     })
 
@@ -280,7 +280,7 @@ describe('User', () => {
         })
       }
       catch (error) {
-        console.log(error)
+        console.error(error)
       }
     })
 

@@ -1,6 +1,6 @@
-import { PrismaService } from '@/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
 import { tbl_order_item } from '@prisma/client'
+import { PrismaService } from '@/prisma/prisma.service'
 import { OrderItemInput } from './dto/order-item.input'
 
 @Injectable()

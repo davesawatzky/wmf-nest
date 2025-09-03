@@ -1,5 +1,5 @@
-import { RegistrationModule } from '@/submissions/registration/registration.module'
 import { forwardRef, Module } from '@nestjs/common'
+import { RegistrationModule } from '@/submissions/registration/registration.module'
 import { TeacherResolver } from './teacher.resolver'
 import { TeacherService } from './teacher.service'
 

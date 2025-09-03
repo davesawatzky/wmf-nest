@@ -1,4 +1,3 @@
-import { hrtime } from 'node:process'
 import { Performer } from '../entities/performer.entity'
 
 export function performerStub(): Performer {

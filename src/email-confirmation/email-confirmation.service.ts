@@ -1,8 +1,8 @@
-import { EmailService } from '@/email/email.service'
-import { UserService } from '@/user/user.service'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
+import { EmailService } from '@/email/email.service'
+import { UserService } from '@/user/user.service'
 import VerificationTokenPayload from './verificationTokenPayload.interface'
 
 @Injectable()
@@ -61,7 +61,7 @@ export class EmailConfirmationService {
       })
     }
     catch (err) {
-      console.log(err)
+      console.error(err)
     }
   }
 
@@ -87,7 +87,7 @@ export class EmailConfirmationService {
       await this.sendPasswordResetLink(userEmail)
     }
     catch (err) {
-      console.log(err)
+      console.error(err)
     }
   }
 }

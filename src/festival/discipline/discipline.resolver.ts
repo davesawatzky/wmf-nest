@@ -1,12 +1,3 @@
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { PerformerType } from '@/common.entity'
-import { Instrument } from '@/festival/instrument/entities/instrument.entity'
-import { InstrumentService } from '@/festival/instrument/instrument.service'
-import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity'
-import { SubdisciplineService } from '@/festival/subdiscipline/subdiscipline.service'
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
 import {
   Args,
@@ -18,6 +9,15 @@ import {
   Resolver,
 } from '@nestjs/graphql'
 import { tbl_discipline } from '@prisma/client'
+import { CheckAbilities } from '@/ability/abilities.decorator'
+import { AbilitiesGuard } from '@/ability/abilities.guard'
+import { Action } from '@/ability/ability.factory'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
+import { PerformerType } from '@/common.entity'
+import { Instrument } from '@/festival/instrument/entities/instrument.entity'
+import { InstrumentService } from '@/festival/instrument/instrument.service'
+import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity'
+import { SubdisciplineService } from '@/festival/subdiscipline/subdiscipline.service'
 import { DisciplineService } from './discipline.service'
 import { DisciplineInput } from './dto/discipline.input'
 import { Discipline, DisciplinePayload } from './entities/discipline.entity'

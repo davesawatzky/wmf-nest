@@ -1,6 +1,6 @@
-import { UserError } from '@/common.entity'
 import { Field, ObjectType } from '@nestjs/graphql'
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
+import { UserError } from '@/common.entity'
 
 @ObjectType()
 export class Submission {

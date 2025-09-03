@@ -1,9 +1,3 @@
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { DisciplineService } from '@/festival/discipline/discipline.service'
-import { Discipline } from '@/festival/discipline/entities/discipline.entity'
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
 import {
   Args,
@@ -15,6 +9,12 @@ import {
   Resolver,
 } from '@nestjs/graphql'
 import { tbl_instrument } from '@prisma/client'
+import { CheckAbilities } from '@/ability/abilities.decorator'
+import { AbilitiesGuard } from '@/ability/abilities.guard'
+import { Action } from '@/ability/ability.factory'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
+import { DisciplineService } from '@/festival/discipline/discipline.service'
+import { Discipline } from '@/festival/discipline/entities/discipline.entity'
 import { InstrumentInput } from './dto/instrument.input'
 import { Instrument, InstrumentPayload } from './entities/instrument.entity'
 import { InstrumentService } from './instrument.service'

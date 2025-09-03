@@ -1,16 +1,16 @@
-import { EmailService } from '@/email/email.service'
-import { PrismaService } from '@/prisma/prisma.service'
-import { UserService } from '@/user/user.service'
+import { MailerService } from '@nestjs-modules/mailer'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { Test, TestingModule } from '@nestjs/testing'
-import { MailerService } from '@nestjs-modules/mailer'
 import {
   beforeEach,
   describe,
   expect,
   it,
 } from 'vitest'
+import { EmailService } from '@/email/email.service'
+import { PrismaService } from '@/prisma/prisma.service'
+import { UserService } from '@/user/user.service'
 import { EmailConfirmationController } from './email-confirmation.controller'
 import { EmailConfirmationService } from './email-confirmation.service'
 

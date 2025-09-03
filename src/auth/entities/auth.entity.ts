@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { IsBoolean, isBoolean, IsEmail, IsJWT, IsOptional } from 'class-validator'
+import { IsBoolean, IsEmail, IsJWT, IsOptional } from 'class-validator'
 import { UserError } from '../../common.entity'
 import { User } from '../../user/entities/user.entity'
 
