@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
 import { PrismaService } from '@/prisma/prisma.service'
 import { User } from '../user/entities/user.entity'
+import { UserService } from '../user/user.service'
 import { CredentialsSignin } from './dto/credentials-signin.input'
 import { CredentialsSignup } from './dto/credentials-signup.input'
 import { AuthPayload, PasswordChangePayload } from './entities/auth.entity'
@@ -17,6 +18,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private userService: UserService,
   ) {}
 
   async signup(credentialsSignup: CredentialsSignup): Promise<AuthPayload> {
@@ -312,7 +314,7 @@ export class AuthService {
     return { userErrors: [], passwordChanged: true }
   }
 
-  public async decodeConfirmationToken(token: string) {
+  public async emailFromToken(token: string) {
     try {
       const payload = await this.jwtService.verify(token, {
         secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
@@ -325,6 +327,17 @@ export class AuthService {
       if (error?.name === 'TokenExpiredError')
         throw new BadRequestException('Email confirmation token expired')
       throw new BadRequestException('Bad confirmation token')
+    }
+  }
+
+  async validateTokenAndGetUser(token: string): Promise<User | null> {
+    try {
+      const payload = this.jwtService.verify(token)
+      return await this.userService.findOne(payload.sub)
+    }
+    catch (error) {
+      console.error(error)
+      return null
     }
   }
 }

@@ -90,7 +90,7 @@ export class AuthResolver {
       }
     }
     else {
-      const email = await this.authService.decodeConfirmationToken(
+      const email = await this.authService.emailFromToken(
         passwordChangeInput.resetToken,
       )
       if (email) {
@@ -119,10 +119,22 @@ export class AuthResolver {
     return await this.authService.checkIfPasswordExists(id)
   }
 
-  @Query(() => Boolean)
+  @Query(() => AuthPayload)
   @UseGuards(JwtAuthGuard)
-  async tokenCheck() {
-    return true
+  async tokenCheck(@Context() context) {
+    try {
+      const token = context.req.cookies.diatonicToken
+      if (!token) {
+        return { userErrors: [{ message: 'No token found', field: [] }], user: null }
+      }
+      const user = await this.authService.validateTokenAndGetUser(token)
+      console.log('user from token:', user)
+      return { userErrors: [], user }
+    }
+    catch (error) {
+      console.error(error)
+      return { userErrors: [{ message: 'Invalid token', field: [] }], user: null }
+    }
   }
 
   @Query(() => String)
