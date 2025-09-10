@@ -41,7 +41,7 @@ export class RegisteredClassResolver {
     @Args('registrationID', { nullable: true, type: () => Int }) registrationID: tbl_registration['id'] | null,
   ) {
     return await this.registeredClassService.findAll(
-      context.req.user.admin ? null : registrationID,
+      context.req.user.roles.includes('admin') ? null : registrationID,
     )
   }
 

@@ -54,7 +54,7 @@ describe('Signin', () => {
                   lastName
                   privateTeacher
                   schoolTeacher
-                  hasSignedIn
+                  isActive
                 }
               }
             }
@@ -96,7 +96,7 @@ describe('Signin', () => {
                   lastName
                   privateTeacher
                   schoolTeacher
-                  hasSignedIn
+                  isActive
                 }
               }
             }
@@ -126,7 +126,7 @@ describe('Signin', () => {
             email: userSignup()[0].email,
           },
         })
-        expect(result.hasSignedIn).toBe(false)
+        expect(result.isActive).toBe(false)
       })
     })
 
@@ -175,7 +175,7 @@ describe('Signin', () => {
             email: userSignup()[0].email,
           },
         })
-        expect(result.hasSignedIn).toBe(false)
+        expect(result.isActive).toBe(false)
       })
     })
   })
@@ -213,7 +213,7 @@ describe('Signin', () => {
                   lastName
                   privateTeacher
                   schoolTeacher
-                  hasSignedIn
+                  isActive
                 }
               }
             }

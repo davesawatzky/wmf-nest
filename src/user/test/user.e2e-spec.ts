@@ -26,8 +26,7 @@ describe('User', () => {
             phone
             emailConfirmed
             staff
-            admin
-            hasSignedIn
+            isActive
           }
         }`)
         .expectNoErrors()
@@ -261,7 +260,7 @@ describe('User', () => {
             privateTeacher: false,
             schoolTeacher: false,
             staff: false,
-            admin: false,
+            roles: ['user'],
           },
         })
         newUserId = newUser.id

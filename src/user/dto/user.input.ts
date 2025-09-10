@@ -1,5 +1,6 @@
 import { InputType } from '@nestjs/graphql'
 import {
+  IsArray,
   IsBoolean,
   IsOptional,
   IsPhoneNumber,
@@ -11,14 +12,6 @@ import {
 export class UserInput {
   @IsBoolean()
   @IsOptional()
-  admin?: boolean
-
-  @IsBoolean()
-  @IsOptional()
-  staff?: boolean
-
-  @IsBoolean()
-  @IsOptional()
   privateTeacher?: boolean
 
   @IsBoolean()
@@ -27,7 +20,7 @@ export class UserInput {
 
   @IsBoolean()
   @IsOptional()
-  hasSignedIn?: boolean
+  isActive?: boolean
 
   @IsBoolean()
   @IsOptional()
@@ -64,4 +57,12 @@ export class UserInput {
   @IsPhoneNumber('CA')
   @IsOptional()
   phone?: string
+
+  @IsArray()
+  @IsString({ each: true })
+  roles?: string[]
+
+  @IsArray()
+  @IsString({ each: true })
+  permissions?: string[]
 }

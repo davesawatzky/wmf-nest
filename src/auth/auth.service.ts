@@ -80,8 +80,7 @@ export class AuthService {
             instrument: instrument ? instrument.trim() : null,
             email: email.trim().toLowerCase(),
             password: hashedPassword,
-            staff: false,
-            admin: false,
+            roles: ['user'],
             privateTeacher,
             schoolTeacher,
           },
@@ -90,8 +89,7 @@ export class AuthService {
             lastName: lastName.trim(),
             instrument: instrument ? instrument.trim() : null,
             password: hashedPassword,
-            staff: false,
-            admin: false,
+            roles: ['user'],
             privateTeacher,
             schoolTeacher,
           },
@@ -116,7 +114,7 @@ export class AuthService {
       const payload = {
         username: user.email,
         sub: user.id,
-        admin: user.admin,
+        roles: user.roles,
         // privateTeacher: user.privateTeacher,
         // schoolTeacher: user.schoolTeacher,
       }

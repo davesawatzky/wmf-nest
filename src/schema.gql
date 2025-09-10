@@ -537,7 +537,7 @@ type Query {
   subdisciplines(disciplineID: Int, performerType: PerformerType): [Subdiscipline!]!
   teacher(teacherEmail: String, teacherID: Int): Teacher
   teachers(teacherType: String!): [Teacher!]!
-  tokenCheck: AuthPayload!
+  tokenCheck: TokenCheck!
   trophies: [Trophy!]!
   trophy(id: Int!): Trophy!
   user(email: String, userID: Int): User!
@@ -772,6 +772,11 @@ type TeacherPayload {
   userErrors: [UserError!]!
 }
 
+type TokenCheck {
+  user: User
+  userErrors: [UserError!]!
+}
+
 type Trophy {
   description: String
   festivalClasses: [FestivalClass!]
@@ -791,23 +796,23 @@ type TrophyPayload {
 
 type User {
   address: String
-  admin: Boolean
   city: String
   email: String
   emailConfirmed: Boolean
   firstName: String
-  hasSignedIn: Boolean
   id: Int!
   instrument: String
+  isActive: Boolean
   lastName: String
   orders: [Order!]
+  permissions: [String!]
   phone: String
   postalCode: String
   privateTeacher: Boolean
   province: String
   registrations: [Registration!]
+  roles: [String!]
   schoolTeacher: Boolean
-  staff: Boolean
 }
 
 type UserError {
@@ -817,19 +822,19 @@ type UserError {
 
 input UserInput {
   address: String
-  admin: Boolean
   city: String
   emailConfirmed: Boolean
   firstName: String
-  hasSignedIn: Boolean
   instrument: String
+  isActive: Boolean
   lastName: String
+  permissions: [String!]
   phone: String
   postalCode: String
   privateTeacher: Boolean
   province: String
+  roles: [String!]
   schoolTeacher: Boolean
-  staff: Boolean
 }
 
 type UserPayload {

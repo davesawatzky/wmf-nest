@@ -19,11 +19,11 @@ export async function setup(): Promise<void> {
   const prismaService = moduleRef.get<PrismaService>(PrismaService)
   await prismaService.tbl_user.update({
     where: { email: TestAdmin().email },
-    data: { emailConfirmed: true, admin: true },
+    data: { emailConfirmed: true, roles: ['admin'] },
   })
   // await prismaService.tbl_user.update({
   //   where: { email: TestUser().email },
-  //   data: { emailConfirmed: true, admin: false },
+  //   data: { emailConfirmed: true, roles: ['user'] },
   // })
   await app.close()
 }

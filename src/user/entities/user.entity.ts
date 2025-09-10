@@ -10,12 +10,12 @@ export class User {
 
   email?: string
   emailConfirmed?: boolean
-  staff?: boolean
-  admin?: boolean
   instrument?: string
   privateTeacher?: boolean
   schoolTeacher?: boolean
-  hasSignedIn?: boolean
+  isActive?: boolean
+  roles?: string[]
+  permissions?: string[]
   firstName?: string
   lastName?: string
   address?: string

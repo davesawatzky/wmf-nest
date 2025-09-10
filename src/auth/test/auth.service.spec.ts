@@ -130,8 +130,7 @@ describe('authService', () => {
           firstName: 'David',
           lastName: 'Sawatzky',
           email: 'test@test.com',
-          admin: false,
-          staff: false,
+          roles: ['user'],
           privateTeacher: false,
           schoolTeacher: false,
         })

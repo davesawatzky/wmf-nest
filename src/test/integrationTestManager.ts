@@ -92,7 +92,7 @@ export class IntegrationTestManager {
                   lastName
                   privateTeacher
                   schoolTeacher
-                  hasSignedIn
+                  isActive
                 }
               }
             }

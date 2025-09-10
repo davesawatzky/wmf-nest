@@ -27,7 +27,7 @@ export class OrderResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Order })
   async orders(@Context() context) {
-    return await this.orderService.findAll(context.req.user.admin ? undefined : context.req.user.id)
+    return await this.orderService.findAll(context.req.user.roles.includes('admin') ? undefined : context.req.user.id)
   }
 
   @Query(() => Order)
@@ -37,7 +37,7 @@ export class OrderResolver {
     @Context() context,
     @Args('orderID', { type: () => Int }) orderID: Order['id'],
   ) {
-    return await this.orderService.findOne(context.req.user.admin ? undefined : context.req.user.id, orderID)
+    return await this.orderService.findOne(context.req.user.roles.includes('admin') ? undefined : context.req.user.id, orderID)
   }
 
   // Mutations

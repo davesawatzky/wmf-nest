@@ -16,7 +16,7 @@ import { AuthService } from './auth.service'
 import { CredentialsSignin } from './dto/credentials-signin.input'
 import { CredentialsSignup } from './dto/credentials-signup.input'
 import { PasswordChangeInput } from './dto/password-change.input'
-import { AuthPayload, EmailExists, PasswordChangePayload, PasswordExists } from './entities/auth.entity'
+import { AuthPayload, EmailExists, PasswordChangePayload, PasswordExists, TokenCheck } from './entities/auth.entity'
 import { GqlAuthGuard } from './gql-auth.guard'
 import { JwtAuthGuard } from './jwt-auth.guard'
 
@@ -119,16 +119,23 @@ export class AuthResolver {
     return await this.authService.checkIfPasswordExists(id)
   }
 
-  @Query(() => AuthPayload)
+  @Query(() => TokenCheck)
   @UseGuards(JwtAuthGuard)
   async tokenCheck(@Context() context) {
     try {
       const token = context.req.cookies.diatonicToken
       if (!token) {
-        return { userErrors: [{ message: 'No token found', field: [] }], user: null }
+        return { userErrors: [{ message: 'No valid token found', field: [] }], user: null }
       }
-      const user = await this.authService.validateTokenAndGetUser(token)
-      console.log('user from token:', user)
+      const tokenUser = await this.authService.validateTokenAndGetUser(token)
+      const user = {
+        id: tokenUser.id,
+        email: tokenUser.email,
+        isActive: tokenUser.isActive,
+        roles: tokenUser.roles,
+        permissions: tokenUser.permissions,
+      }
+      console.log('User details for authorization:', user)
       return { userErrors: [], user }
     }
     catch (error) {

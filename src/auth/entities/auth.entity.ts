@@ -38,3 +38,12 @@ export class PasswordChangePayload {
   @IsBoolean()
   passwordChanged: boolean
 }
+
+@ObjectType()
+export class TokenCheck {
+  userErrors: UserError[]
+
+  @IsOptional()
+  @Field(() => User)
+  user?: Partial<User>
+}

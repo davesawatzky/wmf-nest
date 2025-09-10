@@ -85,8 +85,9 @@ beforeAll(async () => {
           email
           firstName
           lastName
-          hasSignedIn
-          admin
+          isActive
+          roles
+          permissions
         }
       }
     }
@@ -103,7 +104,7 @@ beforeAll(async () => {
     globalThis.httpServer = httpServer
     globalThis.prisma = prisma
     globalThis.userId = response.data.signin.user.id
-    globalThis.admin = response.data.signin.user.admin
+    globalThis.admin = response.data.signin.user.roles.includes('admin')
     globalThis.defined = true
   }
 })

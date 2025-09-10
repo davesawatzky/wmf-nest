@@ -284,8 +284,6 @@ model tbl_user {
   password              String?            @db.Text
   passwordResetPending  Boolean?           @map("password_reset_pending") @db.Boolean @default(false)
   emailConfirmed        Boolean?           @map("email_confirmed") @db.Boolean @default(false)
-  staff                 Boolean?           @default(false)
-  admin                 Boolean?           @default(false)
   privateTeacher        Boolean?           @map("private_teacher") @default(false)
   schoolTeacher         Boolean?           @map("school_teacher") @default(false)
   firstName             String?            @map("first_name") @db.Text
@@ -295,8 +293,10 @@ model tbl_user {
   province              String?            @db.Text
   postalCode            String?            @map("postal_code") @db.Text
   phone                 String?            @db.Text
+  roles                 String[]           @db.Text
+  permissions           String[]           @db.Text
   instrument            String?            @db.Text
-  hasSignedIn           Boolean?           @default(false) @map("has_signed_in") @db.Boolean
+  isActive              Boolean?           @default(false) @map("is_active") @db.Boolean
   updatedAt             DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   createdAt             DateTime           @default(now()) @map("created_at") @db.Timestamp(3)
   RegistrationUser      tbl_registration[] @relation("UserRelation")

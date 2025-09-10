@@ -34,7 +34,7 @@ export class PerformerResolver {
   ) {
     try {
       return await this.performerService.findAll(
-        context.req.user.admin ? undefined : registrationID,
+        context.req.user.includes('admin') ? undefined : registrationID,
       )
     }
     catch (error) {

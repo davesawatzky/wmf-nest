@@ -74,7 +74,7 @@ export class AbilityFactory {
     const { can, cannot, build } = new AbilityBuilder<AppAbility>(
       createMongoAbility,
     )
-    if (currentUser.admin) {
+    if (currentUser.roles.includes('admin')) {
       can(Action.Manage, 'all')
     }
     else {

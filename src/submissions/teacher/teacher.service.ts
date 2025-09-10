@@ -60,7 +60,7 @@ export class TeacherService {
           const {
             password,
             staff,
-            admin,
+            roles,
             privateTeacher,
             schoolTeacher,
             ...teacherProps
@@ -96,7 +96,7 @@ export class TeacherService {
           },
         })
         if (teacher.privateTeacher === true || teacher.schoolTeacher === true) {
-          const { password, staff, admin, ...teacherProps } = teacher
+          const { password, roles, ...teacherProps } = teacher
           return teacherProps
         }
         else {
@@ -108,7 +108,7 @@ export class TeacherService {
           where: { email },
         })
         if (teacher) {
-          const { password, staff, admin, ...teacherProps } = teacher
+          const { password, roles, ...teacherProps } = teacher
           return teacherProps
         }
         else {
