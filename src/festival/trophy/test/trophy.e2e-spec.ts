@@ -203,7 +203,7 @@ describe('Trophy', () => {
           },
         })
       }
- catch (error: any) {
+      catch (error: any) {
         if (error.code !== 'P2025') {
           console.error(error)
         }

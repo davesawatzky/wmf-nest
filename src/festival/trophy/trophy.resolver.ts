@@ -44,14 +44,7 @@ export class TrophyResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Create, subject: Trophy })
   async trophyCreate(@Args('trophyInput') trophyInput: TrophyInput) {
-    let response: any
-    try {
-      response = await this.trophyService.create(trophyInput)
-    }
-    catch (error) {
-      throw new HttpException('Could not create trophy', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-    return response
+    return await this.trophyService.create(trophyInput)
   }
 
   @Mutation(() => TrophyPayload)
@@ -61,28 +54,14 @@ export class TrophyResolver {
     @Args('trophyID', { type: () => Int }) trophyID: Trophy['id'],
     @Args('trophyInput') trophyInput: TrophyInput,
   ) {
-    let response: any
-    try {
-      response = await this.trophyService.update(trophyID, trophyInput)
-    }
-    catch (error) {
-      throw new HttpException('Trophy to update not found', HttpStatus.BAD_REQUEST)
-    }
-    return response
+    return await this.trophyService.update(trophyID, trophyInput)
   }
 
   @Mutation(() => TrophyPayload)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Delete, subject: Trophy })
   async trophyDelete(@Args('trophyID', { type: () => Int }) trophyID: Trophy['id']) {
-    let response: any
-    try {
-      response = await this.trophyService.remove(trophyID)
-    }
-    catch (error) {
-      throw new HttpException('Trophy to delete not found', HttpStatus.BAD_REQUEST)
-    }
-    return response
+    return await this.trophyService.remove(trophyID)
   }
 
   /** Field Resolvers */

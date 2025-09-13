@@ -29,12 +29,7 @@ export class SchoolGroupResolver {
     @Args('schoolID', { type: () => Int, nullable: true })
     schoolID: tbl_reg_schoolgroup['schoolID'],
   ) {
-    try {
-      return await this.schoolGroupService.findAll(schoolID)
-    }
-    catch (error) {
-      throw new HttpException('School groups not found', HttpStatus.NOT_FOUND)
-    }
+    return await this.schoolGroupService.findAll(schoolID)
   }
 
   @Query(() => SchoolGroup)
@@ -44,12 +39,7 @@ export class SchoolGroupResolver {
     @Args('schoolGroupID', { type: () => Int })
     schoolGroupID: tbl_reg_schoolgroup['id'],
   ) {
-    try {
-      return await this.schoolGroupService.findOne(schoolGroupID)
-    }
-    catch (error) {
-      throw new HttpException('School group not found', HttpStatus.NOT_FOUND)
-    }
+    return await this.schoolGroupService.findOne(schoolGroupID)
   }
 
   /** Mutations */
@@ -63,12 +53,7 @@ export class SchoolGroupResolver {
     @Args('schoolGroupInput', { type: () => SchoolGroupInput, nullable: true })
     schoolGroupInput: Partial<SchoolGroupInput>,
   ) {
-    try {
-      return await this.schoolGroupService.create(schoolID, schoolGroupInput)
-    }
-    catch (error) {
-      throw new HttpException('Cannot create school group', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
+    return await this.schoolGroupService.create(schoolID, schoolGroupInput)
   }
 
   @Mutation(() => SchoolGroupPayload)
@@ -80,12 +65,7 @@ export class SchoolGroupResolver {
     @Args('schoolGroupInput', { type: () => SchoolGroupInput })
     schoolGroupInput: Partial<SchoolGroupInput>,
   ) {
-    try {
-      return await this.schoolGroupService.update(schoolGroupID, schoolGroupInput)
-    }
-    catch (error) {
-      throw new HttpException('Cannot update school group', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
+    return await this.schoolGroupService.update(schoolGroupID, schoolGroupInput)
   }
 
   @Mutation(() => SchoolGroupPayload)
@@ -95,12 +75,7 @@ export class SchoolGroupResolver {
     @Args('schoolGroupID', { type: () => Int })
     schoolGroupID: SchoolGroup['id'],
   ) {
-    try {
-      return await this.schoolGroupService.remove(schoolGroupID)
-    }
-    catch (error) {
-      throw new HttpException('Cannot delete school group', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
+    return await this.schoolGroupService.remove(schoolGroupID)
   }
 
   /**

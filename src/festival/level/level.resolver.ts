@@ -55,14 +55,7 @@ export class LevelResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Create, subject: Level })
   async levelCreate(@Args('levelInput') levelInput: LevelInput) {
-    let response: any
-    try {
-      response = await this.levelService.create(levelInput)
-    }
-    catch (error) {
-      throw new HttpException('Could not create level', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-    return response
+    return await this.levelService.create(levelInput)
   }
 
   @Mutation(() => LevelPayload)
@@ -72,14 +65,7 @@ export class LevelResolver {
     @Args('levelID', { type: () => Int }) levelID: Level['id'],
     @Args('levelInput') levelInput: LevelInput,
   ) {
-    let response: any
-    try {
-      response = await this.levelService.update(levelID, levelInput)
-    }
-    catch (error) {
-      throw new HttpException('Level to update not found', HttpStatus.BAD_REQUEST)
-    }
-    return response
+    return await this.levelService.update(levelID, levelInput)
   }
 
   @Mutation(() => LevelPayload)
@@ -88,14 +74,7 @@ export class LevelResolver {
   async levelDelete(
     @Args('levelID', { type: () => Int }) levelID: Level['id'],
   ) {
-    let response: any
-    try {
-      response = await this.levelService.remove(levelID)
-    }
-    catch (error) {
-      throw new HttpException('Level to delete not found', HttpStatus.BAD_REQUEST)
-    }
-    return response
+    return await this.levelService.remove(levelID)
   }
 
   /** Field Resolver */

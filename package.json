@@ -28,7 +28,7 @@
     "testvi:watch": "cross-env NODE_ENV=test vitest --watch --ui",
     "testvi:cov": "cross-env NODE_ENV=test vitest --run --coverage",
     "testvi:debug": "cross-env NODE_ENV=test vitest --inspect-brk --inspect --logHeapUsage --threads=false",
-    "testvi:e2e": "cross-env NODE_ENV=test vitest --watch --ui --config ./vitest.config.e2e.mts",
+    "testvi:e2e": "cross-env NODE_ENV=test LOG_LEVEL=silent vitest --watch --ui --config ./vitest.config.e2e.mts",
     "types": "ts-node ./src/generate-typings"
   },
   "dependencies": {

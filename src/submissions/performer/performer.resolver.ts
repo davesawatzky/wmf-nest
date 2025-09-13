@@ -32,15 +32,9 @@ export class PerformerResolver {
     @Args('registrationID', { type: () => Int, nullable: true })
     registrationID: tbl_registration['id'],
   ) {
-    try {
-      return await this.performerService.findAll(
-        context.req.user.roles.includes('admin') ? undefined : registrationID,
-      )
-    }
-    catch (error) {
-      console.error(error)
-      throw new HttpException('Performers not found', HttpStatus.NOT_FOUND)
-    }
+    return await this.performerService.findAll(
+      context.req.user.roles.includes('admin') ? undefined : registrationID,
+    )
   }
 
   @Query(() => Performer)
@@ -50,12 +44,7 @@ export class PerformerResolver {
     @Args('performerID', { type: () => Int })
     performerID: Performer['id'],
   ) {
-    try {
-      return await this.performerService.findOne(performerID)
-    }
-    catch (error) {
-      throw new HttpException('Performer not found', HttpStatus.NOT_FOUND)
-    }
+    return await this.performerService.findOne(performerID)
   }
 
   /** Mutations */
@@ -69,12 +58,7 @@ export class PerformerResolver {
     @Args('performerInput', { type: () => PerformerInput, nullable: true })
     performerInput: Partial<PerformerInput>,
   ) {
-    try {
-      return await this.performerService.create(registrationID, performerInput)
-    }
-    catch (error) {
-      throw new HttpException('Cannot create performer', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
+    return await this.performerService.create(registrationID, performerInput)
   }
 
   @Mutation(() => PerformerPayload)
@@ -86,12 +70,7 @@ export class PerformerResolver {
     @Args('performerInput', { type: () => PerformerInput })
     performerInput: Partial<PerformerInput>,
   ) {
-    try {
-      return await this.performerService.update(performerID, performerInput)
-    }
-    catch (error) {
-      throw new HttpException('Cannot update performer', HttpStatus.NOT_MODIFIED)
-    }
+    return await this.performerService.update(performerID, performerInput)
   }
 
   @Mutation(() => PerformerPayload)
@@ -101,12 +80,7 @@ export class PerformerResolver {
     @Args('performerID', { type: () => Int })
     performerID: Performer['id'],
   ) {
-    try {
-      return await this.performerService.remove(performerID)
-    }
-    catch (error) {
-      throw new HttpException('Cannot delete performer', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
+    return await this.performerService.remove(performerID)
   }
 
   /**

@@ -15,7 +15,7 @@ export default defineConfig({
       './src/test/integrationTestAdminSetup.ts',
       // resolve(process.cwd(), 'src/test/integrationTestUserSetup.ts'),
     ],
-    fileParallelism: false,
+    // fileParallelism: false,
     // maxConcurrency: 1,
     pool: 'forks',
     poolOptions: {

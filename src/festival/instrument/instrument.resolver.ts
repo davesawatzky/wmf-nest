@@ -53,14 +53,7 @@ export class InstrumentResolver {
   @CheckAbilities({ action: Action.Create, subject: Instrument })
   @UseGuards(JwtAuthGuard)
   async instrumentCreate(@Args('instrumentInput') instrumentInput: InstrumentInput) {
-    let response: any
-    try {
-      response = await this.instrumentService.create(instrumentInput)
-    }
-    catch (error) {
-      throw new HttpException('Could not create instrument', HttpStatus.INTERNAL_SERVER_ERROR, { cause: error })
-    }
-    return response
+    return await this.instrumentService.create(instrumentInput)
   }
 
   @Mutation(() => InstrumentPayload)
@@ -72,14 +65,7 @@ export class InstrumentResolver {
     instrumentID: Instrument['id'],
     @Args('instrumentInput') instrumentInput: InstrumentInput,
   ) {
-    let response: any
-    try {
-      response = await this.instrumentService.update(instrumentID, instrumentInput)
-    }
-    catch (error) {
-      throw new HttpException('Instrument to update not found', HttpStatus.BAD_REQUEST, { cause: error })
-    }
-    return response
+    return await this.instrumentService.update(instrumentID, instrumentInput)
   }
 
   @Mutation(() => InstrumentPayload)
@@ -89,14 +75,7 @@ export class InstrumentResolver {
   async instrumentDelete(
     @Args('instrumentID', { type: () => Int }) instrumentID: Instrument['id'],
   ) {
-    let response: any
-    try {
-      response = await this.instrumentService.remove(instrumentID)
-    }
-    catch (error) {
-      throw new HttpException('Instrument to delete not found', HttpStatus.BAD_REQUEST, { cause: error })
-    }
-    return response
+    return await this.instrumentService.remove(instrumentID)
   }
 
   /** Field Resolver */

@@ -28,12 +28,7 @@ export class CommunityGroupResolver {
     @Args('communityID', { type: () => Int, nullable: true })
     communityID: tbl_reg_communitygroup['communityID'],
   ) {
-    try {
-      return await this.communityGroupService.findAll(communityID)
-    }
-    catch (error) {
-      throw new HttpException('Community groups not found', HttpStatus.NOT_FOUND)
-    }
+    return await this.communityGroupService.findAll(communityID)
   }
 
   @Query(() => CommunityGroup)
@@ -43,12 +38,7 @@ export class CommunityGroupResolver {
     @Args('communityGroupID', { type: () => Int })
     communityGroupID: tbl_reg_communitygroup['id'],
   ) {
-    try {
-      return await this.communityGroupService.findOne(communityGroupID)
-    }
-    catch (error) {
-      throw new HttpException('Community group not found', HttpStatus.NOT_FOUND)
-    }
+    return await this.communityGroupService.findOne(communityGroupID)
   }
 
   /** Mutations */
@@ -62,12 +52,7 @@ export class CommunityGroupResolver {
     @Args('communityGroupInput', { type: () => CommunityGroupInput, nullable: true })
     communityGroupInput: Partial<CommunityGroupInput>,
   ) {
-    try {
-      return await this.communityGroupService.create(communityID, communityGroupInput)
-    }
-    catch (error) {
-      throw new HttpException('Cannot create community group', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
+    return await this.communityGroupService.create(communityID, communityGroupInput)
   }
 
   @Mutation(() => CommunityGroupPayload)
@@ -79,12 +64,7 @@ export class CommunityGroupResolver {
     @Args('communityGroupInput', { type: () => CommunityGroupInput })
     communityGroupInput: Partial<CommunityGroupInput>,
   ) {
-    try {
-      return await this.communityGroupService.update(communityGroupID, communityGroupInput)
-    }
-    catch (error) {
-      throw new HttpException('Cannot update community group', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
+    return await this.communityGroupService.update(communityGroupID, communityGroupInput)
   }
 
   @Mutation(() => CommunityGroupPayload)
@@ -94,12 +74,7 @@ export class CommunityGroupResolver {
     @Args('communityGroupID', { type: () => Int })
     communityGroupID: CommunityGroup['id'],
   ) {
-    try {
-      return await this.communityGroupService.remove(communityGroupID)
-    }
-    catch (error) {
-      throw new HttpException('Cannot delete community group', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
+    return await this.communityGroupService.remove(communityGroupID)
   }
 
   /**

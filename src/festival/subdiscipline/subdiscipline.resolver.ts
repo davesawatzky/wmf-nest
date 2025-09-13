@@ -78,15 +78,7 @@ export class SubdisciplineResolver {
     @Args('subdisciplineInput')
     subdisciplineInput: SubdisciplineInput,
   ): Promise<SubdisciplinePayload> {
-    let response: any
-    try {
-      response = await this.subdisciplineService.create(subdisciplineInput,
-      )
-    }
-    catch (error) {
-      throw new HttpException('Could not create subdiscipline', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-    return response
+    return await this.subdisciplineService.create(subdisciplineInput)
   }
 
   @Mutation(() => SubdisciplinePayload)
@@ -98,17 +90,10 @@ export class SubdisciplineResolver {
     @Args('subdisciplineInput', { type: () => SubdisciplineInput })
     subdisciplineInput: SubdisciplineInput,
   ) {
-    let response: any
-    try {
-      response = await this.subdisciplineService.update(
-        subdisciplineID,
-        subdisciplineInput,
-      )
-    }
-    catch (error) {
-      throw new HttpException('Subdiscipline to update not found', HttpStatus.BAD_REQUEST)
-    }
-    return response
+    return await this.subdisciplineService.update(
+      subdisciplineID,
+      subdisciplineInput,
+    )
   }
 
   @Mutation(() => SubdisciplinePayload)
@@ -118,14 +103,7 @@ export class SubdisciplineResolver {
     @Args('subdisciplineID', { type: () => Int })
     subdisciplineID: Subdiscipline['id'],
   ) {
-    let response: any
-    try {
-      response = await this.subdisciplineService.remove(subdisciplineID)
-    }
-    catch (error) {
-      throw new HttpException('Subdiscipline to delete not found', HttpStatus.BAD_REQUEST)
-    }
-    return response
+    return await this.subdisciplineService.remove(subdisciplineID)
   }
 
   /** Field Resolvers */

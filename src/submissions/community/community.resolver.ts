@@ -28,12 +28,7 @@ export class CommunityResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: 'admin' })
   async communities() {
-    try {
-      return await this.communityService.findAll()
-    }
-    catch (error) {
-      throw new HttpException('No communities found', HttpStatus.NOT_FOUND)
-    }
+    return await this.communityService.findAll()
   }
 
   @Query(() => Community)
@@ -45,12 +40,7 @@ export class CommunityResolver {
     @Args('communityID', { type: () => Int, nullable: true })
     communityID: Community['id'],
   ) {
-    try {
-      return await this.communityService.findOne(registrationID, communityID)
-    }
-    catch (error) {
-      throw new HttpException('Community not found', HttpStatus.NOT_FOUND)
-    }
+    return await this.communityService.findOne(registrationID, communityID)
   }
 
   /** Mutations */
@@ -64,12 +54,7 @@ export class CommunityResolver {
     @Args('communityInput', { type: () => CommunityInput, nullable: true })
     communityInput: Partial<CommunityInput>,
   ) {
-    try {
-      return await this.communityService.create(registrationID, communityInput)
-    }
-    catch (error) {
-      throw new HttpException('Cannot create community', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
+    return await this.communityService.create(registrationID, communityInput)
   }
 
   @Mutation(() => CommunityPayload)
@@ -81,12 +66,7 @@ export class CommunityResolver {
     @Args('communityInput', { type: () => CommunityInput })
     communityInput: Partial<CommunityInput>,
   ) {
-    try {
-      return await this.communityService.update(communityID, communityInput)
-    }
-    catch (error) {
-      throw new HttpException('Cannot update community', HttpStatus.NOT_MODIFIED)
-    }
+    return await this.communityService.update(communityID, communityInput)
   }
 
   @Mutation(() => CommunityPayload)
@@ -96,12 +76,7 @@ export class CommunityResolver {
     @Args('communityID', { type: () => Int })
     communityID: Community['id'],
   ) {
-    try {
-      return await this.communityService.remove(communityID)
-    }
-    catch (error) {
-      throw new HttpException('Cannot delete community', HttpStatus.BAD_REQUEST)
-    }
+    return await this.communityService.remove(communityID)
   }
 
   /**

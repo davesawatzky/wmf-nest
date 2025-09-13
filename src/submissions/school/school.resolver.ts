@@ -37,12 +37,7 @@ export class SchoolResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: 'admin' })
   async schools() {
-    try {
-      return await this.schoolService.findAll()
-    }
-    catch (error) {
-      throw new HttpException('No schools found', HttpStatus.NOT_FOUND)
-    }
+    return await this.schoolService.findAll()
   }
 
   @Query(() => School)
@@ -54,12 +49,7 @@ export class SchoolResolver {
     @Args('schoolID', { type: () => Int, nullable: true })
     schoolID: School['id'],
   ) {
-    try {
-      return await this.schoolService.findOne(registrationID, schoolID)
-    }
-    catch (error) {
-      throw new HttpException('School not found', HttpStatus.NOT_FOUND)
-    }
+    return await this.schoolService.findOne(registrationID, schoolID)
   }
 
   /** Mutations */
@@ -73,12 +63,7 @@ export class SchoolResolver {
     @Args('schoolInput', { type: () => SchoolInput, nullable: true })
     schoolInput: Partial<SchoolInput>,
   ) {
-    try {
-      return await this.schoolService.create(registrationID, schoolInput)
-    }
-    catch (error) {
-      throw new HttpException('School not created', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
+    return await this.schoolService.create(registrationID, schoolInput)
   }
 
   @Mutation(() => SchoolPayload)
@@ -90,12 +75,7 @@ export class SchoolResolver {
     @Args('schoolInput', { type: () => SchoolInput })
     schoolInput: Partial<SchoolInput>,
   ) {
-    try {
-      return await this.schoolService.update(schoolID, schoolInput)
-    }
-    catch (error) {
-      throw new HttpException('School not updated', HttpStatus.NOT_MODIFIED)
-    }
+    return await this.schoolService.update(schoolID, schoolInput)
   }
 
   @Mutation(() => SchoolPayload)
@@ -105,18 +85,12 @@ export class SchoolResolver {
     @Args('schoolID', { type: () => Int })
     schoolID: tbl_reg_school['id'],
   ) {
-    try {
-      return await this.schoolService.remove(schoolID)
-    }
-    catch (error) {
-      throw new HttpException('School not deleted', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
+    return await this.schoolService.remove(schoolID)
   }
 
   /**
    * Field Resolvers
    */
-
   @ResolveField(() => [SchoolGroup])
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: SchoolGroup })

@@ -60,14 +60,7 @@ export class DisciplineResolver {
   async disciplineCreate(
     @Args('disciplineInput') disciplineInput: DisciplineInput,
   ) {
-    let response: DisciplinePayload
-    try {
-      response = await this.disciplineService.create(disciplineInput)
-    }
-    catch (error) {
-      throw new HttpException('Could not create discipline', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-    return response
+    return await this.disciplineService.create(disciplineInput)
   }
 
   @Mutation(() => DisciplinePayload)
@@ -77,14 +70,7 @@ export class DisciplineResolver {
     @Args('disciplineID', { type: () => Int }) disciplineID: Discipline['id'],
     @Args('disciplineInput') disciplineInput: DisciplineInput,
   ) {
-    let response: DisciplinePayload
-    try {
-      response = await this.disciplineService.update(disciplineID, disciplineInput)
-    }
-    catch (error) {
-      throw new HttpException('Discipline to update not found', HttpStatus.BAD_REQUEST)
-    }
-    return response
+    return await this.disciplineService.update(disciplineID, disciplineInput)
   }
 
   @Mutation(() => DisciplinePayload)
@@ -93,14 +79,7 @@ export class DisciplineResolver {
   async disciplineDelete(
     @Args('disciplineID', { type: () => Int }) disciplineID: Discipline['id'],
   ) {
-    let response: DisciplinePayload
-    try {
-      response = await this.disciplineService.remove(disciplineID)
-    }
-    catch (error) {
-      throw new HttpException('Discipline to delete not found', HttpStatus.BAD_REQUEST)
-    }
-    return response
+    return await this.disciplineService.remove(disciplineID)
   }
 
   /**

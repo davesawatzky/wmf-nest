@@ -29,12 +29,7 @@ export class GroupResolver {
     @Args('registrationID', { type: () => Int, nullable: true })
     registrationID: Registration['id'],
   ) {
-    try {
-      return await this.groupService.findAll(registrationID)
-    }
-    catch (error) {
-      throw new HttpException('Groups not found', HttpStatus.NOT_FOUND)
-    }
+    return await this.groupService.findAll(registrationID)
   }
 
   @Query(() => Group)
@@ -46,12 +41,7 @@ export class GroupResolver {
     @Args('groupID', { type: () => Int, nullable: true })
     groupID: Group['id'],
   ) {
-    try {
-      return await this.groupService.findOne(registrationID, groupID)
-    }
-    catch (error) {
-      throw new HttpException('Group not found', HttpStatus.NOT_FOUND)
-    }
+    return await this.groupService.findOne(registrationID, groupID)
   }
 
   /** Mutations */
@@ -63,12 +53,7 @@ export class GroupResolver {
     @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
   ) {
-    try {
-      return await this.groupService.create(registrationID)
-    }
-    catch (error) {
-      throw new HttpException('Cannot create group', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
+    return await this.groupService.create(registrationID)
   }
 
   @Mutation(() => GroupPayload)
@@ -79,12 +64,7 @@ export class GroupResolver {
     @Args('groupInput', { type: () => GroupInput })
     groupInput: Partial<GroupInput>,
   ) {
-    try {
-      return await this.groupService.update(groupID, groupInput)
-    }
-    catch (error) {
-      throw new HttpException('Cannot update group', HttpStatus.NOT_MODIFIED)
-    }
+    return await this.groupService.update(groupID, groupInput)
   }
 
   @Mutation(() => GroupPayload)
@@ -93,12 +73,7 @@ export class GroupResolver {
   async groupDelete(
     @Args('groupID', { type: () => Int }) groupID: Group['id'],
   ) {
-    try {
-      return await this.groupService.remove(groupID)
-    }
-    catch (error) {
-      throw new HttpException('Cannot delete group', HttpStatus.BAD_REQUEST)
-    }
+    return await this.groupService.remove(groupID)
   }
 
   /**

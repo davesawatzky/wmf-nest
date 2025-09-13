@@ -13,7 +13,6 @@ import { CheckAbilities } from '@/ability/abilities.decorator'
 import { AbilitiesGuard } from '@/ability/abilities.guard'
 import { Action } from '@/ability/ability.factory'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PerformerType } from '@/common.entity'
 import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
 import { FestivalClassService } from '@/festival/festival-class/festival-class.service'
@@ -56,14 +55,7 @@ export class CategoryResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Create, subject: Category })
   async categoryCreate(@Args('categoryInput') categoryInput: CategoryInput) {
-    let response: any
-    try {
-      response = await this.categoryService.create(categoryInput)
-    }
-    catch (error) {
-      throw new HttpException('Could not create category', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-    return response
+    return await this.categoryService.create(categoryInput)
   }
 
   @Mutation(() => CategoryPayload)
@@ -74,28 +66,14 @@ export class CategoryResolver {
     categoryID: Category['id'],
     @Args('categoryInput') categoryInput: CategoryInput,
   ) {
-    let response: any
-    try {
-      response = await this.categoryService.update(categoryID, categoryInput)
-    }
-    catch (error) {
-      throw new HttpException('Category to update not found', HttpStatus.BAD_REQUEST)
-    }
-    return response
+    return await this.categoryService.update(categoryID, categoryInput)
   }
 
   @Mutation(() => CategoryPayload)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Delete, subject: Category })
   async categoryDelete(@Args('categoryID', { type: () => Int }) categoryID: Category['id']) {
-    let response: any
-    try {
-      response = await this.categoryService.remove(categoryID)
-    }
-    catch (error) {
-      throw new HttpException('Category to delete not found', HttpStatus.BAD_REQUEST)
-    }
-    return response
+    return await this.categoryService.remove(categoryID)
   }
 
   /** Field Resolvers */

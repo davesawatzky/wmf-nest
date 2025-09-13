@@ -1,5 +1,5 @@
 import { ForbiddenError } from '@casl/ability'
-import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
+import { BadRequestException, ForbiddenException, HttpException, HttpStatus, NotFoundException, UnauthorizedException, UseGuards } from '@nestjs/common'
 import {
   Args,
   Context,
@@ -10,7 +10,6 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { NotFoundError } from 'rxjs'
 import { CheckAbilities } from '@/ability/abilities.decorator'
 import { AbilitiesGuard } from '@/ability/abilities.guard'
 import { Action } from '@/ability/ability.factory'
@@ -67,17 +66,7 @@ export class UserResolver {
     @Args('userID', { type: () => Int }) userID: User['id'],
     @Args('userInput', { type: () => UserInput }) userInput: Partial<UserInput>,
   ) {
-    try {
-      return await this.userService.update(userID, userInput)
-    }
-    catch (error: any) {
-      if (error instanceof NotFoundError)
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND)
-      else if (error instanceof ForbiddenError)
-        throw new HttpException(error.message, HttpStatus.FORBIDDEN)
-      else
-        throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
-    }
+    return await this.userService.update(userID, userInput)
   }
 
   @Mutation(() => UserPayload)

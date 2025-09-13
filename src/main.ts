@@ -1,6 +1,6 @@
 import { join } from 'node:path'
 import process from 'node:process'
-import { ValidationPipe } from '@nestjs/common'
+import { ConsoleLogger, ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import cookieParser from 'cookie-parser'
@@ -11,6 +11,13 @@ import 'reflect-metadata'
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     rawBody: true,
+    logger: process.env.NODE_ENV === 'test'
+      ? false
+      : new ConsoleLogger({
+        prefix: 'WMF-Server',
+        logLevels: ['error', 'warn', 'debug'],
+
+      }),
   })
 
   app.use(
@@ -56,8 +63,5 @@ async function bootstrap() {
 
   const PORT = process.env.PORT || 3000
   await app.listen(PORT)
-  // console.log(`Server listening on PORT: ${PORT}`)
-  // console.log('Server environment: ', process.env.NODE_ENV)
-  // console.log('Database URL: ', process.env.DATABASE_URL)
 }
 bootstrap()

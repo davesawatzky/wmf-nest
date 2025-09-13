@@ -135,7 +135,6 @@ export class AuthResolver {
         roles: tokenUser.roles,
         permissions: tokenUser.permissions,
       }
-      console.log('User details for authorization:', user)
       return { userErrors: [], user }
     }
     catch (error) {

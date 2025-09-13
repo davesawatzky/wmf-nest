@@ -25,14 +25,20 @@ describe('User', () => {
             postalCode
             phone
             emailConfirmed
-            staff
             isActive
+            roles
+            permissions
           }
         }`)
         .expectNoErrors()
       expect(response.data.users[1].firstName).toBeTruthy()
       expect(response.data.users[1].lastName).toBeTruthy()
       expect(response.data.users[1].id).toBeTruthy()
+      expect(response.data.users[1]).toHaveProperty('roles')
+      expect(response.data.users[1]).toHaveProperty('permissions')
+      expect(response.data.users[1].roles).toBeInstanceOf(Array)
+      expect(response.data.users[1].permissions).toBeInstanceOf(Array)
+      expect(response.data.users[1].roles[0]).toEqual('user')
     })
 
     it('Should return a list of users and associated registrations', async () => {
@@ -239,7 +245,7 @@ describe('User', () => {
     //         lastName: 'UpdatedLastName',
     //       }
     //     })
-    //   console.log(response.errors)
+    //   console.error(response.errors)
     //   expect(response.data.userUpdate.userErrors[0].message).toBeTruthy()
     //   expect(response.data.userUpdate.userErrors[0]).toHaveProperty('field')
     // })
@@ -259,7 +265,6 @@ describe('User', () => {
             password: 'password',
             privateTeacher: false,
             schoolTeacher: false,
-            staff: false,
             roles: ['user'],
           },
         })

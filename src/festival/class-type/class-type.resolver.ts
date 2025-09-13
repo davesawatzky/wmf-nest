@@ -41,14 +41,7 @@ export class ClassTypeResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Create, subject: ClassType })
   async classTypeCreate(@Args('classTypeInput') classTypeInput: ClassTypeInput) {
-    let response: any
-    try {
-      response = await this.classTypeService.create(classTypeInput)
-    }
-    catch (error) {
-      throw new HttpException('Could not create class type', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-    return response
+    return await this.classTypeService.create(classTypeInput)
   }
 
   @Mutation(() => ClassTypePayload)
@@ -58,14 +51,7 @@ export class ClassTypeResolver {
     @Args('classTypeID', { type: () => Int }) classTypeID: ClassType['id'],
     @Args('classTypeInput') classTypeInput: ClassTypeInput,
   ) {
-    let response: any
-    try {
-      response = await this.classTypeService.update(classTypeID, classTypeInput)
-    }
-    catch (error) {
-      throw new HttpException('Class type to update not found', HttpStatus.BAD_REQUEST)
-    }
-    return response
+    return await this.classTypeService.update(classTypeID, classTypeInput)
   }
 
   @Mutation(() => ClassTypePayload)
@@ -74,14 +60,7 @@ export class ClassTypeResolver {
   async classTypeDelete(
     @Args('classTypeID', { type: () => Int }) classTypeID: ClassType['id'],
   ) {
-    let response: any
-    try {
-      response = await this.classTypeService.remove(classTypeID)
-    }
-    catch (error) {
-      throw new HttpException('Class type to delete not found', HttpStatus.BAD_REQUEST)
-    }
-    return response
+    return await this.classTypeService.remove(classTypeID)
   }
 
   /** Field Resolvers */

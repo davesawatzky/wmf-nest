@@ -104,8 +104,8 @@ export class AuthService {
       }
     }
     catch (err) {
-      console.error(err)
-      throw new BadRequestException('Be sure to provide all fields')
+      // console.error(err)
+      throw new BadRequestException('Be sure to provide all fields', err)
     }
   }
 

@@ -55,17 +55,12 @@ export class FestivalClassResolver {
     })
     festivalClassSearch: FestivalClassSearchArgs | null,
   ) {
-    try {
-      return await this.festivalClassService.findAll(
-        performerType,
-        festivalClassSearch?.subdisciplineID,
-        festivalClassSearch?.levelID,
-        festivalClassSearch?.categoryID,
-      )
-    }
-    catch (error) {
-      throw new HttpException('Festival classes not found', HttpStatus.NOT_FOUND)
-    }
+    return await this.festivalClassService.findAll(
+      performerType,
+      festivalClassSearch?.subdisciplineID,
+      festivalClassSearch?.levelID,
+      festivalClassSearch?.categoryID,
+    )
   }
 
   @Query(() => [FestivalClass])
@@ -75,12 +70,7 @@ export class FestivalClassResolver {
     @Args('festivalClassSearch', { type: () => FestivalClassSearchArgs })
     festivalClassSearch: FestivalClassSearchArgs,
   ) {
-    try {
-      return await this.festivalClassService.search(festivalClassSearch)
-    }
-    catch (error) {
-      throw new HttpException('Festival class not found', HttpStatus.NOT_FOUND)
-    }
+    return await this.festivalClassService.search(festivalClassSearch)
   }
 
   @Query(() => FestivalClass)
@@ -89,12 +79,7 @@ export class FestivalClassResolver {
   async festivalClass(
     @Args('id', { type: () => Int }) id: FestivalClass['id'],
   ) {
-    try {
-      return await this.festivalClassService.findById(id)
-    }
-    catch (error) {
-      throw new HttpException('Festival class not found', HttpStatus.NOT_FOUND)
-    }
+    return await this.festivalClassService.findById(id)
   }
 
   @Query(() => FestivalClass)
@@ -104,12 +89,7 @@ export class FestivalClassResolver {
     @Args('festivalClassNumber', { type: () => String })
     festivalClassNumber: FestivalClass['classNumber'],
   ) {
-    try {
-      return await this.festivalClassService.findByNumber(festivalClassNumber)
-    }
-    catch (error) {
-      throw new HttpException('Festival class not found', HttpStatus.NOT_FOUND)
-    }
+    return await this.festivalClassService.findByNumber(festivalClassNumber)
   }
 
   /** Mutations */
@@ -121,14 +101,7 @@ export class FestivalClassResolver {
     @Args('festivalClassInput')
     festivalClassInput: FestivalClassInput,
   ) {
-    let response: any
-    try {
-      response = await this.festivalClassService.create(festivalClassInput)
-    }
-    catch (error) {
-      throw new HttpException('Could not create festival class', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-    return response
+    return await this.festivalClassService.create(festivalClassInput)
   }
 
   @Mutation(() => FestivalClassPayload)
@@ -140,17 +113,10 @@ export class FestivalClassResolver {
     @Args('festivalClassInput', { type: () => FestivalClassInput })
     festivalClassInput: FestivalClassInput,
   ) {
-    let response: any
-    try {
-      response = await this.festivalClassService.update(
-        festivalClassID,
-        festivalClassInput,
-      )
-    }
-    catch (error) {
-      throw new HttpException('Could not update festival class', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-    return response
+    return await this.festivalClassService.update(
+      festivalClassID,
+      festivalClassInput,
+    )
   }
 
   @Mutation(() => FestivalClassPayload)
