@@ -14,11 +14,11 @@ export class FieldConfig {
   schoolRequired: boolean
   soloRequired: boolean
   customField: boolean
-  customFieldType?: string
+  customFieldType: string
 }
 
 @ObjectType()
 export class FieldConfigPayload {
   userErrors: UserError[]
-  fieldConfig: FieldConfig
+  fieldConfig?: FieldConfig
 }

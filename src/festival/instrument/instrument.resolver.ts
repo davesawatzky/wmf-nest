@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import {
   Args,
   Int,
@@ -29,7 +29,7 @@ export class InstrumentResolver {
   /** Queries */
 
   @Query(() => [Instrument])
-  // @CheckAbilities({ action: Action.Read, subject: Instrument })
+  @CheckAbilities({ action: Action.Read, subject: Instrument })
   async instruments(
     @Args('disciplineID', { type: () => Int, nullable: true }) disciplineID: Discipline['id'] | null,
   ) {
@@ -37,7 +37,7 @@ export class InstrumentResolver {
   }
 
   @Query(() => Instrument)
-  // @CheckAbilities({ action: Action.Read, subject: Instrument })
+  @CheckAbilities({ action: Action.Read, subject: Instrument })
   async instrument(
     @Args('id', { type: () => Int, nullable: true }) id: Instrument['id'] | null,
     @Args('name', { type: () => String, nullable: true })

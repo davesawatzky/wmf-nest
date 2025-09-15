@@ -21,7 +21,7 @@ export class FestivalClass {
   @Field(() => Int)
   maxSelections: number
 
-  @Field(type => Int)
+  @Field(() => Int)
   minSelections: number
 
   requiredSelection?: string

@@ -1,4 +1,3 @@
-import { HttpException, HttpStatus } from '@nestjs/common'
 import { UseGuards } from '@nestjs/common/decorators'
 import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { tbl_reg_performer, tbl_registration } from '@prisma/client'

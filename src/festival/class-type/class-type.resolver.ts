@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { tbl_class_type } from '@prisma/client'
 import { CheckAbilities } from '@/ability/abilities.decorator'

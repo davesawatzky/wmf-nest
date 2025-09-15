@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common'
 import { tbl_reg_community, tbl_reg_communitygroup } from '@prisma/client'
-import { UserError } from '@/common.entity'
 import { PrismaService } from '@/prisma/prisma.service'
 import { CommunityGroupInput } from './dto/community-group.input'
 

@@ -4,28 +4,28 @@ import { IsBoolean, IsOptional, IsString } from 'class-validator'
 @InputType()
 export class FieldConfigInput {
   @IsString()
-  tableName?: string
+  tableName: string
 
   @IsString()
-  fieldName?: string
+  fieldName: string
 
   @IsBoolean()
-  submissionRequired?: boolean
+  submissionRequired: boolean
 
   @IsBoolean()
-  communityRequired?: boolean
+  communityRequired: boolean
 
   @IsBoolean()
-  groupRequired?: boolean
+  groupRequired: boolean
 
   @IsBoolean()
-  schoolRequired?: boolean
+  schoolRequired: boolean
 
   @IsBoolean()
-  soloRequired?: boolean
+  soloRequired: boolean
 
   @IsBoolean()
-  customField?: boolean
+  customField: boolean
 
   @IsString()
   @IsOptional()

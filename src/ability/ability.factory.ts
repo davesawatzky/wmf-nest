@@ -93,6 +93,7 @@ export class AbilityFactory {
       can(Action.Manage, OrderItem)
       can(Action.Read, Item)
       can(Action.Read, FestivalClass)
+      can(Action.Read, FieldConfig)
       can(Action.Read, Trophy)
       can(Action.Read, Subdiscipline)
       can(Action.Read, Level)

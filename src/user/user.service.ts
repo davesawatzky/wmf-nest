@@ -1,9 +1,7 @@
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common'
 import { tbl_user } from '@prisma/client'
-import { UserError } from '@/common.entity'
 import { PrismaService } from '@/prisma/prisma.service'
 import { UserInput } from './dto/user.input'
-import { User } from './entities/user.entity'
 
 @Injectable()
 export class UserService {

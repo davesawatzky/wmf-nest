@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common'
 import { tbl_reg_school, tbl_reg_schoolgroup } from '@prisma/client'
-import { UserError } from '@/common.entity'
 import { PrismaService } from '@/prisma/prisma.service'
 import { SchoolGroupInput } from './dto/school-group.input'
 

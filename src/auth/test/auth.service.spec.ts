@@ -175,8 +175,6 @@ describe('authService', () => {
     })
 
     describe('if no email given', () => {
-      let result: User
-
       it('should return error message', async () => {
         await expect(() => authService.findOne(null)).rejects.toThrowError()
       })

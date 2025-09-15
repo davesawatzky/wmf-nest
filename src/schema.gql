@@ -190,16 +190,33 @@ input FestivalClassSearchArgs {
 }
 
 type FieldConfig {
-  communityRequired: Boolean!
-  customField: Boolean!
+  communityRequired: Boolean
+  customField: Boolean
   customFieldType: String
-  fieldName: String!
-  groupRequired: Boolean!
+  fieldName: String
+  groupRequired: Boolean
   id: Int!
-  schoolRequired: Boolean!
-  soloRequired: Boolean!
-  submissionRequired: Boolean!
-  tableName: String!
+  schoolRequired: Boolean
+  soloRequired: Boolean
+  submissionRequired: Boolean
+  tableName: String
+}
+
+input FieldConfigInput {
+  communityRequired: Boolean
+  customField: Boolean
+  customFieldType: String
+  fieldName: String
+  groupRequired: Boolean
+  schoolRequired: Boolean
+  soloRequired: Boolean
+  submissionRequired: Boolean
+  tableName: String
+}
+
+type FieldConfigPayload {
+  fieldConfig: FieldConfig
+  userErrors: [UserError!]!
 }
 
 type Group {
@@ -315,6 +332,9 @@ type Mutation {
   festivalClassCreate(festivalClassInput: FestivalClassInput!): FestivalClassPayload!
   festivalClassDelete(festivalClassID: Int!): FestivalClassPayload!
   festivalClassUpdate(festivalClassID: Int!, festivalClassInput: FestivalClassInput!): FestivalClassPayload!
+  fieldConfigCreate(fieldConfigInput: FieldConfigInput!): FieldConfigPayload!
+  fieldConfigDelete(fieldConfigID: Int!): FieldConfigPayload!
+  fieldConfigUpdate(fieldConfigID: Int!, fieldConfigInput: FieldConfigInput!): FieldConfigPayload!
   groupCreate(registrationID: Int!): GroupPayload!
   groupDelete(groupID: Int!): GroupPayload!
   groupUpdate(groupID: Int!, groupInput: GroupInput!): GroupPayload!

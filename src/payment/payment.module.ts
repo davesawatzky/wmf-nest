@@ -15,7 +15,7 @@ import { PaymentService } from './payment.service'
       useFactory: (configService: ConfigService) => ({
         apiKey: configService.get<string>('STRIPE_SERVER_KEY'),
         options: {
-          apiVersion: '2024-06-20',
+          apiVersion: '2025-08-27.basil',
         },
       }),
     }),
