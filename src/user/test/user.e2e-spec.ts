@@ -38,7 +38,7 @@ describe('User', () => {
       expect(response.data.users[1]).toHaveProperty('permissions')
       expect(response.data.users[1].roles).toBeInstanceOf(Array)
       expect(response.data.users[1].permissions).toBeInstanceOf(Array)
-      expect(response.data.users[1].roles[0]).toEqual('user')
+      expect(response.data.users[10].roles[0]).toEqual('user')
     })
 
     it('Should return a list of users and associated registrations', async () => {

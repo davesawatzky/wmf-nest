@@ -9,6 +9,9 @@ export function TestAdmin(): CredentialsSignup {
     privateTeacher: false,
     schoolTeacher: false,
     instrument: 'piano',
+    roles: ['admin'],
+    // permissions: [],
+    isActive: false,
   }
 }
 
@@ -21,5 +24,7 @@ export function TestUser(): CredentialsSignup {
     privateTeacher: false,
     schoolTeacher: false,
     instrument: 'piano',
+    roles: ['user'],
+    isActive: false,
   }
 }

@@ -120,7 +120,7 @@ describe('Signin', () => {
 
   describe('User does exist, but not confirmed', () => {
     describe('Has never signed in', () => {
-      it('Should have the "has_signed_in" field set to false', async () => {
+      it('Should have the "isActive" field set to false', async () => {
         const result = await globalThis.prisma.tbl_user.findUnique({
           where: {
             email: userSignup()[0].email,

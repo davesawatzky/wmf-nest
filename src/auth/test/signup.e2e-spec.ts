@@ -471,7 +471,7 @@ describe('Signup', () => {
           credentials: userSignup()[0],
         })
       expect(response.data.signup).toMatchObject({
-        userErrors: [{ message: 'User already exists', field: [] }],
+        userErrors: [{ message: 'User already exists', field: ['email'] }],
         user: null,
         diatonicToken: null,
       })

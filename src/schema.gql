@@ -114,9 +114,12 @@ input CredentialsSignup {
   email: String!
   firstName: String!
   instrument: String
+  isActive: Boolean!
   lastName: String!
   password: String!
+  permissions: [String!]
   privateTeacher: Boolean!
+  roles: [String!]!
   schoolTeacher: Boolean!
 }
 
@@ -190,28 +193,28 @@ input FestivalClassSearchArgs {
 }
 
 type FieldConfig {
-  communityRequired: Boolean
-  customField: Boolean
+  communityRequired: Boolean!
+  customField: Boolean!
   customFieldType: String
-  fieldName: String
-  groupRequired: Boolean
+  fieldName: String!
+  groupRequired: Boolean!
   id: Int!
-  schoolRequired: Boolean
-  soloRequired: Boolean
-  submissionRequired: Boolean
-  tableName: String
+  schoolRequired: Boolean!
+  soloRequired: Boolean!
+  submissionRequired: Boolean!
+  tableName: String!
 }
 
 input FieldConfigInput {
-  communityRequired: Boolean
-  customField: Boolean
+  communityRequired: Boolean!
+  customField: Boolean!
   customFieldType: String
-  fieldName: String
-  groupRequired: Boolean
-  schoolRequired: Boolean
-  soloRequired: Boolean
-  submissionRequired: Boolean
-  tableName: String
+  fieldName: String!
+  groupRequired: Boolean!
+  schoolRequired: Boolean!
+  soloRequired: Boolean!
+  submissionRequired: Boolean!
+  tableName: String!
 }
 
 type FieldConfigPayload {

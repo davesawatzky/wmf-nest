@@ -10,6 +10,9 @@ export function userSignup(): CredentialsSignup[] {
       privateTeacher: false,
       schoolTeacher: false,
       instrument: 'clarinet',
+      isActive: false,
+      roles: ['user'],
+      permissions: [],
     },
     {
       email: 'test_user@test.com',
@@ -19,6 +22,9 @@ export function userSignup(): CredentialsSignup[] {
       privateTeacher: false,
       schoolTeacher: false,
       instrument: null,
+      isActive: false,
+      roles: ['user'],
+      permissions: [],
     },
     {
       email: 'test_private.teacher_inst@test.com',
@@ -28,6 +34,9 @@ export function userSignup(): CredentialsSignup[] {
       privateTeacher: true,
       schoolTeacher: false,
       instrument: 'piano',
+      isActive: false,
+      roles: ['user'],
+      permissions: [],
     },
     {
       email: 'test_school.teacher@test.com',
@@ -37,6 +46,9 @@ export function userSignup(): CredentialsSignup[] {
       privateTeacher: false,
       schoolTeacher: true,
       instrument: null,
+      isActive: false,
+      roles: ['user'],
+      permissions: [],
     },
     {
       email: 'test_school.private@test.com',
@@ -46,6 +58,9 @@ export function userSignup(): CredentialsSignup[] {
       privateTeacher: true,
       schoolTeacher: true,
       instrument: null,
+      isActive: false,
+      roles: ['user'],
+      permissions: [],
     },
   ]
 }

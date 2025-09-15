@@ -15,7 +15,7 @@ async function bootstrap() {
       ? false
       : new ConsoleLogger({
         prefix: 'WMF-Server',
-        logLevels: ['error', 'warn', 'debug'],
+        logLevels: ['log', 'error', 'warn', 'debug'],
 
       }),
   })

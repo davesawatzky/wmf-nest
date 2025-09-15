@@ -293,7 +293,7 @@ model tbl_user {
   province              String?            @db.Text
   postalCode            String?            @map("postal_code") @db.Text
   phone                 String?            @db.Text
-  roles                 String[]           @db.Text @default([])
+  roles                 String[]           @db.Text @default(["user"])
   permissions           String[]           @db.Text @default([])
   instrument            String?            @db.Text
   isActive              Boolean?           @default(false) @map("is_active") @db.Boolean
