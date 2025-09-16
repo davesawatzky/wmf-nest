@@ -1,5 +1,8 @@
-import { Field, Float, InputType, Int } from '@nestjs/graphql'
-import { IsInt, IsNumber, IsOptional, IsString } from 'class-validator'
+import {Field, Float, InputType, Int} from '@nestjs/graphql'
+import { Decimal } from '@prisma/client/runtime/library'
+import { Transform, Type } from 'class-transformer'
+import { IsDecimal, IsInt, IsNumber, IsOptional, IsString } from 'class-validator'
+import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
 
 @InputType()
 export class RegisteredClassInput {
@@ -42,9 +45,11 @@ export class RegisteredClassInput {
   @Field(() => Int)
   maxSelections?: number
 
-  @Field(() => Float)
-  @IsNumber({ maxDecimalPlaces: 2 })
-  price?: number
+  @Field(() => GraphQLDecimal)
+  @IsDecimal({ decimal_digits: '2' })
+  @Type(() => Object)
+  @Transform(transformToDecimal)
+  price?: Decimal
 
   @IsInt()
   @IsOptional()

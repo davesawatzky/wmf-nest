@@ -580,7 +580,7 @@ type RegisteredClass {
   numberOfSelections: Int
   performers: [Performer!]
   price: Decimal
-  regID: Int!
+  regID: Int
   schoolGroupID: Int
   selections: [Selection!]
   subdiscipline: String
@@ -596,7 +596,7 @@ input RegisteredClassInput {
   maxSelections: Int
   minSelections: Int
   numberOfSelections: Int
-  price: Float
+  price: Decimal
   schoolGroupID: Int
   subdiscipline: String
 }

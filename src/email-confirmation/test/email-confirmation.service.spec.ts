@@ -13,7 +13,7 @@ import {
 import { EmailService } from '@/email/email.service'
 import { PrismaService } from '@/prisma/prisma.service'
 import { UserService } from '@/user/user.service'
-import { EmailConfirmationService } from './email-confirmation.service'
+import { EmailConfirmationService } from '../email-confirmation.service'
 
 describe('emailConfirmationService', () => {
   let emailConfirmationService: EmailConfirmationService

@@ -37,6 +37,7 @@ import metadata from './metadata'
 import { OrderModule } from './submissions/order/order.module'
 import { ItemModule } from './festival/item/item.module'
 import { OrderItemModule } from './submissions/order-item/order-item.module'
+import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
 
 @Module({
   imports: [
@@ -53,6 +54,9 @@ import { OrderItemModule } from './submissions/order-item/order-item.module'
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
+      resolvers: {
+        Decimal: GraphQLDecimal,
+      },
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault(), ApolloServerPluginUsageReportingDisabled()],
     }),

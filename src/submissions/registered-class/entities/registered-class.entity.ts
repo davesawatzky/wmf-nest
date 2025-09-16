@@ -11,7 +11,8 @@ export class RegisteredClass {
   @Field(() => Int)
   id: number
 
-  regID: number
+  @Field(() => Int)
+  regID?: number
 
   selections?: Selection[]
   classType?: string

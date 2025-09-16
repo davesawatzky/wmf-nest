@@ -11,8 +11,8 @@ import {
 import { EmailService } from '@/email/email.service'
 import { PrismaService } from '@/prisma/prisma.service'
 import { UserService } from '@/user/user.service'
-import { EmailConfirmationController } from './email-confirmation.controller'
-import { EmailConfirmationService } from './email-confirmation.service'
+import { EmailConfirmationController } from '../email-confirmation.controller'
+import { EmailConfirmationService } from '../email-confirmation.service'
 
 describe('emailConfirmationController', () => {
   let controller: EmailConfirmationController
