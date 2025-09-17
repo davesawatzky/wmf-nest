@@ -5,9 +5,7 @@ import { ItemInput } from './dto/item.input'
 
 @Injectable()
 export class ItemService {
-  constructor(
-    private readonly prisma: PrismaService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async findAll() {
     return await this.prisma.tbl_item.findMany()

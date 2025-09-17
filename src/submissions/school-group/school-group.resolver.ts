@@ -1,5 +1,13 @@
 import { UseGuards } from '@nestjs/common/decorators'
-import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 import { tbl_reg_school, tbl_reg_schoolgroup } from '@prisma/client'
 import { CheckAbilities } from '@/ability/abilities.decorator'
 import { AbilitiesGuard } from '@/ability/abilities.guard'
@@ -8,7 +16,10 @@ import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { School } from '@/submissions/school/entities/school.entity'
 import { SchoolService } from '@/submissions/school/school.service'
 import { SchoolGroupInput } from './dto/school-group.input'
-import { SchoolGroup, SchoolGroupPayload } from './entities/school-group.entity'
+import {
+  SchoolGroup,
+  SchoolGroupPayload,
+} from './entities/school-group.entity'
 import { SchoolGroupService } from './school-group.service'
 
 @Resolver(() => SchoolGroup)
@@ -64,7 +75,10 @@ export class SchoolGroupResolver {
     @Args('schoolGroupInput', { type: () => SchoolGroupInput })
     schoolGroupInput: Partial<SchoolGroupInput>,
   ) {
-    return await this.schoolGroupService.update(schoolGroupID, schoolGroupInput)
+    return await this.schoolGroupService.update(
+      schoolGroupID,
+      schoolGroupInput,
+    )
   }
 
   @Mutation(() => SchoolGroupPayload)

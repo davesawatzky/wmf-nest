@@ -7,7 +7,11 @@ import { UserService } from './user.service'
 
 @Module({
   providers: [UserResolver, UserService],
-  imports: [forwardRef(() => RegistrationModule), AbilityModule, forwardRef(() => OrderModule)],
+  imports: [
+    forwardRef(() => RegistrationModule),
+    AbilityModule,
+    forwardRef(() => OrderModule),
+  ],
   exports: [UserService],
 })
 export class UserModule {}

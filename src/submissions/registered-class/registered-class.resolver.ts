@@ -19,7 +19,10 @@ import { Selection } from '@/submissions/selection/entities/selection.entity'
 import { SelectionService } from '@/submissions/selection/selection.service'
 import { PerformerService } from '../performer/performer.service'
 import { RegisteredClassInput } from './dto/registered-class.input'
-import { RegisteredClass, RegisteredClassPayload } from './entities/registered-class.entity'
+import {
+  RegisteredClass,
+  RegisteredClassPayload,
+} from './entities/registered-class.entity'
 import { RegisteredClassService } from './registered-class.service'
 
 @Resolver(() => RegisteredClass)
@@ -38,7 +41,8 @@ export class RegisteredClassResolver {
   @CheckAbilities({ action: Action.Manage, subject: RegisteredClass })
   async registeredClasses(
     @Context() context,
-    @Args('registrationID', { nullable: true, type: () => Int }) registrationID: tbl_registration['id'] | null,
+    @Args('registrationID', { nullable: true, type: () => Int })
+    registrationID: tbl_registration['id'] | null,
   ) {
     return await this.registeredClassService.findAll(
       context.req.user.roles.includes('admin') ? null : registrationID,
@@ -103,7 +107,8 @@ export class RegisteredClassResolver {
 
   @ResolveField(() => [Performer])
   async performers(@Parent() registeredClass: tbl_reg_class) {
-    const { classNumber }: { classNumber: RegisteredClass['classNumber'] } = registeredClass
+    const { classNumber }: { classNumber: RegisteredClass['classNumber'] }
+      = registeredClass
     if (!classNumber) {
       return []
     }

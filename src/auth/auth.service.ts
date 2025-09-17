@@ -27,7 +27,9 @@ export class AuthService {
   ) {}
 
   async signup(credentialsSignup: CredentialsSignup): Promise<AuthPayload> {
-    this.logger.debug(`Attempting signup for email: ${credentialsSignup.email}`)
+    this.logger.debug(
+      `Attempting signup for email: ${credentialsSignup.email}`,
+    )
 
     let user: any
     let userErrors: any[] = []
@@ -38,11 +40,15 @@ export class AuthService {
       })
 
       if (!!user && !!user.password) {
-        this.logger.warn(`Signup attempt for existing user: ${credentialsSignup.email}`)
-        userErrors = [{
-          message: 'User already exists',
-          field: ['email'],
-        }]
+        this.logger.warn(
+          `Signup attempt for existing user: ${credentialsSignup.email}`,
+        )
+        userErrors = [
+          {
+            message: 'User already exists',
+            field: ['email'],
+          },
+        ]
         user = null
       }
       else if (
@@ -50,11 +56,15 @@ export class AuthService {
         && !credentialsSignup.privateTeacher
         && !credentialsSignup.schoolTeacher
       ) {
-        this.logger.warn(`Signup attempt for existing non-teacher user: ${credentialsSignup.email}`)
-        userErrors = [{
-          message: 'User already exists',
-          field: ['email'],
-        }]
+        this.logger.warn(
+          `Signup attempt for existing non-teacher user: ${credentialsSignup.email}`,
+        )
+        userErrors = [
+          {
+            message: 'User already exists',
+            field: ['email'],
+          },
+        ]
         user = null
       }
       else if (
@@ -101,31 +111,42 @@ export class AuthService {
         })
 
         user = this.stripProperties(newUser)
-        this.logger.log(`Successfully created/updated user with ID: ${newUser.id} for email: ${credentialsSignup.email}`)
+        this.logger.log(
+          `Successfully created/updated user with ID: ${newUser.id} for email: ${credentialsSignup.email}`,
+        )
       }
     }
     catch (error: any) {
-      this.logger.error(`Failed to signup user ${credentialsSignup.email}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to signup user ${credentialsSignup.email}: ${error.message}`,
+        error.stack,
+      )
 
       if (error.code === 'P2002') {
-        userErrors = [{
-          message: 'Email address already in use',
-          field: ['email'],
-        }]
+        userErrors = [
+          {
+            message: 'Email address already in use',
+            field: ['email'],
+          },
+        ]
         user = null
       }
       else if (error.code === 'P2003') {
-        userErrors = [{
-          message: 'Invalid data provided',
-          field: [],
-        }]
+        userErrors = [
+          {
+            message: 'Invalid data provided',
+            field: [],
+          },
+        ]
         user = null
       }
       else {
-        userErrors = [{
-          message: 'Cannot create user account',
-          field: [],
-        }]
+        userErrors = [
+          {
+            message: 'Cannot create user account',
+            field: [],
+          },
+        ]
         user = null
       }
     }
@@ -152,11 +173,14 @@ export class AuthService {
       })
 
       if (!!signedInUser && !signedInUser.emailConfirmed) {
-        this.logger.warn(`Signin attempt for unconfirmed user: ${signedInUser.email}`)
+        this.logger.warn(
+          `Signin attempt for unconfirmed user: ${signedInUser.email}`,
+        )
         return {
           userErrors: [
             {
-              message: 'Account not confirmed. Check email account for verification link',
+              message:
+                'Account not confirmed. Check email account for verification link',
               field: ['email'],
             },
           ],
@@ -169,7 +193,9 @@ export class AuthService {
         }
       }
       else if (!!signedInUser && signedInUser.passwordResetPending) {
-        this.logger.warn(`Signin attempt for user with pending password reset: ${signedInUser.email}`)
+        this.logger.warn(
+          `Signin attempt for user with pending password reset: ${signedInUser.email}`,
+        )
         return {
           userErrors: [
             {
@@ -209,7 +235,10 @@ export class AuthService {
       }
     }
     catch (error: any) {
-      this.logger.error(`Failed to signin user ID ${user.id}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to signin user ID ${user.id}: ${error.message}`,
+        error.stack,
+      )
 
       return {
         userErrors: [
@@ -251,10 +280,17 @@ export class AuthService {
       }
     }
     catch (error: any) {
-      if (error instanceof BadRequestException || error instanceof NotFoundException)
+      if (
+        error instanceof BadRequestException
+        || error instanceof NotFoundException
+      ) {
         throw error
+      }
 
-      this.logger.error(`Failed to find user ${email}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to find user ${email}: ${error.message}`,
+        error.stack,
+      )
       throw new InternalServerErrorException('Failed to retrieve user')
     }
   }
@@ -272,7 +308,9 @@ export class AuthService {
 
       if (user) {
         const pass = !!user.password
-        this.logger.log(`Password check completed for user ID: ${id}, has password: ${pass}`)
+        this.logger.log(
+          `Password check completed for user ID: ${id}, has password: ${pass}`,
+        )
         return { id, pass }
       }
       else {
@@ -281,10 +319,17 @@ export class AuthService {
       }
     }
     catch (error: any) {
-      if (error instanceof BadRequestException || error instanceof NotFoundException)
+      if (
+        error instanceof BadRequestException
+        || error instanceof NotFoundException
+      ) {
         throw error
+      }
 
-      this.logger.error(`Failed to check password for user ID ${id}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to check password for user ID ${id}: ${error.message}`,
+        error.stack,
+      )
       throw new InternalServerErrorException('Failed to check password status')
     }
   }
@@ -326,7 +371,10 @@ export class AuthService {
       return null
     }
     catch (error: any) {
-      this.logger.error(`Failed to validate user ${username}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to validate user ${username}: ${error.message}`,
+        error.stack,
+      )
       return null
     }
   }
@@ -354,7 +402,10 @@ export class AuthService {
       return null
     }
     catch (error: any) {
-      this.logger.error(`Failed to find authenticated user ${id}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to find authenticated user ${id}: ${error.message}`,
+        error.stack,
+      )
       return null
     }
   }
@@ -378,11 +429,18 @@ export class AuthService {
         },
       })
 
-      this.logger.log(`Successfully set password change pending for user ID: ${id}`)
+      this.logger.log(
+        `Successfully set password change pending for user ID: ${id}`,
+      )
     }
     catch (error: any) {
-      this.logger.error(`Failed to set password change pending for user ID ${id}: ${error.message}`, error.stack)
-      throw new InternalServerErrorException('Failed to update password reset status')
+      this.logger.error(
+        `Failed to set password change pending for user ID ${id}: ${error.message}`,
+        error.stack,
+      )
+      throw new InternalServerErrorException(
+        'Failed to update password reset status',
+      )
     }
   }
 
@@ -390,7 +448,9 @@ export class AuthService {
     if (!id)
       throw new BadRequestException('User ID is required')
 
-    this.logger.debug(`Checking password reset pending status for user ID: ${id}`)
+    this.logger.debug(
+      `Checking password reset pending status for user ID: ${id}`,
+    )
 
     try {
       const user = await this.prisma.tbl_user.findUnique({
@@ -407,22 +467,38 @@ export class AuthService {
       return status
     }
     catch (error: any) {
-      if (error instanceof BadRequestException || error instanceof NotFoundException)
+      if (
+        error instanceof BadRequestException
+        || error instanceof NotFoundException
+      ) {
         throw error
+      }
 
-      this.logger.error(`Failed to check password reset status for user ID ${id}: ${error.message}`, error.stack)
-      throw new InternalServerErrorException('Failed to check password reset status')
+      this.logger.error(
+        `Failed to check password reset status for user ID ${id}: ${error.message}`,
+        error.stack,
+      )
+      throw new InternalServerErrorException(
+        'Failed to check password reset status',
+      )
     }
   }
 
-  async passwordChange(email: string, password: string): Promise<PasswordChangePayload> {
+  async passwordChange(
+    email: string,
+    password: string,
+  ): Promise<PasswordChangePayload> {
     if (!email || !password) {
-      this.logger.warn('Password change attempt with missing email or password')
+      this.logger.warn(
+        'Password change attempt with missing email or password',
+      )
       return {
-        userErrors: [{
-          message: 'Email and password are required',
-          field: ['email', 'password'],
-        }],
+        userErrors: [
+          {
+            message: 'Email and password are required',
+            field: ['email', 'password'],
+          },
+        ],
         passwordChanged: false,
       }
     }
@@ -442,23 +518,30 @@ export class AuthService {
       this.logger.log(`Successfully changed password for user: ${email}`)
     }
     catch (error: any) {
-      this.logger.error(`Failed to change password for user ${email}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to change password for user ${email}: ${error.message}`,
+        error.stack,
+      )
 
       if (error.code === 'P2025') {
         return {
-          userErrors: [{
-            message: 'User not found',
-            field: ['email'],
-          }],
+          userErrors: [
+            {
+              message: 'User not found',
+              field: ['email'],
+            },
+          ],
           passwordChanged: false,
         }
       }
 
       return {
-        userErrors: [{
-          message: 'Could not change password',
-          field: [],
-        }],
+        userErrors: [
+          {
+            message: 'Could not change password',
+            field: [],
+          },
+        ],
         passwordChanged: false,
       }
     }
@@ -485,7 +568,10 @@ export class AuthService {
       throw new BadRequestException('Invalid token payload')
     }
     catch (error: any) {
-      this.logger.error(`Failed to extract email from token: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to extract email from token: ${error.message}`,
+        error.stack,
+      )
 
       if (error?.name === 'TokenExpiredError') {
         throw new BadRequestException('Email confirmation token expired')
@@ -500,7 +586,10 @@ export class AuthService {
       return await this.userService.findOne(payload.sub)
     }
     catch (error: any) {
-      this.logger.error(`Failed to validate token and get user: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to validate token and get user: ${error.message}`,
+        error.stack,
+      )
       return null
     }
   }

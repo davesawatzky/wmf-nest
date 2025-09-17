@@ -18,21 +18,28 @@ export class DisciplineService {
   constructor(private prisma: PrismaService) {}
 
   async create(disciplineInput: DisciplineInput) {
-    this.logger.debug(`Creating discipline with data: ${JSON.stringify(disciplineInput)}`)
+    this.logger.debug(
+      `Creating discipline with data: ${JSON.stringify(disciplineInput)}`,
+    )
     let discipline: tbl_discipline
     let userErrors: UserError[] = []
     try {
       discipline = await this.prisma.tbl_discipline.create({
         data: { ...disciplineInput },
       })
-      this.logger.log(`Successfully created discipline with ID: ${discipline.id}`)
+      this.logger.log(
+        `Successfully created discipline with ID: ${discipline.id}`,
+      )
       return {
         userErrors,
         discipline,
       }
     }
     catch (error: any) {
-      this.logger.error(`Failed to create discipline: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to create discipline: ${error.message}`,
+        error.stack,
+      )
       if (error.code === 'P2002') {
         userErrors = [
           {
@@ -40,12 +47,15 @@ export class DisciplineService {
             field: ['name'],
           },
         ]
-        this.logger.warn(`Duplicate discipline name attempted: ${disciplineInput.name}`)
+        this.logger.warn(
+          `Duplicate discipline name attempted: ${disciplineInput.name}`,
+        )
       }
       else {
         userErrors = [
           {
-            message: 'An unexpected error occurred while creating the discipline',
+            message:
+              'An unexpected error occurred while creating the discipline',
             field: [],
           },
         ]
@@ -61,7 +71,9 @@ export class DisciplineService {
     performerType?: PerformerType | null,
     instrument?: Instrument['name'] | null,
   ) {
-    this.logger.debug(`Retrieving disciplines with filters - performerType: ${performerType}, instrument: ${instrument}`)
+    this.logger.debug(
+      `Retrieving disciplines with filters - performerType: ${performerType}, instrument: ${instrument}`,
+    )
     try {
       let disciplines: tbl_discipline[]
       if (!!performerType && !instrument) {
@@ -122,11 +134,16 @@ export class DisciplineService {
       else if (!performerType && !instrument) {
         disciplines = await this.prisma.tbl_discipline.findMany({})
       }
-      this.logger.log(`Successfully retrieved ${disciplines?.length || 0} disciplines`)
+      this.logger.log(
+        `Successfully retrieved ${disciplines?.length || 0} disciplines`,
+      )
       return disciplines
     }
     catch (error: any) {
-      this.logger.error(`Failed to retrieve disciplines: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to retrieve disciplines: ${error.message}`,
+        error.stack,
+      )
       throw new InternalServerErrorException('Failed to retrieve disciplines')
     }
   }
@@ -149,10 +166,16 @@ export class DisciplineService {
       return discipline
     }
     catch (error: any) {
-      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+      if (
+        error instanceof NotFoundException
+        || error instanceof BadRequestException
+      ) {
         throw error
       }
-      this.logger.error(`Failed to retrieve discipline with ID ${id}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to retrieve discipline with ID ${id}: ${error.message}`,
+        error.stack,
+      )
       throw new InternalServerErrorException('Failed to retrieve discipline')
     }
   }
@@ -161,7 +184,9 @@ export class DisciplineService {
     id: tbl_discipline['id'],
     DisciplineInput: Partial<tbl_discipline>,
   ) {
-    this.logger.debug(`Updating discipline with ID: ${id}, data: ${JSON.stringify(DisciplineInput)}`)
+    this.logger.debug(
+      `Updating discipline with ID: ${id}, data: ${JSON.stringify(DisciplineInput)}`,
+    )
     let discipline: tbl_discipline
     let userErrors: UserError[] = []
     try {
@@ -176,7 +201,10 @@ export class DisciplineService {
       }
     }
     catch (error: any) {
-      this.logger.error(`Failed to update discipline with ID ${id}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to update discipline with ID ${id}: ${error.message}`,
+        error.stack,
+      )
       if (error.code === 'P2025') {
         userErrors = [
           {
@@ -184,7 +212,9 @@ export class DisciplineService {
             field: ['id'],
           },
         ]
-        this.logger.warn(`Attempted to update non-existent discipline with ID: ${id}`)
+        this.logger.warn(
+          `Attempted to update non-existent discipline with ID: ${id}`,
+        )
       }
       else if (error.code === 'P2002') {
         userErrors = [
@@ -193,12 +223,15 @@ export class DisciplineService {
             field: ['name'],
           },
         ]
-        this.logger.warn(`Duplicate discipline name attempted during update: ${DisciplineInput.name}`)
+        this.logger.warn(
+          `Duplicate discipline name attempted during update: ${DisciplineInput.name}`,
+        )
       }
       else {
         userErrors = [
           {
-            message: 'An unexpected error occurred while updating the discipline',
+            message:
+              'An unexpected error occurred while updating the discipline',
             field: [],
           },
         ]
@@ -218,14 +251,19 @@ export class DisciplineService {
       discipline = await this.prisma.tbl_discipline.delete({
         where: { id: disciplineID },
       })
-      this.logger.log(`Successfully deleted discipline with ID: ${disciplineID}`)
+      this.logger.log(
+        `Successfully deleted discipline with ID: ${disciplineID}`,
+      )
       return {
         userErrors,
         discipline,
       }
     }
     catch (error: any) {
-      this.logger.error(`Failed to delete discipline with ID ${disciplineID}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to delete discipline with ID ${disciplineID}: ${error.message}`,
+        error.stack,
+      )
       if (error.code === 'P2025') {
         userErrors = [
           {
@@ -233,21 +271,27 @@ export class DisciplineService {
             field: ['id'],
           },
         ]
-        this.logger.warn(`Attempted to delete non-existent discipline with ID: ${disciplineID}`)
+        this.logger.warn(
+          `Attempted to delete non-existent discipline with ID: ${disciplineID}`,
+        )
       }
       else if (error.code === 'P2003') {
         userErrors = [
           {
-            message: 'Cannot delete discipline as it is referenced by other records',
+            message:
+              'Cannot delete discipline as it is referenced by other records',
             field: ['id'],
           },
         ]
-        this.logger.warn(`Attempted to delete discipline with ID ${disciplineID} that has foreign key references`)
+        this.logger.warn(
+          `Attempted to delete discipline with ID ${disciplineID} that has foreign key references`,
+        )
       }
       else {
         userErrors = [
           {
-            message: 'An unexpected error occurred while deleting the discipline',
+            message:
+              'An unexpected error occurred while deleting the discipline',
             field: [],
           },
         ]

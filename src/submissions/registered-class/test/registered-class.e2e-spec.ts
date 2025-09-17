@@ -1,6 +1,9 @@
 import gql from 'graphql-tag'
 import request from 'supertest-graphql'
-import { RegisteredClass, RegisteredClassPayload } from '../entities/registered-class.entity'
+import {
+  RegisteredClass,
+  RegisteredClassPayload,
+} from '../entities/registered-class.entity'
 
 describe('RegisteredClass', () => {
   let testRegistrationId: number
@@ -31,7 +34,7 @@ describe('RegisteredClass', () => {
         numberOfSelections: 2,
         minSelections: 1,
         maxSelections: 3,
-        price: 25.00,
+        price: 25.0,
       },
     })
     testRegisteredClassId = testRegisteredClass.id
@@ -58,7 +61,9 @@ describe('RegisteredClass', () => {
     let response: any
 
     it('Can provide a list of all registered classes (admin only)', async () => {
-      response = await request<{ registeredClasses: RegisteredClass[] }>(globalThis.httpServer)
+      response = await request<{ registeredClasses: RegisteredClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query RegisteredClasses {
@@ -101,7 +106,9 @@ describe('RegisteredClass', () => {
         data: { roles: ['user'] },
       })
 
-      response = await request<{ registeredClasses: RegisteredClass[] }>(globalThis.httpServer)
+      response = await request<{ registeredClasses: RegisteredClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query RegisteredClasses($registrationId: Int) {
@@ -136,7 +143,9 @@ describe('RegisteredClass', () => {
     })
 
     it('Returns correct data types for registered class fields', async () => {
-      response = await request<{ registeredClasses: RegisteredClass[] }>(globalThis.httpServer)
+      response = await request<{ registeredClasses: RegisteredClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query RegisteredClasses {
@@ -168,7 +177,9 @@ describe('RegisteredClass', () => {
     let response: any
 
     it('Can find registered class using proper ID', async () => {
-      response = await request<{ registeredClass: RegisteredClass }>(globalThis.httpServer)
+      response = await request<{ registeredClass: RegisteredClass }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query RegisteredClass($registeredClassId: Int!) {
@@ -204,7 +215,9 @@ describe('RegisteredClass', () => {
     })
 
     it('Returns error when registered class not found', async () => {
-      response = await request<{ registeredClass: RegisteredClass }>(globalThis.httpServer)
+      response = await request<{ registeredClass: RegisteredClass }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query RegisteredClass($registeredClassId: Int!) {
@@ -223,7 +236,9 @@ describe('RegisteredClass', () => {
     })
 
     it('Returns error when invalid registered class ID provided', async () => {
-      response = await request<{ registeredClass: RegisteredClass }>(globalThis.httpServer)
+      response = await request<{ registeredClass: RegisteredClass }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query RegisteredClass($registeredClassId: Int!) {
@@ -248,19 +263,29 @@ describe('RegisteredClass', () => {
     afterEach(async () => {
       // Clean up created registered class
       if (createdRegisteredClassId) {
-        await globalThis.prisma.tbl_reg_class.delete({
-          where: { id: createdRegisteredClassId },
-        }).catch(() => {}) // Ignore errors if already deleted
+        await globalThis.prisma.tbl_reg_class
+          .delete({
+            where: { id: createdRegisteredClassId },
+          })
+          .catch(() => {}) // Ignore errors if already deleted
         createdRegisteredClassId = undefined
       }
     })
 
     it('Successfully creates a registered class using RegisteredClassInput', async () => {
-      response = await request<{ registeredClassCreate: RegisteredClassPayload }>(globalThis.httpServer)
+      response = await request<{
+        registeredClassCreate: RegisteredClassPayload
+      }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation CreateRegisteredClass($registrationId: Int!, $registeredClass: RegisteredClassInput) {
-            registeredClassCreate(registrationID: $registrationId, registeredClass: $registeredClass) {
+          mutation CreateRegisteredClass(
+            $registrationId: Int!
+            $registeredClass: RegisteredClassInput
+          ) {
+            registeredClassCreate(
+              registrationID: $registrationId
+              registeredClass: $registeredClass
+            ) {
               userErrors {
                 message
                 field
@@ -294,27 +319,44 @@ describe('RegisteredClass', () => {
             numberOfSelections: 1,
             minSelections: 1,
             maxSelections: 2,
-            price: 30.50,
+            price: 30.5,
           },
         })
         .expectNoErrors()
 
-      createdRegisteredClassId = response.data.registeredClassCreate.registeredClass.id
+      createdRegisteredClassId
+        = response.data.registeredClassCreate.registeredClass.id
 
       expect(response.data.registeredClassCreate.userErrors).toEqual([])
       expect(response.data.registeredClassCreate.registeredClass).toBeTruthy()
-      expect(response.data.registeredClassCreate.registeredClass.regID).toBe(testRegistrationId)
-      expect(response.data.registeredClassCreate.registeredClass.classNumber).toBe('e2e_test_001')
-      expect(response.data.registeredClassCreate.registeredClass.discipline).toBe('Voice')
-      expect(response.data.registeredClassCreate.registeredClass.price).toBe('30.5')
+      expect(response.data.registeredClassCreate.registeredClass.regID).toBe(
+        testRegistrationId,
+      )
+      expect(
+        response.data.registeredClassCreate.registeredClass.classNumber,
+      ).toBe('e2e_test_001')
+      expect(
+        response.data.registeredClassCreate.registeredClass.discipline,
+      ).toBe('Voice')
+      expect(response.data.registeredClassCreate.registeredClass.price).toBe(
+        '30.5',
+      )
     })
 
     it('Successfully creates registered class with minimal data', async () => {
-      response = await request<{ registeredClassCreate: RegisteredClassPayload }>(globalThis.httpServer)
+      response = await request<{
+        registeredClassCreate: RegisteredClassPayload
+      }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation CreateRegisteredClass($registrationId: Int!, $registeredClass: RegisteredClassInput) {
-            registeredClassCreate(registrationID: $registrationId, registeredClass: $registeredClass) {
+          mutation CreateRegisteredClass(
+            $registrationId: Int!
+            $registeredClass: RegisteredClassInput
+          ) {
+            registeredClassCreate(
+              registrationID: $registrationId
+              registeredClass: $registeredClass
+            ) {
               userErrors {
                 message
                 field
@@ -330,25 +372,38 @@ describe('RegisteredClass', () => {
         .variables({
           registrationId: testRegistrationId,
           registeredClass: {
-            price: 25.00,
+            price: 25.0,
           },
         })
         .expectNoErrors()
 
-      createdRegisteredClassId = response.data.registeredClassCreate.registeredClass.id
+      createdRegisteredClassId
+        = response.data.registeredClassCreate.registeredClass.id
 
       expect(response.data.registeredClassCreate.userErrors).toEqual([])
       expect(response.data.registeredClassCreate.registeredClass).toBeTruthy()
-      expect(response.data.registeredClassCreate.registeredClass.regID).toBe(testRegistrationId)
-      expect(response.data.registeredClassCreate.registeredClass.price).toBe('25')
+      expect(response.data.registeredClassCreate.registeredClass.regID).toBe(
+        testRegistrationId,
+      )
+      expect(response.data.registeredClassCreate.registeredClass.price).toBe(
+        '25',
+      )
     })
 
     it('Returns userError when trying to create with invalid registration ID', async () => {
-      response = await request<{ registeredClassCreate: RegisteredClassPayload }>(globalThis.httpServer)
+      response = await request<{
+        registeredClassCreate: RegisteredClassPayload
+      }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation CreateRegisteredClass($registrationId: Int!, $registeredClass: RegisteredClassInput) {
-            registeredClassCreate(registrationID: $registrationId, registeredClass: $registeredClass) {
+          mutation CreateRegisteredClass(
+            $registrationId: Int!
+            $registeredClass: RegisteredClassInput
+          ) {
+            registeredClassCreate(
+              registrationID: $registrationId
+              registeredClass: $registeredClass
+            ) {
               userErrors {
                 message
                 field
@@ -363,22 +418,34 @@ describe('RegisteredClass', () => {
           registrationId: 99999,
           registeredClass: {
             classNumber: 'e2e_test_invalid',
-            price: 25.00,
+            price: 25.0,
           },
         })
         .expectNoErrors()
 
-      expect(response.data.registeredClassCreate.userErrors.length).toBeGreaterThan(0)
-      expect(response.data.registeredClassCreate.userErrors[0].message).toBeTruthy()
+      expect(
+        response.data.registeredClassCreate.userErrors.length,
+      ).toBeGreaterThan(0)
+      expect(
+        response.data.registeredClassCreate.userErrors[0].message,
+      ).toBeTruthy()
       expect(response.data.registeredClassCreate.registeredClass).toBeNull()
     })
 
     it('Returns error with invalid input data', async () => {
-      response = await request<{ registeredClassCreate: RegisteredClassPayload }>(globalThis.httpServer)
+      response = await request<{
+        registeredClassCreate: RegisteredClassPayload
+      }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation CreateRegisteredClass($registrationId: Int!, $registeredClass: RegisteredClassInput) {
-            registeredClassCreate(registrationID: $registrationId, registeredClass: $registeredClass) {
+          mutation CreateRegisteredClass(
+            $registrationId: Int!
+            $registeredClass: RegisteredClassInput
+          ) {
+            registeredClassCreate(
+              registrationID: $registrationId
+              registeredClass: $registeredClass
+            ) {
               userErrors {
                 message
                 field
@@ -420,7 +487,7 @@ describe('RegisteredClass', () => {
           numberOfSelections: 1,
           minSelections: 1,
           maxSelections: 2,
-          price: 20.00,
+          price: 20.0,
         },
       })
       updateTestRegisteredClassId = testClass.id
@@ -429,18 +496,28 @@ describe('RegisteredClass', () => {
     afterEach(async () => {
       // Clean up test data
       if (updateTestRegisteredClassId) {
-        await globalThis.prisma.tbl_reg_class.delete({
-          where: { id: updateTestRegisteredClassId },
-        }).catch(() => {}) // Ignore errors if already deleted
+        await globalThis.prisma.tbl_reg_class
+          .delete({
+            where: { id: updateTestRegisteredClassId },
+          })
+          .catch(() => {}) // Ignore errors if already deleted
       }
     })
 
     it('Successfully updates a registered class', async () => {
-      response = await request<{ registeredClassUpdate: RegisteredClassPayload }>(globalThis.httpServer)
+      response = await request<{
+        registeredClassUpdate: RegisteredClassPayload
+      }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation UpdateRegisteredClass($registeredClassId: Int!, $registeredClassInput: RegisteredClassInput!) {
-            registeredClassUpdate(registeredClassID: $registeredClassId, registeredClassInput: $registeredClassInput) {
+          mutation UpdateRegisteredClass(
+            $registeredClassId: Int!
+            $registeredClassInput: RegisteredClassInput!
+          ) {
+            registeredClassUpdate(
+              registeredClassID: $registeredClassId
+              registeredClassInput: $registeredClassInput
+            ) {
               userErrors {
                 message
                 field
@@ -478,21 +555,43 @@ describe('RegisteredClass', () => {
 
       expect(response.data.registeredClassUpdate.userErrors).toEqual([])
       expect(response.data.registeredClassUpdate.registeredClass).toBeTruthy()
-      expect(response.data.registeredClassUpdate.registeredClass.id).toBe(updateTestRegisteredClassId)
-      expect(response.data.registeredClassUpdate.registeredClass.classType).toBe('Updated Solo Class')
-      expect(response.data.registeredClassUpdate.registeredClass.classNumber).toBe('e2e_updated')
-      expect(response.data.registeredClassUpdate.registeredClass.discipline).toBe('Woodwinds')
-      expect(response.data.registeredClassUpdate.registeredClass.subdiscipline).toBe('Flute')
-      expect(response.data.registeredClassUpdate.registeredClass.numberOfSelections).toBe(3)
-      expect(response.data.registeredClassUpdate.registeredClass.price).toBe('35.75')
+      expect(response.data.registeredClassUpdate.registeredClass.id).toBe(
+        updateTestRegisteredClassId,
+      )
+      expect(
+        response.data.registeredClassUpdate.registeredClass.classType,
+      ).toBe('Updated Solo Class')
+      expect(
+        response.data.registeredClassUpdate.registeredClass.classNumber,
+      ).toBe('e2e_updated')
+      expect(
+        response.data.registeredClassUpdate.registeredClass.discipline,
+      ).toBe('Woodwinds')
+      expect(
+        response.data.registeredClassUpdate.registeredClass.subdiscipline,
+      ).toBe('Flute')
+      expect(
+        response.data.registeredClassUpdate.registeredClass.numberOfSelections,
+      ).toBe(3)
+      expect(response.data.registeredClassUpdate.registeredClass.price).toBe(
+        '35.75',
+      )
     })
 
     it('Returns userError when trying to update non-existent registered class', async () => {
-      response = await request<{ registeredClassUpdate: RegisteredClassPayload }>(globalThis.httpServer)
+      response = await request<{
+        registeredClassUpdate: RegisteredClassPayload
+      }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation UpdateRegisteredClass($registeredClassId: Int!, $registeredClassInput: RegisteredClassInput!) {
-            registeredClassUpdate(registeredClassID: $registeredClassId, registeredClassInput: $registeredClassInput) {
+          mutation UpdateRegisteredClass(
+            $registeredClassId: Int!
+            $registeredClassInput: RegisteredClassInput!
+          ) {
+            registeredClassUpdate(
+              registeredClassID: $registeredClassId
+              registeredClassInput: $registeredClassInput
+            ) {
               userErrors {
                 message
                 field
@@ -507,22 +606,34 @@ describe('RegisteredClass', () => {
           registeredClassId: 99999,
           registeredClassInput: {
             classType: 'Non-existent Class',
-            price: 25.00,
+            price: 25.0,
           },
         })
         .expectNoErrors()
 
-      expect(response.data.registeredClassUpdate.userErrors.length).toBeGreaterThan(0)
-      expect(response.data.registeredClassUpdate.userErrors[0].message).toContain('not found')
+      expect(
+        response.data.registeredClassUpdate.userErrors.length,
+      ).toBeGreaterThan(0)
+      expect(
+        response.data.registeredClassUpdate.userErrors[0].message,
+      ).toContain('not found')
       expect(response.data.registeredClassUpdate.registeredClass).toBeNull()
     })
 
     it('Returns error with invalid update input', async () => {
-      response = await request<{ registeredClassUpdate: RegisteredClassPayload }>(globalThis.httpServer)
+      response = await request<{
+        registeredClassUpdate: RegisteredClassPayload
+      }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation UpdateRegisteredClass($registeredClassId: Int!, $registeredClassInput: RegisteredClassInput!) {
-            registeredClassUpdate(registeredClassID: $registeredClassId, registeredClassInput: $registeredClassInput) {
+          mutation UpdateRegisteredClass(
+            $registeredClassId: Int!
+            $registeredClassInput: RegisteredClassInput!
+          ) {
+            registeredClassUpdate(
+              registeredClassID: $registeredClassId
+              registeredClassInput: $registeredClassInput
+            ) {
               userErrors {
                 message
                 field
@@ -560,14 +671,16 @@ describe('RegisteredClass', () => {
           subdiscipline: 'Drums',
           level: 'Beginner',
           category: 'Solo',
-          price: 15.00,
+          price: 15.0,
         },
       })
       deleteTestRegisteredClassId = testClass.id
     })
 
     it('Successfully deletes a registered class', async () => {
-      response = await request<{ registeredClassDelete: RegisteredClassPayload }>(globalThis.httpServer)
+      response = await request<{
+        registeredClassDelete: RegisteredClassPayload
+      }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation DeleteRegisteredClass($registeredClassId: Int!) {
@@ -591,7 +704,9 @@ describe('RegisteredClass', () => {
 
       expect(response.data.registeredClassDelete.userErrors).toEqual([])
       expect(response.data.registeredClassDelete.registeredClass).toBeTruthy()
-      expect(response.data.registeredClassDelete.registeredClass.id).toBe(deleteTestRegisteredClassId)
+      expect(response.data.registeredClassDelete.registeredClass.id).toBe(
+        deleteTestRegisteredClassId,
+      )
 
       // Verify the registered class was actually deleted
       const deletedClass = await globalThis.prisma.tbl_reg_class.findUnique({
@@ -603,7 +718,9 @@ describe('RegisteredClass', () => {
     })
 
     it('Returns userError when trying to delete non-existent registered class', async () => {
-      response = await request<{ registeredClassDelete: RegisteredClassPayload }>(globalThis.httpServer)
+      response = await request<{
+        registeredClassDelete: RegisteredClassPayload
+      }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation DeleteRegisteredClass($registeredClassId: Int!) {
@@ -623,13 +740,19 @@ describe('RegisteredClass', () => {
         })
         .expectNoErrors()
 
-      expect(response.data.registeredClassDelete.userErrors.length).toBeGreaterThan(0)
-      expect(response.data.registeredClassDelete.userErrors[0].message).toContain('not found')
+      expect(
+        response.data.registeredClassDelete.userErrors.length,
+      ).toBeGreaterThan(0)
+      expect(
+        response.data.registeredClassDelete.userErrors[0].message,
+      ).toContain('not found')
       expect(response.data.registeredClassDelete.registeredClass).toBeNull()
     })
 
     it('Returns error with invalid registered class ID', async () => {
-      response = await request<{ registeredClassDelete: RegisteredClassPayload }>(globalThis.httpServer)
+      response = await request<{
+        registeredClassDelete: RegisteredClassPayload
+      }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation DeleteRegisteredClass($registeredClassId: Int!) {
@@ -654,9 +777,11 @@ describe('RegisteredClass', () => {
     afterEach(async () => {
       // Clean up if deletion test failed
       if (deleteTestRegisteredClassId) {
-        await globalThis.prisma.tbl_reg_class.delete({
-          where: { id: deleteTestRegisteredClassId },
-        }).catch(() => {}) // Ignore errors if already deleted
+        await globalThis.prisma.tbl_reg_class
+          .delete({
+            where: { id: deleteTestRegisteredClassId },
+          })
+          .catch(() => {}) // Ignore errors if already deleted
       }
     })
   })
@@ -665,7 +790,9 @@ describe('RegisteredClass', () => {
     let response: any
 
     it('Can resolve selections field for registered class', async () => {
-      response = await request<{ registeredClass: RegisteredClass }>(globalThis.httpServer)
+      response = await request<{ registeredClass: RegisteredClass }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query RegisteredClassWithSelections($registeredClassId: Int!) {
@@ -687,11 +814,15 @@ describe('RegisteredClass', () => {
 
       expect(response.data.registeredClass).toBeTruthy()
       expect(response.data.registeredClass.selections).toBeDefined()
-      expect(Array.isArray(response.data.registeredClass.selections)).toBe(true)
+      expect(Array.isArray(response.data.registeredClass.selections)).toBe(
+        true,
+      )
     })
 
     it('Can resolve performers field for registered class', async () => {
-      response = await request<{ registeredClass: RegisteredClass }>(globalThis.httpServer)
+      response = await request<{ registeredClass: RegisteredClass }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query RegisteredClassWithPerformers($registeredClassId: Int!) {
@@ -713,21 +844,24 @@ describe('RegisteredClass', () => {
 
       expect(response.data.registeredClass).toBeTruthy()
       expect(response.data.registeredClass.performers).toBeDefined()
-      expect(Array.isArray(response.data.registeredClass.performers)).toBe(true)
+      expect(Array.isArray(response.data.registeredClass.performers)).toBe(
+        true,
+      )
     })
   })
 
   describe('Authentication and Authorization', () => {
     it('Requires authentication for all operations', async () => {
-      const response = await request<{ registeredClasses: RegisteredClass[] }>(globalThis.httpServer)
-        .query(gql`
-          query RegisteredClasses {
-            registeredClasses {
-              id
-              classNumber
-            }
+      const response = await request<{ registeredClasses: RegisteredClass[] }>(
+        globalThis.httpServer,
+      ).query(gql`
+        query RegisteredClasses {
+          registeredClasses {
+            id
+            classNumber
           }
-        `)
+        }
+      `)
 
       expect(response.errors).toBeTruthy()
       expect(response.errors[0].message).toContain('Unauthorized')
@@ -736,7 +870,9 @@ describe('RegisteredClass', () => {
     it('Enforces permissions for admin-only operations', async () => {
       // Note: In a real scenario, you'd test with a non-admin user
       // This test assumes the admin user has all permissions
-      const response = await request<{ registeredClasses: RegisteredClass[] }>(globalThis.httpServer)
+      const response = await request<{ registeredClasses: RegisteredClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query RegisteredClasses {
@@ -754,11 +890,19 @@ describe('RegisteredClass', () => {
 
   describe('Data Validation and Business Logic', () => {
     it('Validates price format with decimal precision', async () => {
-      const response = await request<{ registeredClassCreate: RegisteredClassPayload }>(globalThis.httpServer)
+      const response = await request<{
+        registeredClassCreate: RegisteredClassPayload
+      }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation CreateRegisteredClass($registrationId: Int!, $registeredClass: RegisteredClassInput) {
-            registeredClassCreate(registrationID: $registrationId, registeredClass: $registeredClass) {
+          mutation CreateRegisteredClass(
+            $registrationId: Int!
+            $registeredClass: RegisteredClassInput
+          ) {
+            registeredClassCreate(
+              registrationID: $registrationId
+              registeredClass: $registeredClass
+            ) {
               userErrors {
                 message
                 field
@@ -779,7 +923,9 @@ describe('RegisteredClass', () => {
         .expectNoErrors()
 
       expect(response.data.registeredClassCreate.userErrors).toEqual([])
-      expect(response.data.registeredClassCreate.registeredClass.price).toBe('29.99')
+      expect(response.data.registeredClassCreate.registeredClass.price).toBe(
+        '29.99',
+      )
 
       // Clean up
       await globalThis.prisma.tbl_reg_class.delete({
@@ -788,11 +934,19 @@ describe('RegisteredClass', () => {
     })
 
     it('Validates selection count constraints', async () => {
-      const response = await request<{ registeredClassCreate: RegisteredClassPayload }>(globalThis.httpServer)
+      const response = await request<{
+        registeredClassCreate: RegisteredClassPayload
+      }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation CreateRegisteredClass($registrationId: Int!, $registeredClass: RegisteredClassInput) {
-            registeredClassCreate(registrationID: $registrationId, registeredClass: $registeredClass) {
+          mutation CreateRegisteredClass(
+            $registrationId: Int!
+            $registeredClass: RegisteredClassInput
+          ) {
+            registeredClassCreate(
+              registrationID: $registrationId
+              registeredClass: $registeredClass
+            ) {
               userErrors {
                 message
                 field
@@ -812,15 +966,21 @@ describe('RegisteredClass', () => {
             numberOfSelections: 2,
             minSelections: 1,
             maxSelections: 3,
-            price: 25.00,
+            price: 25.0,
           },
         })
         .expectNoErrors()
 
       expect(response.data.registeredClassCreate.userErrors).toEqual([])
-      expect(response.data.registeredClassCreate.registeredClass.numberOfSelections).toBe(2)
-      expect(response.data.registeredClassCreate.registeredClass.minSelections).toBe(1)
-      expect(response.data.registeredClassCreate.registeredClass.maxSelections).toBe(3)
+      expect(
+        response.data.registeredClassCreate.registeredClass.numberOfSelections,
+      ).toBe(2)
+      expect(
+        response.data.registeredClassCreate.registeredClass.minSelections,
+      ).toBe(1)
+      expect(
+        response.data.registeredClassCreate.registeredClass.maxSelections,
+      ).toBe(3)
 
       // Clean up
       await globalThis.prisma.tbl_reg_class.delete({
@@ -829,11 +989,19 @@ describe('RegisteredClass', () => {
     })
 
     it('Handles group ID associations correctly', async () => {
-      const response = await request<{ registeredClassCreate: RegisteredClassPayload }>(globalThis.httpServer)
+      const response = await request<{
+        registeredClassCreate: RegisteredClassPayload
+      }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation CreateRegisteredClass($registrationId: Int!, $registeredClass: RegisteredClassInput) {
-            registeredClassCreate(registrationID: $registrationId, registeredClass: $registeredClass) {
+          mutation CreateRegisteredClass(
+            $registrationId: Int!
+            $registeredClass: RegisteredClassInput
+          ) {
+            registeredClassCreate(
+              registrationID: $registrationId
+              registeredClass: $registeredClass
+            ) {
               userErrors {
                 message
                 field
@@ -851,14 +1019,18 @@ describe('RegisteredClass', () => {
           registeredClass: {
             schoolGroupID: 1,
             communityGroupID: 2,
-            price: 25.00,
+            price: 25.0,
           },
         })
         .expectNoErrors()
 
       expect(response.data.registeredClassCreate.userErrors).toEqual([])
-      expect(response.data.registeredClassCreate.registeredClass.schoolGroupID).toBe(1)
-      expect(response.data.registeredClassCreate.registeredClass.communityGroupID).toBe(2)
+      expect(
+        response.data.registeredClassCreate.registeredClass.schoolGroupID,
+      ).toBe(1)
+      expect(
+        response.data.registeredClassCreate.registeredClass.communityGroupID,
+      ).toBe(2)
 
       // Clean up
       await globalThis.prisma.tbl_reg_class.delete({

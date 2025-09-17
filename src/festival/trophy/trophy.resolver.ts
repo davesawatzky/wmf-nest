@@ -60,7 +60,9 @@ export class TrophyResolver {
   @Mutation(() => TrophyPayload)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Delete, subject: Trophy })
-  async trophyDelete(@Args('trophyID', { type: () => Int }) trophyID: Trophy['id']) {
+  async trophyDelete(
+    @Args('trophyID', { type: () => Int }) trophyID: Trophy['id'],
+  ) {
     return await this.trophyService.remove(trophyID)
   }
 

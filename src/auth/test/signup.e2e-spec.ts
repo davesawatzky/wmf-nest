@@ -8,9 +8,7 @@ describe('Signup', () => {
     let response: any
 
     beforeAll(async () => {
-      response = await request<{ signup: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      response = await request<{ signup: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
             signup(credentials: $credentials) {
@@ -66,9 +64,7 @@ describe('Signup', () => {
     let response: any
 
     beforeAll(async () => {
-      response = await request<{ signup: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      response = await request<{ signup: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
             signup(credentials: $credentials) {
@@ -126,9 +122,7 @@ describe('Signup', () => {
     let response: any
 
     beforeAll(async () => {
-      response = await request<{ signup: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      response = await request<{ signup: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
             signup(credentials: $credentials) {
@@ -184,9 +178,7 @@ describe('Signup', () => {
     let response: any
 
     beforeAll(async () => {
-      response = await request<{ signup: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      response = await request<{ signup: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
             signup(credentials: $credentials) {
@@ -241,9 +233,7 @@ describe('Signup', () => {
     let response: any
 
     beforeAll(async () => {
-      response = await request<{ signup: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      response = await request<{ signup: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
             signup(credentials: $credentials) {
@@ -298,9 +288,7 @@ describe('Signup', () => {
     let response: any
 
     beforeAll(async () => {
-      response = await request<{ signup: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      response = await request<{ signup: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
             signup(credentials: $credentials) {
@@ -385,9 +373,7 @@ describe('Signup', () => {
     })
 
     it('Should be able to add the password to the existing account', async () => {
-      await request<{ signup: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      await request<{ signup: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
             signup(credentials: $credentials) {
@@ -418,9 +404,7 @@ describe('Signup', () => {
 
   describe('If user already exists in database', () => {
     beforeAll(async () => {
-      await request<{ signup: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      await request<{ signup: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignUp($credentials: CredentialsSignup!) {
             signup(credentials: $credentials) {

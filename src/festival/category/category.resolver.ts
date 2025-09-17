@@ -72,7 +72,9 @@ export class CategoryResolver {
   @Mutation(() => CategoryPayload)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Delete, subject: Category })
-  async categoryDelete(@Args('categoryID', { type: () => Int }) categoryID: Category['id']) {
+  async categoryDelete(
+    @Args('categoryID', { type: () => Int }) categoryID: Category['id'],
+  ) {
     return await this.categoryService.remove(categoryID)
   }
 

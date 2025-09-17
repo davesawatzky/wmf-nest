@@ -7,14 +7,16 @@ describe('ClassType', () => {
     let response: any
 
     it('Can provide a list of all classTypes', async () => {
-      response = await request<{ classTypes: ClassType[] }>(globalThis.httpServer)
+      response = await request<{ classTypes: ClassType[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query ClassTypes {
             classTypes {
               description
               id
-              name 
+              name
             }
           }
         `)
@@ -23,14 +25,16 @@ describe('ClassType', () => {
     })
 
     it('Can provide a list of all classTypes with associated festival classes', async () => {
-      response = await request<{ classTypes: ClassType[] }>(globalThis.httpServer)
+      response = await request<{ classTypes: ClassType[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query ClassTypes {
             classTypes {
               description
               id
-              name 
+              name
               festivalClasses {
                 classNumber
               }
@@ -39,7 +43,9 @@ describe('ClassType', () => {
         `)
         .expectNoErrors()
       expect(response.data.classTypes).toBeTruthy()
-      expect(response.data.classTypes[0].festivalClasses[0].classNumber).toBeTruthy()
+      expect(
+        response.data.classTypes[0].festivalClasses[0].classNumber,
+      ).toBeTruthy()
     })
   })
 
@@ -96,21 +102,24 @@ describe('ClassType', () => {
     })
 
     it('Successfully creates a classType using ClassTypeInput', async () => {
-      response = await request<{ classTypeCreate: ClassTypePayload }>(globalThis.httpServer)
+      response = await request<{ classTypeCreate: ClassTypePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateClassType($classTypeInput: ClassTypeInput!) {
-          classTypeCreate(classTypeInput: $classTypeInput) {
-            userErrors {
-            message
+            classTypeCreate(classTypeInput: $classTypeInput) {
+              userErrors {
+                message
+              }
+              classType {
+                id
+                name
+                description
+              }
+            }
           }
-          classType {
-            id
-            name
-            description
-          }
-        }
-      }`)
+        `)
         .variables({
           classTypeInput: {
             name: 'Brand New Class',
@@ -118,25 +127,30 @@ describe('ClassType', () => {
           },
         })
       classTypeId = response.data.classTypeCreate.classType.id
-      expect(response.data.classTypeCreate.classType.name).toBe('Brand New Class')
+      expect(response.data.classTypeCreate.classType.name).toBe(
+        'Brand New Class',
+      )
       expect(response.data.classTypeCreate.classType.id).toBeTruthy()
     })
 
     it('Returns error if trying to add duplicate classType name', async () => {
-      response = await request<{ classTypeCreate: ClassTypePayload }>(globalThis.httpServer)
+      response = await request<{ classTypeCreate: ClassTypePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateClassType($classTypeInput: ClassTypeInput!) {
-          classTypeCreate(classTypeInput: $classTypeInput) {
-            userErrors {
-            message
+            classTypeCreate(classTypeInput: $classTypeInput) {
+              userErrors {
+                message
+              }
+              classType {
+                id
+                name
+              }
+            }
           }
-          classType {
-            id
-            name
-          }
-        }
-      }`)
+        `)
         .variables({
           classTypeInput: {
             name: 'Brand New Class',
@@ -148,20 +162,23 @@ describe('ClassType', () => {
     })
 
     it('Improper input returns error', async () => {
-      response = await request<{ classTypeCreate: ClassTypePayload }>(globalThis.httpServer)
+      response = await request<{ classTypeCreate: ClassTypePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateClassType($classTypeInput: ClassTypeInput!) {
-          classTypeCreate(classTypeInput: $classTypeInput) {
-            userErrors {
-            message
+            classTypeCreate(classTypeInput: $classTypeInput) {
+              userErrors {
+                message
+              }
+              classType {
+                id
+                name
+              }
+            }
           }
-          classType {
-            id
-            name
-          }
-        }
-      }`)
+        `)
         .variables({
           classTypeInput: {
             name: null,
@@ -177,21 +194,24 @@ describe('ClassType', () => {
     let classTypeID: number
 
     beforeEach(async () => {
-      response = await request<{ classTypeCreate: ClassTypePayload }>(globalThis.httpServer)
+      response = await request<{ classTypeCreate: ClassTypePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateClassType($classTypeInput: ClassTypeInput!) {
-          classTypeCreate(classTypeInput: $classTypeInput) {
-            userErrors {
-            message
+            classTypeCreate(classTypeInput: $classTypeInput) {
+              userErrors {
+                message
+              }
+              classType {
+                id
+                name
+                description
+              }
+            }
           }
-          classType {
-            id
-            name
-            description
-          }
-        }
-      }`)
+        `)
         .variables({
           classTypeInput: {
             name: 'Brand New Class',
@@ -217,47 +237,67 @@ describe('ClassType', () => {
     })
 
     it('Update details of existing classType', async () => {
-      response = await request<{ classTypeUpdate: ClassTypePayload }>(globalThis.httpServer)
+      response = await request<{ classTypeUpdate: ClassTypePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation ClassTypeUpdate($classTypeId: Int!, $classTypeInput: ClassTypeInput!){
-          classTypeUpdate(classTypeID: $classTypeId, classTypeInput: $classTypeInput) {
-            userErrors {
-              message
-            }
-            classType {
-              id
-              name
-              description
+          mutation ClassTypeUpdate(
+            $classTypeId: Int!
+            $classTypeInput: ClassTypeInput!
+          ) {
+            classTypeUpdate(
+              classTypeID: $classTypeId
+              classTypeInput: $classTypeInput
+            ) {
+              userErrors {
+                message
+              }
+              classType {
+                id
+                name
+                description
+              }
             }
           }
-      }`)
+        `)
         .variables({
           classTypeId: classTypeID,
           classTypeInput: {
             name: 'Updated Class',
           },
         })
-      expect(response.data.classTypeUpdate.classType.name).toBe('Updated Class')
+      expect(response.data.classTypeUpdate.classType.name).toBe(
+        'Updated Class',
+      )
       expect(response.errors).not.toBeDefined()
     })
 
     it('Returns error if classType not found', async () => {
-      response = await request<{ classTypeUpdate: ClassTypePayload }>(globalThis.httpServer)
+      response = await request<{ classTypeUpdate: ClassTypePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation ClassTypeUpdate($classTypeId: Int!, $classTypeInput: ClassTypeInput!){
-          classTypeUpdate(classTypeID: $classTypeId, classTypeInput: $classTypeInput) {
-            userErrors {
-              message
-            }
-            classType {
-              id
-              name
-              description
+          mutation ClassTypeUpdate(
+            $classTypeId: Int!
+            $classTypeInput: ClassTypeInput!
+          ) {
+            classTypeUpdate(
+              classTypeID: $classTypeId
+              classTypeInput: $classTypeInput
+            ) {
+              userErrors {
+                message
+              }
+              classType {
+                id
+                name
+                description
+              }
             }
           }
-      }`)
+        `)
         .variables({
           classTypeId: classTypeID + 1,
           classTypeInput: {
@@ -269,21 +309,30 @@ describe('ClassType', () => {
     })
 
     it('Returns error if name is null in update', async () => {
-      response = await request<{ classTypeUpdate: ClassTypePayload }>(globalThis.httpServer)
+      response = await request<{ classTypeUpdate: ClassTypePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation ClassTypeUpdate($classTypeId: Int!, $classTypeInput: ClassTypeInput!){
-          classTypeUpdate(classTypeID: $classTypeId, classTypeInput: $classTypeInput) {
-            userErrors {
-              message
-            }
-            classType {
-              id
-              name
-              description
+          mutation ClassTypeUpdate(
+            $classTypeId: Int!
+            $classTypeInput: ClassTypeInput!
+          ) {
+            classTypeUpdate(
+              classTypeID: $classTypeId
+              classTypeInput: $classTypeInput
+            ) {
+              userErrors {
+                message
+              }
+              classType {
+                id
+                name
+                description
+              }
             }
           }
-      }`)
+        `)
         .variables({
           classTypeId: classTypeID,
           classTypeInput: {
@@ -300,20 +349,23 @@ describe('ClassType', () => {
     let response: any
     let classTypeId: number
     beforeEach(async () => {
-      response = await request<{ classTypeCreate: ClassTypePayload }>(globalThis.httpServer)
+      response = await request<{ classTypeCreate: ClassTypePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateClassType($classTypeInput: ClassTypeInput!) {
-          classTypeCreate(classTypeInput: $classTypeInput) {
-            userErrors {
-            message
+            classTypeCreate(classTypeInput: $classTypeInput) {
+              userErrors {
+                message
+              }
+              classType {
+                id
+                name
+              }
+            }
           }
-          classType {
-            id
-            name
-          }
-        }
-      }`)
+        `)
         .variables({
           classTypeInput: {
             name: 'Brand New Class',
@@ -339,21 +391,24 @@ describe('ClassType', () => {
     })
 
     it('Deletes a classType using the classTypeID', async () => {
-      response = await request<{ classTypeDelete: ClassTypePayload }>(globalThis.httpServer)
+      response = await request<{ classTypeDelete: ClassTypePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation ClassTypeDelete($classTypeDeleteId: Int!) {
-          classTypeDelete(classTypeID: $classTypeDeleteId) {
-            userErrors {
-              message
-            }
+          mutation ClassTypeDelete($classTypeDeleteId: Int!) {
+            classTypeDelete(classTypeID: $classTypeDeleteId) {
+              userErrors {
+                message
+              }
               classType {
-            id
-            name
-            description
+                id
+                name
+                description
+              }
+            }
           }
-        }
-      }`)
+        `)
         .variables({
           classTypeDeleteId: classTypeId,
         })
@@ -361,25 +416,30 @@ describe('ClassType', () => {
         where: { id: classTypeId },
       })
       expect(deleteCheck).toBeNull()
-      expect(response.data.classTypeDelete.classType.name).toBe('Brand New Class')
+      expect(response.data.classTypeDelete.classType.name).toBe(
+        'Brand New Class',
+      )
     })
 
     it('Returns error message if classType not found', async () => {
-      response = await request<{ classTypeDelete: ClassTypePayload }>(globalThis.httpServer)
+      response = await request<{ classTypeDelete: ClassTypePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation ClassTypeDelete($classTypeDeleteId: Int!) {
-          classTypeDelete(classTypeID: $classTypeDeleteId) {
-            userErrors {
-              message
-            }
+          mutation ClassTypeDelete($classTypeDeleteId: Int!) {
+            classTypeDelete(classTypeID: $classTypeDeleteId) {
+              userErrors {
+                message
+              }
               classType {
-            id
-            name
-            description
+                id
+                name
+                description
+              }
+            }
           }
-        }
-      }`)
+        `)
         .variables({
           classTypeDeleteId: classTypeId + 1,
         })

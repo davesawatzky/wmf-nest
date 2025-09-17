@@ -7,7 +7,11 @@ import { SchoolService } from './school.service'
 
 @Module({
   providers: [SchoolResolver, SchoolService],
-  imports: [forwardRef(() => RegistrationModule), SchoolGroupModule, AbilityModule],
+  imports: [
+    forwardRef(() => RegistrationModule),
+    SchoolGroupModule,
+    AbilityModule,
+  ],
   exports: [SchoolService],
 })
 export class SchoolModule {}

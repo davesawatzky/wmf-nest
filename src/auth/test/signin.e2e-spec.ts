@@ -38,9 +38,7 @@ describe('Signin', () => {
       let response: any
 
       beforeAll(async () => {
-        response = await request<{ signin: AuthPayload }>(
-          globalThis.httpServer,
-        )
+        response = await request<{ signin: AuthPayload }>(globalThis.httpServer)
           .mutate(gql`
             mutation SignIn($credentials: CredentialsSignin!) {
               signin(credentials: $credentials) {
@@ -80,9 +78,7 @@ describe('Signin', () => {
       let response: any
 
       beforeAll(async () => {
-        response = await request<{ signin: AuthPayload }>(
-          globalThis.httpServer,
-        )
+        response = await request<{ signin: AuthPayload }>(globalThis.httpServer)
           .mutate(gql`
             mutation SignIn($credentials: CredentialsSignin!) {
               signin(credentials: $credentials) {
@@ -135,9 +131,7 @@ describe('Signin', () => {
       let response: any
 
       beforeAll(async () => {
-        response = await request<{ signin: AuthPayload }>(
-          globalThis.httpServer,
-        )
+        response = await request<{ signin: AuthPayload }>(globalThis.httpServer)
           .mutate(gql`
             mutation SignIn($credentials: CredentialsSignin!) {
               signin(credentials: $credentials) {
@@ -197,9 +191,7 @@ describe('Signin', () => {
       let response: any
 
       beforeAll(async () => {
-        response = await request<{ signin: AuthPayload }>(
-          globalThis.httpServer,
-        )
+        response = await request<{ signin: AuthPayload }>(globalThis.httpServer)
           .mutate(gql`
             mutation SignIn($credentials: CredentialsSignin!) {
               signin(credentials: $credentials) {

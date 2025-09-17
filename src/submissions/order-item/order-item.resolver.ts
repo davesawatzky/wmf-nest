@@ -1,5 +1,13 @@
 import { UseGuards } from '@nestjs/common'
-import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 import { tbl_order_item } from '@prisma/client'
 import { CheckAbilities } from '@/ability/abilities.decorator'
 import { AbilitiesGuard } from '@/ability/abilities.guard'
@@ -25,9 +33,7 @@ export class OrderItemResolver {
   @Query(() => [OrderItem])
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: OrderItem })
-  async orderItems(
-    @Args('orderID', { type: () => Int }) orderID: Order['id'],
-  ) {
+  async orderItems(@Args('orderID', { type: () => Int }) orderID: Order['id']) {
     return await this.orderItemsService.findAll(orderID)
   }
 
@@ -46,7 +52,8 @@ export class OrderItemResolver {
   @CheckAbilities({ action: Action.Read, subject: OrderItem })
   async orderItemCreate(
     @Args('orderID', { type: () => Int }) orderID: Order['id'],
-    @Args('orderItemInput', { type: () => OrderItemInput }) orderItemInput: OrderItemInput,
+    @Args('orderItemInput', { type: () => OrderItemInput })
+    orderItemInput: OrderItemInput,
   ) {
     return await this.orderItemsService.create(orderID, orderItemInput)
   }

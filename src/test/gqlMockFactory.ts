@@ -1,7 +1,9 @@
 import { ExecutionContext } from '@nestjs/common'
 import { GqlExecutionContext } from '@nestjs/graphql'
 
-export function mockContext(fakeExecutionContext: object | null): GqlExecutionContext {
+export function mockContext(
+  fakeExecutionContext: object | null,
+): GqlExecutionContext {
   const gqlMockFactory = (context: Record<string, any>): ExecutionContext =>
     ({
       getType: () => 'graphql',

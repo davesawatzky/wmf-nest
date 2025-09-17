@@ -1,12 +1,7 @@
 import { JwtService } from '@nestjs/jwt'
 import { Test, TestingModule } from '@nestjs/testing'
 import { User } from 'src/user/entities/user.entity'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-} from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { PrismaService } from '../../prisma/prisma.service'
 import { userStub } from '../../user/test/stubs/user.stub'
 import { AuthService } from '../auth.service'

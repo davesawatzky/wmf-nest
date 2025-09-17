@@ -9,7 +9,13 @@ import { FestivalClassService } from './festival-class.service'
 
 @Module({
   providers: [FestivalClassResolver, FestivalClassService],
-  imports: [SubdisciplineModule, LevelModule, CategoryModule, ClassTypeModule, AbilityModule],
+  imports: [
+    SubdisciplineModule,
+    LevelModule,
+    CategoryModule,
+    ClassTypeModule,
+    AbilityModule,
+  ],
   exports: [FestivalClassService],
 })
 export class FestivalClassModule {}

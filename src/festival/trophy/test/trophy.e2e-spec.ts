@@ -10,18 +10,18 @@ describe('Trophy', () => {
       response = await request<{ trophies: Trophy[] }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        query Trophies {
-          trophies {
-            id
-            name
-            description
-            festivalClasses {
+          query Trophies {
+            trophies {
               id
-              classNumber
+              name
+              description
+              festivalClasses {
+                id
+                classNumber
+              }
             }
-           }
-        }`,
-        )
+          }
+        `)
         .expectNoErrors()
       expect(response.data.trophies).toBeTruthy()
       expect(response.data.trophies[0].festivalClasses[0]).toBeTruthy()
@@ -31,16 +31,17 @@ describe('Trophy', () => {
       response = await request<{ trophy: Trophy }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        query Trophy($trophyId: Int!) {
-          trophy(id: $trophyId) {
-            name
-            description
-            festivalClasses {
-              id
-              classNumber
+          query Trophy($trophyId: Int!) {
+            trophy(id: $trophyId) {
+              name
+              description
+              festivalClasses {
+                id
+                classNumber
+              }
             }
           }
-        }`)
+        `)
         .variables({
           trophyId: 10,
         })
@@ -54,16 +55,17 @@ describe('Trophy', () => {
       response = await request<{ trophy: Trophy }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        query Trophy($trophyId: Int!) {
-          trophy(id: $trophyId) {
-            name
-            description
-            festivalClasses {
-              id
-              classNumber
+          query Trophy($trophyId: Int!) {
+            trophy(id: $trophyId) {
+              name
+              description
+              festivalClasses {
+                id
+                classNumber
+              }
             }
           }
-        }`)
+        `)
         .variables({
           trophyId: 0,
         })
@@ -84,22 +86,25 @@ describe('Trophy', () => {
     })
 
     it('Successfully creates a trophy with TrophyInput', async () => {
-      response = await request<{ trophyCreate: TrophyPayload }>(globalThis.httpServer)
+      response = await request<{ trophyCreate: TrophyPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateTrophy($trophyInput: TrophyInput!) {
-          trophyCreate(trophyInput: $trophyInput) {
-            userErrors {
-            message
-            field
+            trophyCreate(trophyInput: $trophyInput) {
+              userErrors {
+                message
+                field
+              }
+              trophy {
+                id
+                name
+                description
+              }
+            }
           }
-          trophy {
-            id
-            name
-            description
-          }
-        }
-      }`)
+        `)
         .variables({
           trophyInput: {
             name: 'Best in Show',
@@ -112,22 +117,25 @@ describe('Trophy', () => {
     })
 
     it('Returns error if trying to add duplicate Trophy name', async () => {
-      response = await request<{ trophyCreate: TrophyPayload }>(globalThis.httpServer)
+      response = await request<{ trophyCreate: TrophyPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateTrophy($trophyInput: TrophyInput!) {
-          trophyCreate(trophyInput: $trophyInput) {
-            userErrors {
-            message
-            field
+            trophyCreate(trophyInput: $trophyInput) {
+              userErrors {
+                message
+                field
+              }
+              trophy {
+                id
+                name
+                description
+              }
+            }
           }
-          trophy {
-            id
-            name
-            description
-          }
-        }
-      }`)
+        `)
         .variables({
           trophyInput: {
             name: 'Best in Show',
@@ -140,22 +148,25 @@ describe('Trophy', () => {
     })
 
     it('Improper trophy input returns error', async () => {
-      response = await request<{ trophyCreate: TrophyPayload }>(globalThis.httpServer)
+      response = await request<{ trophyCreate: TrophyPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateTrophy($trophyInput: TrophyInput!) {
-          trophyCreate(trophyInput: $trophyInput) {
-            userErrors {
-            message
-            field
+            trophyCreate(trophyInput: $trophyInput) {
+              userErrors {
+                message
+                field
+              }
+              trophy {
+                id
+                name
+                description
+              }
+            }
           }
-          trophy {
-            id
-            name
-            description
-          }
-        }
-      }`)
+        `)
         .variables({
           trophyInput: {
             name: null,
@@ -172,20 +183,23 @@ describe('Trophy', () => {
     let trophyId: number
 
     beforeEach(async () => {
-      response = await request<{ trophyCreate: TrophyPayload }>(globalThis.httpServer)
+      response = await request<{ trophyCreate: TrophyPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateTrophy($trophyInput: TrophyInput!) {
-          trophyCreate(trophyInput: $trophyInput) {
-            userErrors {
-            message
+            trophyCreate(trophyInput: $trophyInput) {
+              userErrors {
+                message
+              }
+              trophy {
+                id
+                name
+              }
+            }
           }
-          trophy {
-            id
-            name
-          }
-        }
-      }`)
+        `)
         .variables({
           trophyInput: {
             name: 'Really Old',
@@ -211,21 +225,24 @@ describe('Trophy', () => {
     })
 
     it('Update details of existing trophy', async () => {
-      response = await request<{ trophyUpdate: TrophyPayload }>(globalThis.httpServer)
+      response = await request<{ trophyUpdate: TrophyPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation TrophyUpdate($trophyId: Int!, $trophyInput: TrophyInput!){
-          trophyUpdate(trophyID: $trophyId, trophyInput: $trophyInput) {
-            userErrors {
-              message
-            }
-            trophy {
-              id
-              name
-              description
+          mutation TrophyUpdate($trophyId: Int!, $trophyInput: TrophyInput!) {
+            trophyUpdate(trophyID: $trophyId, trophyInput: $trophyInput) {
+              userErrors {
+                message
+              }
+              trophy {
+                id
+                name
+                description
+              }
             }
           }
-      }`)
+        `)
         .variables({
           trophyId,
           trophyInput: {
@@ -233,26 +250,31 @@ describe('Trophy', () => {
             description: 'Young at heart',
           },
         })
-      expect(response.data.trophyUpdate.trophy.description).toBe('Young at heart')
+      expect(response.data.trophyUpdate.trophy.description).toBe(
+        'Young at heart',
+      )
       expect(response.errors).not.toBeDefined()
     })
 
     it('Returns error if trophy not found', async () => {
-      response = await request<{ trophyUpdate: TrophyPayload }>(globalThis.httpServer)
+      response = await request<{ trophyUpdate: TrophyPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation TrophyUpdate($trophyId: Int!, $trophyInput: TrophyInput!){
-          trophyUpdate(trophyID: $trophyId, trophyInput: $trophyInput) {
-            userErrors {
-              message
-            }
-            trophy {
-              id
-              name
-              description
+          mutation TrophyUpdate($trophyId: Int!, $trophyInput: TrophyInput!) {
+            trophyUpdate(trophyID: $trophyId, trophyInput: $trophyInput) {
+              userErrors {
+                message
+              }
+              trophy {
+                id
+                name
+                description
+              }
             }
           }
-      }`)
+        `)
         .variables({
           trophyId: trophyId + 1,
           trophyInput: {
@@ -264,21 +286,24 @@ describe('Trophy', () => {
     })
 
     it('Returns error if name is null or undefined in update', async () => {
-      response = await request<{ trophyUpdate: TrophyPayload }>(globalThis.httpServer)
+      response = await request<{ trophyUpdate: TrophyPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation TrophyUpdate($trophyId: Int!, $trophyInput: TrophyInput!){
-          trophyUpdate(trophyID: $trophyId, trophyInput: $trophyInput) {
-            userErrors {
-              message
-            }
-            trophy {
-              id
-              name
-              description
+          mutation TrophyUpdate($trophyId: Int!, $trophyInput: TrophyInput!) {
+            trophyUpdate(trophyID: $trophyId, trophyInput: $trophyInput) {
+              userErrors {
+                message
+              }
+              trophy {
+                id
+                name
+                description
+              }
             }
           }
-      }`)
+        `)
         .variables({
           trophyId,
           trophyInput: {
@@ -296,20 +321,23 @@ describe('Trophy', () => {
     let trophyId: number
 
     beforeEach(async () => {
-      response = await request<{ trophyCreate: TrophyPayload }>(globalThis.httpServer)
+      response = await request<{ trophyCreate: TrophyPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateTrophy($trophyInput: TrophyInput!) {
-          trophyCreate(trophyInput: $trophyInput) {
-            userErrors {
-            message
+            trophyCreate(trophyInput: $trophyInput) {
+              userErrors {
+                message
+              }
+              trophy {
+                id
+                name
+              }
+            }
           }
-          trophy {
-            id
-            name
-          }
-        }
-      }`)
+        `)
         .variables({
           trophyInput: {
             name: 'Best in Show',
@@ -335,21 +363,24 @@ describe('Trophy', () => {
     })
 
     it('Deletes a trophy using the trophyID', async () => {
-      response = await request<{ trophyDelete: TrophyPayload }>(globalThis.httpServer)
+      response = await request<{ trophyDelete: TrophyPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation TrophyDelete($trophyDeleteId: Int!) {
-          trophyDelete(trophyID: $trophyDeleteId) {
-            userErrors {
-              message
-            }
+          mutation TrophyDelete($trophyDeleteId: Int!) {
+            trophyDelete(trophyID: $trophyDeleteId) {
+              userErrors {
+                message
+              }
               trophy {
-            id
-            name
-            description
+                id
+                name
+                description
+              }
+            }
           }
-        }
-      }`)
+        `)
         .variables({
           trophyDeleteId: trophyId,
         })
@@ -361,21 +392,24 @@ describe('Trophy', () => {
     })
 
     it('Returns error message if trophy not found', async () => {
-      response = await request<{ trophyDelete: TrophyPayload }>(globalThis.httpServer)
+      response = await request<{ trophyDelete: TrophyPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation TrophyDelete($trophyDeleteId: Int!) {
-          trophyDelete(trophyID: $trophyDeleteId) {
-            userErrors {
-              message
-            }
+          mutation TrophyDelete($trophyDeleteId: Int!) {
+            trophyDelete(trophyID: $trophyDeleteId) {
+              userErrors {
+                message
+              }
               trophy {
-            id
-            name
-            description
+                id
+                name
+                description
+              }
+            }
           }
-        }
-      }`)
+        `)
         .variables({
           trophyDeleteId: trophyId + 1,
         })

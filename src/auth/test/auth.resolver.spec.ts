@@ -91,7 +91,9 @@ describe('authResolver', () => {
         const userName = `${user.firstName} ${user.lastName}`
         expect(userName).toBeTruthy()
         expect(user.email).toBeTruthy()
-        expect(emailConfirmationService.sendVerificationLink).toHaveBeenCalled()
+        expect(
+          emailConfirmationService.sendVerificationLink,
+        ).toHaveBeenCalled()
       })
       it('returns user and userError details', () => {
         expect(userErrors).toEqual([])

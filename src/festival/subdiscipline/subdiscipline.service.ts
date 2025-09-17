@@ -5,10 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import {
-  tbl_discipline,
-  tbl_subdiscipline,
-} from '@prisma/client'
+import { tbl_discipline, tbl_subdiscipline } from '@prisma/client'
 
 import { PerformerType, UserError } from '@/common.entity'
 import { PrismaService } from '@/prisma/prisma.service'
@@ -20,10 +17,10 @@ export class SubdisciplineService {
 
   constructor(private prisma: PrismaService) {}
 
-  async create(
-    subdisciplineInput: SubdisciplineInput,
-  ) {
-    this.logger.debug(`Creating subdiscipline with data: ${JSON.stringify(subdisciplineInput)}`)
+  async create(subdisciplineInput: SubdisciplineInput) {
+    this.logger.debug(
+      `Creating subdiscipline with data: ${JSON.stringify(subdisciplineInput)}`,
+    )
 
     let subdiscipline: tbl_subdiscipline
     let userErrors: UserError[] = []
@@ -35,7 +32,9 @@ export class SubdisciplineService {
         },
       })
 
-      this.logger.log(`Successfully created subdiscipline with ID: ${subdiscipline.id}`)
+      this.logger.log(
+        `Successfully created subdiscipline with ID: ${subdiscipline.id}`,
+      )
 
       return {
         userErrors,
@@ -46,7 +45,10 @@ export class SubdisciplineService {
       }
     }
     catch (error: any) {
-      this.logger.error(`Failed to create subdiscipline: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to create subdiscipline: ${error.message}`,
+        error.stack,
+      )
 
       if (error.code === 'P2002') {
         userErrors = [
@@ -55,12 +57,15 @@ export class SubdisciplineService {
             field: ['name'],
           },
         ]
-        this.logger.warn(`Duplicate subdiscipline name attempted: ${subdisciplineInput.name}`)
+        this.logger.warn(
+          `Duplicate subdiscipline name attempted: ${subdisciplineInput.name}`,
+        )
       }
       else {
         userErrors = [
           {
-            message: 'An unexpected error occurred while creating the subdiscipline',
+            message:
+              'An unexpected error occurred while creating the subdiscipline',
             field: [],
           },
         ]
@@ -77,7 +82,9 @@ export class SubdisciplineService {
     disciplineID?: tbl_discipline['id'] | null,
     performerType?: PerformerType | null,
   ) {
-    this.logger.debug(`Retrieving subdisciplines with filters - disciplineID: ${disciplineID}, performerType: ${performerType}`)
+    this.logger.debug(
+      `Retrieving subdisciplines with filters - disciplineID: ${disciplineID}, performerType: ${performerType}`,
+    )
 
     try {
       const subdisciplines = await this.prisma.tbl_subdiscipline.findMany({
@@ -93,12 +100,19 @@ export class SubdisciplineService {
         performerType: subdiscipline.performerType as PerformerType,
       }))
 
-      this.logger.log(`Successfully retrieved ${mappedSubdisciplines.length} subdisciplines`)
+      this.logger.log(
+        `Successfully retrieved ${mappedSubdisciplines.length} subdisciplines`,
+      )
       return mappedSubdisciplines
     }
     catch (error: any) {
-      this.logger.error(`Failed to retrieve subdisciplines: ${error.message}`, error.stack)
-      throw new InternalServerErrorException('Failed to retrieve subdisciplines')
+      this.logger.error(
+        `Failed to retrieve subdisciplines: ${error.message}`,
+        error.stack,
+      )
+      throw new InternalServerErrorException(
+        'Failed to retrieve subdisciplines',
+      )
     }
   }
 
@@ -127,12 +141,20 @@ export class SubdisciplineService {
       }
     }
     catch (error: any) {
-      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+      if (
+        error instanceof NotFoundException
+        || error instanceof BadRequestException
+      ) {
         throw error
       }
 
-      this.logger.error(`Failed to retrieve subdiscipline with ID ${id}: ${error.message}`, error.stack)
-      throw new InternalServerErrorException('Failed to retrieve subdiscipline')
+      this.logger.error(
+        `Failed to retrieve subdiscipline with ID ${id}: ${error.message}`,
+        error.stack,
+      )
+      throw new InternalServerErrorException(
+        'Failed to retrieve subdiscipline',
+      )
     }
   }
 
@@ -140,7 +162,9 @@ export class SubdisciplineService {
     id: tbl_subdiscipline['id'],
     subdisciplineInput: SubdisciplineInput,
   ) {
-    this.logger.debug(`Updating subdiscipline with ID: ${id}, data: ${JSON.stringify(subdisciplineInput)}`)
+    this.logger.debug(
+      `Updating subdiscipline with ID: ${id}, data: ${JSON.stringify(subdisciplineInput)}`,
+    )
 
     let subdiscipline: tbl_subdiscipline
     let userErrors: UserError[] = []
@@ -162,7 +186,10 @@ export class SubdisciplineService {
       }
     }
     catch (error: any) {
-      this.logger.error(`Failed to update subdiscipline with ID ${id}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to update subdiscipline with ID ${id}: ${error.message}`,
+        error.stack,
+      )
 
       if (error.code === 'P2025') {
         userErrors = [
@@ -171,7 +198,9 @@ export class SubdisciplineService {
             field: ['id'],
           },
         ]
-        this.logger.warn(`Attempted to update non-existent subdiscipline with ID: ${id}`)
+        this.logger.warn(
+          `Attempted to update non-existent subdiscipline with ID: ${id}`,
+        )
       }
       else if (error.code === 'P2002') {
         userErrors = [
@@ -180,12 +209,15 @@ export class SubdisciplineService {
             field: ['name'],
           },
         ]
-        this.logger.warn(`Duplicate subdiscipline name attempted during update: ${subdisciplineInput.name}`)
+        this.logger.warn(
+          `Duplicate subdiscipline name attempted during update: ${subdisciplineInput.name}`,
+        )
       }
       else {
         userErrors = [
           {
-            message: 'An unexpected error occurred while updating the subdiscipline',
+            message:
+              'An unexpected error occurred while updating the subdiscipline',
             field: [],
           },
         ]
@@ -220,7 +252,10 @@ export class SubdisciplineService {
       }
     }
     catch (error: any) {
-      this.logger.error(`Failed to delete subdiscipline with ID ${id}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to delete subdiscipline with ID ${id}: ${error.message}`,
+        error.stack,
+      )
 
       if (error.code === 'P2025') {
         userErrors = [
@@ -229,21 +264,27 @@ export class SubdisciplineService {
             field: ['id'],
           },
         ]
-        this.logger.warn(`Attempted to delete non-existent subdiscipline with ID: ${id}`)
+        this.logger.warn(
+          `Attempted to delete non-existent subdiscipline with ID: ${id}`,
+        )
       }
       else if (error.code === 'P2003') {
         userErrors = [
           {
-            message: 'Cannot delete subdiscipline as it is referenced by other records',
+            message:
+              'Cannot delete subdiscipline as it is referenced by other records',
             field: ['id'],
           },
         ]
-        this.logger.warn(`Attempted to delete subdiscipline with ID ${id} that has foreign key references`)
+        this.logger.warn(
+          `Attempted to delete subdiscipline with ID ${id} that has foreign key references`,
+        )
       }
       else {
         userErrors = [
           {
-            message: 'An unexpected error occurred while deleting the subdiscipline',
+            message:
+              'An unexpected error occurred while deleting the subdiscipline',
             field: [],
           },
         ]

@@ -1,4 +1,11 @@
-import { BadRequestException, HttpException, Injectable, InternalServerErrorException, Logger, RawBodyRequest } from '@nestjs/common'
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  RawBodyRequest,
+} from '@nestjs/common'
 import { StripeService } from '@/stripe/stripe.service'
 import { RegistrationService } from '@/submissions/registration/registration.service'
 
@@ -11,34 +18,54 @@ export class PaymentService {
     private readonly registrationService: RegistrationService,
   ) {}
 
-  async createPaymentIntent(regID: number, WMFconfirmationId: string, tokenId: string) {
-    this.logger.debug(`Creating payment intent for registration ID: ${regID}, confirmation ID: ${WMFconfirmationId}`)
+  async createPaymentIntent(
+    regID: number,
+    WMFconfirmationId: string,
+    tokenId: string,
+  ) {
+    this.logger.debug(
+      `Creating payment intent for registration ID: ${regID}, confirmation ID: ${WMFconfirmationId}`,
+    )
 
     if (!regID || !WMFconfirmationId || !tokenId) {
-      this.logger.warn('Missing required parameters for payment intent creation', { regID, WMFconfirmationId, tokenId })
-      throw new BadRequestException('Registration ID, confirmation ID, and token ID are required')
+      this.logger.warn(
+        'Missing required parameters for payment intent creation',
+        { regID, WMFconfirmationId, tokenId },
+      )
+      throw new BadRequestException(
+        'Registration ID, confirmation ID, and token ID are required',
+      )
     }
 
     try {
       const { totalAmt } = await this.registrationService.findOne(regID)
 
       if (!totalAmt || Number(totalAmt) <= 0) {
-        this.logger.warn(`Invalid total amount for registration ID ${regID}: ${totalAmt}`)
+        this.logger.warn(
+          `Invalid total amount for registration ID ${regID}: ${totalAmt}`,
+        )
         throw new BadRequestException('Invalid total amount for payment')
       }
 
-      const confirmationToken = await this.stripeService.stripe.confirmationTokens.retrieve(tokenId)
-      const { totalAmount } = this.findPaymentDetails(Number(totalAmt), confirmationToken)
+      const confirmationToken
+        = await this.stripeService.stripe.confirmationTokens.retrieve(tokenId)
+      const { totalAmount } = this.findPaymentDetails(
+        Number(totalAmt),
+        confirmationToken,
+      )
 
-      const paymentIntent = await this.stripeService.stripe.paymentIntents.create({
-        amount: Math.round(totalAmount * 100),
-        currency: 'cad',
-        metadata: {
-          WMF_Confirmation_ID: WMFconfirmationId,
-        },
-      })
+      const paymentIntent
+        = await this.stripeService.stripe.paymentIntents.create({
+          amount: Math.round(totalAmount * 100),
+          currency: 'cad',
+          metadata: {
+            WMF_Confirmation_ID: WMFconfirmationId,
+          },
+        })
 
-      this.logger.log(`Successfully created payment intent for registration ID: ${regID}, amount: $${totalAmount}`)
+      this.logger.log(
+        `Successfully created payment intent for registration ID: ${regID}, amount: $${totalAmount}`,
+      )
       return paymentIntent
     }
     catch (error: any) {
@@ -46,7 +73,10 @@ export class PaymentService {
         throw error
       }
 
-      this.logger.error(`Failed to create payment intent for registration ID ${regID}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to create payment intent for registration ID ${regID}: ${error.message}`,
+        error.stack,
+      )
       throw new InternalServerErrorException('Failed to create payment intent')
     }
   }
@@ -55,22 +85,35 @@ export class PaymentService {
     this.logger.debug(`Summarizing payment for registration ID: ${regID}`)
 
     if (!regID || !tokenId) {
-      this.logger.warn('Missing required parameters for payment summary', { regID, tokenId })
-      throw new BadRequestException('Registration ID and token ID are required')
+      this.logger.warn('Missing required parameters for payment summary', {
+        regID,
+        tokenId,
+      })
+      throw new BadRequestException(
+        'Registration ID and token ID are required',
+      )
     }
 
     try {
       const { totalAmt } = await this.registrationService.findOne(regID)
 
       if (!totalAmt || Number(totalAmt) <= 0) {
-        this.logger.warn(`Invalid total amount for registration ID ${regID}: ${totalAmt}`)
+        this.logger.warn(
+          `Invalid total amount for registration ID ${regID}: ${totalAmt}`,
+        )
         throw new BadRequestException('Invalid total amount for payment')
       }
 
-      const confirmationToken = await this.stripeService.stripe.confirmationTokens.retrieve(tokenId)
-      const { amount, stripeFee, totalAmount } = this.findPaymentDetails(Number(totalAmt), confirmationToken)
+      const confirmationToken
+        = await this.stripeService.stripe.confirmationTokens.retrieve(tokenId)
+      const { amount, stripeFee, totalAmount } = this.findPaymentDetails(
+        Number(totalAmt),
+        confirmationToken,
+      )
 
-      this.logger.log(`Successfully summarized payment for registration ID: ${regID}, total: $${totalAmount}`)
+      this.logger.log(
+        `Successfully summarized payment for registration ID: ${regID}, total: $${totalAmount}`,
+      )
       return { amount, stripeFee, totalAmount, confirmationToken }
     }
     catch (error: any) {
@@ -78,12 +121,18 @@ export class PaymentService {
         throw error
       }
 
-      this.logger.error(`Failed to summarize payment for registration ID ${regID}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to summarize payment for registration ID ${regID}: ${error.message}`,
+        error.stack,
+      )
       throw new InternalServerErrorException('Failed to summarize payment')
     }
   }
 
-  private findPaymentDetails(amount: number, token: any): { amount: number, stripeFee: string, totalAmount: number } {
+  private findPaymentDetails(
+    amount: number,
+    token: any,
+  ): { amount: number, stripeFee: string, totalAmount: number } {
     this.logger.debug(`Calculating payment details for amount: $${amount}`)
 
     const domesticFeePercent: number = 0.029
@@ -95,12 +144,15 @@ export class PaymentService {
 
     if (country === 'CA') {
       stripeFee = (
-        Number(amount + transactionFee) / (1 - domesticFeePercent) - amount
+        Number(amount + transactionFee) / (1 - domesticFeePercent)
+        - amount
       ).toFixed(2)
     }
     else {
       stripeFee = (
-        Number(amount + transactionFee) / (1 - (domesticFeePercent + internationalFeePercent)) - amount
+        Number(amount + transactionFee)
+        / (1 - (domesticFeePercent + internationalFeePercent))
+        - amount
       ).toFixed(2)
     }
 
@@ -136,7 +188,10 @@ export class PaymentService {
       this.logger.debug(`Webhook event received: ${event.type}`)
     }
     catch (err: any) {
-      this.logger.error(`Webhook signature verification failed: ${err.message}`, err.stack)
+      this.logger.error(
+        `Webhook signature verification failed: ${err.message}`,
+        err.stack,
+      )
       throw new HttpException(`Webhook Error: ${err.message}`, 400)
     }
 
@@ -145,39 +200,53 @@ export class PaymentService {
       switch (event.type) {
         case 'payment_intent.succeeded': {
           const paymentIntentSucceeded = event.data.object
-          this.logger.log(`Payment successful for payment intent: ${paymentIntentSucceeded.id}`, {
-            paymentIntentId: paymentIntentSucceeded.id,
-            amount: paymentIntentSucceeded.amount,
-            currency: paymentIntentSucceeded.currency,
-            metadata: paymentIntentSucceeded.metadata,
-          })
+          this.logger.log(
+            `Payment successful for payment intent: ${paymentIntentSucceeded.id}`,
+            {
+              paymentIntentId: paymentIntentSucceeded.id,
+              amount: paymentIntentSucceeded.amount,
+              currency: paymentIntentSucceeded.currency,
+              metadata: paymentIntentSucceeded.metadata,
+            },
+          )
           break
         }
         case 'payment_intent.payment_failed': {
           const paymentIntentFailed = event.data.object
-          this.logger.warn(`Payment failed for payment intent: ${paymentIntentFailed.id}`, {
-            paymentIntentId: paymentIntentFailed.id,
-            lastPaymentError: paymentIntentFailed.last_payment_error,
-            metadata: paymentIntentFailed.metadata,
-          })
+          this.logger.warn(
+            `Payment failed for payment intent: ${paymentIntentFailed.id}`,
+            {
+              paymentIntentId: paymentIntentFailed.id,
+              lastPaymentError: paymentIntentFailed.last_payment_error,
+              metadata: paymentIntentFailed.metadata,
+            },
+          )
           break
         }
         case 'payment_intent.processing': {
           const paymentIntentProcess = event.data.object
-          this.logger.log(`Payment processing for payment intent: ${paymentIntentProcess.id}`, {
-            paymentIntentId: paymentIntentProcess.id,
-            metadata: paymentIntentProcess.metadata,
-          })
+          this.logger.log(
+            `Payment processing for payment intent: ${paymentIntentProcess.id}`,
+            {
+              paymentIntentId: paymentIntentProcess.id,
+              metadata: paymentIntentProcess.metadata,
+            },
+          )
           break
         }
         default: {
-          this.logger.warn(`Unhandled webhook event type: ${event.type}`, { eventType: event.type })
+          this.logger.warn(`Unhandled webhook event type: ${event.type}`, {
+            eventType: event.type,
+          })
           break
         }
       }
     }
     catch (error: any) {
-      this.logger.error(`Error processing webhook event ${event.type}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Error processing webhook event ${event.type}: ${error.message}`,
+        error.stack,
+      )
       throw new InternalServerErrorException('Failed to process webhook event')
     }
   }

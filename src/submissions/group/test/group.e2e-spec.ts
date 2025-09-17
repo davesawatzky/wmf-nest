@@ -38,7 +38,7 @@ describe('Group', () => {
       response = await request<{ groups: Group[] }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Groups{
+          query Groups {
             groups {
               id
               name
@@ -59,7 +59,7 @@ describe('Group', () => {
       response = await request<{ groups: Group[] }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Groups{
+          query Groups {
             groups {
               id
               name
@@ -227,13 +227,13 @@ describe('Group', () => {
             groupCreate(registrationID: $registrationId) {
               group {
                 id
-                }
+              }
               userErrors {
-                field 
+                field
                 message
               }
             }
-          } 
+          }
         `)
         .variables({
           registrationId: regId,
@@ -252,13 +252,13 @@ describe('Group', () => {
             groupCreate(registrationID: $registrationId) {
               group {
                 id
-                }
+              }
               userErrors {
-                field 
+                field
                 message
               }
             }
-          } 
+          }
         `)
         .variables({
           registrationId: regId + 1,
@@ -294,20 +294,20 @@ describe('Group', () => {
       response = await request<{ groupUpdate: Group }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation GroupUpdate($groupId: Int!, $groupInput: GroupInput!) {
-          groupUpdate(groupID: $groupId, groupInput: $groupInput) {
-            group {
-              id
-              name
-              groupType
+          mutation GroupUpdate($groupId: Int!, $groupInput: GroupInput!) {
+            groupUpdate(groupID: $groupId, groupInput: $groupInput) {
+              group {
+                id
+                name
+                groupType
               }
-            userErrors {
-              field 
-              message
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           groupId,
           groupInput: {
@@ -324,20 +324,20 @@ describe('Group', () => {
       response = await request<{ groupUpdate: Group }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation GroupUpdate($groupId: Int!, $groupInput: GroupInput!) {
-          groupUpdate(groupID: $groupId, groupInput: $groupInput) {
-            group {
-              id
-              name
-              groupType
+          mutation GroupUpdate($groupId: Int!, $groupInput: GroupInput!) {
+            groupUpdate(groupID: $groupId, groupInput: $groupInput) {
+              group {
+                id
+                name
+                groupType
               }
-            userErrors {
-              field 
-              message
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           groupId: groupId + 1,
           groupInput: {
@@ -353,20 +353,20 @@ describe('Group', () => {
       response = await request<{ groupUpdate: Group }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation GroupUpdate($groupId: Int!, $groupInput: GroupInput!) {
-          groupUpdate(groupID: $groupId, groupInput: $groupInput) {
-            group {
-              id
-              name
-              groupType
+          mutation GroupUpdate($groupId: Int!, $groupInput: GroupInput!) {
+            groupUpdate(groupID: $groupId, groupInput: $groupInput) {
+              group {
+                id
+                name
+                groupType
               }
-            userErrors {
-              field 
-              message
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           groupId: null,
           groupInput: {
@@ -381,20 +381,20 @@ describe('Group', () => {
       response = await request<{ groupUpdate: Group }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation GroupUpdate($groupId: Int!, $groupInput: GroupInput!) {
-          groupUpdate(groupID: $groupId, groupInput: $groupInput) {
-            group {
-              id
-              name
-              groupType
+          mutation GroupUpdate($groupId: Int!, $groupInput: GroupInput!) {
+            groupUpdate(groupID: $groupId, groupInput: $groupInput) {
+              group {
+                id
+                name
+                groupType
               }
-            userErrors {
-              field 
-              message
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           groupId: null,
           groupInput: {
@@ -439,19 +439,19 @@ describe('Group', () => {
       response = await request<{ groupDelete: boolean }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation GroupDelete($groupId: Int!) {
-          groupDelete(groupID: $groupId) {
-            group {
-              id
-              name
-            }
-            userErrors {
-              field 
-              message
+          mutation GroupDelete($groupId: Int!) {
+            groupDelete(groupID: $groupId) {
+              group {
+                id
+                name
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           groupId,
         })
@@ -468,19 +468,19 @@ describe('Group', () => {
       response = await request<{ groupDelete: boolean }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation GroupDelete($groupId: Int!) {
-          groupDelete(groupID: $groupId) {
-            group {
-              id
-              name
-            }
-            userErrors {
-              field 
-              message
+          mutation GroupDelete($groupId: Int!) {
+            groupDelete(groupID: $groupId) {
+              group {
+                id
+                name
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           groupId: groupId + 1,
         })
@@ -492,19 +492,19 @@ describe('Group', () => {
       response = await request<{ groupDelete: boolean }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation GroupDelete($groupId: Int!) {
-          groupDelete(groupID: $groupId) {
-            group {
-              id
-              name
-            }
-            userErrors {
-              field 
-              message
+          mutation GroupDelete($groupId: Int!) {
+            groupDelete(groupID: $groupId) {
+              group {
+                id
+                name
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           groupId: null,
         })

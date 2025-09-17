@@ -1,13 +1,18 @@
 import gql from 'graphql-tag'
 import request from 'supertest-graphql'
-import { FestivalClass, FestivalClassPayload } from '../entities/festival-class.entity'
+import {
+  FestivalClass,
+  FestivalClassPayload,
+} from '../entities/festival-class.entity'
 
 describe('FestivalClass', () => {
   describe('Listing FestivalClasses', () => {
     let response: any
 
     it('Can return a full list of all festival classes', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+      response = await request<{ festivalClasses: FestivalClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses {
@@ -29,11 +34,15 @@ describe('FestivalClass', () => {
       expect(response.data.festivalClasses[0].classNumber).toBeTruthy()
       expect(response.data.festivalClasses[0].performerType).toBeTruthy()
       expect(response.data.festivalClasses[0].price).toBeTruthy()
-      expect(response.data.festivalClasses[0]).toHaveProperty('requiredSelection')
+      expect(response.data.festivalClasses[0]).toHaveProperty(
+        'requiredSelection',
+      )
     })
 
     it('Can return a list of all festival classes with performerType arg', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+      response = await request<{ festivalClasses: FestivalClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($performerType: PerformerType) {
@@ -58,11 +67,15 @@ describe('FestivalClass', () => {
       expect(response.data.festivalClasses[0].classNumber).toBeTruthy()
       expect(response.data.festivalClasses[0].performerType).toBe('COMMUNITY')
       expect(response.data.festivalClasses[0].price).toBeTruthy()
-      expect(response.data.festivalClasses[0]).toHaveProperty('requiredSelection')
+      expect(response.data.festivalClasses[0]).toHaveProperty(
+        'requiredSelection',
+      )
     })
 
     it('Can return a list of all festival classes with subdisciplineID', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+      response = await request<{ festivalClasses: FestivalClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
@@ -93,11 +106,15 @@ describe('FestivalClass', () => {
       expect(response.data.festivalClasses[0].performerType).toBeTruthy()
       expect(response.data.festivalClasses[0].price).toBeTruthy()
       expect(response.data.festivalClasses[0].subdiscipline.name).toBeTruthy()
-      expect(response.data.festivalClasses[0]).toHaveProperty('requiredSelection')
+      expect(response.data.festivalClasses[0]).toHaveProperty(
+        'requiredSelection',
+      )
     })
 
     it('Can return a list of all festival classes with levelID', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+      response = await request<{ festivalClasses: FestivalClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
@@ -128,11 +145,15 @@ describe('FestivalClass', () => {
       expect(response.data.festivalClasses[0].performerType).toBeTruthy()
       expect(response.data.festivalClasses[0].price).toBeTruthy()
       expect(response.data.festivalClasses[0].level.name).toBeTruthy()
-      expect(response.data.festivalClasses[0]).toHaveProperty('requiredSelection')
+      expect(response.data.festivalClasses[0]).toHaveProperty(
+        'requiredSelection',
+      )
     })
 
     it('Can return a list of all festival classes with categoryID', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+      response = await request<{ festivalClasses: FestivalClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
@@ -163,11 +184,15 @@ describe('FestivalClass', () => {
       expect(response.data.festivalClasses[0].performerType).toBeTruthy()
       expect(response.data.festivalClasses[0].price).toBeTruthy()
       expect(response.data.festivalClasses[0].category.name).toBeTruthy()
-      expect(response.data.festivalClasses[0]).toHaveProperty('requiredSelection')
+      expect(response.data.festivalClasses[0]).toHaveProperty(
+        'requiredSelection',
+      )
     })
 
     it('Can return a list of all festival classes with 2 arguments', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+      response = await request<{ festivalClasses: FestivalClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
@@ -203,11 +228,15 @@ describe('FestivalClass', () => {
       expect(response.data.festivalClasses[0].price).toBeTruthy()
       expect(response.data.festivalClasses[0].category.name).toBeTruthy()
       expect(response.data.festivalClasses[0].level.name).toBeTruthy()
-      expect(response.data.festivalClasses[0]).toHaveProperty('requiredSelection')
+      expect(response.data.festivalClasses[0]).toHaveProperty(
+        'requiredSelection',
+      )
     })
 
     it('Can return a list of all festival classes with all 3 arguments', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+      response = await request<{ festivalClasses: FestivalClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
@@ -247,15 +276,25 @@ describe('FestivalClass', () => {
       expect(response.data.festivalClasses[0].price).toBeTruthy()
       expect(response.data.festivalClasses[0].category.name).toBeTruthy()
       expect(response.data.festivalClasses[0].level.name).toBeTruthy()
-      expect(response.data.festivalClasses[0]).toHaveProperty('requiredSelection')
+      expect(response.data.festivalClasses[0]).toHaveProperty(
+        'requiredSelection',
+      )
     })
 
     it('Will return an empty array if nothing is found.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+      response = await request<{ festivalClasses: FestivalClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs, $performerType: PerformerType) {
-            festivalClasses(festivalClassSearch: $festivalClassSearch, performerType: $performerType) {
+          query FestivalClasses(
+            $festivalClassSearch: FestivalClassSearchArgs
+            $performerType: PerformerType
+          ) {
+            festivalClasses(
+              festivalClassSearch: $festivalClassSearch
+              performerType: $performerType
+            ) {
               id
               classNumber
               description
@@ -291,11 +330,19 @@ describe('FestivalClass', () => {
     })
 
     it('Will return an error if input is invalid.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+      response = await request<{ festivalClasses: FestivalClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs, $performerType: PerformerType) {
-            festivalClasses(festivalClassSearch: $festivalClassSearch, performerType: $performerType) {
+          query FestivalClasses(
+            $festivalClassSearch: FestivalClassSearchArgs
+            $performerType: PerformerType
+          ) {
+            festivalClasses(
+              festivalClassSearch: $festivalClassSearch
+              performerType: $performerType
+            ) {
               id
               classNumber
               description
@@ -328,7 +375,9 @@ describe('FestivalClass', () => {
     })
 
     it('Can return associated levels in list.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+      response = await request<{ festivalClasses: FestivalClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
@@ -347,7 +396,9 @@ describe('FestivalClass', () => {
       expect(response.data.festivalClasses[0].level.name).toBeTruthy()
     })
     it('Can return associated subdisciplines in list.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+      response = await request<{ festivalClasses: FestivalClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
@@ -367,7 +418,9 @@ describe('FestivalClass', () => {
     })
 
     it('Can return associated trophies in list.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+      response = await request<{ festivalClasses: FestivalClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
@@ -388,7 +441,9 @@ describe('FestivalClass', () => {
     })
 
     it('Can return associated categories in list.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+      response = await request<{ festivalClasses: FestivalClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
@@ -408,7 +463,9 @@ describe('FestivalClass', () => {
     })
 
     it('Can return associated class types in list.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+      response = await request<{ festivalClasses: FestivalClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
@@ -433,7 +490,9 @@ describe('FestivalClass', () => {
     let response: any
 
     it('Can provide a single festival by festivalClassNumber.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+      response = await request<{ festivalClasses: FestivalClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClass($festivalClassNumber: String!) {
@@ -467,7 +526,9 @@ describe('FestivalClass', () => {
     })
 
     it('Will return error if number does not exist.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+      response = await request<{ festivalClasses: FestivalClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClass($festivalClassNumber: String!) {
@@ -502,7 +563,9 @@ describe('FestivalClass', () => {
     let response: any
 
     it('Can provide a single festival by ID.', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+      response = await request<{ festivalClasses: FestivalClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClass($festivalClassId: Int!) {
@@ -520,8 +583,7 @@ describe('FestivalClass', () => {
               level {
                 name
               }
-              trophies 
-              {
+              trophies {
                 name
               }
             }
@@ -535,7 +597,9 @@ describe('FestivalClass', () => {
       expect(response.data.festivalClass.classNumber).not.toBe(1094)
     })
     it('Returns error when no festivalClass is found', async () => {
-      response = await request<{ festivalClasses: FestivalClass[] }>(globalThis.httpServer)
+      response = await request<{ festivalClasses: FestivalClass[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FestivalClass($festivalClassId: Int!) {
@@ -553,8 +617,7 @@ describe('FestivalClass', () => {
               level {
                 name
               }
-              trophies 
-              {
+              trophies {
                 name
               }
             }
@@ -578,36 +641,41 @@ describe('FestivalClass', () => {
     })
 
     it('Successfully creates a festivalClass using FestivalClassInput', async () => {
-      response = await request<{ festivalClassCreate: FestivalClassPayload }>(globalThis.httpServer)
+      response = await request<{ festivalClassCreate: FestivalClassPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation CreateFestivalClass($festivalClassInput: FestivalClassInput!) {
-          festivalClassCreate(festivalClassInput: $festivalClassInput) {
-            userErrors {
-            message
-            field
+          mutation CreateFestivalClass(
+            $festivalClassInput: FestivalClassInput!
+          ) {
+            festivalClassCreate(festivalClassInput: $festivalClassInput) {
+              userErrors {
+                message
+                field
+              }
+              festivalClass {
+                id
+                classNumber
+                description
+                performerType
+                price
+                subdiscipline {
+                  name
+                }
+                category {
+                  name
+                }
+                level {
+                  name
+                }
+                classType {
+                  name
+                }
+              }
+            }
           }
-          festivalClass {
-            id
-            classNumber
-            description
-            performerType
-            price
-            subdiscipline {
-              name
-            }
-            category {
-              name
-            }
-            level {
-              name
-            }
-            classType {
-              name
-            }
-          }
-        }
-      }`)
+        `)
         .expectNoErrors()
         .variables({
           festivalClassInput: {
@@ -620,47 +688,57 @@ describe('FestivalClass', () => {
             maxSelections: 3,
             minSelections: 2,
             performerType: 'SOLO',
-            price: 120.00,
+            price: 120.0,
             requiredSelection: 'Test Selection',
           },
         })
 
-      festivalClassId = await response.data.festivalClassCreate.festivalClass.id
-      expect(response.data.festivalClassCreate.festivalClass.classNumber).toBe('testNumber')
-      expect(response.data.festivalClassCreate.festivalClass.description).toBe('Test description for grade 10 honours bassoon')
+      festivalClassId
+        = await response.data.festivalClassCreate.festivalClass.id
+      expect(response.data.festivalClassCreate.festivalClass.classNumber).toBe(
+        'testNumber',
+      )
+      expect(response.data.festivalClassCreate.festivalClass.description).toBe(
+        'Test description for grade 10 honours bassoon',
+      )
     })
 
     it('Returns error if trying to add duplicate festivalClass number', async () => {
-      response = await request<{ festivalClassCreate: FestivalClassPayload }>(globalThis.httpServer)
+      response = await request<{ festivalClassCreate: FestivalClassPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation CreateFestivalClass($festivalClassInput: FestivalClassInput!) {
-          festivalClassCreate(festivalClassInput: $festivalClassInput) {
-            userErrors {
-            message
-            field
+          mutation CreateFestivalClass(
+            $festivalClassInput: FestivalClassInput!
+          ) {
+            festivalClassCreate(festivalClassInput: $festivalClassInput) {
+              userErrors {
+                message
+                field
+              }
+              festivalClass {
+                id
+                classNumber
+                description
+                performerType
+                price
+                subdiscipline {
+                  name
+                }
+                category {
+                  name
+                }
+                level {
+                  name
+                }
+                classType {
+                  name
+                }
+              }
+            }
           }
-          festivalClass {
-            id
-            classNumber
-            description
-            performerType
-            price
-            subdiscipline {
-              name
-            }
-            category {
-              name
-            }
-            level {
-              name
-            }
-            classType {
-              name
-            }
-          }
-        }
-      }`)
+        `)
         .expectNoErrors()
         .variables({
           festivalClassInput: {
@@ -673,45 +751,52 @@ describe('FestivalClass', () => {
             maxSelections: 3,
             minSelections: 2,
             performerType: 'SOLO',
-            price: 120.00,
+            price: 120.0,
             requiredSelection: 'Test Selection',
           },
         })
-      expect(response.data.festivalClassCreate.userErrors[0].message).toBeTruthy()
+      expect(
+        response.data.festivalClassCreate.userErrors[0].message,
+      ).toBeTruthy()
       expect(response.data.festivalClassCreate.festivalClass).toBeNull()
     })
 
     it('Returns error if trying to add different number with duplicate category/level/discipline', async () => {
-      response = await request<{ festivalClassCreate: FestivalClassPayload }>(globalThis.httpServer)
+      response = await request<{ festivalClassCreate: FestivalClassPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation CreateFestivalClass($festivalClassInput: FestivalClassInput!) {
-          festivalClassCreate(festivalClassInput: $festivalClassInput) {
-            userErrors {
-            message
-            field
+          mutation CreateFestivalClass(
+            $festivalClassInput: FestivalClassInput!
+          ) {
+            festivalClassCreate(festivalClassInput: $festivalClassInput) {
+              userErrors {
+                message
+                field
+              }
+              festivalClass {
+                id
+                classNumber
+                description
+                performerType
+                price
+                subdiscipline {
+                  name
+                }
+                category {
+                  name
+                }
+                level {
+                  name
+                }
+                classType {
+                  name
+                }
+              }
+            }
           }
-          festivalClass {
-            id
-            classNumber
-            description
-            performerType
-            price
-            subdiscipline {
-              name
-            }
-            category {
-              name
-            }
-            level {
-              name
-            }
-            classType {
-              name
-            }
-          }
-        }
-      }`)
+        `)
         .expectNoErrors()
         .variables({
           festivalClassInput: {
@@ -724,45 +809,52 @@ describe('FestivalClass', () => {
             maxSelections: 3,
             minSelections: 2,
             performerType: 'SOLO',
-            price: 120.00,
+            price: 120.0,
             requiredSelection: 'Test Selection',
           },
         })
-      expect(response.data.festivalClassCreate.userErrors[0].message).toBeTruthy()
+      expect(
+        response.data.festivalClassCreate.userErrors[0].message,
+      ).toBeTruthy()
       expect(response.data.festivalClassCreate.festivalClass).toBeNull()
     })
 
     it('Returns error if trying to add class with missing input fields', async () => {
-      response = await request<{ festivalClassCreate: FestivalClassPayload }>(globalThis.httpServer)
+      response = await request<{ festivalClassCreate: FestivalClassPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation CreateFestivalClass($festivalClassInput: FestivalClassInput!) {
-          festivalClassCreate(festivalClassInput: $festivalClassInput) {
-            userErrors {
-            message
-            field
+          mutation CreateFestivalClass(
+            $festivalClassInput: FestivalClassInput!
+          ) {
+            festivalClassCreate(festivalClassInput: $festivalClassInput) {
+              userErrors {
+                message
+                field
+              }
+              festivalClass {
+                id
+                classNumber
+                description
+                performerType
+                price
+                subdiscipline {
+                  name
+                }
+                category {
+                  name
+                }
+                level {
+                  name
+                }
+                classType {
+                  name
+                }
+              }
+            }
           }
-          festivalClass {
-            id
-            classNumber
-            description
-            performerType
-            price
-            subdiscipline {
-              name
-            }
-            category {
-              name
-            }
-            level {
-              name
-            }
-            classType {
-              name
-            }
-          }
-        }
-      }`)
+        `)
         .variables({
           festivalClassInput: {
             classNumber: 'testNumber with missing input fields',
@@ -773,7 +865,7 @@ describe('FestivalClass', () => {
             maxSelections: 3,
             minSelections: 2,
             performerType: 'SOLO',
-            price: 120.00,
+            price: 120.0,
             requiredSelection: 'Test Selection',
           },
         })
@@ -781,36 +873,41 @@ describe('FestivalClass', () => {
     })
 
     it('Returns error if trying to add class with improper data', async () => {
-      response = await request<{ festivalClassCreate: FestivalClassPayload }>(globalThis.httpServer)
+      response = await request<{ festivalClassCreate: FestivalClassPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation CreateFestivalClass($festivalClassInput: FestivalClassInput!) {
-          festivalClassCreate(festivalClassInput: $festivalClassInput) {
-            userErrors {
-            message
-            field
+          mutation CreateFestivalClass(
+            $festivalClassInput: FestivalClassInput!
+          ) {
+            festivalClassCreate(festivalClassInput: $festivalClassInput) {
+              userErrors {
+                message
+                field
+              }
+              festivalClass {
+                id
+                classNumber
+                description
+                performerType
+                price
+                subdiscipline {
+                  name
+                }
+                category {
+                  name
+                }
+                level {
+                  name
+                }
+                classType {
+                  name
+                }
+              }
+            }
           }
-          festivalClass {
-            id
-            classNumber
-            description
-            performerType
-            price
-            subdiscipline {
-              name
-            }
-            category {
-              name
-            }
-            level {
-              name
-            }
-            classType {
-              name
-            }
-          }
-        }
-      }`)
+        `)
         .variables({
           festivalClassInput: {
             classNumber: 'testNumber with improper data',
@@ -821,7 +918,7 @@ describe('FestivalClass', () => {
             maxSelections: 3,
             minSelections: 2,
             performerType: 'SOLO',
-            price: 120.00,
+            price: 120.0,
             requiredSelection: 'Test Selection',
           },
         })
@@ -834,36 +931,41 @@ describe('FestivalClass', () => {
     let festClassId: number
 
     beforeEach(async () => {
-      response = await request<{ festivalClassCreate: FestivalClassPayload }>(globalThis.httpServer)
+      response = await request<{ festivalClassCreate: FestivalClassPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation CreateFestivalClass($festivalClassInput: FestivalClassInput!) {
-          festivalClassCreate(festivalClassInput: $festivalClassInput) {
-            userErrors {
-            message
-            field
+          mutation CreateFestivalClass(
+            $festivalClassInput: FestivalClassInput!
+          ) {
+            festivalClassCreate(festivalClassInput: $festivalClassInput) {
+              userErrors {
+                message
+                field
+              }
+              festivalClass {
+                id
+                classNumber
+                description
+                performerType
+                price
+                subdiscipline {
+                  name
+                }
+                category {
+                  name
+                }
+                level {
+                  name
+                }
+                classType {
+                  name
+                }
+              }
+            }
           }
-          festivalClass {
-            id
-            classNumber
-            description
-            performerType
-            price
-            subdiscipline {
-              name
-            }
-            category {
-              name
-            }
-            level {
-              name
-            }
-            classType {
-              name
-            }
-          }
-        }
-      }`)
+        `)
         .expectNoErrors()
         .variables({
           festivalClassInput: {
@@ -876,7 +978,7 @@ describe('FestivalClass', () => {
             maxSelections: 3,
             minSelections: 2,
             performerType: 'SOLO',
-            price: 120.00,
+            price: 120.0,
             requiredSelection: 'Test Selection',
           },
         })
@@ -897,22 +999,31 @@ describe('FestivalClass', () => {
     })
 
     it('Can update details of existing festival class', async () => {
-      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(globalThis.httpServer)
+      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation FestivalClassUpdate($festivalClassId: Int!, $festivalClassInput: FestivalClassInput!) {
-          festivalClassUpdate(festivalClassID: $festivalClassId, festivalClassInput: $festivalClassInput) {
-            userErrors {
-              message
-              field
-            }
-            festivalClass {
-              id
-              classNumber
-              description
+          mutation FestivalClassUpdate(
+            $festivalClassId: Int!
+            $festivalClassInput: FestivalClassInput!
+          ) {
+            festivalClassUpdate(
+              festivalClassID: $festivalClassId
+              festivalClassInput: $festivalClassInput
+            ) {
+              userErrors {
+                message
+                field
+              }
+              festivalClass {
+                id
+                classNumber
+                description
+              }
             }
           }
-        }`)
+        `)
         .expectNoErrors()
         .variables({
           festivalClassId: festClassId,
@@ -926,32 +1037,44 @@ describe('FestivalClass', () => {
             maxSelections: 1,
             minSelections: 1,
             performerType: 'GROUP',
-            price: 60.00,
+            price: 60.0,
             requiredSelection: 'Test Selection',
           },
-
         })
-      expect(response.data.festivalClassUpdate.festivalClass.classNumber).toBe('testUpdate')
-      expect(response.data.festivalClassUpdate.festivalClass.description).toBeTruthy()
+      expect(response.data.festivalClassUpdate.festivalClass.classNumber).toBe(
+        'testUpdate',
+      )
+      expect(
+        response.data.festivalClassUpdate.festivalClass.description,
+      ).toBeTruthy()
     })
 
     it('Returns error when removing required field', async () => {
-      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(globalThis.httpServer)
+      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation FestivalClassUpdate($festivalClassId: Int!, $festivalClassInput: FestivalClassInput!) {
-          festivalClassUpdate(festivalClassID: $festivalClassId, festivalClassInput: $festivalClassInput) {
-            userErrors {
-              message
-              field
-            }
-            festivalClass {
-              id
-              classNumber
-              description
+          mutation FestivalClassUpdate(
+            $festivalClassId: Int!
+            $festivalClassInput: FestivalClassInput!
+          ) {
+            festivalClassUpdate(
+              festivalClassID: $festivalClassId
+              festivalClassInput: $festivalClassInput
+            ) {
+              userErrors {
+                message
+                field
+              }
+              festivalClass {
+                id
+                classNumber
+                description
+              }
             }
           }
-        }`)
+        `)
         .variables({
           festivalClassId: festClassId,
           festivalClassInput: {
@@ -964,31 +1087,39 @@ describe('FestivalClass', () => {
             maxSelections: 1,
             minSelections: 1,
             performerType: 'GROUP',
-            price: 60.00,
+            price: 60.0,
             requiredSelection: 'Test Selection',
           },
-
         })
       expect(response.errors[0].message).toBeTruthy()
     })
 
     it('Returns error when entering empty class number', async () => {
-      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(globalThis.httpServer)
+      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation FestivalClassUpdate($festivalClassId: Int!, $festivalClassInput: FestivalClassInput!) {
-          festivalClassUpdate(festivalClassID: $festivalClassId, festivalClassInput: $festivalClassInput) {
-            userErrors {
-              message
-              field
-            }
-            festivalClass {
-              id
-              classNumber
-              description
+          mutation FestivalClassUpdate(
+            $festivalClassId: Int!
+            $festivalClassInput: FestivalClassInput!
+          ) {
+            festivalClassUpdate(
+              festivalClassID: $festivalClassId
+              festivalClassInput: $festivalClassInput
+            ) {
+              userErrors {
+                message
+                field
+              }
+              festivalClass {
+                id
+                classNumber
+                description
+              }
             }
           }
-        }`)
+        `)
         .variables({
           festivalClassId: festClassId,
           festivalClassInput: {
@@ -1001,7 +1132,7 @@ describe('FestivalClass', () => {
             maxSelections: 1,
             minSelections: 1,
             performerType: 'GROUP',
-            price: 60.00,
+            price: 60.0,
             requiredSelection: 'Test Selection',
           },
         })
@@ -1009,22 +1140,31 @@ describe('FestivalClass', () => {
     })
 
     it('Returns error if festival class not found', async () => {
-      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(globalThis.httpServer)
+      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation FestivalClassUpdate($festivalClassId: Int!, $festivalClassInput: FestivalClassInput!) {
-          festivalClassUpdate(festivalClassID: $festivalClassId, festivalClassInput: $festivalClassInput) {
-            userErrors {
-              message
-              field
-            }
-            festivalClass {
-              id
-              classNumber
-              description
+          mutation FestivalClassUpdate(
+            $festivalClassId: Int!
+            $festivalClassInput: FestivalClassInput!
+          ) {
+            festivalClassUpdate(
+              festivalClassID: $festivalClassId
+              festivalClassInput: $festivalClassInput
+            ) {
+              userErrors {
+                message
+                field
+              }
+              festivalClass {
+                id
+                classNumber
+                description
+              }
             }
           }
-        }`)
+        `)
         .variables({
           festivalClassId: festClassId + 1,
           festivalClassInput: {
@@ -1037,30 +1177,41 @@ describe('FestivalClass', () => {
             maxSelections: 1,
             minSelections: 1,
             performerType: 'GROUP',
-            price: 60.00,
+            price: 60.0,
             requiredSelection: 'Test Selection',
           },
         })
-      expect(response.data.festivalClassUpdate.userErrors[0].message).toBeTruthy()
+      expect(
+        response.data.festivalClassUpdate.userErrors[0].message,
+      ).toBeTruthy()
     })
 
     it('Improper input returns error', async () => {
-      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(globalThis.httpServer)
+      response = await request<{ festivalClassUpdate: FestivalClassPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation FestivalClassUpdate($festivalClassId: Int!, $festivalClassInput: FestivalClassInput!) {
-          festivalClassUpdate(festivalClassID: $festivalClassId, festivalClassInput: $festivalClassInput) {
-            userErrors {
-              message
-              field
-            }
-            festivalClass {
-              id
-              classNumber
-              description
+          mutation FestivalClassUpdate(
+            $festivalClassId: Int!
+            $festivalClassInput: FestivalClassInput!
+          ) {
+            festivalClassUpdate(
+              festivalClassID: $festivalClassId
+              festivalClassInput: $festivalClassInput
+            ) {
+              userErrors {
+                message
+                field
+              }
+              festivalClass {
+                id
+                classNumber
+                description
+              }
             }
           }
-        }`)
+        `)
         .variables({
           festivalClassId: festClassId,
           festivalClassInput: {
@@ -1073,11 +1224,13 @@ describe('FestivalClass', () => {
             maxSelections: 1,
             minSelections: 1,
             performerType: 'GROUP',
-            price: 60.00,
+            price: 60.0,
             requiredSelection: 'Test Selection',
           },
         })
-      expect(response.data.festivalClassUpdate.userErrors[0].message).toBeTruthy()
+      expect(
+        response.data.festivalClassUpdate.userErrors[0].message,
+      ).toBeTruthy()
     })
   })
 
@@ -1086,36 +1239,41 @@ describe('FestivalClass', () => {
     let festClassId: number
 
     beforeEach(async () => {
-      response = await request<{ festivalClassCreate: FestivalClassPayload }>(globalThis.httpServer)
+      response = await request<{ festivalClassCreate: FestivalClassPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation CreateFestivalClass($festivalClassInput: FestivalClassInput!) {
-          festivalClassCreate(festivalClassInput: $festivalClassInput) {
-            userErrors {
-            message
-            field
+          mutation CreateFestivalClass(
+            $festivalClassInput: FestivalClassInput!
+          ) {
+            festivalClassCreate(festivalClassInput: $festivalClassInput) {
+              userErrors {
+                message
+                field
+              }
+              festivalClass {
+                id
+                classNumber
+                description
+                performerType
+                price
+                subdiscipline {
+                  name
+                }
+                category {
+                  name
+                }
+                level {
+                  name
+                }
+                classType {
+                  name
+                }
+              }
+            }
           }
-          festivalClass {
-            id
-            classNumber
-            description
-            performerType
-            price
-            subdiscipline {
-              name
-            }
-            category {
-              name
-            }
-            level {
-              name
-            }
-            classType {
-              name
-            }
-          }
-        }
-      }`)
+        `)
         .expectNoErrors()
         .variables({
           festivalClassInput: {
@@ -1128,7 +1286,7 @@ describe('FestivalClass', () => {
             maxSelections: 3,
             minSelections: 2,
             performerType: 'SOLO',
-            price: 120.00,
+            price: 120.0,
             requiredSelection: 'Test Selection',
           },
         })
@@ -1149,21 +1307,24 @@ describe('FestivalClass', () => {
     })
 
     it('Deletes a festival class using the festivalClassID', async () => {
-      response = await request<{ festivalClassDelete: FestivalClassPayload }>(globalThis.httpServer)
+      response = await request<{ festivalClassDelete: FestivalClassPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation FestivalClassDelete($festivalClassId: Int!) {
-          festivalClassDelete(festivalClassID: $festivalClassId) {
-            userErrors {
-              message
-            }
+          mutation FestivalClassDelete($festivalClassId: Int!) {
+            festivalClassDelete(festivalClassID: $festivalClassId) {
+              userErrors {
+                message
+              }
               festivalClass {
-            id
-            classNumber
-            description
+                id
+                classNumber
+                description
+              }
+            }
           }
-        }
-      }`)
+        `)
         .variables({
           festivalClassId: festClassId,
         })
@@ -1171,29 +1332,36 @@ describe('FestivalClass', () => {
         where: { id: festClassId },
       })
       expect(deleteCheck).toBeNull()
-      expect(response.data.festivalClassDelete.festivalClass.classNumber).toBe('testNumber')
+      expect(response.data.festivalClassDelete.festivalClass.classNumber).toBe(
+        'testNumber',
+      )
     })
 
     it('Return error message is festival class not found', async () => {
-      response = await request<{ festivalClassDelete: FestivalClassPayload }>(globalThis.httpServer)
+      response = await request<{ festivalClassDelete: FestivalClassPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation FestivalClassDelete($festivalClassId: Int!) {
-          festivalClassDelete(festivalClassID: $festivalClassId) {
-            userErrors {
-              message
-            }
+          mutation FestivalClassDelete($festivalClassId: Int!) {
+            festivalClassDelete(festivalClassID: $festivalClassId) {
+              userErrors {
+                message
+              }
               festivalClass {
-            id
-            classNumber
-            description
+                id
+                classNumber
+                description
+              }
+            }
           }
-        }
-      }`)
+        `)
         .variables({
           festivalClassId: festClassId + 1,
         })
-      expect(response.data.festivalClassDelete.userErrors[0].message).toBeTruthy()
+      expect(
+        response.data.festivalClassDelete.userErrors[0].message,
+      ).toBeTruthy()
       expect(response.data.festivalClassDelete.festivalClass).toBeNull()
     })
   })

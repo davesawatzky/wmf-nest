@@ -13,7 +13,7 @@ export default defineConfig({
     globalSetup: './src/test/globalSetup_e2e.ts',
     setupFiles: [
       './src/test/integrationTestAdminSetup.ts',
-      // resolve(process.cwd(), 'src/test/integrationTestUserSetup.ts'),
+      // './src/test/integrationTestUserSetup.ts',
     ],
     // fileParallelism: false,
     // maxConcurrency: 1,

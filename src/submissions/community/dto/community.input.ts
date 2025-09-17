@@ -1,5 +1,11 @@
 import { InputType } from '@nestjs/graphql'
-import { IsEmail, IsOptional, IsPhoneNumber, IsPostalCode, IsString } from 'class-validator'
+import {
+  IsEmail,
+  IsOptional,
+  IsPhoneNumber,
+  IsPostalCode,
+  IsString,
+} from 'class-validator'
 
 @InputType()
 export class CommunityInput {

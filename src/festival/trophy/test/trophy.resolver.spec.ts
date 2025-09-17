@@ -1,10 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-} from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { PrismaService } from '@/prisma/prisma.service'
 import { TrophyResolver } from '../trophy.resolver'
 import { TrophyService } from '../trophy.service'

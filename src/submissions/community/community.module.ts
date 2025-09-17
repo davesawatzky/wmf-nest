@@ -7,7 +7,11 @@ import { CommunityService } from './community.service'
 
 @Module({
   providers: [CommunityResolver, CommunityService],
-  imports: [forwardRef(() => RegistrationModule), CommunityGroupModule, AbilityModule],
+  imports: [
+    forwardRef(() => RegistrationModule),
+    CommunityGroupModule,
+    AbilityModule,
+  ],
   exports: [CommunityService],
 })
 export class CommunityModule {}

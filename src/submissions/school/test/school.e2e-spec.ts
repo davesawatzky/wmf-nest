@@ -31,7 +31,7 @@ describe('School', () => {
       response = await request<{ schools: School[] }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Schools{
+          query Schools {
             schools {
               id
               name
@@ -53,7 +53,7 @@ describe('School', () => {
       response = await request<{ schools: School[] }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Schools{
+          query Schools {
             schools {
               id
               name
@@ -76,7 +76,7 @@ describe('School', () => {
       response = await request<{ schools: School[] }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Schools{
+          query Schools {
             schools {
               id
               name
@@ -175,13 +175,13 @@ describe('School', () => {
             schoolCreate(registrationID: $registrationId) {
               school {
                 id
-                }
+              }
               userErrors {
-                field 
+                field
                 message
               }
             }
-          } 
+          }
         `)
         .variables({
           registrationId: regId,
@@ -196,18 +196,24 @@ describe('School', () => {
       response = await request<{ schoolCreate: School }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          mutation SchoolCreate($registrationId: Int!, $schoolInput: SchoolInput) {
-            schoolCreate(registrationID: $registrationId, schoolInput: $schoolInput) {
+          mutation SchoolCreate(
+            $registrationId: Int!
+            $schoolInput: SchoolInput
+          ) {
+            schoolCreate(
+              registrationID: $registrationId
+              schoolInput: $schoolInput
+            ) {
               school {
                 id
                 name
-                }
+              }
               userErrors {
-                field 
+                field
                 message
               }
             }
-          } 
+          }
         `)
         .variables({
           registrationId: regId,
@@ -225,18 +231,24 @@ describe('School', () => {
       response = await request<{ schoolCreate: School }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          mutation SchoolCreate($registrationId: Int!, $schoolInput: SchoolInput) {
-            schoolCreate(registrationID: $registrationId, schoolInput: $schoolInput) {
+          mutation SchoolCreate(
+            $registrationId: Int!
+            $schoolInput: SchoolInput
+          ) {
+            schoolCreate(
+              registrationID: $registrationId
+              schoolInput: $schoolInput
+            ) {
               school {
                 id
                 name
-                }
+              }
               userErrors {
-                field 
+                field
                 message
               }
             }
-          } 
+          }
         `)
         .variables({
           registrationId: regId + 1,
@@ -276,20 +288,20 @@ describe('School', () => {
       response = await request<{ schoolUpdate: School }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation SchoolUpdate($schoolId: Int!, $schoolInput: SchoolInput!) {
-          schoolUpdate(schoolID: $schoolId, schoolInput: $schoolInput) {
-            school {
-              id
-              name
-              division            
+          mutation SchoolUpdate($schoolId: Int!, $schoolInput: SchoolInput!) {
+            schoolUpdate(schoolID: $schoolId, schoolInput: $schoolInput) {
+              school {
+                id
+                name
+                division
               }
-            userErrors {
-              field 
-              message
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           schoolId,
           schoolInput: {
@@ -297,7 +309,9 @@ describe('School', () => {
           },
         })
         .expectNoErrors()
-      expect(response.data.schoolUpdate.school.division).toBe('Updated Division')
+      expect(response.data.schoolUpdate.school.division).toBe(
+        'Updated Division',
+      )
       expect(response.data.schoolUpdate.school.name).toBe('Test School')
     })
 
@@ -305,19 +319,19 @@ describe('School', () => {
       response = await request<{ schoolUpdate: School }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation SchoolUpdate($schoolId: Int!, $schoolInput: SchoolInput!) {
-          schoolUpdate(schoolID: $schoolId, schoolInput: $schoolInput) {
-            school {
-              id
-              name
+          mutation SchoolUpdate($schoolId: Int!, $schoolInput: SchoolInput!) {
+            schoolUpdate(schoolID: $schoolId, schoolInput: $schoolInput) {
+              school {
+                id
+                name
               }
-            userErrors {
-              field 
-              message
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           schoolId: schoolId + 1,
           schoolInput: {
@@ -332,20 +346,20 @@ describe('School', () => {
       response = await request<{ schoolUpdate: School }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation SchoolUpdate($schoolId: Int!, $schoolInput: SchoolInput!) {
-          schoolUpdate(schoolID: $schoolId, schoolInput: $schoolInput) {
-            school {
-              id
-              name
-              division
+          mutation SchoolUpdate($schoolId: Int!, $schoolInput: SchoolInput!) {
+            schoolUpdate(schoolID: $schoolId, schoolInput: $schoolInput) {
+              school {
+                id
+                name
+                division
               }
-            userErrors {
-              field 
-              message
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           schoolId: null,
           schoolInput: {
@@ -359,20 +373,20 @@ describe('School', () => {
       response = await request<{ schoolUpdate: School }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation SchoolUpdate($schoolId: Int!, $schoolInput: SchoolInput!) {
-          schoolUpdate(schoolID: $schoolId, schoolInput: $schoolInput) {
-            school {
-              id
-              name
-              performerType
+          mutation SchoolUpdate($schoolId: Int!, $schoolInput: SchoolInput!) {
+            schoolUpdate(schoolID: $schoolId, schoolInput: $schoolInput) {
+              school {
+                id
+                name
+                performerType
               }
-            userErrors {
-              field 
-              message
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           schoolId,
           schoolInput: {
@@ -417,19 +431,19 @@ describe('School', () => {
       response = await request<{ schoolDelete: boolean }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation SchoolDelete($schoolId: Int!) {
-          schoolDelete(schoolID: $schoolId) {
-            school {
-              id
-              name
-            }
-            userErrors {
-              field 
-              message
+          mutation SchoolDelete($schoolId: Int!) {
+            schoolDelete(schoolID: $schoolId) {
+              school {
+                id
+                name
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           schoolId,
         })
@@ -446,19 +460,19 @@ describe('School', () => {
       response = await request<{ schoolDelete: boolean }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation SchoolDelete($schoolId: Int!) {
-          schoolDelete(schoolID: $schoolId) {
-            school {
-              id
-              name
-            }
-            userErrors {
-              field 
-              message
+          mutation SchoolDelete($schoolId: Int!) {
+            schoolDelete(schoolID: $schoolId) {
+              school {
+                id
+                name
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           schoolId: schoolId + 1,
         })
@@ -470,19 +484,19 @@ describe('School', () => {
       response = await request<{ schoolDelete: boolean }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation SchoolDelete($schoolId: Int!) {
-          schoolDelete(schoolID: $schoolId) {
-            school {
-              id
-              name
-            }
-            userErrors {
-              field 
-              message
+          mutation SchoolDelete($schoolId: Int!) {
+            schoolDelete(schoolID: $schoolId) {
+              school {
+                id
+                name
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           schoolId: null,
         })

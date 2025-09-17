@@ -71,32 +71,32 @@ beforeAll(async () => {
   const httpServer: any = await app.getHttpServer()
   const prisma: PrismaService = app.get<PrismaService>(PrismaService)
 
-  const response = await request<{ signin: AuthPayload }>(
-    httpServer,
-  ).mutate(gql`
-    mutation SignIn($credentials: CredentialsSignin!) {
-      signin(credentials: $credentials) {
-        userErrors {
-          message
-        }
-        diatonicToken
-        user {
-          id
-          email
-          firstName
-          lastName
-          isActive
-          roles
-          permissions
+  const response = await request<{ signin: AuthPayload }>(httpServer)
+    .mutate(gql`
+      mutation SignIn($credentials: CredentialsSignin!) {
+        signin(credentials: $credentials) {
+          userErrors {
+            message
+          }
+          diatonicToken
+          user {
+            id
+            email
+            firstName
+            lastName
+            isActive
+            roles
+            permissions
+          }
         }
       }
-    }
-  `).variables({
-    credentials: {
-      email: TestAdmin().email,
-      password: TestAdmin().password,
-    },
-  })
+    `)
+    .variables({
+      credentials: {
+        email: TestAdmin().email,
+        password: TestAdmin().password,
+      },
+    })
   const diatonicToken: string = response.data.signin.diatonicToken
   globalThis.diatonicToken = diatonicToken
 

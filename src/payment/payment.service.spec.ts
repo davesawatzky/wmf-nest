@@ -1,10 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-} from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { StripeService } from '@/stripe/stripe.service'
 import { PaymentService } from './payment.service'
 
@@ -14,10 +9,13 @@ describe('paymentService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [PaymentService, {
-        provide: StripeService,
-        useValue: stripeService,
-      }],
+      providers: [
+        PaymentService,
+        {
+          provide: StripeService,
+          useValue: stripeService,
+        },
+      ],
 
       // imports: [
       //   StripeModule.forRootAsync({

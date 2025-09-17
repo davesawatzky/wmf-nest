@@ -1,8 +1,11 @@
-import {Field, Float, InputType, Int} from '@nestjs/graphql'
+import { Field, InputType, Int } from '@nestjs/graphql'
 import { Decimal } from '@prisma/client/runtime/library'
 import { Transform, Type } from 'class-transformer'
-import { IsDecimal, IsInt, IsNumber, IsOptional, IsString } from 'class-validator'
-import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
+import { IsDecimal, IsInt, IsOptional, IsString } from 'class-validator'
+import {
+  GraphQLDecimal,
+  transformToDecimal,
+} from 'prisma-graphql-type-decimal'
 
 @InputType()
 export class RegisteredClassInput {

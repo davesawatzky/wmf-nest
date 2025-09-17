@@ -17,7 +17,9 @@ export class ClassTypeService {
   constructor(private prisma: PrismaService) {}
 
   async create(classTypeInput: ClassTypeInput) {
-    this.logger.debug(`Creating class type with data: ${JSON.stringify(classTypeInput)}`)
+    this.logger.debug(
+      `Creating class type with data: ${JSON.stringify(classTypeInput)}`,
+    )
 
     let classType: tbl_class_type
     let userErrors: UserError[] = []
@@ -27,7 +29,9 @@ export class ClassTypeService {
         data: { ...classTypeInput },
       })
 
-      this.logger.log(`Successfully created class type with ID: ${classType.id}`)
+      this.logger.log(
+        `Successfully created class type with ID: ${classType.id}`,
+      )
 
       return {
         userErrors,
@@ -35,7 +39,10 @@ export class ClassTypeService {
       }
     }
     catch (error: any) {
-      this.logger.error(`Failed to create class type: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to create class type: ${error.message}`,
+        error.stack,
+      )
 
       if (error.code === 'P2002') {
         userErrors = [
@@ -44,12 +51,15 @@ export class ClassTypeService {
             field: ['name'],
           },
         ]
-        this.logger.warn(`Duplicate class type name attempted: ${classTypeInput.name}`)
+        this.logger.warn(
+          `Duplicate class type name attempted: ${classTypeInput.name}`,
+        )
       }
       else {
         userErrors = [
           {
-            message: 'An unexpected error occurred while creating the class type',
+            message:
+              'An unexpected error occurred while creating the class type',
             field: [],
           },
         ]
@@ -67,11 +77,16 @@ export class ClassTypeService {
 
     try {
       const classTypes = await this.prisma.tbl_class_type.findMany()
-      this.logger.log(`Successfully retrieved ${classTypes.length} class types`)
+      this.logger.log(
+        `Successfully retrieved ${classTypes.length} class types`,
+      )
       return classTypes
     }
     catch (error: any) {
-      this.logger.error(`Failed to retrieve class types: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to retrieve class types: ${error.message}`,
+        error.stack,
+      )
       throw new InternalServerErrorException('Failed to retrieve class types')
     }
   }
@@ -98,17 +113,25 @@ export class ClassTypeService {
       return classType
     }
     catch (error: any) {
-      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+      if (
+        error instanceof NotFoundException
+        || error instanceof BadRequestException
+      ) {
         throw error
       }
 
-      this.logger.error(`Failed to retrieve class type with ID ${id}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to retrieve class type with ID ${id}: ${error.message}`,
+        error.stack,
+      )
       throw new InternalServerErrorException('Failed to retrieve class type')
     }
   }
 
   async update(id: tbl_class_type['id'], classTypeInput: ClassTypeInput) {
-    this.logger.debug(`Updating class type with ID: ${id}, data: ${JSON.stringify(classTypeInput)}`)
+    this.logger.debug(
+      `Updating class type with ID: ${id}, data: ${JSON.stringify(classTypeInput)}`,
+    )
 
     let classType: tbl_class_type
     let userErrors: UserError[] = []
@@ -127,7 +150,10 @@ export class ClassTypeService {
       }
     }
     catch (error: any) {
-      this.logger.error(`Failed to update class type with ID ${id}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to update class type with ID ${id}: ${error.message}`,
+        error.stack,
+      )
 
       if (error.code === 'P2025') {
         userErrors = [
@@ -136,7 +162,9 @@ export class ClassTypeService {
             field: ['id'],
           },
         ]
-        this.logger.warn(`Attempted to update non-existent class type with ID: ${id}`)
+        this.logger.warn(
+          `Attempted to update non-existent class type with ID: ${id}`,
+        )
       }
       else if (error.code === 'P2002') {
         userErrors = [
@@ -145,12 +173,15 @@ export class ClassTypeService {
             field: ['name'],
           },
         ]
-        this.logger.warn(`Duplicate class type name attempted during update: ${classTypeInput.name}`)
+        this.logger.warn(
+          `Duplicate class type name attempted during update: ${classTypeInput.name}`,
+        )
       }
       else {
         userErrors = [
           {
-            message: 'An unexpected error occurred while updating the class type',
+            message:
+              'An unexpected error occurred while updating the class type',
             field: [],
           },
         ]
@@ -182,7 +213,10 @@ export class ClassTypeService {
       }
     }
     catch (error: any) {
-      this.logger.error(`Failed to delete class type with ID ${id}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to delete class type with ID ${id}: ${error.message}`,
+        error.stack,
+      )
 
       if (error.code === 'P2025') {
         userErrors = [
@@ -191,21 +225,27 @@ export class ClassTypeService {
             field: ['id'],
           },
         ]
-        this.logger.warn(`Attempted to delete non-existent class type with ID: ${id}`)
+        this.logger.warn(
+          `Attempted to delete non-existent class type with ID: ${id}`,
+        )
       }
       else if (error.code === 'P2003') {
         userErrors = [
           {
-            message: 'Cannot delete class type as it is referenced by other records',
+            message:
+              'Cannot delete class type as it is referenced by other records',
             field: ['id'],
           },
         ]
-        this.logger.warn(`Attempted to delete class type with ID ${id} that has foreign key references`)
+        this.logger.warn(
+          `Attempted to delete class type with ID ${id} that has foreign key references`,
+        )
       }
       else {
         userErrors = [
           {
-            message: 'An unexpected error occurred while deleting the class type',
+            message:
+              'An unexpected error occurred while deleting the class type',
             field: [],
           },
         ]

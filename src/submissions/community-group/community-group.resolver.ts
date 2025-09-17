@@ -1,5 +1,13 @@
 import { UseGuards } from '@nestjs/common'
-import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 import { tbl_reg_community, tbl_reg_communitygroup } from '@prisma/client'
 import { CheckAbilities } from '@/ability/abilities.decorator'
 import { AbilitiesGuard } from '@/ability/abilities.guard'
@@ -9,7 +17,10 @@ import { CommunityService } from '@/submissions/community/community.service'
 import { Community } from '@/submissions/community/entities/community.entity'
 import { CommunityGroupService } from './community-group.service'
 import { CommunityGroupInput } from './dto/community-group.input'
-import { CommunityGroup, CommunityGroupPayload } from './entities/community-group.entity'
+import {
+  CommunityGroup,
+  CommunityGroupPayload,
+} from './entities/community-group.entity'
 
 @Resolver(() => CommunityGroup)
 @UseGuards(JwtAuthGuard)
@@ -49,10 +60,16 @@ export class CommunityGroupResolver {
   async communityGroupCreate(
     @Args('communityID', { type: () => Int })
     communityID: tbl_reg_community['id'],
-    @Args('communityGroupInput', { type: () => CommunityGroupInput, nullable: true })
+    @Args('communityGroupInput', {
+      type: () => CommunityGroupInput,
+      nullable: true,
+    })
     communityGroupInput: Partial<CommunityGroupInput>,
   ) {
-    return await this.communityGroupService.create(communityID, communityGroupInput)
+    return await this.communityGroupService.create(
+      communityID,
+      communityGroupInput,
+    )
   }
 
   @Mutation(() => CommunityGroupPayload)
@@ -64,7 +81,10 @@ export class CommunityGroupResolver {
     @Args('communityGroupInput', { type: () => CommunityGroupInput })
     communityGroupInput: Partial<CommunityGroupInput>,
   ) {
-    return await this.communityGroupService.update(communityGroupID, communityGroupInput)
+    return await this.communityGroupService.update(
+      communityGroupID,
+      communityGroupInput,
+    )
   }
 
   @Mutation(() => CommunityGroupPayload)

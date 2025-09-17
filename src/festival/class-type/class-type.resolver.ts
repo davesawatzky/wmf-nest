@@ -1,5 +1,13 @@
 import { UseGuards } from '@nestjs/common'
-import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 import { tbl_class_type } from '@prisma/client'
 import { CheckAbilities } from '@/ability/abilities.decorator'
 import { AbilitiesGuard } from '@/ability/abilities.guard'
@@ -40,7 +48,9 @@ export class ClassTypeResolver {
   @Mutation(() => ClassTypePayload)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Create, subject: ClassType })
-  async classTypeCreate(@Args('classTypeInput') classTypeInput: ClassTypeInput) {
+  async classTypeCreate(
+    @Args('classTypeInput') classTypeInput: ClassTypeInput,
+  ) {
     return await this.classTypeService.create(classTypeInput)
   }
 
@@ -67,10 +77,14 @@ export class ClassTypeResolver {
   @ResolveField(() => [FestivalClass])
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: FestivalClass })
-  async festivalClasses(
-    @Parent() classType: tbl_class_type,
-  ) {
+  async festivalClasses(@Parent() classType: tbl_class_type) {
     const classTypeID = classType.id
-    return await this.festivalClassService.findAll(undefined, undefined, undefined, undefined, classTypeID)
+    return await this.festivalClassService.findAll(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      classTypeID,
+    )
   }
 }

@@ -7,7 +7,11 @@ import { OrderItemService } from './order-item.service'
 
 @Module({
   providers: [OrderItemResolver, OrderItemService],
-  imports: [AbilityModule, forwardRef(() => OrderModule), forwardRef(() => ItemModule)],
+  imports: [
+    AbilityModule,
+    forwardRef(() => OrderModule),
+    forwardRef(() => ItemModule),
+  ],
   exports: [OrderItemService],
 })
 export class OrderItemModule {}

@@ -14,7 +14,10 @@ export function SearchFilterArgs<T>(
   fields: string[],
 ): ParameterDecorator {
   // Create the search filter input type
-  const SearchFiltersType = SearchFilterInputFactory.create<T>(entityName, fields)
+  const SearchFiltersType = SearchFilterInputFactory.create<T>(
+    entityName,
+    fields,
+  )
 
   // Return a parameter decorator that sets up the GraphQL Args
   return Args('searchFilters', {

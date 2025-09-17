@@ -78,7 +78,9 @@ export class RegistrationResolver {
   ) {
     // const skip = (page - 1) * take
     return await this.registrationService.findAll(
-      context.req.user.roles.includes('admin') ? undefined : context.req.user.id,
+      context.req.user.roles.includes('admin')
+        ? undefined
+        : context.req.user.id,
       performerType,
       undefined,
       // skip,

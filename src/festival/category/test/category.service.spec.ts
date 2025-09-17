@@ -1,10 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-} from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { PrismaService } from '../../../prisma/prisma.service'
 import { CategoryService } from '../category.service'
 import { CategoryInput } from '../dto/category.input'
@@ -27,15 +22,11 @@ describe('categoryService', () => {
   })
 
   describe('findAll', () => {
-    it('returns a list of categories', async () => {
-
-    })
+    it('returns a list of categories', async () => {})
   })
 
   describe('findOne', () => {
-    it('returns one category', async () => {
-
-    })
+    it('returns one category', async () => {})
   })
 
   describe('create', () => {

@@ -19,7 +19,9 @@ export const MatchModeScalar = new GraphQLScalarType({
 
     // Find the matching enum key by value
     const matchedKey = Object.keys(MatchMode).find(
-      key => MatchMode[key as keyof typeof MatchMode].toLowerCase() === value.toLowerCase(),
+      key =>
+        MatchMode[key as keyof typeof MatchMode].toLowerCase()
+        === value.toLowerCase(),
     )
 
     if (matchedKey) {
@@ -37,7 +39,9 @@ export const MatchModeScalar = new GraphQLScalarType({
 
       // Find the matching enum key by value
       const matchedKey = Object.keys(MatchMode).find(
-        key => MatchMode[key as keyof typeof MatchMode].toLowerCase() === value.toLowerCase(),
+        key =>
+          MatchMode[key as keyof typeof MatchMode].toLowerCase()
+          === value.toLowerCase(),
       )
 
       if (matchedKey) {
@@ -67,7 +71,9 @@ export const OperatorTypeScalar = new GraphQLScalarType({
 
     // Find the matching enum key by value
     const matchedKey = Object.keys(OperatorType).find(
-      key => OperatorType[key as keyof typeof OperatorType].toLowerCase() === value.toLowerCase(),
+      key =>
+        OperatorType[key as keyof typeof OperatorType].toLowerCase()
+        === value.toLowerCase(),
     )
 
     if (matchedKey) {
@@ -85,7 +91,9 @@ export const OperatorTypeScalar = new GraphQLScalarType({
 
       // Find the matching enum key by value
       const matchedKey = Object.keys(OperatorType).find(
-        key => OperatorType[key as keyof typeof OperatorType].toLowerCase() === value.toLowerCase(),
+        key =>
+          OperatorType[key as keyof typeof OperatorType].toLowerCase()
+          === value.toLowerCase(),
       )
 
       if (matchedKey) {
@@ -101,7 +109,8 @@ export const OperatorTypeScalar = new GraphQLScalarType({
 // Custom scalar for mixed value types (string, number, boolean)
 export const GenericScalar = new GraphQLScalarType({
   name: 'GenericScalar',
-  description: 'The GenericScalar type handles multiple data types: string, number, boolean',
+  description:
+    'The GenericScalar type handles multiple data types: string, number, boolean',
 
   // Convert outgoing values
   serialize(value: any) {

@@ -132,9 +132,7 @@ export class SubdisciplineResolver {
   @ResolveField(() => [Category])
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Category })
-  async categories(
-    @Parent() subdiscipline: tbl_subdiscipline,
-  ) {
+  async categories(@Parent() subdiscipline: tbl_subdiscipline) {
     const subdisciplineID = subdiscipline.id
     return await this.categoryService.findAll(undefined, subdisciplineID)
   }
@@ -142,9 +140,7 @@ export class SubdisciplineResolver {
   @ResolveField(() => [Level])
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Level })
-  async levels(
-    @Parent() subdiscipline: tbl_subdiscipline,
-  ) {
+  async levels(@Parent() subdiscipline: tbl_subdiscipline) {
     const subdisciplineID = subdiscipline.id
     return await this.levelService.findAll(undefined, subdisciplineID)
   }
@@ -152,9 +148,7 @@ export class SubdisciplineResolver {
   @ResolveField(() => Discipline)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Discipline })
-  async discipline(
-    @Parent() subdiscipline: tbl_subdiscipline,
-  ) {
+  async discipline(@Parent() subdiscipline: tbl_subdiscipline) {
     const disciplineID = subdiscipline.disciplineID
     return await this.disciplineService.findOne(disciplineID)
   }

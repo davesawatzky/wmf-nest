@@ -42,10 +42,12 @@ describe('CommunityGroup', () => {
     let response: any
 
     it('Can return the full list of communityGroups', async () => {
-      response = await request<{ communityGroups: CommunityGroup[] }>(globalThis.httpServer)
+      response = await request<{ communityGroups: CommunityGroup[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query CommunityGroups{
+          query CommunityGroups {
             communityGroups {
               id
               name
@@ -65,10 +67,12 @@ describe('CommunityGroup', () => {
     })
 
     it('Can return the full list of communityGroups with associated communities and reg', async () => {
-      response = await request<{ communityGroups: CommunityGroup[] }>(globalThis.httpServer)
+      response = await request<{ communityGroups: CommunityGroup[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query CommunityGroups{
+          query CommunityGroups {
             communityGroups {
               id
               name
@@ -86,15 +90,21 @@ describe('CommunityGroup', () => {
           }
         `)
         .expectNoErrors()
-      expect(response.data.communityGroups[0].community).toHaveProperty('registration')
-      expect(response.data.communityGroups[0].community.registration.label).toBeTruthy()
+      expect(response.data.communityGroups[0].community).toHaveProperty(
+        'registration',
+      )
+      expect(
+        response.data.communityGroups[0].community.registration.label,
+      ).toBeTruthy()
     })
 
     it('Can return the full list of communityGroups from one community using communityID', async () => {
-      response = await request<{ communityGroups: CommunityGroup[] }>(globalThis.httpServer)
+      response = await request<{ communityGroups: CommunityGroup[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query CommunityGroups{
+          query CommunityGroups {
             communityGroups {
               id
               name
@@ -110,7 +120,9 @@ describe('CommunityGroup', () => {
     })
 
     it('Can return a single communityGroup with communityGroupID with community', async () => {
-      response = await request<{ communityGroup: CommunityGroup }>(globalThis.httpServer)
+      response = await request<{ communityGroup: CommunityGroup }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query CommunityGroup($communityGroupId: Int!) {
@@ -133,7 +145,9 @@ describe('CommunityGroup', () => {
     })
 
     it('Returns an error if nothing is found', async () => {
-      response = await request<{ communityGroup: CommunityGroup }>(globalThis.httpServer)
+      response = await request<{ communityGroup: CommunityGroup }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query CommunityGroup($communityGroupId: Int!) {
@@ -174,11 +188,19 @@ describe('CommunityGroup', () => {
     })
 
     it('Can create a communityGroup', async () => {
-      response = await request<{ communityGroupCreate: CommunityGroup }>(globalThis.httpServer)
+      response = await request<{ communityGroupCreate: CommunityGroup }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          mutation CommunityGroup($communityId: Int!, $communityGroupInput: CommunityGroupInput) {
-            communityGroupCreate(communityID: $communityId, communityGroupInput: $communityGroupInput) {
+          mutation CommunityGroup(
+            $communityId: Int!
+            $communityGroupInput: CommunityGroupInput
+          ) {
+            communityGroupCreate(
+              communityID: $communityId
+              communityGroupInput: $communityGroupInput
+            ) {
               communityGroup {
                 id
               }
@@ -193,17 +215,28 @@ describe('CommunityGroup', () => {
           communityId: commId,
         })
         .expectNoErrors()
-      communityGroupId = await response.data.communityGroupCreate.communityGroup.id
-      expect(response.data.communityGroupCreate.communityGroup.id).toBeTypeOf('number')
+      communityGroupId
+        = await response.data.communityGroupCreate.communityGroup.id
+      expect(response.data.communityGroupCreate.communityGroup.id).toBeTypeOf(
+        'number',
+      )
       expect(response.data.communityGroupCreate.communityGroup.id).toBeTruthy()
     })
 
     it('Can create a communityGroup with communityGroup Input', async () => {
-      response = await request<{ communityGroupCreate: CommunityGroup }>(globalThis.httpServer)
+      response = await request<{ communityGroupCreate: CommunityGroup }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          mutation CommunityGroup($communityId: Int!, $communityGroupInput: CommunityGroupInput) {
-            communityGroupCreate(communityID: $communityId, communityGroupInput: $communityGroupInput) {
+          mutation CommunityGroup(
+            $communityId: Int!
+            $communityGroupInput: CommunityGroupInput
+          ) {
+            communityGroupCreate(
+              communityID: $communityId
+              communityGroupInput: $communityGroupInput
+            ) {
               communityGroup {
                 id
                 name
@@ -222,17 +255,30 @@ describe('CommunityGroup', () => {
           },
         })
         .expectNoErrors()
-      communityGroupId = await response.data.communityGroupCreate.communityGroup.id
-      expect(response.data.communityGroupCreate.communityGroup.id).toBeTypeOf('number')
-      expect(response.data.communityGroupCreate.communityGroup.name).toBe('Test CommunityGroup')
+      communityGroupId
+        = await response.data.communityGroupCreate.communityGroup.id
+      expect(response.data.communityGroupCreate.communityGroup.id).toBeTypeOf(
+        'number',
+      )
+      expect(response.data.communityGroupCreate.communityGroup.name).toBe(
+        'Test CommunityGroup',
+      )
     })
 
     it('Returns an userError if trying to create a communityGroup without valid communityID', async () => {
-      response = await request<{ communityGroupCreate: CommunityGroup }>(globalThis.httpServer)
+      response = await request<{ communityGroupCreate: CommunityGroup }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          mutation CommunityGroup($communityId: Int!, $communityGroupInput: CommunityGroupInput) {
-            communityGroupCreate(communityID: $communityId, communityGroupInput: $communityGroupInput) {
+          mutation CommunityGroup(
+            $communityId: Int!
+            $communityGroupInput: CommunityGroupInput
+          ) {
+            communityGroupCreate(
+              communityID: $communityId
+              communityGroupInput: $communityGroupInput
+            ) {
               communityGroup {
                 id
                 name
@@ -250,7 +296,9 @@ describe('CommunityGroup', () => {
             name: 'Test CommunityGroup',
           },
         })
-      expect(response.data.communityGroupCreate.userErrors[0].message).toBeTruthy()
+      expect(
+        response.data.communityGroupCreate.userErrors[0].message,
+      ).toBeTruthy()
       expect(response.data.communityGroupCreate.communityGroup).toBeNull()
     })
   })
@@ -280,23 +328,31 @@ describe('CommunityGroup', () => {
     })
 
     it('Can update any communityGroup', async () => {
-      response = await request<{ communityGroupUpdate: CommunityGroup }>(globalThis.httpServer)
+      response = await request<{ communityGroupUpdate: CommunityGroup }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation CommunityGroupUpdate($communityGroupId: Int!, $communityGroupInput: CommunityGroupInput!) {
-          communityGroupUpdate(communityGroupID: $communityGroupId, communityGroupInput: $communityGroupInput) {
-            communityGroup {
-              id
-              name
-              groupSize
-            }
-            userErrors {
-              field
-              message
+          mutation CommunityGroupUpdate(
+            $communityGroupId: Int!
+            $communityGroupInput: CommunityGroupInput!
+          ) {
+            communityGroupUpdate(
+              communityGroupID: $communityGroupId
+              communityGroupInput: $communityGroupInput
+            ) {
+              communityGroup {
+                id
+                name
+                groupSize
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        }
-      `)
+        `)
         .variables({
           communityGroupId,
           communityGroupInput: {
@@ -305,56 +361,78 @@ describe('CommunityGroup', () => {
           },
         })
         .expectNoErrors()
-      expect(response.data.communityGroupUpdate.communityGroup.name).toBe('Updated CommunityGroup')
-      expect(response.data.communityGroupUpdate.communityGroup.groupSize).toBe(30)
+      expect(response.data.communityGroupUpdate.communityGroup.name).toBe(
+        'Updated CommunityGroup',
+      )
+      expect(response.data.communityGroupUpdate.communityGroup.groupSize).toBe(
+        30,
+      )
     })
 
     it('Returns userError if incorrect communityGroup id', async () => {
-      response = await request<{ communityGroupUpdate: CommunityGroup }>(globalThis.httpServer)
+      response = await request<{ communityGroupUpdate: CommunityGroup }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation CommunityGroupUpdate($communityGroupId: Int!, $communityGroupInput: CommunityGroupInput!) {
-          communityGroupUpdate(communityGroupID: $communityGroupId, communityGroupInput: $communityGroupInput) {
-            communityGroup {
-              id
-              name
-              groupSize
-            }
-            userErrors {
-              field
-              message
+          mutation CommunityGroupUpdate(
+            $communityGroupId: Int!
+            $communityGroupInput: CommunityGroupInput!
+          ) {
+            communityGroupUpdate(
+              communityGroupID: $communityGroupId
+              communityGroupInput: $communityGroupInput
+            ) {
+              communityGroup {
+                id
+                name
+                groupSize
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        }
-      `)
+        `)
         .variables({
           communityGroupId: communityGroupId + 1,
           communityGroupInput: {
             name: 'Updated CommunityGroup',
           },
         })
-      expect(response.data.communityGroupUpdate.userErrors[0].message).toBeTruthy()
+      expect(
+        response.data.communityGroupUpdate.userErrors[0].message,
+      ).toBeTruthy()
       expect(response.data.communityGroupUpdate.communityGroup).toBeNull()
     })
 
     it('Returns html status error if missing communityGroup id', async () => {
-      response = await request<{ communityGroupUpdate: CommunityGroup }>(globalThis.httpServer)
+      response = await request<{ communityGroupUpdate: CommunityGroup }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation CommunityGroupUpdate($communityGroupId: Int!, $communityGroupInput: CommunityGroupInput!) {
-          communityGroupUpdate(communityGroupID: $communityGroupId, communityGroupInput: $communityGroupInput) {
-            communityGroup {
-              id
-              name
-              groupSize
-            }
-            userErrors {
-              field
-              message
+          mutation CommunityGroupUpdate(
+            $communityGroupId: Int!
+            $communityGroupInput: CommunityGroupInput!
+          ) {
+            communityGroupUpdate(
+              communityGroupID: $communityGroupId
+              communityGroupInput: $communityGroupInput
+            ) {
+              communityGroup {
+                id
+                name
+                groupSize
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        }
-      `)
+        `)
         .variables({
           communityGroupId: null,
           communityGroupInput: {
@@ -365,23 +443,31 @@ describe('CommunityGroup', () => {
     })
 
     it('Returns html status error if any bad input args', async () => {
-      response = await request<{ communityGroupUpdate: CommunityGroup }>(globalThis.httpServer)
+      response = await request<{ communityGroupUpdate: CommunityGroup }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation CommunityGroupUpdate($communityGroupId: Int!, $communityGroupInput: CommunityGroupInput!) {
-          communityGroupUpdate(communityGroupID: $communityGroupId, communityGroupInput: $communityGroupInput) {
-            communityGroup {
-              id
-              name
-              groupSize
-            }
-            userErrors {
-              field
-              message
+          mutation CommunityGroupUpdate(
+            $communityGroupId: Int!
+            $communityGroupInput: CommunityGroupInput!
+          ) {
+            communityGroupUpdate(
+              communityGroupID: $communityGroupId
+              communityGroupInput: $communityGroupInput
+            ) {
+              communityGroup {
+                id
+                name
+                groupSize
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        }
-      `)
+        `)
         .variables({
           communityGroupId,
           communityGroupInput: {
@@ -423,75 +509,86 @@ describe('CommunityGroup', () => {
     })
 
     it('Can delete a communityGroup', async () => {
-      response = await request<{ communityGroupDelete: boolean }>(globalThis.httpServer)
+      response = await request<{ communityGroupDelete: boolean }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation CommunityGroupDelete($communityGroupId: Int!) {
-          communityGroupDelete(communityGroupID: $communityGroupId) {
-            communityGroup {
-              id
-              name
-            }
-            userErrors {
-              field 
-              message
+          mutation CommunityGroupDelete($communityGroupId: Int!) {
+            communityGroupDelete(communityGroupID: $communityGroupId) {
+              communityGroup {
+                id
+                name
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           communityGroupId,
         })
         .expectNoErrors()
 
-      const deleteCheck = await globalThis.prisma.tbl_reg_communitygroup.findUnique({
-        where: { id: communityGroupId },
-      })
+      const deleteCheck
+        = await globalThis.prisma.tbl_reg_communitygroup.findUnique({
+          where: { id: communityGroupId },
+        })
       expect(deleteCheck).toBeNull()
-      expect(response.data.communityGroupDelete.communityGroup.name).toBe('Test CommunityGroup')
+      expect(response.data.communityGroupDelete.communityGroup.name).toBe(
+        'Test CommunityGroup',
+      )
     })
 
     it('Returns a userError if communityGroup not found', async () => {
-      response = await request<{ communityGroupDelete: boolean }>(globalThis.httpServer)
+      response = await request<{ communityGroupDelete: boolean }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation CommunityGroupDelete($communityGroupId: Int!) {
-          communityGroupDelete(communityGroupID: $communityGroupId) {
-            communityGroup {
-              id
-              name
-            }
-            userErrors {
-              field 
-              message
+          mutation CommunityGroupDelete($communityGroupId: Int!) {
+            communityGroupDelete(communityGroupID: $communityGroupId) {
+              communityGroup {
+                id
+                name
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           communityGroupId: communityGroupId + 1,
         })
         .expectNoErrors()
-      expect(response.data.communityGroupDelete.userErrors[0].message).toBeTruthy()
+      expect(
+        response.data.communityGroupDelete.userErrors[0].message,
+      ).toBeTruthy()
     })
 
     it('Returns status error if communityGroup id not given', async () => {
-      response = await request<{ communityGroupDelete: boolean }>(globalThis.httpServer)
+      response = await request<{ communityGroupDelete: boolean }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation CommunityGroupDelete($communityGroupId: Int!) {
-          communityGroupDelete(communityGroupID: $communityGroupId) {
-            communityGroup {
-              id
-              name
-            }
-            userErrors {
-              field 
-              message
+          mutation CommunityGroupDelete($communityGroupId: Int!) {
+            communityGroupDelete(communityGroupID: $communityGroupId) {
+              communityGroup {
+                id
+                name
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           communityGroupId: null,
         })

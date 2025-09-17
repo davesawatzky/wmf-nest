@@ -42,10 +42,12 @@ describe('SchoolGroup', () => {
     let response: any
 
     it('Can return the full list of schoolGroups', async () => {
-      response = await request<{ schoolGroups: SchoolGroup[] }>(globalThis.httpServer)
+      response = await request<{ schoolGroups: SchoolGroup[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query SchoolGroups{
+          query SchoolGroups {
             schoolGroups {
               id
               name
@@ -65,10 +67,12 @@ describe('SchoolGroup', () => {
     })
 
     it('Can return the full list of schoolGroups with associated schools and reg', async () => {
-      response = await request<{ schoolGroups: SchoolGroup[] }>(globalThis.httpServer)
+      response = await request<{ schoolGroups: SchoolGroup[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query SchoolGroups{
+          query SchoolGroups {
             schoolGroups {
               id
               name
@@ -86,15 +90,21 @@ describe('SchoolGroup', () => {
           }
         `)
         .expectNoErrors()
-      expect(response.data.schoolGroups[0].school).toHaveProperty('registration')
-      expect(response.data.schoolGroups[0].school.registration.label).toBeTruthy()
+      expect(response.data.schoolGroups[0].school).toHaveProperty(
+        'registration',
+      )
+      expect(
+        response.data.schoolGroups[0].school.registration.label,
+      ).toBeTruthy()
     })
 
     it('Can return the full list of schoolGroups from one school using schoolID', async () => {
-      response = await request<{ schoolGroups: SchoolGroup[] }>(globalThis.httpServer)
+      response = await request<{ schoolGroups: SchoolGroup[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query SchoolGroups{
+          query SchoolGroups {
             schoolGroups {
               id
               name
@@ -110,7 +120,9 @@ describe('SchoolGroup', () => {
     })
 
     it('Can return a single schoolGroup with schoolGroupID with school', async () => {
-      response = await request<{ schoolGroup: SchoolGroup }>(globalThis.httpServer)
+      response = await request<{ schoolGroup: SchoolGroup }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query SchoolGroup($schoolGroupId: Int!) {
@@ -133,7 +145,9 @@ describe('SchoolGroup', () => {
     })
 
     it('Returns an error if nothing is found', async () => {
-      response = await request<{ schoolGroup: SchoolGroup }>(globalThis.httpServer)
+      response = await request<{ schoolGroup: SchoolGroup }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query SchoolGroup($schoolGroupId: Int!) {
@@ -174,11 +188,19 @@ describe('SchoolGroup', () => {
     })
 
     it('Can create a schoolGroup', async () => {
-      response = await request<{ schoolGroupCreate: SchoolGroup }>(globalThis.httpServer)
+      response = await request<{ schoolGroupCreate: SchoolGroup }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          mutation SchoolGroup($schoolId: Int!, $schoolGroupInput: SchoolGroupInput) {
-            schoolGroupCreate(schoolID: $schoolId, schoolGroupInput: $schoolGroupInput) {
+          mutation SchoolGroup(
+            $schoolId: Int!
+            $schoolGroupInput: SchoolGroupInput
+          ) {
+            schoolGroupCreate(
+              schoolID: $schoolId
+              schoolGroupInput: $schoolGroupInput
+            ) {
               schoolGroup {
                 id
               }
@@ -194,16 +216,26 @@ describe('SchoolGroup', () => {
         })
         .expectNoErrors()
       schoolGroupId = await response.data.schoolGroupCreate.schoolGroup.id
-      expect(response.data.schoolGroupCreate.schoolGroup.id).toBeTypeOf('number')
+      expect(response.data.schoolGroupCreate.schoolGroup.id).toBeTypeOf(
+        'number',
+      )
       expect(response.data.schoolGroupCreate.schoolGroup.id).toBeTruthy()
     })
 
     it('Can create a schoolGroup with schoolGroup Input', async () => {
-      response = await request<{ schoolGroupCreate: SchoolGroup }>(globalThis.httpServer)
+      response = await request<{ schoolGroupCreate: SchoolGroup }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          mutation SchoolGroup($schoolId: Int!, $schoolGroupInput: SchoolGroupInput) {
-            schoolGroupCreate(schoolID: $schoolId, schoolGroupInput: $schoolGroupInput) {
+          mutation SchoolGroup(
+            $schoolId: Int!
+            $schoolGroupInput: SchoolGroupInput
+          ) {
+            schoolGroupCreate(
+              schoolID: $schoolId
+              schoolGroupInput: $schoolGroupInput
+            ) {
               schoolGroup {
                 id
                 name
@@ -223,16 +255,28 @@ describe('SchoolGroup', () => {
         })
         .expectNoErrors()
       schoolGroupId = await response.data.schoolGroupCreate.schoolGroup.id
-      expect(response.data.schoolGroupCreate.schoolGroup.id).toBeTypeOf('number')
-      expect(response.data.schoolGroupCreate.schoolGroup.name).toBe('Test SchoolGroup')
+      expect(response.data.schoolGroupCreate.schoolGroup.id).toBeTypeOf(
+        'number',
+      )
+      expect(response.data.schoolGroupCreate.schoolGroup.name).toBe(
+        'Test SchoolGroup',
+      )
     })
 
     it('Returns an userError if trying to create a schoolGroup without valid schoolID', async () => {
-      response = await request<{ schoolGroupCreate: SchoolGroup }>(globalThis.httpServer)
+      response = await request<{ schoolGroupCreate: SchoolGroup }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          mutation SchoolGroup($schoolId: Int!, $schoolGroupInput: SchoolGroupInput) {
-            schoolGroupCreate(schoolID: $schoolId, schoolGroupInput: $schoolGroupInput) {
+          mutation SchoolGroup(
+            $schoolId: Int!
+            $schoolGroupInput: SchoolGroupInput
+          ) {
+            schoolGroupCreate(
+              schoolID: $schoolId
+              schoolGroupInput: $schoolGroupInput
+            ) {
               schoolGroup {
                 id
                 name
@@ -250,7 +294,9 @@ describe('SchoolGroup', () => {
             name: 'Test SchoolGroup',
           },
         })
-      expect(response.data.schoolGroupCreate.userErrors[0].message).toBeTruthy()
+      expect(
+        response.data.schoolGroupCreate.userErrors[0].message,
+      ).toBeTruthy()
       expect(response.data.schoolGroupCreate.schoolGroup).toBeNull()
     })
   })
@@ -280,23 +326,31 @@ describe('SchoolGroup', () => {
     })
 
     it('Can update any schoolGroup', async () => {
-      response = await request<{ schoolGroupUpdate: SchoolGroup }>(globalThis.httpServer)
+      response = await request<{ schoolGroupUpdate: SchoolGroup }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation SchoolGroupUpdate($schoolGroupId: Int!, $schoolGroupInput: SchoolGroupInput!) {
-          schoolGroupUpdate(schoolGroupID: $schoolGroupId, schoolGroupInput: $schoolGroupInput) {
-            schoolGroup {
-              id
-              name
-              groupSize
-            }
-            userErrors {
-              field
-              message
+          mutation SchoolGroupUpdate(
+            $schoolGroupId: Int!
+            $schoolGroupInput: SchoolGroupInput!
+          ) {
+            schoolGroupUpdate(
+              schoolGroupID: $schoolGroupId
+              schoolGroupInput: $schoolGroupInput
+            ) {
+              schoolGroup {
+                id
+                name
+                groupSize
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        }
-      `)
+        `)
         .variables({
           schoolGroupId,
           schoolGroupInput: {
@@ -305,56 +359,76 @@ describe('SchoolGroup', () => {
           },
         })
         .expectNoErrors()
-      expect(response.data.schoolGroupUpdate.schoolGroup.name).toBe('Updated SchoolGroup')
+      expect(response.data.schoolGroupUpdate.schoolGroup.name).toBe(
+        'Updated SchoolGroup',
+      )
       expect(response.data.schoolGroupUpdate.schoolGroup.groupSize).toBe(30)
     })
 
     it('Returns userError if incorrect schoolGroup id', async () => {
-      response = await request<{ schoolGroupUpdate: SchoolGroup }>(globalThis.httpServer)
+      response = await request<{ schoolGroupUpdate: SchoolGroup }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation SchoolGroupUpdate($schoolGroupId: Int!, $schoolGroupInput: SchoolGroupInput!) {
-          schoolGroupUpdate(schoolGroupID: $schoolGroupId, schoolGroupInput: $schoolGroupInput) {
-            schoolGroup {
-              id
-              name
-              groupSize
-            }
-            userErrors {
-              field
-              message
+          mutation SchoolGroupUpdate(
+            $schoolGroupId: Int!
+            $schoolGroupInput: SchoolGroupInput!
+          ) {
+            schoolGroupUpdate(
+              schoolGroupID: $schoolGroupId
+              schoolGroupInput: $schoolGroupInput
+            ) {
+              schoolGroup {
+                id
+                name
+                groupSize
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        }
-      `)
+        `)
         .variables({
           schoolGroupId: schoolGroupId + 1,
           schoolGroupInput: {
             name: 'Updated SchoolGroup',
           },
         })
-      expect(response.data.schoolGroupUpdate.userErrors[0].message).toBeTruthy()
+      expect(
+        response.data.schoolGroupUpdate.userErrors[0].message,
+      ).toBeTruthy()
       expect(response.data.schoolGroupUpdate.schoolGroup).toBeNull()
     })
 
     it('Returns html status error if missing schoolGroup id', async () => {
-      response = await request<{ schoolGroupUpdate: SchoolGroup }>(globalThis.httpServer)
+      response = await request<{ schoolGroupUpdate: SchoolGroup }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation SchoolGroupUpdate($schoolGroupId: Int!, $schoolGroupInput: SchoolGroupInput!) {
-          schoolGroupUpdate(schoolGroupID: $schoolGroupId, schoolGroupInput: $schoolGroupInput) {
-            schoolGroup {
-              id
-              name
-              groupSize
-            }
-            userErrors {
-              field
-              message
+          mutation SchoolGroupUpdate(
+            $schoolGroupId: Int!
+            $schoolGroupInput: SchoolGroupInput!
+          ) {
+            schoolGroupUpdate(
+              schoolGroupID: $schoolGroupId
+              schoolGroupInput: $schoolGroupInput
+            ) {
+              schoolGroup {
+                id
+                name
+                groupSize
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        }
-      `)
+        `)
         .variables({
           schoolGroupId: null,
           schoolGroupInput: {
@@ -365,23 +439,31 @@ describe('SchoolGroup', () => {
     })
 
     it('Returns html status error if any bad input args', async () => {
-      response = await request<{ schoolGroupUpdate: SchoolGroup }>(globalThis.httpServer)
+      response = await request<{ schoolGroupUpdate: SchoolGroup }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation SchoolGroupUpdate($schoolGroupId: Int!, $schoolGroupInput: SchoolGroupInput!) {
-          schoolGroupUpdate(schoolGroupID: $schoolGroupId, schoolGroupInput: $schoolGroupInput) {
-            schoolGroup {
-              id
-              name
-              groupSize
-            }
-            userErrors {
-              field
-              message
+          mutation SchoolGroupUpdate(
+            $schoolGroupId: Int!
+            $schoolGroupInput: SchoolGroupInput!
+          ) {
+            schoolGroupUpdate(
+              schoolGroupID: $schoolGroupId
+              schoolGroupInput: $schoolGroupInput
+            ) {
+              schoolGroup {
+                id
+                name
+                groupSize
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        }
-      `)
+        `)
         .variables({
           schoolGroupId,
           schoolGroupInput: {
@@ -423,75 +505,86 @@ describe('SchoolGroup', () => {
     })
 
     it('Can delete a schoolGroup', async () => {
-      response = await request<{ schoolGroupDelete: boolean }>(globalThis.httpServer)
+      response = await request<{ schoolGroupDelete: boolean }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation SchoolGroupDelete($schoolGroupId: Int!) {
-          schoolGroupDelete(schoolGroupID: $schoolGroupId) {
-            schoolGroup {
-              id
-              name
-            }
-            userErrors {
-              field 
-              message
+          mutation SchoolGroupDelete($schoolGroupId: Int!) {
+            schoolGroupDelete(schoolGroupID: $schoolGroupId) {
+              schoolGroup {
+                id
+                name
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           schoolGroupId,
         })
         .expectNoErrors()
 
-      const deleteCheck = await globalThis.prisma.tbl_reg_schoolgroup.findUnique({
-        where: { id: schoolGroupId },
-      })
+      const deleteCheck
+        = await globalThis.prisma.tbl_reg_schoolgroup.findUnique({
+          where: { id: schoolGroupId },
+        })
       expect(deleteCheck).toBeNull()
-      expect(response.data.schoolGroupDelete.schoolGroup.name).toBe('Test SchoolGroup')
+      expect(response.data.schoolGroupDelete.schoolGroup.name).toBe(
+        'Test SchoolGroup',
+      )
     })
 
     it('Returns a userError if schoolGroup not found', async () => {
-      response = await request<{ schoolGroupDelete: boolean }>(globalThis.httpServer)
+      response = await request<{ schoolGroupDelete: boolean }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation SchoolGroupDelete($schoolGroupId: Int!) {
-          schoolGroupDelete(schoolGroupID: $schoolGroupId) {
-            schoolGroup {
-              id
-              name
-            }
-            userErrors {
-              field 
-              message
+          mutation SchoolGroupDelete($schoolGroupId: Int!) {
+            schoolGroupDelete(schoolGroupID: $schoolGroupId) {
+              schoolGroup {
+                id
+                name
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           schoolGroupId: schoolGroupId + 1,
         })
         .expectNoErrors()
-      expect(response.data.schoolGroupDelete.userErrors[0].message).toBeTruthy()
+      expect(
+        response.data.schoolGroupDelete.userErrors[0].message,
+      ).toBeTruthy()
     })
 
     it('Returns status error if schoolGroup id not given', async () => {
-      response = await request<{ schoolGroupDelete: boolean }>(globalThis.httpServer)
+      response = await request<{ schoolGroupDelete: boolean }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation SchoolGroupDelete($schoolGroupId: Int!) {
-          schoolGroupDelete(schoolGroupID: $schoolGroupId) {
-            schoolGroup {
-              id
-              name
-            }
-            userErrors {
-              field 
-              message
+          mutation SchoolGroupDelete($schoolGroupId: Int!) {
+            schoolGroupDelete(schoolGroupID: $schoolGroupId) {
+              schoolGroup {
+                id
+                name
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           schoolGroupId: null,
         })

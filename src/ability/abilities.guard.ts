@@ -2,7 +2,6 @@ import { ForbiddenError } from '@casl/ability'
 import {
   CanActivate,
   ExecutionContext,
-
   ForbiddenException,
   Injectable,
 } from '@nestjs/common'

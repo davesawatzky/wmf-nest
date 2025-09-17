@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common'
 import { tbl_user } from '@prisma/client'
 import { PrismaService } from '@/prisma/prisma.service'
 import { UserInput } from './dto/user.input'
@@ -32,11 +38,15 @@ export class UserService {
 
   async findOne(userID?: tbl_user['id'], email?: tbl_user['email']) {
     try {
-      this.logger.log(`Finding user by ${userID ? `ID: ${userID}` : `email: ${email}`}`)
+      this.logger.log(
+        `Finding user by ${userID ? `ID: ${userID}` : `email: ${email}`}`,
+      )
 
       if (!userID && !email) {
         this.logger.warn('FindOne called without userID or email parameters')
-        throw new BadRequestException('Either userID or email must be provided')
+        throw new BadRequestException(
+          'Either userID or email must be provided',
+        )
       }
 
       let response: tbl_user
@@ -53,7 +63,9 @@ export class UserService {
       }
 
       if (!response) {
-        this.logger.warn(`User not found with ${userID ? `ID: ${userID}` : `email: ${email}`}`)
+        this.logger.warn(
+          `User not found with ${userID ? `ID: ${userID}` : `email: ${email}`}`,
+        )
         throw new NotFoundException('User not found')
       }
 
@@ -68,11 +80,17 @@ export class UserService {
     }
     catch (error: any) {
       // Re-throw known exceptions
-      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+      if (
+        error instanceof BadRequestException
+        || error instanceof NotFoundException
+      ) {
         throw error
       }
 
-      this.logger.error(`Failed to find user by ${userID ? `ID: ${userID}` : `email: ${email}`}`, error)
+      this.logger.error(
+        `Failed to find user by ${userID ? `ID: ${userID}` : `email: ${email}`}`,
+        error,
+      )
       throw new InternalServerErrorException('Failed to retrieve user')
     }
   }
@@ -96,7 +114,9 @@ export class UserService {
     }
     catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(`User update failed - User with ID ${userID} not found`)
+        this.logger.warn(
+          `User update failed - User with ID ${userID} not found`,
+        )
         return {
           userErrors: [
             {
@@ -157,7 +177,9 @@ export class UserService {
     }
     catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(`User deletion failed - User with ID ${userID} not found`)
+        this.logger.warn(
+          `User deletion failed - User with ID ${userID} not found`,
+        )
         return {
           userErrors: [
             {
@@ -169,11 +191,14 @@ export class UserService {
         }
       }
       else if (error.code === 'P2003') {
-        this.logger.warn(`User deletion failed - Foreign key constraint violation for user ${userID}`)
+        this.logger.warn(
+          `User deletion failed - Foreign key constraint violation for user ${userID}`,
+        )
         return {
           userErrors: [
             {
-              message: 'Cannot delete user with existing registrations or orders',
+              message:
+                'Cannot delete user with existing registrations or orders',
               field: ['id'],
             },
           ],

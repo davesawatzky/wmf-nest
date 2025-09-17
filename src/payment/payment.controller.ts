@@ -21,7 +21,10 @@ export class PaymentController {
   // @UseGuards(RestJwtAuthGuard)
   async summarizePayment(@Body() body) {
     const { regId, tokenId } = body
-    const paymentDetails = await this.paymentService.summarizePayment(regId, tokenId)
+    const paymentDetails = await this.paymentService.summarizePayment(
+      regId,
+      tokenId,
+    )
     return paymentDetails
   }
 
@@ -29,7 +32,11 @@ export class PaymentController {
   // @UseGuards(RestJwtAuthGuard)
   async createPaymentIntent(@Body() body) {
     const { regId, WMFconfirmationId, tokenId } = body
-    const paymentIntent = await this.paymentService.createPaymentIntent(regId, WMFconfirmationId, tokenId)
+    const paymentIntent = await this.paymentService.createPaymentIntent(
+      regId,
+      WMFconfirmationId,
+      tokenId,
+    )
     return {
       totalPayment: paymentIntent.amount,
       client_secret: paymentIntent.client_secret,

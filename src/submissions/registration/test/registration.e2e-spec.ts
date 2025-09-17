@@ -28,7 +28,9 @@ describe('Registration', () => {
     let response: any
 
     it('Should return full registration list', async () => {
-      response = await request<{ registrations: Registration[] }>(globalThis.httpServer)
+      response = await request<{ registrations: Registration[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Registrations {
@@ -45,8 +47,7 @@ describe('Registration', () => {
       expect(response.data.registrations).toBeTruthy()
       if (globalThis.admin)
         expect(response.data.registrations.length).toBeGreaterThan(10)
-      else
-        expect(response.data.registrations.length).toBeGreaterThan(0)
+      else expect(response.data.registrations.length).toBeGreaterThan(0)
     })
 
     it('Can read all registrations according to performerType', () => {})

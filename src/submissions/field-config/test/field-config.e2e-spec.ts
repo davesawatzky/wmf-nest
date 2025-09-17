@@ -1,6 +1,9 @@
 import gql from 'graphql-tag'
 import request from 'supertest-graphql'
-import { FieldConfig, FieldConfigPayload } from '../entities/field-config.entity'
+import {
+  FieldConfig,
+  FieldConfigPayload,
+} from '../entities/field-config.entity'
 
 describe('FieldConfig', () => {
   let testFieldConfigId: number
@@ -41,7 +44,9 @@ describe('FieldConfig', () => {
     let response: any
 
     it('Can provide a list of all field configurations', async () => {
-      response = await request<{ fieldConfigs: FieldConfig[] }>(globalThis.httpServer)
+      response = await request<{ fieldConfigs: FieldConfig[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FieldConfigs {
@@ -75,7 +80,9 @@ describe('FieldConfig', () => {
     })
 
     it('Returns field configurations with correct data types', async () => {
-      response = await request<{ fieldConfigs: FieldConfig[] }>(globalThis.httpServer)
+      response = await request<{ fieldConfigs: FieldConfig[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FieldConfigs {
@@ -112,7 +119,9 @@ describe('FieldConfig', () => {
     let response: any
 
     it('Can find field config using tableName and fieldName', async () => {
-      response = await request<{ fieldConfig: FieldConfig }>(globalThis.httpServer)
+      response = await request<{ fieldConfig: FieldConfig }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FieldConfig($tableName: String!, $fieldName: String!) {
@@ -146,7 +155,9 @@ describe('FieldConfig', () => {
     })
 
     it('Returns error when field config not found', async () => {
-      response = await request<{ fieldConfig: FieldConfig }>(globalThis.httpServer)
+      response = await request<{ fieldConfig: FieldConfig }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FieldConfig($tableName: String!, $fieldName: String!) {
@@ -167,7 +178,9 @@ describe('FieldConfig', () => {
     })
 
     it('Returns error when required parameters are missing', async () => {
-      response = await request<{ fieldConfig: FieldConfig }>(globalThis.httpServer)
+      response = await request<{ fieldConfig: FieldConfig }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FieldConfig($tableName: String!, $fieldName: String!) {
@@ -194,15 +207,19 @@ describe('FieldConfig', () => {
     afterEach(async () => {
       // Clean up created field config
       if (createdFieldConfigId) {
-        await globalThis.prisma.tbl_field_config.delete({
-          where: { id: createdFieldConfigId },
-        }).catch(() => {}) // Ignore errors if already deleted
+        await globalThis.prisma.tbl_field_config
+          .delete({
+            where: { id: createdFieldConfigId },
+          })
+          .catch(() => {}) // Ignore errors if already deleted
         createdFieldConfigId = undefined
       }
     })
 
     it('Successfully creates a field config using FieldConfigInput', async () => {
-      response = await request<{ fieldConfigCreate: FieldConfigPayload }>(globalThis.httpServer)
+      response = await request<{ fieldConfigCreate: FieldConfigPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateFieldConfig($fieldConfigInput: FieldConfigInput!) {
@@ -245,16 +262,30 @@ describe('FieldConfig', () => {
 
       expect(response.data.fieldConfigCreate.userErrors).toEqual([])
       expect(response.data.fieldConfigCreate.fieldConfig).toBeTruthy()
-      expect(response.data.fieldConfigCreate.fieldConfig.tableName).toBe('new_test_table')
-      expect(response.data.fieldConfigCreate.fieldConfig.fieldName).toBe('e2e_test_field_create')
-      expect(response.data.fieldConfigCreate.fieldConfig.communityRequired).toBe(true)
-      expect(response.data.fieldConfigCreate.fieldConfig.schoolRequired).toBe(true)
-      expect(response.data.fieldConfigCreate.fieldConfig.customField).toBe(true)
-      expect(response.data.fieldConfigCreate.fieldConfig.customFieldType).toBe('email')
+      expect(response.data.fieldConfigCreate.fieldConfig.tableName).toBe(
+        'new_test_table',
+      )
+      expect(response.data.fieldConfigCreate.fieldConfig.fieldName).toBe(
+        'e2e_test_field_create',
+      )
+      expect(
+        response.data.fieldConfigCreate.fieldConfig.communityRequired,
+      ).toBe(true)
+      expect(response.data.fieldConfigCreate.fieldConfig.schoolRequired).toBe(
+        true,
+      )
+      expect(response.data.fieldConfigCreate.fieldConfig.customField).toBe(
+        true,
+      )
+      expect(response.data.fieldConfigCreate.fieldConfig.customFieldType).toBe(
+        'email',
+      )
     })
 
     it('Returns userError when trying to create duplicate field config', async () => {
-      response = await request<{ fieldConfigCreate: FieldConfigPayload }>(globalThis.httpServer)
+      response = await request<{ fieldConfigCreate: FieldConfigPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateFieldConfig($fieldConfigInput: FieldConfigInput!) {
@@ -286,13 +317,19 @@ describe('FieldConfig', () => {
         })
         .expectNoErrors()
 
-      expect(response.data.fieldConfigCreate.userErrors.length).toBeGreaterThan(0)
-      expect(response.data.fieldConfigCreate.userErrors[0].message).toContain('already exists')
+      expect(response.data.fieldConfigCreate.userErrors.length).toBeGreaterThan(
+        0,
+      )
+      expect(response.data.fieldConfigCreate.userErrors[0].message).toContain(
+        'already exists',
+      )
       expect(response.data.fieldConfigCreate.fieldConfig).toBeNull()
     })
 
     it('Returns error with invalid input data', async () => {
-      response = await request<{ fieldConfigCreate: FieldConfigPayload }>(globalThis.httpServer)
+      response = await request<{ fieldConfigCreate: FieldConfigPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateFieldConfig($fieldConfigInput: FieldConfigInput!) {
@@ -320,7 +357,9 @@ describe('FieldConfig', () => {
     })
 
     it('Creates field config with minimal required fields', async () => {
-      response = await request<{ fieldConfigCreate: FieldConfigPayload }>(globalThis.httpServer)
+      response = await request<{ fieldConfigCreate: FieldConfigPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateFieldConfig($fieldConfigInput: FieldConfigInput!) {
@@ -356,8 +395,12 @@ describe('FieldConfig', () => {
 
       expect(response.data.fieldConfigCreate.userErrors).toEqual([])
       expect(response.data.fieldConfigCreate.fieldConfig).toBeTruthy()
-      expect(response.data.fieldConfigCreate.fieldConfig.tableName).toBe('minimal_table')
-      expect(response.data.fieldConfigCreate.fieldConfig.fieldName).toBe('e2e_test_minimal_field')
+      expect(response.data.fieldConfigCreate.fieldConfig.tableName).toBe(
+        'minimal_table',
+      )
+      expect(response.data.fieldConfigCreate.fieldConfig.fieldName).toBe(
+        'e2e_test_minimal_field',
+      )
     })
   })
 
@@ -386,18 +429,28 @@ describe('FieldConfig', () => {
     afterEach(async () => {
       // Clean up test data
       if (updateTestFieldConfigId) {
-        await globalThis.prisma.tbl_field_config.delete({
-          where: { id: updateTestFieldConfigId },
-        }).catch(() => {}) // Ignore errors if already deleted
+        await globalThis.prisma.tbl_field_config
+          .delete({
+            where: { id: updateTestFieldConfigId },
+          })
+          .catch(() => {}) // Ignore errors if already deleted
       }
     })
 
     it('Successfully updates a field config', async () => {
-      response = await request<{ fieldConfigUpdate: FieldConfigPayload }>(globalThis.httpServer)
+      response = await request<{ fieldConfigUpdate: FieldConfigPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation UpdateFieldConfig($fieldConfigId: Int!, $fieldConfigInput: FieldConfigInput!) {
-            fieldConfigUpdate(fieldConfigID: $fieldConfigId, fieldConfigInput: $fieldConfigInput) {
+          mutation UpdateFieldConfig(
+            $fieldConfigId: Int!
+            $fieldConfigInput: FieldConfigInput!
+          ) {
+            fieldConfigUpdate(
+              fieldConfigID: $fieldConfigId
+              fieldConfigInput: $fieldConfigInput
+            ) {
               userErrors {
                 message
                 field
@@ -435,20 +488,40 @@ describe('FieldConfig', () => {
 
       expect(response.data.fieldConfigUpdate.userErrors).toEqual([])
       expect(response.data.fieldConfigUpdate.fieldConfig).toBeTruthy()
-      expect(response.data.fieldConfigUpdate.fieldConfig.id).toBe(updateTestFieldConfigId)
-      expect(response.data.fieldConfigUpdate.fieldConfig.tableName).toBe('updated_table')
-      expect(response.data.fieldConfigUpdate.fieldConfig.fieldName).toBe('e2e_test_updated_field')
-      expect(response.data.fieldConfigUpdate.fieldConfig.submissionRequired).toBe(true)
-      expect(response.data.fieldConfigUpdate.fieldConfig.communityRequired).toBe(true)
-      expect(response.data.fieldConfigUpdate.fieldConfig.customFieldType).toBe('number')
+      expect(response.data.fieldConfigUpdate.fieldConfig.id).toBe(
+        updateTestFieldConfigId,
+      )
+      expect(response.data.fieldConfigUpdate.fieldConfig.tableName).toBe(
+        'updated_table',
+      )
+      expect(response.data.fieldConfigUpdate.fieldConfig.fieldName).toBe(
+        'e2e_test_updated_field',
+      )
+      expect(
+        response.data.fieldConfigUpdate.fieldConfig.submissionRequired,
+      ).toBe(true)
+      expect(
+        response.data.fieldConfigUpdate.fieldConfig.communityRequired,
+      ).toBe(true)
+      expect(response.data.fieldConfigUpdate.fieldConfig.customFieldType).toBe(
+        'number',
+      )
     })
 
     it('Returns userError when trying to update non-existent field config', async () => {
-      response = await request<{ fieldConfigUpdate: FieldConfigPayload }>(globalThis.httpServer)
+      response = await request<{ fieldConfigUpdate: FieldConfigPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation UpdateFieldConfig($fieldConfigId: Int!, $fieldConfigInput: FieldConfigInput!) {
-            fieldConfigUpdate(fieldConfigID: $fieldConfigId, fieldConfigInput: $fieldConfigInput) {
+          mutation UpdateFieldConfig(
+            $fieldConfigId: Int!
+            $fieldConfigInput: FieldConfigInput!
+          ) {
+            fieldConfigUpdate(
+              fieldConfigID: $fieldConfigId
+              fieldConfigInput: $fieldConfigInput
+            ) {
               userErrors {
                 message
                 field
@@ -474,17 +547,29 @@ describe('FieldConfig', () => {
         })
         .expectNoErrors()
 
-      expect(response.data.fieldConfigUpdate.userErrors.length).toBeGreaterThan(0)
-      expect(response.data.fieldConfigUpdate.userErrors[0].message).toContain('not found')
+      expect(response.data.fieldConfigUpdate.userErrors.length).toBeGreaterThan(
+        0,
+      )
+      expect(response.data.fieldConfigUpdate.userErrors[0].message).toContain(
+        'not found',
+      )
       expect(response.data.fieldConfigUpdate.fieldConfig).toBeNull()
     })
 
     it('Returns error with invalid update input', async () => {
-      response = await request<{ fieldConfigUpdate: FieldConfigPayload }>(globalThis.httpServer)
+      response = await request<{ fieldConfigUpdate: FieldConfigPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-          mutation UpdateFieldConfig($fieldConfigId: Int!, $fieldConfigInput: FieldConfigInput!) {
-            fieldConfigUpdate(fieldConfigID: $fieldConfigId, fieldConfigInput: $fieldConfigInput) {
+          mutation UpdateFieldConfig(
+            $fieldConfigId: Int!
+            $fieldConfigInput: FieldConfigInput!
+          ) {
+            fieldConfigUpdate(
+              fieldConfigID: $fieldConfigId
+              fieldConfigInput: $fieldConfigInput
+            ) {
               userErrors {
                 message
                 field
@@ -531,7 +616,9 @@ describe('FieldConfig', () => {
     })
 
     it('Successfully deletes a field config', async () => {
-      response = await request<{ fieldConfigDelete: FieldConfigPayload }>(globalThis.httpServer)
+      response = await request<{ fieldConfigDelete: FieldConfigPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation DeleteFieldConfig($fieldConfigId: Int!) {
@@ -555,19 +642,25 @@ describe('FieldConfig', () => {
 
       expect(response.data.fieldConfigDelete.userErrors).toEqual([])
       expect(response.data.fieldConfigDelete.fieldConfig).toBeTruthy()
-      expect(response.data.fieldConfigDelete.fieldConfig.id).toBe(deleteTestFieldConfigId)
+      expect(response.data.fieldConfigDelete.fieldConfig.id).toBe(
+        deleteTestFieldConfigId,
+      )
 
       // Verify the field config was actually deleted
-      const deletedConfig = await globalThis.prisma.tbl_field_config.findUnique({
-        where: { id: deleteTestFieldConfigId },
-      })
+      const deletedConfig = await globalThis.prisma.tbl_field_config.findUnique(
+        {
+          where: { id: deleteTestFieldConfigId },
+        },
+      )
       expect(deletedConfig).toBeNull()
 
       deleteTestFieldConfigId = undefined // Prevent cleanup attempt
     })
 
     it('Returns userError when trying to delete non-existent field config', async () => {
-      response = await request<{ fieldConfigDelete: FieldConfigPayload }>(globalThis.httpServer)
+      response = await request<{ fieldConfigDelete: FieldConfigPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation DeleteFieldConfig($fieldConfigId: Int!) {
@@ -587,13 +680,19 @@ describe('FieldConfig', () => {
         })
         .expectNoErrors()
 
-      expect(response.data.fieldConfigDelete.userErrors.length).toBeGreaterThan(0)
-      expect(response.data.fieldConfigDelete.userErrors[0].message).toContain('not found')
+      expect(response.data.fieldConfigDelete.userErrors.length).toBeGreaterThan(
+        0,
+      )
+      expect(response.data.fieldConfigDelete.userErrors[0].message).toContain(
+        'not found',
+      )
       expect(response.data.fieldConfigDelete.fieldConfig).toBeNull()
     })
 
     it('Returns error with invalid field config ID', async () => {
-      response = await request<{ fieldConfigDelete: FieldConfigPayload }>(globalThis.httpServer)
+      response = await request<{ fieldConfigDelete: FieldConfigPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation DeleteFieldConfig($fieldConfigId: Int!) {
@@ -618,25 +717,28 @@ describe('FieldConfig', () => {
     afterEach(async () => {
       // Clean up if deletion test failed
       if (deleteTestFieldConfigId) {
-        await globalThis.prisma.tbl_field_config.delete({
-          where: { id: deleteTestFieldConfigId },
-        }).catch(() => {}) // Ignore errors if already deleted
+        await globalThis.prisma.tbl_field_config
+          .delete({
+            where: { id: deleteTestFieldConfigId },
+          })
+          .catch(() => {}) // Ignore errors if already deleted
       }
     })
   })
 
   describe('Authentication and Authorization', () => {
     it('Requires authentication for all operations', async () => {
-      const response = await request<{ fieldConfigs: FieldConfig[] }>(globalThis.httpServer)
-        .query(gql`
-          query FieldConfigs {
-            fieldConfigs {
-              id
-              tableName
-              fieldName
-            }
+      const response = await request<{ fieldConfigs: FieldConfig[] }>(
+        globalThis.httpServer,
+      ).query(gql`
+        query FieldConfigs {
+          fieldConfigs {
+            id
+            tableName
+            fieldName
           }
-        `)
+        }
+      `)
 
       expect(response.errors).toBeTruthy()
       expect(response.errors[0].message).toContain('Unauthorized')
@@ -645,7 +747,9 @@ describe('FieldConfig', () => {
     it('Enforces read permissions for queries', async () => {
       // Note: In a real scenario, you'd test with a user that lacks read permissions
       // This test assumes the admin user has all permissions
-      const response = await request<{ fieldConfigs: FieldConfig[] }>(globalThis.httpServer)
+      const response = await request<{ fieldConfigs: FieldConfig[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query FieldConfigs {
@@ -665,7 +769,9 @@ describe('FieldConfig', () => {
   describe('Data Validation and Business Logic', () => {
     it('Validates performer type requirements consistency', async () => {
       // Test business rule: at least one performer type should be required
-      const response = await request<{ fieldConfigCreate: FieldConfigPayload }>(globalThis.httpServer)
+      const response = await request<{ fieldConfigCreate: FieldConfigPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateFieldConfig($fieldConfigInput: FieldConfigInput!) {
@@ -706,7 +812,9 @@ describe('FieldConfig', () => {
     })
 
     it('Handles custom field type validation', async () => {
-      const response = await request<{ fieldConfigCreate: FieldConfigPayload }>(globalThis.httpServer)
+      const response = await request<{ fieldConfigCreate: FieldConfigPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateFieldConfig($fieldConfigInput: FieldConfigInput!) {
@@ -741,8 +849,12 @@ describe('FieldConfig', () => {
         .expectNoErrors()
 
       expect(response.data.fieldConfigCreate.userErrors).toEqual([])
-      expect(response.data.fieldConfigCreate.fieldConfig.customField).toBe(true)
-      expect(response.data.fieldConfigCreate.fieldConfig.customFieldType).toBe('date')
+      expect(response.data.fieldConfigCreate.fieldConfig.customField).toBe(
+        true,
+      )
+      expect(response.data.fieldConfigCreate.fieldConfig.customFieldType).toBe(
+        'date',
+      )
 
       // Clean up
       await globalThis.prisma.tbl_field_config.delete({

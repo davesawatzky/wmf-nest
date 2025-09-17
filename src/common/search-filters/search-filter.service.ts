@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { MatchMode, OperatorType, PrismaWhereClause, SearchFilters } from './types'
+import {
+  MatchMode,
+  OperatorType,
+  PrismaWhereClause,
+  SearchFilters,
+} from './types'
 
 @Injectable()
 export class SearchFilterService {
@@ -9,7 +14,9 @@ export class SearchFilterService {
    * @param searchFilters The search filters to apply
    * @returns A Prisma-compatible where clause
    */
-  buildWhereClause<T>(searchFilters: SearchFilters<T> | undefined): PrismaWhereClause {
+  buildWhereClause<T>(
+    searchFilters: SearchFilters<T> | undefined,
+  ): PrismaWhereClause {
     if (!searchFilters) {
       return {}
     }
@@ -26,8 +33,13 @@ export class SearchFilterService {
       const { operator, constraints } = filterOptions
 
       // Skip if constraints is null, undefined, or empty array
-      if (!constraints || !Array.isArray(constraints) || constraints.length === 0)
+      if (
+        !constraints
+        || !Array.isArray(constraints)
+        || constraints.length === 0
+      ) {
         continue
+      }
 
       // Process each constraint for this field
       const fieldConditions: Record<string, any>[] = []
@@ -36,7 +48,11 @@ export class SearchFilterService {
         const { value, matchMode } = constraint
 
         // Skip if value is null, undefined, or empty string
-        if (value === undefined || value === null || (typeof value === 'string' && value.trim() === '')) {
+        if (
+          value === undefined
+          || value === null
+          || (typeof value === 'string' && value.trim() === '')
+        ) {
           continue
         }
 
@@ -96,7 +112,11 @@ export class SearchFilterService {
    * @param matchMode The match mode to apply
    * @returns A Prisma-compatible condition
    */
-  private buildConditionForField(field: string, value: any, matchMode: MatchMode): Record<string, any> {
+  private buildConditionForField(
+    field: string,
+    value: any,
+    matchMode: MatchMode,
+  ): Record<string, any> {
     const condition: Record<string, any> = {}
 
     switch (matchMode) {
@@ -134,13 +154,19 @@ export class SearchFilterService {
         condition[field] = value instanceof Date ? value : new Date(value)
         break
       case MatchMode.DATE_IS_NOT:
-        condition[field] = { not: value instanceof Date ? value : new Date(value) }
+        condition[field] = {
+          not: value instanceof Date ? value : new Date(value),
+        }
         break
       case MatchMode.DATE_BEFORE:
-        condition[field] = { lt: value instanceof Date ? value : new Date(value) }
+        condition[field] = {
+          lt: value instanceof Date ? value : new Date(value),
+        }
         break
       case MatchMode.DATE_AFTER:
-        condition[field] = { gt: value instanceof Date ? value : new Date(value) }
+        condition[field] = {
+          gt: value instanceof Date ? value : new Date(value),
+        }
         break
       default:
         condition[field] = value

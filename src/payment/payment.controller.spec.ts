@@ -1,11 +1,6 @@
 import { ConfigService } from '@nestjs/config'
 import { Test, TestingModule } from '@nestjs/testing'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-} from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { StripeService } from '@/stripe/stripe.service'
 import { PaymentCreateDto } from './dto/payment.dto'
 import { PaymentController } from './payment.controller'
@@ -20,13 +15,17 @@ describe('paymentController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PaymentController],
-      providers: [PaymentService, {
-        provide: StripeService,
-        useValue: stripe,
-      }, {
-        provide: ConfigService,
-        useValue: configService,
-      }],
+      providers: [
+        PaymentService,
+        {
+          provide: StripeService,
+          useValue: stripe,
+        },
+        {
+          provide: ConfigService,
+          useValue: configService,
+        },
+      ],
       // imports: [StripeModule],
     }).compile()
 
@@ -46,7 +45,7 @@ describe('paymentController', () => {
     let body: PaymentCreateDto
     beforeEach(() => {
       body = {
-        amount: 25.00,
+        amount: 25.0,
         currency: 'cad',
       }
       payment.createPaymentIntent = vi.fn().mockResolvedValue({

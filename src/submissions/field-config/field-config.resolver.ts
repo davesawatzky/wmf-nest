@@ -6,7 +6,10 @@ import { AbilitiesGuard } from '@/ability/abilities.guard'
 import { Action } from '@/ability/ability.factory'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { FieldConfigInput } from './dto/field-config.input'
-import { FieldConfig, FieldConfigPayload } from './entities/field-config.entity'
+import {
+  FieldConfig,
+  FieldConfigPayload,
+} from './entities/field-config.entity'
 import { FieldConfigService } from './field-config.service'
 
 @Resolver(() => FieldConfig)
@@ -54,14 +57,18 @@ export class FieldConfigResolver {
     @Args('fieldConfigInput', { type: () => FieldConfigInput })
     fieldConfigInput: FieldConfigInput,
   ) {
-    return await this.fieldConfigService.update(fieldConfigID, fieldConfigInput)
+    return await this.fieldConfigService.update(
+      fieldConfigID,
+      fieldConfigInput,
+    )
   }
 
   @Mutation(() => FieldConfigPayload)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Delete, subject: FieldConfig })
   async fieldConfigDelete(
-    @Args('fieldConfigID', { type: () => Int }) fieldConfigID: FieldConfig['id'],
+    @Args('fieldConfigID', { type: () => Int })
+    fieldConfigID: FieldConfig['id'],
   ) {
     return await this.fieldConfigService.remove(fieldConfigID)
   }

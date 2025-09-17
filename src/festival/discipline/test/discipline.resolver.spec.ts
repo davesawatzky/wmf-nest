@@ -1,10 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-} from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { InstrumentService } from '@/festival/instrument/instrument.service'
 import { SubdisciplineService } from '@/festival/subdiscipline/subdiscipline.service'
 import { PrismaService } from '@/prisma/prisma.service'

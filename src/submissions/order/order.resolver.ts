@@ -1,5 +1,14 @@
 import { UseGuards } from '@nestjs/common'
-import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  Context,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 import { tbl_order } from '@prisma/client'
 import { CheckAbilities } from '@/ability/abilities.decorator'
 import { AbilitiesGuard } from '@/ability/abilities.guard'
@@ -27,7 +36,11 @@ export class OrderResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Order })
   async orders(@Context() context) {
-    return await this.orderService.findAll(context.req.user.roles.includes('admin') ? undefined : context.req.user.id)
+    return await this.orderService.findAll(
+      context.req.user.roles.includes('admin')
+        ? undefined
+        : context.req.user.id,
+    )
   }
 
   @Query(() => Order)
@@ -37,7 +50,12 @@ export class OrderResolver {
     @Context() context,
     @Args('orderID', { type: () => Int }) orderID: Order['id'],
   ) {
-    return await this.orderService.findOne(orderID, context.req.user.roles.includes('admin') ? undefined : context.req.user.id)
+    return await this.orderService.findOne(
+      orderID,
+      context.req.user.roles.includes('admin')
+        ? undefined
+        : context.req.user.id,
+    )
   }
 
   // Mutations
@@ -46,7 +64,8 @@ export class OrderResolver {
   @CheckAbilities({ action: Action.Create, subject: Order })
   async orderCreate(
     @Context() context,
-    @Args('orderInput', { type: () => OrderInput }) orderInput: Partial<OrderInput>,
+    @Args('orderInput', { type: () => OrderInput })
+    orderInput: Partial<OrderInput>,
   ) {
     return await this.orderService.create(context.req.user.id, orderInput)
   }
@@ -56,7 +75,8 @@ export class OrderResolver {
   @CheckAbilities({ action: Action.Update, subject: Order })
   async orderUpdate(
     @Args('orderID', { type: () => Int }) orderID: Order['id'],
-    @Args('orderInput', { type: () => OrderInput }) orderInput: Partial<OrderInput>,
+    @Args('orderInput', { type: () => OrderInput })
+    orderInput: Partial<OrderInput>,
   ) {
     return await this.orderService.update(orderID, orderInput)
   }

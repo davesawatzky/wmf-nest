@@ -1,4 +1,10 @@
-import { applyDecorators, createParamDecorator, ExecutionContext, Injectable, UseGuards } from '@nestjs/common'
+import {
+  applyDecorators,
+  createParamDecorator,
+  ExecutionContext,
+  Injectable,
+  UseGuards,
+} from '@nestjs/common'
 import { GqlExecutionContext } from '@nestjs/graphql'
 import { SearchFilterService } from './search-filter.service'
 
@@ -22,9 +28,7 @@ export const SearchFilter = createParamDecorator(
  * @param fields Array of field names that can be filtered
  */
 export function ApplySearchFilters(entityName: string, fields: string[]) {
-  return applyDecorators(
-    UseSearchFilters(),
-  )
+  return applyDecorators(UseSearchFilters())
 }
 
 /**

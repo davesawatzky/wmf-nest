@@ -7,13 +7,21 @@ describe('Discipline', () => {
     let response: any
 
     it('Can provide a list of all disciplines when no arguments given', async () => {
-      response = await request<{ disciplines: Discipline[] }>(globalThis.httpServer)
+      response = await request<{ disciplines: Discipline[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Disciplines($performerType: PerformerType, $instrument: String, ) {
-            disciplines(performerType:$performerType, instrument: $instrument ) {
+          query Disciplines(
+            $performerType: PerformerType
+            $instrument: String
+          ) {
+            disciplines(
+              performerType: $performerType
+              instrument: $instrument
+            ) {
               id
-              name 
+              name
             }
           }
         `)
@@ -21,16 +29,24 @@ describe('Discipline', () => {
           performerType: null,
           instrument: null,
         })
-        // .expectNoErrors()
+      // .expectNoErrors()
       expect(response.data.disciplines.length).toBe(17)
     })
 
     it('Can provide a list of disciplines with given PerformerType', async () => {
-      response = await request<{ disciplines: Discipline[] }>(globalThis.httpServer)
+      response = await request<{ disciplines: Discipline[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Disciplines($performerType: PerformerType, $instrument: String){
-            disciplines(performerType: $performerType, instrument: $instrument) {
+          query Disciplines(
+            $performerType: PerformerType
+            $instrument: String
+          ) {
+            disciplines(
+              performerType: $performerType
+              instrument: $instrument
+            ) {
               id
               name
             }
@@ -43,11 +59,19 @@ describe('Discipline', () => {
     })
 
     it('Can provide a list of disciplines with given instrument', async () => {
-      const response2: any = await request<{ disciplines: Discipline[] }>(globalThis.httpServer)
+      const response2: any = await request<{ disciplines: Discipline[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Disciplines($performerType: PerformerType, $instrument: String){
-            disciplines(performerType: $performerType, instrument: $instrument) {
+          query Disciplines(
+            $performerType: PerformerType
+            $instrument: String
+          ) {
+            disciplines(
+              performerType: $performerType
+              instrument: $instrument
+            ) {
               id
               name
             }
@@ -62,11 +86,19 @@ describe('Discipline', () => {
     })
 
     it('Can provide a list of disciplines with performerType and instrument arguments', async () => {
-      response = await request<{ disciplines: Discipline[] }>(globalThis.httpServer)
+      response = await request<{ disciplines: Discipline[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Disciplines($performerType: PerformerType, $instrument: String){
-            disciplines(performerType: $performerType, instrument: $instrument) {
+          query Disciplines(
+            $performerType: PerformerType
+            $instrument: String
+          ) {
+            disciplines(
+              performerType: $performerType
+              instrument: $instrument
+            ) {
               id
               name
             }
@@ -80,11 +112,19 @@ describe('Discipline', () => {
     })
 
     it('Can return instruments in the disciplines list', async () => {
-      response = await request<{ disciplines: Discipline[] }>(globalThis.httpServer)
+      response = await request<{ disciplines: Discipline[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Disciplines($instrument: String, $performerType: PerformerType) {
-            disciplines(instrument: $instrument, performerType: $performerType) {
+          query Disciplines(
+            $instrument: String
+            $performerType: PerformerType
+          ) {
+            disciplines(
+              instrument: $instrument
+              performerType: $performerType
+            ) {
               id
               name
               instruments {
@@ -97,11 +137,19 @@ describe('Discipline', () => {
     })
 
     it('Can return subdisciplines in the disciplines list', async () => {
-      response = await request<{ disciplines: Discipline[] }>(globalThis.httpServer)
+      response = await request<{ disciplines: Discipline[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Disciplines($instrument: String, $performerType: PerformerType) {
-            disciplines(instrument: $instrument, performerType: $performerType) {
+          query Disciplines(
+            $instrument: String
+            $performerType: PerformerType
+          ) {
+            disciplines(
+              instrument: $instrument
+              performerType: $performerType
+            ) {
               id
               name
               subdisciplines {
@@ -114,11 +162,19 @@ describe('Discipline', () => {
     })
 
     it('Returns empty array if nothing is found', async () => {
-      response = await request<{ disciplines: Discipline[] }>(globalThis.httpServer)
+      response = await request<{ disciplines: Discipline[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Disciplines($performerType: PerformerType, $instrument: String){
-            disciplines(performerType: $performerType, instrument: $instrument) {
+          query Disciplines(
+            $performerType: PerformerType
+            $instrument: String
+          ) {
+            disciplines(
+              performerType: $performerType
+              instrument: $instrument
+            ) {
               id
               name
             }
@@ -136,7 +192,9 @@ describe('Discipline', () => {
     let response: any
 
     it('Find discipline using proper ID', async () => {
-      response = await request<{ discipline: Discipline }>(globalThis.httpServer)
+      response = await request<{ discipline: Discipline }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Discipline($disciplineId: Int!) {
@@ -153,7 +211,9 @@ describe('Discipline', () => {
     })
 
     it('Returns error when nothing found', async () => {
-      response = await request<{ discipline: Discipline }>(globalThis.httpServer)
+      response = await request<{ discipline: Discipline }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Discipline($disciplineId: Int!) {
@@ -182,20 +242,23 @@ describe('Discipline', () => {
     })
 
     it('Successfully creates a discipline using DisciplineInput', async () => {
-      response = await request<{ disciplineCreate: DisciplinePayload }>(globalThis.httpServer)
+      response = await request<{ disciplineCreate: DisciplinePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateDiscipline($disciplineInput: DisciplineInput!) {
-          disciplineCreate(disciplineInput: $disciplineInput) {
-            userErrors {
-            message
+            disciplineCreate(disciplineInput: $disciplineInput) {
+              userErrors {
+                message
+              }
+              discipline {
+                id
+                name
+              }
+            }
           }
-          discipline {
-            id
-            name
-          }
-        }
-      }`)
+        `)
         .variables({
           disciplineInput: {
             name: 'Sticks',
@@ -206,20 +269,23 @@ describe('Discipline', () => {
     })
 
     it('Returns error if trying to add duplicate discipline name', async () => {
-      response = await request<{ disciplineCreate: DisciplinePayload }>(globalThis.httpServer)
+      response = await request<{ disciplineCreate: DisciplinePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateDiscipline($disciplineInput: DisciplineInput!) {
-          disciplineCreate(disciplineInput: $disciplineInput) {
-            userErrors {
-            message
+            disciplineCreate(disciplineInput: $disciplineInput) {
+              userErrors {
+                message
+              }
+              discipline {
+                id
+                name
+              }
+            }
           }
-          discipline {
-            id
-            name
-          }
-        }
-      }`)
+        `)
         .variables({
           disciplineInput: {
             name: 'Sticks',
@@ -230,20 +296,23 @@ describe('Discipline', () => {
     })
 
     it('Improper input returns error', async () => {
-      response = await request<{ disciplineCreate: DisciplinePayload }>(globalThis.httpServer)
+      response = await request<{ disciplineCreate: DisciplinePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateDiscipline($disciplineInput: DisciplineInput!) {
-          disciplineCreate(disciplineInput: $disciplineInput) {
-            userErrors {
-            message
+            disciplineCreate(disciplineInput: $disciplineInput) {
+              userErrors {
+                message
+              }
+              discipline {
+                id
+                name
+              }
+            }
           }
-          discipline {
-            id
-            name
-          }
-        }
-      }`)
+        `)
         .variables({
           disciplineInput: {
             name: null,
@@ -258,20 +327,23 @@ describe('Discipline', () => {
     let disciplineId: number
 
     beforeEach(async () => {
-      response = await request<{ disciplineCreate: DisciplinePayload }>(globalThis.httpServer)
+      response = await request<{ disciplineCreate: DisciplinePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateDiscipline($disciplineInput: DisciplineInput!) {
-          disciplineCreate(disciplineInput: $disciplineInput) {
-            userErrors {
-            message
+            disciplineCreate(disciplineInput: $disciplineInput) {
+              userErrors {
+                message
+              }
+              discipline {
+                id
+                name
+              }
+            }
           }
-          discipline {
-            id
-            name
-          }
-        }
-      }`)
+        `)
         .variables({
           disciplineInput: {
             name: 'Sticks',
@@ -296,20 +368,29 @@ describe('Discipline', () => {
     })
 
     it('Update details of existing discipline', async () => {
-      response = await request<{ disciplineUpdate: DisciplinePayload }>(globalThis.httpServer)
+      response = await request<{ disciplineUpdate: DisciplinePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation DisciplineUpdate($disciplineId: Int!, $disciplineInput: DisciplineInput!){
-          disciplineUpdate(disciplineID: $disciplineId, disciplineInput: $disciplineInput) {
-            userErrors {
-              message
-            }
-            discipline {
-              id
-              name
+          mutation DisciplineUpdate(
+            $disciplineId: Int!
+            $disciplineInput: DisciplineInput!
+          ) {
+            disciplineUpdate(
+              disciplineID: $disciplineId
+              disciplineInput: $disciplineInput
+            ) {
+              userErrors {
+                message
+              }
+              discipline {
+                id
+                name
+              }
             }
           }
-      }`)
+        `)
         .variables({
           disciplineId,
           disciplineInput: {
@@ -321,20 +402,29 @@ describe('Discipline', () => {
     })
 
     it('Returns error if discipline not found', async () => {
-      response = await request<{ disciplineUpdate: DisciplinePayload }>(globalThis.httpServer)
+      response = await request<{ disciplineUpdate: DisciplinePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation DisciplineUpdate($disciplineId: Int!, $disciplineInput: DisciplineInput!){
-          disciplineUpdate(disciplineID: $disciplineId, disciplineInput: $disciplineInput) {
-            userErrors {
-              message
-            }
-            discipline {
-              id
-              name
+          mutation DisciplineUpdate(
+            $disciplineId: Int!
+            $disciplineInput: DisciplineInput!
+          ) {
+            disciplineUpdate(
+              disciplineID: $disciplineId
+              disciplineInput: $disciplineInput
+            ) {
+              userErrors {
+                message
+              }
+              discipline {
+                id
+                name
+              }
             }
           }
-      }`)
+        `)
         .variables({
           disciplineId: disciplineId + 1,
           disciplineInput: {
@@ -346,20 +436,29 @@ describe('Discipline', () => {
     })
 
     it('Returns error if name is null or undefined in update', async () => {
-      response = await request<{ disciplineUpdate: DisciplinePayload }>(globalThis.httpServer)
+      response = await request<{ disciplineUpdate: DisciplinePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation DisciplineUpdate($disciplineId: Int!, $disciplineInput: DisciplineInput!){
-          disciplineUpdate(disciplineID: $disciplineId, disciplineInput: $disciplineInput) {
-            userErrors {
-              message
-            }
-            discipline {
-              id
-              name
+          mutation DisciplineUpdate(
+            $disciplineId: Int!
+            $disciplineInput: DisciplineInput!
+          ) {
+            disciplineUpdate(
+              disciplineID: $disciplineId
+              disciplineInput: $disciplineInput
+            ) {
+              userErrors {
+                message
+              }
+              discipline {
+                id
+                name
+              }
             }
           }
-      }`)
+        `)
         .variables({
           disciplineId,
           disciplineInput: {
@@ -376,20 +475,23 @@ describe('Discipline', () => {
     let disciplineId: number
 
     beforeEach(async () => {
-      response = await request<{ disciplineCreate: DisciplinePayload }>(globalThis.httpServer)
+      response = await request<{ disciplineCreate: DisciplinePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateDiscipline($disciplineInput: DisciplineInput!) {
-          disciplineCreate(disciplineInput: $disciplineInput) {
-            userErrors {
-            message
+            disciplineCreate(disciplineInput: $disciplineInput) {
+              userErrors {
+                message
+              }
+              discipline {
+                id
+                name
+              }
+            }
           }
-          discipline {
-            id
-            name
-          }
-        }
-      }`)
+        `)
         .variables({
           disciplineInput: {
             name: 'Sticks',
@@ -414,20 +516,23 @@ describe('Discipline', () => {
     })
 
     it('Deletes a discipline using the disciplineID', async () => {
-      response = await request<{ disciplineDelete: DisciplinePayload }>(globalThis.httpServer)
+      response = await request<{ disciplineDelete: DisciplinePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation DisciplineDelete($disciplineId: Int!) {
-          disciplineDelete(disciplineID: $disciplineId) {
-            userErrors {
-              message
-            }
+          mutation DisciplineDelete($disciplineId: Int!) {
+            disciplineDelete(disciplineID: $disciplineId) {
+              userErrors {
+                message
+              }
               discipline {
-            id
-            name
+                id
+                name
+              }
+            }
           }
-        }
-      }`)
+        `)
         .variables({
           disciplineId,
         })
@@ -439,20 +544,23 @@ describe('Discipline', () => {
     })
 
     it('Returns error message if discipline not found', async () => {
-      response = await request<{ disciplineDelete: DisciplinePayload }>(globalThis.httpServer)
+      response = await request<{ disciplineDelete: DisciplinePayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation DisciplineDelete($disciplineId: Int!) {
-          disciplineDelete(disciplineID: $disciplineId) {
-            userErrors {
-              message
-            }
+          mutation DisciplineDelete($disciplineId: Int!) {
+            disciplineDelete(disciplineID: $disciplineId) {
+              userErrors {
+                message
+              }
               discipline {
-            id
-            name
+                id
+                name
+              }
+            }
           }
-        }
-      }`)
+        `)
         .variables({
           disciplineId: disciplineId + 1,
         })

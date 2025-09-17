@@ -1,22 +1,19 @@
-import {
-  UseGuards,
-} from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import {
-  Args,
-  Context,
-  Int,
-  Mutation,
-  Query,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { EmailConfirmationService } from '../email-confirmation/email-confirmation.service'
 import { User } from '../user/entities/user.entity'
 import { AuthService } from './auth.service'
 import { CredentialsSignin } from './dto/credentials-signin.input'
 import { CredentialsSignup } from './dto/credentials-signup.input'
 import { PasswordChangeInput } from './dto/password-change.input'
-import { AuthPayload, EmailExists, PasswordChangePayload, PasswordExists, TokenCheck } from './entities/auth.entity'
+import {
+  AuthPayload,
+  EmailExists,
+  PasswordChangePayload,
+  PasswordExists,
+  TokenCheck,
+} from './entities/auth.entity'
 import { GqlAuthGuard } from './gql-auth.guard'
 import { JwtAuthGuard } from './jwt-auth.guard'
 
@@ -66,7 +63,9 @@ export class AuthResolver {
   }
 
   @Query(() => EmailExists)
-  async passwordChangeEmailVerification(@Args('email', { type: () => String }) email: User['email']) {
+  async passwordChangeEmailVerification(
+    @Args('email', { type: () => String }) email: User['email'],
+  ) {
     const user = await this.authService.findOne(email)
     if (user) {
       await this.authService.setPasswordChangePending(user.id)
@@ -82,10 +81,12 @@ export class AuthResolver {
   ): Promise<PasswordChangePayload> {
     if (passwordChangeInput.password1 !== passwordChangeInput.password2) {
       return {
-        userErrors: [{
-          message: 'Passwords do not match',
-          field: [],
-        }],
+        userErrors: [
+          {
+            message: 'Passwords do not match',
+            field: [],
+          },
+        ],
         passwordChanged: false,
       }
     }
@@ -94,15 +95,21 @@ export class AuthResolver {
         passwordChangeInput.resetToken,
       )
       if (email) {
-        const { userErrors, passwordChanged } = await this.authService.passwordChange(email, passwordChangeInput.password1)
+        const { userErrors, passwordChanged }
+          = await this.authService.passwordChange(
+            email,
+            passwordChangeInput.password1,
+          )
         return { userErrors, passwordChanged }
       }
       else {
         return {
-          userErrors: [{
-            message: 'Could not change password',
-            field: [],
-          }],
+          userErrors: [
+            {
+              message: 'Could not change password',
+              field: [],
+            },
+          ],
           passwordChanged: false,
         }
       }
@@ -125,7 +132,10 @@ export class AuthResolver {
     try {
       const token = context.req.cookies.diatonicToken
       if (!token) {
-        return { userErrors: [{ message: 'No valid token found', field: [] }], user: null }
+        return {
+          userErrors: [{ message: 'No valid token found', field: [] }],
+          user: null,
+        }
       }
       const tokenUser = await this.authService.validateTokenAndGetUser(token)
       const user = {
@@ -139,7 +149,10 @@ export class AuthResolver {
     }
     catch (error) {
       console.error(error)
-      return { userErrors: [{ message: 'Invalid token', field: [] }], user: null }
+      return {
+        userErrors: [{ message: 'Invalid token', field: [] }],
+        user: null,
+      }
     }
   }
 

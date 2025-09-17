@@ -8,6 +8,10 @@ import { PerformerService } from './performer.service'
 @Module({
   providers: [PerformerResolver, PerformerService],
   exports: [PerformerService],
-  imports: [forwardRef(() => RegistrationModule), SelectionModule, AbilityModule],
+  imports: [
+    forwardRef(() => RegistrationModule),
+    SelectionModule,
+    AbilityModule,
+  ],
 })
 export class PerformerModule {}

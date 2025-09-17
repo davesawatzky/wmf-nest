@@ -1,7 +1,10 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { Decimal } from '@prisma/client/runtime/library'
 import { Transform, Type } from 'class-transformer'
-import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
+import {
+  GraphQLDecimal,
+  transformToDecimal,
+} from 'prisma-graphql-type-decimal'
 import { PerformerType, UserError } from '@/common.entity'
 import { Category } from '@/festival/category/entities/category.entity'
 import { Discipline } from '@/festival/discipline/entities/discipline.entity'

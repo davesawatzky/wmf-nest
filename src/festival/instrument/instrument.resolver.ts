@@ -31,7 +31,8 @@ export class InstrumentResolver {
   @Query(() => [Instrument])
   @CheckAbilities({ action: Action.Read, subject: Instrument })
   async instruments(
-    @Args('disciplineID', { type: () => Int, nullable: true }) disciplineID: Discipline['id'] | null,
+    @Args('disciplineID', { type: () => Int, nullable: true })
+    disciplineID: Discipline['id'] | null,
   ) {
     return await this.instrumentService.findAll(disciplineID)
   }
@@ -39,7 +40,8 @@ export class InstrumentResolver {
   @Query(() => Instrument)
   @CheckAbilities({ action: Action.Read, subject: Instrument })
   async instrument(
-    @Args('id', { type: () => Int, nullable: true }) id: Instrument['id'] | null,
+    @Args('id', { type: () => Int, nullable: true })
+    id: Instrument['id'] | null,
     @Args('name', { type: () => String, nullable: true })
     name: Instrument['name'] | null,
   ) {
@@ -52,7 +54,9 @@ export class InstrumentResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Create, subject: Instrument })
   @UseGuards(JwtAuthGuard)
-  async instrumentCreate(@Args('instrumentInput') instrumentInput: InstrumentInput) {
+  async instrumentCreate(
+    @Args('instrumentInput') instrumentInput: InstrumentInput,
+  ) {
     return await this.instrumentService.create(instrumentInput)
   }
 

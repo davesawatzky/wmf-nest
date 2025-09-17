@@ -19,7 +19,9 @@ export class LevelService {
   constructor(private prisma: PrismaService) {}
 
   async create(levelInput: LevelInput) {
-    this.logger.debug(`Creating level with data: ${JSON.stringify(levelInput)}`)
+    this.logger.debug(
+      `Creating level with data: ${JSON.stringify(levelInput)}`,
+    )
 
     let level: tbl_level
     let userErrors: UserError[] = []
@@ -37,7 +39,10 @@ export class LevelService {
       }
     }
     catch (error: any) {
-      this.logger.error(`Failed to create level: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to create level: ${error.message}`,
+        error.stack,
+      )
 
       if (error.code === 'P2002') {
         userErrors = [
@@ -68,7 +73,9 @@ export class LevelService {
     categoryID?: tbl_category['id'],
     subdisciplineID?: tbl_subdiscipline['id'],
   ) {
-    this.logger.debug(`Retrieving levels with filters - categoryID: ${categoryID}, subdisciplineID: ${subdisciplineID}`)
+    this.logger.debug(
+      `Retrieving levels with filters - categoryID: ${categoryID}, subdisciplineID: ${subdisciplineID}`,
+    )
 
     try {
       const levels = await this.prisma.tbl_level.findMany({
@@ -89,7 +96,10 @@ export class LevelService {
       return levels
     }
     catch (error: any) {
-      this.logger.error(`Failed to retrieve levels: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to retrieve levels: ${error.message}`,
+        error.stack,
+      )
       throw new InternalServerErrorException('Failed to retrieve levels')
     }
   }
@@ -116,17 +126,25 @@ export class LevelService {
       return level
     }
     catch (error: any) {
-      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+      if (
+        error instanceof NotFoundException
+        || error instanceof BadRequestException
+      ) {
         throw error
       }
 
-      this.logger.error(`Failed to retrieve level with ID ${id}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to retrieve level with ID ${id}: ${error.message}`,
+        error.stack,
+      )
       throw new InternalServerErrorException('Failed to retrieve level')
     }
   }
 
   async update(id: tbl_level['id'], levelInput: LevelInput) {
-    this.logger.debug(`Updating level with ID: ${id}, data: ${JSON.stringify(levelInput)}`)
+    this.logger.debug(
+      `Updating level with ID: ${id}, data: ${JSON.stringify(levelInput)}`,
+    )
 
     let level: tbl_level
     let userErrors: UserError[] = []
@@ -145,7 +163,10 @@ export class LevelService {
       }
     }
     catch (error: any) {
-      this.logger.error(`Failed to update level with ID ${id}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to update level with ID ${id}: ${error.message}`,
+        error.stack,
+      )
 
       if (error.code === 'P2025') {
         userErrors = [
@@ -154,7 +175,9 @@ export class LevelService {
             field: ['id'],
           },
         ]
-        this.logger.warn(`Attempted to update non-existent level with ID: ${id}`)
+        this.logger.warn(
+          `Attempted to update non-existent level with ID: ${id}`,
+        )
       }
       else if (error.code === 'P2002') {
         userErrors = [
@@ -163,7 +186,9 @@ export class LevelService {
             field: ['name'],
           },
         ]
-        this.logger.warn(`Duplicate level name attempted during update: ${levelInput.name}`)
+        this.logger.warn(
+          `Duplicate level name attempted during update: ${levelInput.name}`,
+        )
       }
       else {
         userErrors = [
@@ -200,7 +225,10 @@ export class LevelService {
       }
     }
     catch (error: any) {
-      this.logger.error(`Failed to delete level with ID ${id}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to delete level with ID ${id}: ${error.message}`,
+        error.stack,
+      )
 
       if (error.code === 'P2025') {
         userErrors = [
@@ -209,7 +237,9 @@ export class LevelService {
             field: ['id'],
           },
         ]
-        this.logger.warn(`Attempted to delete non-existent level with ID: ${id}`)
+        this.logger.warn(
+          `Attempted to delete non-existent level with ID: ${id}`,
+        )
       }
       else if (error.code === 'P2003') {
         userErrors = [
@@ -218,7 +248,9 @@ export class LevelService {
             field: ['id'],
           },
         ]
-        this.logger.warn(`Attempted to delete level with ID ${id} that has foreign key references`)
+        this.logger.warn(
+          `Attempted to delete level with ID ${id} that has foreign key references`,
+        )
       }
       else {
         userErrors = [

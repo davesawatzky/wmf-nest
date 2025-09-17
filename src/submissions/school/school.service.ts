@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common'
 import { tbl_reg_school, tbl_registration } from '@prisma/client'
 import { PrismaService } from '@/prisma/prisma.service'
 import { SchoolInput } from './dto/school.input'
@@ -31,22 +37,31 @@ export class SchoolService {
     }
     catch (error: any) {
       if (error.code === 'P2003') {
-        this.logger.warn(`School creation failed - Invalid registration ID: ${registrationID}`)
+        this.logger.warn(
+          `School creation failed - Invalid registration ID: ${registrationID}`,
+        )
         return {
-          userErrors: [{
-            message: 'Cannot create school. Invalid registration ID',
-            field: ['registrationId'],
-          }],
+          userErrors: [
+            {
+              message: 'Cannot create school. Invalid registration ID',
+              field: ['registrationId'],
+            },
+          ],
           school: null,
         }
       }
       else {
-        this.logger.error(`Unexpected error during school creation for registration ${registrationID}`, error)
+        this.logger.error(
+          `Unexpected error during school creation for registration ${registrationID}`,
+          error,
+        )
         return {
-          userErrors: [{
-            message: 'An unexpected error occurred while creating the school',
-            field: [],
-          }],
+          userErrors: [
+            {
+              message: 'An unexpected error occurred while creating the school',
+              field: [],
+            },
+          ],
           school: null,
         }
       }
@@ -71,10 +86,14 @@ export class SchoolService {
     try {
       if (!registrationID && !schoolID) {
         this.logger.warn('findOne called without registrationID or schoolID')
-        throw new BadRequestException('Either registrationID or schoolID must be provided')
+        throw new BadRequestException(
+          'Either registrationID or schoolID must be provided',
+        )
       }
 
-      this.logger.log(`Finding school with registrationID: ${registrationID}, schoolID: ${schoolID}`)
+      this.logger.log(
+        `Finding school with registrationID: ${registrationID}, schoolID: ${schoolID}`,
+      )
 
       const school = await this.prisma.tbl_reg_school.findUnique({
         where: {
@@ -84,17 +103,25 @@ export class SchoolService {
       })
 
       if (!school) {
-        this.logger.warn(`School not found with registrationID: ${registrationID}, schoolID: ${schoolID}`)
+        this.logger.warn(
+          `School not found with registrationID: ${registrationID}, schoolID: ${schoolID}`,
+        )
         throw new NotFoundException('School not found')
       }
 
       return school
     }
     catch (error: any) {
-      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+      if (
+        error instanceof BadRequestException
+        || error instanceof NotFoundException
+      ) {
         throw error
       }
-      this.logger.error(`Error finding school with registrationID: ${registrationID}, schoolID: ${schoolID}`, error)
+      this.logger.error(
+        `Error finding school with registrationID: ${registrationID}, schoolID: ${schoolID}`,
+        error,
+      )
       throw new InternalServerErrorException('Unable to find school')
     }
   }
@@ -119,42 +146,59 @@ export class SchoolService {
     }
     catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(`School update failed - School with ID ${schoolID} not found`)
+        this.logger.warn(
+          `School update failed - School with ID ${schoolID} not found`,
+        )
         return {
-          userErrors: [{
-            message: 'School not found',
-            field: ['id'],
-          }],
+          userErrors: [
+            {
+              message: 'School not found',
+              field: ['id'],
+            },
+          ],
           school: null,
         }
       }
       else if (error.code === 'P2002') {
-        this.logger.warn(`School update failed - Unique constraint violation for school ${schoolID}`)
+        this.logger.warn(
+          `School update failed - Unique constraint violation for school ${schoolID}`,
+        )
         return {
-          userErrors: [{
-            message: 'School update violates unique constraint',
-            field: [error.meta?.target?.[0] || 'unknown'],
-          }],
+          userErrors: [
+            {
+              message: 'School update violates unique constraint',
+              field: [error.meta?.target?.[0] || 'unknown'],
+            },
+          ],
           school: null,
         }
       }
       else if (error.code === 'P2003') {
-        this.logger.warn(`School update failed - Foreign key constraint violation for school ${schoolID}`)
+        this.logger.warn(
+          `School update failed - Foreign key constraint violation for school ${schoolID}`,
+        )
         return {
-          userErrors: [{
-            message: 'School update violates foreign key constraint',
-            field: [error.meta?.field_name || 'unknown'],
-          }],
+          userErrors: [
+            {
+              message: 'School update violates foreign key constraint',
+              field: [error.meta?.field_name || 'unknown'],
+            },
+          ],
           school: null,
         }
       }
       else {
-        this.logger.error(`Unexpected error during school update for ID ${schoolID}`, error)
+        this.logger.error(
+          `Unexpected error during school update for ID ${schoolID}`,
+          error,
+        )
         return {
-          userErrors: [{
-            message: 'An unexpected error occurred while updating the school',
-            field: [],
-          }],
+          userErrors: [
+            {
+              message: 'An unexpected error occurred while updating the school',
+              field: [],
+            },
+          ],
           school: null,
         }
       }
@@ -177,32 +221,45 @@ export class SchoolService {
     }
     catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(`School deletion failed - School with ID ${schoolID} not found`)
+        this.logger.warn(
+          `School deletion failed - School with ID ${schoolID} not found`,
+        )
         return {
-          userErrors: [{
-            message: 'School not found',
-            field: ['id'],
-          }],
+          userErrors: [
+            {
+              message: 'School not found',
+              field: ['id'],
+            },
+          ],
           school: null,
         }
       }
       else if (error.code === 'P2003') {
-        this.logger.warn(`School deletion failed - Foreign key constraint violation for school ${schoolID}`)
+        this.logger.warn(
+          `School deletion failed - Foreign key constraint violation for school ${schoolID}`,
+        )
         return {
-          userErrors: [{
-            message: 'Cannot delete school with existing related records',
-            field: ['id'],
-          }],
+          userErrors: [
+            {
+              message: 'Cannot delete school with existing related records',
+              field: ['id'],
+            },
+          ],
           school: null,
         }
       }
       else {
-        this.logger.error(`Unexpected error during school deletion for ID ${schoolID}`, error)
+        this.logger.error(
+          `Unexpected error during school deletion for ID ${schoolID}`,
+          error,
+        )
         return {
-          userErrors: [{
-            message: 'An unexpected error occurred while deleting the school',
-            field: [],
-          }],
+          userErrors: [
+            {
+              message: 'An unexpected error occurred while deleting the school',
+              field: [],
+            },
+          ],
           school: null,
         }
       }

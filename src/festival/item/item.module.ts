@@ -8,6 +8,5 @@ import { ItemService } from './item.service'
   providers: [ItemResolver, ItemService],
   imports: [AbilityModule, forwardRef(() => OrderItemModule)],
   exports: [ItemService],
-
 })
 export class ItemModule {}

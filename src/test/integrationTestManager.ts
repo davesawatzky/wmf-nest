@@ -76,32 +76,32 @@ export class IntegrationTestManager {
 
     await this.app.init()
 
-    const response = await request<{ signin: AuthPayload }>(
-      this.httpServer,
-    ).mutate(gql`
-            mutation SignIn($credentials: CredentialsSignin!) {
-              signin(credentials: $credentials) {
-                userErrors {
-                  message
-                }
-                diatonicToken
-                user {
-                  id
-                  email
-                  firstName
-                  lastName
-                  privateTeacher
-                  schoolTeacher
-                  isActive
-                }
-              }
+    const response = await request<{ signin: AuthPayload }>(this.httpServer)
+      .mutate(gql`
+        mutation SignIn($credentials: CredentialsSignin!) {
+          signin(credentials: $credentials) {
+            userErrors {
+              message
             }
-          `).variables({
-      credentials: {
-        email: TestUser().email,
-        password: TestUser().password,
-      },
-    })
+            diatonicToken
+            user {
+              id
+              email
+              firstName
+              lastName
+              privateTeacher
+              schoolTeacher
+              isActive
+            }
+          }
+        }
+      `)
+      .variables({
+        credentials: {
+          email: TestUser().email,
+          password: TestUser().password,
+        },
+      })
     this.diatonicToken = response.data.signin.diatonicToken
   }
 

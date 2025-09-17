@@ -72,34 +72,34 @@ beforeAll(async () => {
   const httpServer: any = await app.getHttpServer()
   const prisma: PrismaService = app.get<PrismaService>(PrismaService)
 
-  const response = await request<{ signin: AuthPayload }>(
-    httpServer,
-  ).mutate(gql`
-    mutation SignIn($credentials: CredentialsSignin!) {
-      signin(credentials: $credentials) {
-        userErrors {
-          message
-        }
-        diatonicToken
-        user {
-          id
-          email
-          firstName
-          lastName
-          privateTeacher
-          schoolTeacher
-          isActive
-          roles
-          permissions
+  const response = await request<{ signin: AuthPayload }>(httpServer)
+    .mutate(gql`
+      mutation SignIn($credentials: CredentialsSignin!) {
+        signin(credentials: $credentials) {
+          userErrors {
+            message
+          }
+          diatonicToken
+          user {
+            id
+            email
+            firstName
+            lastName
+            privateTeacher
+            schoolTeacher
+            isActive
+            roles
+            permissions
+          }
         }
       }
-    }
-  `).variables({
-    credentials: {
-      email: TestUser().email,
-      password: TestUser().password,
-    },
-  })
+    `)
+    .variables({
+      credentials: {
+        email: TestUser().email,
+        password: TestUser().password,
+      },
+    })
   const diatonicToken: string = response.data.signin.diatonicToken
   globalThis.diatonicToken = diatonicToken
 
@@ -113,6 +113,7 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
+  globalThis.prisma.$disconnect()
   globalThis.prisma = null
 
   delete globalThis.prisma

@@ -1,10 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-} from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { PrismaService } from '@/prisma/prisma.service'
 import { CommunityService } from '@/submissions/community/community.service'
 import { GroupService } from '@/submissions/group/group.service'

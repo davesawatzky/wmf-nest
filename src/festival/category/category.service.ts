@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common'
 import { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
 import { PrismaService } from '@/prisma/prisma.service'
 import { CategoryInput } from './dto/category.input'
@@ -25,22 +31,32 @@ export class CategoryService {
     }
     catch (error: any) {
       if (error.code === 'P2002') {
-        this.logger.warn(`Category creation failed - Name already exists: ${categoryInput.name}`)
+        this.logger.warn(
+          `Category creation failed - Name already exists: ${categoryInput.name}`,
+        )
         return {
-          userErrors: [{
-            message: 'Category name already exists',
-            field: ['name'],
-          }],
+          userErrors: [
+            {
+              message: 'Category name already exists',
+              field: ['name'],
+            },
+          ],
           category: null,
         }
       }
       else {
-        this.logger.error(`Unexpected error during category creation for name: ${categoryInput.name}`, error)
+        this.logger.error(
+          `Unexpected error during category creation for name: ${categoryInput.name}`,
+          error,
+        )
         return {
-          userErrors: [{
-            message: 'An unexpected error occurred while creating the category',
-            field: [],
-          }],
+          userErrors: [
+            {
+              message:
+                'An unexpected error occurred while creating the category',
+              field: [],
+            },
+          ],
           category: null,
         }
       }
@@ -52,7 +68,9 @@ export class CategoryService {
     subdisciplineID?: tbl_subdiscipline['id'],
   ) {
     try {
-      this.logger.log(`Fetching categories with filters - levelID: ${levelID}, subdisciplineID: ${subdisciplineID}`)
+      this.logger.log(
+        `Fetching categories with filters - levelID: ${levelID}, subdisciplineID: ${subdisciplineID}`,
+      )
 
       return await this.prisma.tbl_category.findMany({
         where: {
@@ -67,7 +85,10 @@ export class CategoryService {
       })
     }
     catch (error: any) {
-      this.logger.error(`Error fetching categories with filters - levelID: ${levelID}, subdisciplineID: ${subdisciplineID}`, error)
+      this.logger.error(
+        `Error fetching categories with filters - levelID: ${levelID}, subdisciplineID: ${subdisciplineID}`,
+        error,
+      )
       throw new InternalServerErrorException('Unable to fetch categories')
     }
   }
@@ -93,7 +114,10 @@ export class CategoryService {
       return category
     }
     catch (error: any) {
-      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+      if (
+        error instanceof BadRequestException
+        || error instanceof NotFoundException
+      ) {
         throw error
       }
       this.logger.error(`Error finding category with ID: ${id}`, error)
@@ -118,42 +142,60 @@ export class CategoryService {
     }
     catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(`Category update failed - Category with ID ${id} not found`)
+        this.logger.warn(
+          `Category update failed - Category with ID ${id} not found`,
+        )
         return {
-          userErrors: [{
-            message: 'Category not found',
-            field: ['id'],
-          }],
+          userErrors: [
+            {
+              message: 'Category not found',
+              field: ['id'],
+            },
+          ],
           category: null,
         }
       }
       else if (error.code === 'P2002') {
-        this.logger.warn(`Category update failed - Name already exists for category ${id}: ${categoryInput.name}`)
+        this.logger.warn(
+          `Category update failed - Name already exists for category ${id}: ${categoryInput.name}`,
+        )
         return {
-          userErrors: [{
-            message: 'Category name already exists',
-            field: ['name'],
-          }],
+          userErrors: [
+            {
+              message: 'Category name already exists',
+              field: ['name'],
+            },
+          ],
           category: null,
         }
       }
       else if (error.code === 'P2003') {
-        this.logger.warn(`Category update failed - Foreign key constraint violation for category ${id}`)
+        this.logger.warn(
+          `Category update failed - Foreign key constraint violation for category ${id}`,
+        )
         return {
-          userErrors: [{
-            message: 'Category update violates foreign key constraint',
-            field: [error.meta?.field_name || 'unknown'],
-          }],
+          userErrors: [
+            {
+              message: 'Category update violates foreign key constraint',
+              field: [error.meta?.field_name || 'unknown'],
+            },
+          ],
           category: null,
         }
       }
       else {
-        this.logger.error(`Unexpected error during category update for ID ${id}`, error)
+        this.logger.error(
+          `Unexpected error during category update for ID ${id}`,
+          error,
+        )
         return {
-          userErrors: [{
-            message: 'An unexpected error occurred while updating the category',
-            field: [],
-          }],
+          userErrors: [
+            {
+              message:
+                'An unexpected error occurred while updating the category',
+              field: [],
+            },
+          ],
           category: null,
         }
       }
@@ -176,32 +218,46 @@ export class CategoryService {
     }
     catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(`Category deletion failed - Category with ID ${id} not found`)
+        this.logger.warn(
+          `Category deletion failed - Category with ID ${id} not found`,
+        )
         return {
-          userErrors: [{
-            message: 'Category not found',
-            field: ['id'],
-          }],
+          userErrors: [
+            {
+              message: 'Category not found',
+              field: ['id'],
+            },
+          ],
           category: null,
         }
       }
       else if (error.code === 'P2003') {
-        this.logger.warn(`Category deletion failed - Foreign key constraint violation for category ${id}`)
+        this.logger.warn(
+          `Category deletion failed - Foreign key constraint violation for category ${id}`,
+        )
         return {
-          userErrors: [{
-            message: 'Cannot delete category with existing related records',
-            field: ['id'],
-          }],
+          userErrors: [
+            {
+              message: 'Cannot delete category with existing related records',
+              field: ['id'],
+            },
+          ],
           category: null,
         }
       }
       else {
-        this.logger.error(`Unexpected error during category deletion for ID ${id}`, error)
+        this.logger.error(
+          `Unexpected error during category deletion for ID ${id}`,
+          error,
+        )
         return {
-          userErrors: [{
-            message: 'An unexpected error occurred while deleting the category',
-            field: [],
-          }],
+          userErrors: [
+            {
+              message:
+                'An unexpected error occurred while deleting the category',
+              field: [],
+            },
+          ],
           category: null,
         }
       }

@@ -14,7 +14,7 @@ describe('Level', () => {
             levels {
               id
               description
-              name 
+              name
             }
           }
         `)
@@ -26,7 +26,7 @@ describe('Level', () => {
       response = await request<{ levels: Level[] }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Levels($categoryId: Int, $subdisciplineId: Int){
+          query Levels($categoryId: Int, $subdisciplineId: Int) {
             levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {
               description
               id
@@ -41,10 +41,12 @@ describe('Level', () => {
     })
 
     it('Can provide a list of levels with CategoryID', async () => {
-      const response2: any = await request<{ levels: Level[] }>(globalThis.httpServer)
+      const response2: any = await request<{ levels: Level[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Levels($categoryId: Int, $subdisciplineId: Int){
+          query Levels($categoryId: Int, $subdisciplineId: Int) {
             levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {
               description
               id
@@ -63,7 +65,7 @@ describe('Level', () => {
       response = await request<{ levels: Level[] }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Levels($categoryId: Int, $subdisciplineId: Int){
+          query Levels($categoryId: Int, $subdisciplineId: Int) {
             levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {
               description
               id
@@ -82,7 +84,7 @@ describe('Level', () => {
       response = await request<{ levels: Level[] }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Levels($categoryId: Int, $subdisciplineId: Int){
+          query Levels($categoryId: Int, $subdisciplineId: Int) {
             levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {
               description
               id
@@ -151,20 +153,23 @@ describe('Level', () => {
     })
 
     it('Successfully creates a level using LevelInput', async () => {
-      response = await request<{ levelCreate: LevelPayload }>(globalThis.httpServer)
+      response = await request<{ levelCreate: LevelPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateLevel($levelInput: LevelInput!) {
-          levelCreate(levelInput: $levelInput) {
-            userErrors {
-            message
+            levelCreate(levelInput: $levelInput) {
+              userErrors {
+                message
+              }
+              level {
+                id
+                name
+              }
+            }
           }
-          level {
-            id
-            name
-          }
-        }
-      }`)
+        `)
         .variables({
           levelInput: {
             name: 'Really Old',
@@ -177,20 +182,23 @@ describe('Level', () => {
     })
 
     it('Returns error if trying to add duplicate level name', async () => {
-      response = await request<{ levelCreate: LevelPayload }>(globalThis.httpServer)
+      response = await request<{ levelCreate: LevelPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateLevel($levelInput: LevelInput!) {
-          levelCreate(levelInput: $levelInput) {
-            userErrors {
-            message
+            levelCreate(levelInput: $levelInput) {
+              userErrors {
+                message
+              }
+              level {
+                id
+                name
+              }
+            }
           }
-          level {
-            id
-            name
-          }
-        }
-      }`)
+        `)
         .variables({
           levelInput: {
             name: 'Really Old',
@@ -202,20 +210,23 @@ describe('Level', () => {
     })
 
     it('Improper input returns error', async () => {
-      response = await request<{ levelCreate: LevelPayload }>(globalThis.httpServer)
+      response = await request<{ levelCreate: LevelPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateLevel($levelInput: LevelInput!) {
-          levelCreate(levelInput: $levelInput) {
-            userErrors {
-            message
+            levelCreate(levelInput: $levelInput) {
+              userErrors {
+                message
+              }
+              level {
+                id
+                name
+              }
+            }
           }
-          level {
-            id
-            name
-          }
-        }
-      }`)
+        `)
         .variables({
           levelInput: {
             name: null,
@@ -231,20 +242,23 @@ describe('Level', () => {
     let levelId: number
 
     beforeEach(async () => {
-      response = await request<{ levelCreate: LevelPayload }>(globalThis.httpServer)
+      response = await request<{ levelCreate: LevelPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateLevel($levelInput: LevelInput!) {
-          levelCreate(levelInput: $levelInput) {
-            userErrors {
-            message
+            levelCreate(levelInput: $levelInput) {
+              userErrors {
+                message
+              }
+              level {
+                id
+                name
+              }
+            }
           }
-          level {
-            id
-            name
-          }
-        }
-      }`)
+        `)
         .variables({
           levelInput: {
             name: 'Really Old',
@@ -270,21 +284,24 @@ describe('Level', () => {
     })
 
     it('Update details of existing level', async () => {
-      response = await request<{ levelUpdate: LevelPayload }>(globalThis.httpServer)
+      response = await request<{ levelUpdate: LevelPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation LevelUpdate($levelId: Int!, $levelInput: LevelInput!){
-          levelUpdate(levelID: $levelId, levelInput: $levelInput) {
-            userErrors {
-              message
-            }
-            level {
-              id
-              name
-              description
+          mutation LevelUpdate($levelId: Int!, $levelInput: LevelInput!) {
+            levelUpdate(levelID: $levelId, levelInput: $levelInput) {
+              userErrors {
+                message
+              }
+              level {
+                id
+                name
+                description
+              }
             }
           }
-      }`)
+        `)
         .variables({
           levelId,
           levelInput: {
@@ -292,26 +309,31 @@ describe('Level', () => {
             description: 'Young at heart',
           },
         })
-      expect(response.data.levelUpdate.level.description).toBe('Young at heart')
+      expect(response.data.levelUpdate.level.description).toBe(
+        'Young at heart',
+      )
       expect(response.errors).not.toBeDefined()
     })
 
     it('Returns error if level not found', async () => {
-      response = await request<{ levelUpdate: LevelPayload }>(globalThis.httpServer)
+      response = await request<{ levelUpdate: LevelPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation LevelUpdate($levelId: Int!, $levelInput: LevelInput!){
-          levelUpdate(levelID: $levelId, levelInput: $levelInput) {
-            userErrors {
-              message
-            }
-            level {
-              id
-              name
-              description
+          mutation LevelUpdate($levelId: Int!, $levelInput: LevelInput!) {
+            levelUpdate(levelID: $levelId, levelInput: $levelInput) {
+              userErrors {
+                message
+              }
+              level {
+                id
+                name
+                description
+              }
             }
           }
-      }`)
+        `)
         .variables({
           levelId: levelId + 1,
           levelInput: {
@@ -323,21 +345,24 @@ describe('Level', () => {
     })
 
     it('Returns error if name is null or undefined in update', async () => {
-      response = await request<{ levelUpdate: LevelPayload }>(globalThis.httpServer)
+      response = await request<{ levelUpdate: LevelPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation LevelUpdate($levelId: Int!, $levelInput: LevelInput!){
-          levelUpdate(levelID: $levelId, levelInput: $levelInput) {
-            userErrors {
-              message
-            }
-            level {
-              id
-              name
-              description
+          mutation LevelUpdate($levelId: Int!, $levelInput: LevelInput!) {
+            levelUpdate(levelID: $levelId, levelInput: $levelInput) {
+              userErrors {
+                message
+              }
+              level {
+                id
+                name
+                description
+              }
             }
           }
-      }`)
+        `)
         .variables({
           levelId,
           levelInput: {
@@ -355,20 +380,23 @@ describe('Level', () => {
     let levelId: number
 
     beforeEach(async () => {
-      response = await request<{ levelCreate: LevelPayload }>(globalThis.httpServer)
+      response = await request<{ levelCreate: LevelPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateLevel($levelInput: LevelInput!) {
-          levelCreate(levelInput: $levelInput) {
-            userErrors {
-            message
+            levelCreate(levelInput: $levelInput) {
+              userErrors {
+                message
+              }
+              level {
+                id
+                name
+              }
+            }
           }
-          level {
-            id
-            name
-          }
-        }
-      }`)
+        `)
         .variables({
           levelInput: {
             name: 'Really Old',
@@ -394,21 +422,24 @@ describe('Level', () => {
     })
 
     it('Deletes a level using the levelID', async () => {
-      response = await request<{ levelDelete: LevelPayload }>(globalThis.httpServer)
+      response = await request<{ levelDelete: LevelPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation LevelDelete($levelDeleteId: Int!) {
-          levelDelete(levelID: $levelDeleteId) {
-            userErrors {
-              message
-            }
+          mutation LevelDelete($levelDeleteId: Int!) {
+            levelDelete(levelID: $levelDeleteId) {
+              userErrors {
+                message
+              }
               level {
-            id
-            name
-            description
+                id
+                name
+                description
+              }
+            }
           }
-        }
-      }`)
+        `)
         .variables({
           levelDeleteId: levelId,
         })
@@ -420,21 +451,24 @@ describe('Level', () => {
     })
 
     it('Returns error message if level not found', async () => {
-      response = await request<{ levelDelete: LevelPayload }>(globalThis.httpServer)
+      response = await request<{ levelDelete: LevelPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation LevelDelete($levelDeleteId: Int!) {
-          levelDelete(levelID: $levelDeleteId) {
-            userErrors {
-              message
-            }
+          mutation LevelDelete($levelDeleteId: Int!) {
+            levelDelete(levelID: $levelDeleteId) {
+              userErrors {
+                message
+              }
               level {
-            id
-            name
-            description
+                id
+                name
+                description
+              }
+            }
           }
-        }
-      }`)
+        `)
         .variables({
           levelDeleteId: levelId + 1,
         })

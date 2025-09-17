@@ -38,33 +38,34 @@ export enum Action {
   Delete = 'delete',
 }
 
-export type Subjects = InferSubjects<
-  typeof User
-  | typeof Category
-  | typeof ClassType
-  | typeof Discipline
-  | typeof FestivalClass
-  | typeof Instrument
-  | typeof Level
-  | typeof Subdiscipline
-  | typeof Trophy
-  | typeof Community
-  | typeof CommunityGroup
-  | typeof FieldConfig
-  | typeof Group
-  | typeof Performer
-  | typeof RegisteredClass
-  | typeof Registration
-  | typeof School
-  | typeof SchoolGroup
-  | typeof Selection
-  | typeof Teacher
-  | typeof Order
-  | typeof OrderItem
-  | typeof Item
->
-| 'all'
-| 'admin'
+export type Subjects
+  = | InferSubjects<
+    | typeof User
+    | typeof Category
+    | typeof ClassType
+    | typeof Discipline
+    | typeof FestivalClass
+    | typeof Instrument
+    | typeof Level
+    | typeof Subdiscipline
+    | typeof Trophy
+    | typeof Community
+    | typeof CommunityGroup
+    | typeof FieldConfig
+    | typeof Group
+    | typeof Performer
+    | typeof RegisteredClass
+    | typeof Registration
+    | typeof School
+    | typeof SchoolGroup
+    | typeof Selection
+    | typeof Teacher
+    | typeof Order
+    | typeof OrderItem
+    | typeof Item
+  >
+  | 'all'
+  | 'admin'
 
 export type AppAbility = MongoAbility<[Action, Subjects]>
 

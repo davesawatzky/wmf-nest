@@ -7,13 +7,15 @@ describe('Instrument', () => {
     let response: any
 
     it('Can provide a list of all instruments', async () => {
-      response = await request<{ instruments: Instrument[] }>(globalThis.httpServer)
+      response = await request<{ instruments: Instrument[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Instruments {
             instruments {
               id
-              name 
+              name
               mozart
             }
           }
@@ -23,13 +25,15 @@ describe('Instrument', () => {
     })
 
     it('Can provide a list of all instruments with associated discipline', async () => {
-      response = await request<{ instruments: Instrument[] }>(globalThis.httpServer)
+      response = await request<{ instruments: Instrument[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Instruments {
             instruments {
               id
-              name 
+              name
               mozart
               discipline {
                 name
@@ -47,7 +51,9 @@ describe('Instrument', () => {
     let response: any
 
     it('Find instrument using proper ID', async () => {
-      response = await request<{ instrument: Instrument }>(globalThis.httpServer)
+      response = await request<{ instrument: Instrument }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Instrument($instrumentId: Int!) {
@@ -65,7 +71,9 @@ describe('Instrument', () => {
     })
 
     it('Returns error when no individual class type found', async () => {
-      response = await request<{ instrument: Instrument }>(globalThis.httpServer)
+      response = await request<{ instrument: Instrument }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Instrument($instrumentId: Int!) {
@@ -96,21 +104,24 @@ describe('Instrument', () => {
     })
 
     it('Successfully creates a instrument using InstrumentInput', async () => {
-      response = await request<{ instrumentCreate: InstrumentPayload }>(globalThis.httpServer)
+      response = await request<{ instrumentCreate: InstrumentPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateInstrument($instrumentInput: InstrumentInput!) {
-          instrumentCreate(instrumentInput: $instrumentInput) {
-            userErrors {
-            message
+            instrumentCreate(instrumentInput: $instrumentInput) {
+              userErrors {
+                message
+              }
+              instrument {
+                id
+                name
+                mozart
+              }
+            }
           }
-          instrument {
-            id
-            name
-            mozart
-          }
-        }
-      }`)
+        `)
         .variables({
           instrumentInput: {
             name: 'Kazoo',
@@ -123,21 +134,24 @@ describe('Instrument', () => {
     })
 
     it('Returns error if trying to add duplicate instrument name', async () => {
-      response = await request<{ instrumentCreate: InstrumentPayload }>(globalThis.httpServer)
+      response = await request<{ instrumentCreate: InstrumentPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateInstrument($instrumentInput: InstrumentInput!) {
-          instrumentCreate(instrumentInput: $instrumentInput) {
-            userErrors {
-            message
+            instrumentCreate(instrumentInput: $instrumentInput) {
+              userErrors {
+                message
+              }
+              instrument {
+                id
+                name
+                mozart
+              }
+            }
           }
-          instrument {
-            id
-            name
-            mozart
-          }
-        }
-      }`)
+        `)
         .variables({
           instrumentInput: {
             name: 'Kazoo',
@@ -149,21 +163,24 @@ describe('Instrument', () => {
     })
 
     it('Improper input returns error', async () => {
-      response = await request<{ instrumentCreate: InstrumentPayload }>(globalThis.httpServer)
+      response = await request<{ instrumentCreate: InstrumentPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateInstrument($instrumentInput: InstrumentInput!) {
-          instrumentCreate(instrumentInput: $instrumentInput) {
-            userErrors {
-            message
+            instrumentCreate(instrumentInput: $instrumentInput) {
+              userErrors {
+                message
+              }
+              instrument {
+                id
+                name
+                mozart
+              }
+            }
           }
-          instrument {
-            id
-            name
-            mozart
-          }
-        }
-      }`)
+        `)
         .variables({
           instrumentInput: {
             name: null,
@@ -178,21 +195,24 @@ describe('Instrument', () => {
     let instrumentID: number
 
     beforeEach(async () => {
-      response = await request<{ instrumentCreate: InstrumentPayload }>(globalThis.httpServer)
+      response = await request<{ instrumentCreate: InstrumentPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateInstrument($instrumentInput: InstrumentInput!) {
-          instrumentCreate(instrumentInput: $instrumentInput) {
-            userErrors {
-            message
+            instrumentCreate(instrumentInput: $instrumentInput) {
+              userErrors {
+                message
+              }
+              instrument {
+                id
+                name
+                mozart
+              }
+            }
           }
-          instrument {
-            id
-            name
-            mozart
-          }
-        }
-      }`)
+        `)
         .variables({
           instrumentInput: {
             name: 'Kazoo',
@@ -218,47 +238,67 @@ describe('Instrument', () => {
     })
 
     it('Update details of existing instrument', async () => {
-      response = await request<{ instrumentUpdate: InstrumentPayload }>(globalThis.httpServer)
+      response = await request<{ instrumentUpdate: InstrumentPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation InstrumentUpdate($instrumentId: Int!, $instrumentInput: InstrumentInput!){
-          instrumentUpdate(instrumentID: $instrumentId, instrumentInput: $instrumentInput) {
-            userErrors {
-              message
-            }
-            instrument {
-              id
-              name
-              mozart
+          mutation InstrumentUpdate(
+            $instrumentId: Int!
+            $instrumentInput: InstrumentInput!
+          ) {
+            instrumentUpdate(
+              instrumentID: $instrumentId
+              instrumentInput: $instrumentInput
+            ) {
+              userErrors {
+                message
+              }
+              instrument {
+                id
+                name
+                mozart
+              }
             }
           }
-      }`)
+        `)
         .variables({
           instrumentId: instrumentID,
           instrumentInput: {
             name: 'Didjouridoo',
           },
         })
-      expect(response.data.instrumentUpdate.instrument.name).toBe('Didjouridoo')
+      expect(response.data.instrumentUpdate.instrument.name).toBe(
+        'Didjouridoo',
+      )
       expect(response.errors).not.toBeDefined()
     })
 
     it('Returns error if instrument not found', async () => {
-      response = await request<{ instrumentUpdate: InstrumentPayload }>(globalThis.httpServer)
+      response = await request<{ instrumentUpdate: InstrumentPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation InstrumentUpdate($instrumentId: Int!, $instrumentInput: InstrumentInput!){
-          instrumentUpdate(instrumentID: $instrumentId, instrumentInput: $instrumentInput) {
-            userErrors {
-              message
-            }
-            instrument {
-              id
-              name
-              mozart
+          mutation InstrumentUpdate(
+            $instrumentId: Int!
+            $instrumentInput: InstrumentInput!
+          ) {
+            instrumentUpdate(
+              instrumentID: $instrumentId
+              instrumentInput: $instrumentInput
+            ) {
+              userErrors {
+                message
+              }
+              instrument {
+                id
+                name
+                mozart
+              }
             }
           }
-      }`)
+        `)
         .variables({
           instrumentId: instrumentID + 1,
           instrumentInput: {
@@ -270,21 +310,30 @@ describe('Instrument', () => {
     })
 
     it('Returns error if name is null in update', async () => {
-      response = await request<{ instrumentUpdate: InstrumentPayload }>(globalThis.httpServer)
+      response = await request<{ instrumentUpdate: InstrumentPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation InstrumentUpdate($instrumentId: Int!, $instrumentInput: InstrumentInput!){
-          instrumentUpdate(instrumentID: $instrumentId, instrumentInput: $instrumentInput) {
-            userErrors {
-              message
-            }
-            instrument {
-              id
-              name
-              mozart
+          mutation InstrumentUpdate(
+            $instrumentId: Int!
+            $instrumentInput: InstrumentInput!
+          ) {
+            instrumentUpdate(
+              instrumentID: $instrumentId
+              instrumentInput: $instrumentInput
+            ) {
+              userErrors {
+                message
+              }
+              instrument {
+                id
+                name
+                mozart
+              }
             }
           }
-      }`)
+        `)
         .variables({
           instrumentId: instrumentID,
           instrumentInput: {
@@ -300,26 +349,28 @@ describe('Instrument', () => {
     let response: any
     let instrumentId: number
     beforeEach(async () => {
-      response = await request<{ instrumentCreate: InstrumentPayload }>(globalThis.httpServer)
+      response = await request<{ instrumentCreate: InstrumentPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
           mutation CreateInstrument($instrumentInput: InstrumentInput!) {
-          instrumentCreate(instrumentInput: $instrumentInput) {
-            userErrors {
-            message
+            instrumentCreate(instrumentInput: $instrumentInput) {
+              userErrors {
+                message
+              }
+              instrument {
+                id
+                name
+                mozart
+              }
+            }
           }
-          instrument {
-            id
-            name
-            mozart
-          }
-        }
-      }`)
+        `)
         .variables({
           instrumentInput: {
             name: 'Kazoo',
             mozart: true,
-
           },
         })
       instrumentId = response.data.instrumentCreate.instrument.id
@@ -341,21 +392,24 @@ describe('Instrument', () => {
     })
 
     it('Deletes an instrument using the instrumentID', async () => {
-      response = await request<{ instrumentDelete: InstrumentPayload }>(globalThis.httpServer)
+      response = await request<{ instrumentDelete: InstrumentPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation InstrumentDelete($instrumentDeleteId: Int!) {
-          instrumentDelete(instrumentID: $instrumentDeleteId) {
-            userErrors {
-              message
-            }
+          mutation InstrumentDelete($instrumentDeleteId: Int!) {
+            instrumentDelete(instrumentID: $instrumentDeleteId) {
+              userErrors {
+                message
+              }
               instrument {
-            id
-            name
-            mozart
+                id
+                name
+                mozart
+              }
+            }
           }
-        }
-      }`)
+        `)
         .variables({
           instrumentDeleteId: instrumentId,
         })
@@ -367,21 +421,24 @@ describe('Instrument', () => {
     })
 
     it('Returns error message if instrument not found', async () => {
-      response = await request<{ instrumentDelete: InstrumentPayload }>(globalThis.httpServer)
+      response = await request<{ instrumentDelete: InstrumentPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .mutate(gql`
-        mutation InstrumentDelete($instrumentDeleteId: Int!) {
-          instrumentDelete(instrumentID: $instrumentDeleteId) {
-            userErrors {
-              message
-            }
-            instrument {
-              id
-              name
-              mozart
+          mutation InstrumentDelete($instrumentDeleteId: Int!) {
+            instrumentDelete(instrumentID: $instrumentDeleteId) {
+              userErrors {
+                message
+              }
+              instrument {
+                id
+                name
+                mozart
               }
             }
-          }`)
+          }
+        `)
         .variables({
           instrumentDeleteId: instrumentId + 1,
         })

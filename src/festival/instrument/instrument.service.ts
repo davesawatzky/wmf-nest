@@ -17,21 +17,28 @@ export class InstrumentService {
   constructor(private prisma: PrismaService) {}
 
   async create(instrumentInput: InstrumentInput) {
-    this.logger.debug(`Creating instrument with data: ${JSON.stringify(instrumentInput)}`)
+    this.logger.debug(
+      `Creating instrument with data: ${JSON.stringify(instrumentInput)}`,
+    )
     let instrument: tbl_instrument
     let userErrors: UserError[] = []
     try {
       instrument = await this.prisma.tbl_instrument.create({
         data: { ...instrumentInput },
       })
-      this.logger.log(`Successfully created instrument with ID: ${instrument.id}`)
+      this.logger.log(
+        `Successfully created instrument with ID: ${instrument.id}`,
+      )
       return {
         userErrors,
         instrument,
       }
     }
     catch (error: any) {
-      this.logger.error(`Failed to create instrument: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to create instrument: ${error.message}`,
+        error.stack,
+      )
       if (error.code === 'P2002') {
         userErrors = [
           {
@@ -39,12 +46,15 @@ export class InstrumentService {
             field: ['name'],
           },
         ]
-        this.logger.warn(`Duplicate instrument name attempted: ${instrumentInput.name}`)
+        this.logger.warn(
+          `Duplicate instrument name attempted: ${instrumentInput.name}`,
+        )
       }
       else {
         userErrors = [
           {
-            message: 'An unexpected error occurred while creating the instrument',
+            message:
+              'An unexpected error occurred while creating the instrument',
             field: [],
           },
         ]
@@ -57,7 +67,9 @@ export class InstrumentService {
   }
 
   async findAll(disciplineID?: number) {
-    this.logger.debug(`Retrieving instruments with disciplineID filter: ${disciplineID}`)
+    this.logger.debug(
+      `Retrieving instruments with disciplineID filter: ${disciplineID}`,
+    )
     try {
       let instruments: tbl_instrument[]
       if (disciplineID) {
@@ -77,11 +89,16 @@ export class InstrumentService {
           },
         })
       }
-      this.logger.log(`Successfully retrieved ${instruments.length} instruments`)
+      this.logger.log(
+        `Successfully retrieved ${instruments.length} instruments`,
+      )
       return instruments
     }
     catch (error: any) {
-      this.logger.error(`Failed to retrieve instruments: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to retrieve instruments: ${error.message}`,
+        error.stack,
+      )
       throw new InternalServerErrorException('Failed to retrieve instruments')
     }
   }
@@ -89,7 +106,9 @@ export class InstrumentService {
   async findOne(id?: tbl_instrument['id'], name?: tbl_instrument['name']) {
     this.logger.debug(`Retrieving instrument with ID: ${id}, name: ${name}`)
     if (!id && !name) {
-      this.logger.warn('Attempted to find instrument without providing ID or name')
+      this.logger.warn(
+        'Attempted to find instrument without providing ID or name',
+      )
       throw new BadRequestException('Either instrument ID or name is required')
     }
     try {
@@ -110,17 +129,25 @@ export class InstrumentService {
         })
         if (!instrument) {
           this.logger.warn(`Instrument not found with name: ${name}`)
-          throw new NotFoundException(`Instrument with name '${name}' not found`)
+          throw new NotFoundException(
+            `Instrument with name '${name}' not found`,
+          )
         }
         this.logger.log(`Successfully retrieved instrument with name: ${name}`)
       }
       return instrument
     }
     catch (error: any) {
-      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+      if (
+        error instanceof NotFoundException
+        || error instanceof BadRequestException
+      ) {
         throw error
       }
-      this.logger.error(`Failed to retrieve instrument: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to retrieve instrument: ${error.message}`,
+        error.stack,
+      )
       throw new InternalServerErrorException('Failed to retrieve instrument')
     }
   }
@@ -129,7 +156,9 @@ export class InstrumentService {
     instrumentID: tbl_instrument['id'],
     inst: Partial<tbl_instrument>,
   ) {
-    this.logger.debug(`Updating instrument with ID: ${instrumentID}, data: ${JSON.stringify(inst)}`)
+    this.logger.debug(
+      `Updating instrument with ID: ${instrumentID}, data: ${JSON.stringify(inst)}`,
+    )
     let instrument: tbl_instrument
     let userErrors: UserError[] = []
     try {
@@ -141,14 +170,19 @@ export class InstrumentService {
           ...inst,
         },
       })
-      this.logger.log(`Successfully updated instrument with ID: ${instrumentID}`)
+      this.logger.log(
+        `Successfully updated instrument with ID: ${instrumentID}`,
+      )
       return {
         userErrors,
         instrument,
       }
     }
     catch (error: any) {
-      this.logger.error(`Failed to update instrument with ID ${instrumentID}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to update instrument with ID ${instrumentID}: ${error.message}`,
+        error.stack,
+      )
       if (error.code === 'P2025') {
         userErrors = [
           {
@@ -156,7 +190,9 @@ export class InstrumentService {
             field: ['id'],
           },
         ]
-        this.logger.warn(`Attempted to update non-existent instrument with ID: ${instrumentID}`)
+        this.logger.warn(
+          `Attempted to update non-existent instrument with ID: ${instrumentID}`,
+        )
       }
       else if (error.code === 'P2002') {
         userErrors = [
@@ -165,12 +201,15 @@ export class InstrumentService {
             field: ['name'],
           },
         ]
-        this.logger.warn(`Duplicate instrument name attempted during update: ${inst.name}`)
+        this.logger.warn(
+          `Duplicate instrument name attempted during update: ${inst.name}`,
+        )
       }
       else {
         userErrors = [
           {
-            message: 'An unexpected error occurred while updating the instrument',
+            message:
+              'An unexpected error occurred while updating the instrument',
             field: [],
           },
         ]
@@ -197,7 +236,10 @@ export class InstrumentService {
       }
     }
     catch (error: any) {
-      this.logger.error(`Failed to delete instrument with ID ${id}: ${error.message}`, error.stack)
+      this.logger.error(
+        `Failed to delete instrument with ID ${id}: ${error.message}`,
+        error.stack,
+      )
       if (error.code === 'P2025') {
         userErrors = [
           {
@@ -205,21 +247,27 @@ export class InstrumentService {
             field: ['id'],
           },
         ]
-        this.logger.warn(`Attempted to delete non-existent instrument with ID: ${id}`)
+        this.logger.warn(
+          `Attempted to delete non-existent instrument with ID: ${id}`,
+        )
       }
       else if (error.code === 'P2003') {
         userErrors = [
           {
-            message: 'Cannot delete instrument as it is referenced by other records',
+            message:
+              'Cannot delete instrument as it is referenced by other records',
             field: ['id'],
           },
         ]
-        this.logger.warn(`Attempted to delete instrument with ID ${id} that has foreign key references`)
+        this.logger.warn(
+          `Attempted to delete instrument with ID ${id} that has foreign key references`,
+        )
       }
       else {
         userErrors = [
           {
-            message: 'An unexpected error occurred while deleting the instrument',
+            message:
+              'An unexpected error occurred while deleting the instrument',
             field: [],
           },
         ]

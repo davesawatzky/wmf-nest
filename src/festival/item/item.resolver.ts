@@ -1,5 +1,13 @@
 import { UseGuards } from '@nestjs/common'
-import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 import { CheckAbilities } from '@/ability/abilities.decorator'
 import { AbilitiesGuard } from '@/ability/abilities.guard'
 import { Action } from '@/ability/ability.factory'
@@ -28,9 +36,7 @@ export class ItemResolver {
   @Query(() => Item)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Item })
-  async item(
-    @Args('id', { type: () => Int }) id: Item['id'],
-  ) {
+  async item(@Args('id', { type: () => Int }) id: Item['id']) {
     return await this.itemService.findOne(id)
   }
 

@@ -4,9 +4,8 @@ import { Registration } from '../entities/registration.entity'
 
 // Create a Registration-specific search filter input type
 // This gives us proper typing for all registration fields
-const RegistrationSearchFiltersBase = SearchFilterInputFactory.create<Registration>(
-  'Registration',
-  [
+const RegistrationSearchFiltersBase
+  = SearchFilterInputFactory.create<Registration>('Registration', [
     'id',
     'userID',
     'label',
@@ -20,8 +19,7 @@ const RegistrationSearchFiltersBase = SearchFilterInputFactory.create<Registrati
     'createdAt',
     'updatedAt',
     'submittedAt',
-  ],
-)
+  ])
 
 @InputType()
 export class RegistrationSearchFilters extends RegistrationSearchFiltersBase {}

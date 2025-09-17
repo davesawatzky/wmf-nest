@@ -10,26 +10,27 @@ describe('User', () => {
       response = await request<{ users: User[] }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        query {
-          users {
-            id
-            email
-            firstName
-            lastName
-            privateTeacher
-            schoolTeacher
-            instrument
-            address
-            city
-            province
-            postalCode
-            phone
-            emailConfirmed
-            isActive
-            roles
-            permissions
+          query {
+            users {
+              id
+              email
+              firstName
+              lastName
+              privateTeacher
+              schoolTeacher
+              instrument
+              address
+              city
+              province
+              postalCode
+              phone
+              emailConfirmed
+              isActive
+              roles
+              permissions
+            }
           }
-        }`)
+        `)
         .expectNoErrors()
       expect(response.data.users[1].firstName).toBeTruthy()
       expect(response.data.users[1].lastName).toBeTruthy()
@@ -45,18 +46,19 @@ describe('User', () => {
       response = await request<{ users: User[] }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        query {
-          users {
-            id
-            email
-            firstName
-            lastName
-            registrations {
+          query {
+            users {
               id
-              label
+              email
+              firstName
+              lastName
+              registrations {
+                id
+                label
+              }
             }
           }
-        }`)
+        `)
         .expectNoErrors()
       expect(response.data.users[1].firstName).toBeTruthy()
       expect(response.data.users[1].lastName).toBeTruthy()
@@ -71,12 +73,13 @@ describe('User', () => {
       response = await request<{ myUser: User }>(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        query {
-          myUser {
-            id
-            firstName
+          query {
+            myUser {
+              id
+              firstName
             }
-        }`)
+          }
+        `)
         .expectNoErrors()
       expect(response.data.myUser.firstName).toBeTruthy()
       expect(response.data.myUser.id).toBeTruthy()
@@ -96,7 +99,8 @@ describe('User', () => {
               firstName
               lastName
             }
-          }`)
+          }
+        `)
         .variables({
           userId: 3,
         })
@@ -119,7 +123,8 @@ describe('User', () => {
                 label
               }
             }
-          }`)
+          }
+        `)
         .variables({
           userId: 10,
         })
@@ -138,7 +143,8 @@ describe('User', () => {
               firstName
               lastName
             }
-          }`)
+          }
+        `)
         .variables({
           email: 'test_e2e_admin@test.com',
         })
@@ -160,7 +166,9 @@ describe('User', () => {
     })
 
     it('Should update a user', async () => {
-      response = await request<{ updateUser: UserPayload }>(globalThis.httpServer)
+      response = await request<{ updateUser: UserPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           mutation UserUpdate($userId: Int!, $userInput: UserInput!) {
@@ -191,7 +199,9 @@ describe('User', () => {
     })
 
     it('Should return a userError if user not found', async () => {
-      response = await request<{ updateUser: UserPayload }>(globalThis.httpServer)
+      response = await request<{ updateUser: UserPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           mutation UserUpdate($userId: Int!, $userInput: UserInput!) {
@@ -291,7 +301,9 @@ describe('User', () => {
     })
 
     it('Should delete a user', async () => {
-      response = await request<{ deleteUser: UserPayload }>(globalThis.httpServer)
+      response = await request<{ deleteUser: UserPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           mutation UserDelete($userId: Int!) {
@@ -319,7 +331,9 @@ describe('User', () => {
     })
 
     it('Should return an error if the user is not found', async () => {
-      response = await request<{ deleteUser: UserPayload }>(globalThis.httpServer)
+      response = await request<{ deleteUser: UserPayload }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           mutation UserDelete($userId: Int!) {

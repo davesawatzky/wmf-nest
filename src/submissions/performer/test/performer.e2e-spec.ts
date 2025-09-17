@@ -28,10 +28,12 @@ describe('Performer', () => {
     let response: any
 
     it('Can return the full list of performers', async () => {
-      response = await request<{ performers: Performer[] }>(globalThis.httpServer)
+      response = await request<{ performers: Performer[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Performers{
+          query Performers {
             performers {
               id
               pronouns
@@ -58,10 +60,12 @@ describe('Performer', () => {
     })
 
     it('Can return the full list of performers with associated registrations', async () => {
-      response = await request<{ performers: Performer[] }>(globalThis.httpServer)
+      response = await request<{ performers: Performer[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          query Performers{
+          query Performers {
             performers {
               id
               firstName
@@ -82,7 +86,9 @@ describe('Performer', () => {
     })
 
     it('Can return the full list of performers with optional registrationID', async () => {
-      response = await request<{ performers: Performer[] }>(globalThis.httpServer)
+      response = await request<{ performers: Performer[] }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           query Performers($registrationId: Int) {
@@ -178,20 +184,22 @@ describe('Performer', () => {
     })
 
     it('Can create a performer', async () => {
-      response = await request<{ performerCreate: Performer }>(globalThis.httpServer)
+      response = await request<{ performerCreate: Performer }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
           mutation PerformerCreate($registrationId: Int!) {
             performerCreate(registrationID: $registrationId) {
               performer {
                 id
-                }
+              }
               userErrors {
-                field 
+                field
                 message
               }
             }
-          } 
+          }
         `)
         .variables({
           registrationId: regId,
@@ -203,22 +211,30 @@ describe('Performer', () => {
     })
 
     it('Can create a performer with performer Input', async () => {
-      response = await request<{ performerCreate: Performer }>(globalThis.httpServer)
+      response = await request<{ performerCreate: Performer }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          mutation PerformerCreate($registrationId: Int!, $performerInput: PerformerInput) {
-            performerCreate(registrationID: $registrationId, performerInput: $performerInput) {
+          mutation PerformerCreate(
+            $registrationId: Int!
+            $performerInput: PerformerInput
+          ) {
+            performerCreate(
+              registrationID: $registrationId
+              performerInput: $performerInput
+            ) {
               performer {
                 id
                 firstName
                 lastName
-                }
+              }
               userErrors {
-                field 
+                field
                 message
               }
             }
-          } 
+          }
         `)
         .variables({
           registrationId: regId,
@@ -234,22 +250,30 @@ describe('Performer', () => {
     })
 
     it('Returns an error if trying to create a performer without proper registrationId', async () => {
-      response = await request<{ performerCreate: Performer }>(globalThis.httpServer)
+      response = await request<{ performerCreate: Performer }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-          mutation PerformerCreate($registrationId: Int!, $performerInput: PerformerInput) {
-            performerCreate(registrationID: $registrationId, performerInput: $performerInput) {
+          mutation PerformerCreate(
+            $registrationId: Int!
+            $performerInput: PerformerInput
+          ) {
+            performerCreate(
+              registrationID: $registrationId
+              performerInput: $performerInput
+            ) {
               performer {
                 id
                 firstName
                 lastName
-                }
+              }
               userErrors {
-                field 
+                field
                 message
               }
             }
-          } 
+          }
         `)
         .variables({
           registrationId: regId + 1,
@@ -288,24 +312,32 @@ describe('Performer', () => {
     })
 
     it('Can update any performer', async () => {
-      response = await request<{ performerUpdate: Performer }>(globalThis.httpServer)
+      response = await request<{ performerUpdate: Performer }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation PerformerUpdate($performerId: Int!, $performerInput: PerformerInput!) {
-          performerUpdate(performerID: $performerId, performerInput: $performerInput) {
-            performer {
-              id
-              firstName
-              lastName
-              address              
+          mutation PerformerUpdate(
+            $performerId: Int!
+            $performerInput: PerformerInput!
+          ) {
+            performerUpdate(
+              performerID: $performerId
+              performerInput: $performerInput
+            ) {
+              performer {
+                id
+                firstName
+                lastName
+                address
               }
-            userErrors {
-              field 
-              message
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           performerId,
           performerInput: {
@@ -313,28 +345,38 @@ describe('Performer', () => {
           },
         })
         .expectNoErrors()
-      expect(response.data.performerUpdate.performer.address).toBe('Updated Address')
+      expect(response.data.performerUpdate.performer.address).toBe(
+        'Updated Address',
+      )
       expect(response.data.performerUpdate.performer.firstName).toBe('Test')
     })
 
     it('Returns userError if incorrect performer id', async () => {
-      response = await request<{ performerUpdate: Performer }>(globalThis.httpServer)
+      response = await request<{ performerUpdate: Performer }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation PerformerUpdate($performerId: Int!, $performerInput: PerformerInput!) {
-          performerUpdate(performerID: $performerId, performerInput: $performerInput) {
-            performer {
-              id
-              firstName
-              lastName
+          mutation PerformerUpdate(
+            $performerId: Int!
+            $performerInput: PerformerInput!
+          ) {
+            performerUpdate(
+              performerID: $performerId
+              performerInput: $performerInput
+            ) {
+              performer {
+                id
+                firstName
+                lastName
               }
-            userErrors {
-              field 
-              message
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           performerId: performerId + 1,
           performerInput: {
@@ -346,23 +388,31 @@ describe('Performer', () => {
     })
 
     it('Returns html status error if missing performer id', async () => {
-      response = await request<{ performerUpdate: Performer }>(globalThis.httpServer)
+      response = await request<{ performerUpdate: Performer }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation PerformerUpdate($performerId: Int!, $performerInput: PerformerInput!) {
-          performerUpdate(performerID: $performerId, performerInput: $performerInput) {
-            performer {
-              id
-              firstName
-              lastName
+          mutation PerformerUpdate(
+            $performerId: Int!
+            $performerInput: PerformerInput!
+          ) {
+            performerUpdate(
+              performerID: $performerId
+              performerInput: $performerInput
+            ) {
+              performer {
+                id
+                firstName
+                lastName
               }
-            userErrors {
-              field 
-              message
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           performerId: null,
           performerInput: {
@@ -373,23 +423,31 @@ describe('Performer', () => {
     })
 
     it('Returns html status error if any bad input args', async () => {
-      response = await request<{ performerUpdate: Performer }>(globalThis.httpServer)
+      response = await request<{ performerUpdate: Performer }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation PerformerUpdate($performerId: Int!, $performerInput: PerformerInput!) {
-          performerUpdate(performerID: $performerId, performerInput: $performerInput) {
-            performer {
-              id
-              name
-              performerType
+          mutation PerformerUpdate(
+            $performerId: Int!
+            $performerInput: PerformerInput!
+          ) {
+            performerUpdate(
+              performerID: $performerId
+              performerInput: $performerInput
+            ) {
+              performer {
+                id
+                name
+                performerType
               }
-            userErrors {
-              field 
-              message
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           performerId,
           performerInput: {
@@ -432,23 +490,25 @@ describe('Performer', () => {
     })
 
     it('Can delete a performer', async () => {
-      response = await request<{ performerDelete: boolean }>(globalThis.httpServer)
+      response = await request<{ performerDelete: boolean }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation PerformerDelete($performerId: Int!) {
-          performerDelete(performerID: $performerId) {
-            performer {
-              id
-              firstName
-              lastName
-            }
-            userErrors {
-              field 
-              message
+          mutation PerformerDelete($performerId: Int!) {
+            performerDelete(performerID: $performerId) {
+              performer {
+                id
+                firstName
+                lastName
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           performerId,
         })
@@ -458,27 +518,31 @@ describe('Performer', () => {
         where: { id: performerId },
       })
       expect(deleteCheck).toBeNull()
-      expect(response.data.performerDelete.performer.lastName).toBe('Performer')
+      expect(response.data.performerDelete.performer.lastName).toBe(
+        'Performer',
+      )
     })
 
     it('Returns a userError if performer not found', async () => {
-      response = await request<{ performerDelete: boolean }>(globalThis.httpServer)
+      response = await request<{ performerDelete: boolean }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation PerformerDelete($performerId: Int!) {
-          performerDelete(performerID: $performerId) {
-            performer {
-              id
-              firstName
-              lastName
-            }
-            userErrors {
-              field 
-              message
+          mutation PerformerDelete($performerId: Int!) {
+            performerDelete(performerID: $performerId) {
+              performer {
+                id
+                firstName
+                lastName
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           performerId: performerId + 1,
         })
@@ -487,22 +551,24 @@ describe('Performer', () => {
     })
 
     it('Returns status error if performer id not given', async () => {
-      response = await request<{ performerDelete: boolean }>(globalThis.httpServer)
+      response = await request<{ performerDelete: boolean }>(
+        globalThis.httpServer,
+      )
         .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
         .query(gql`
-        mutation PerformerDelete($performerId: Int!) {
-          performerDelete(performerID: $performerId) {
-            performer {
-              id
-              name
-            }
-            userErrors {
-              field 
-              message
+          mutation PerformerDelete($performerId: Int!) {
+            performerDelete(performerID: $performerId) {
+              performer {
+                id
+                name
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        } 
-      `)
+        `)
         .variables({
           performerId: null,
         })

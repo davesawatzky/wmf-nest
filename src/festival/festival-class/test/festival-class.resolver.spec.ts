@@ -1,10 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-} from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { CategoryService } from '@/festival/category/category.service'
 import { ClassTypeService } from '@/festival/class-type/class-type.service'
 import { LevelService } from '@/festival/level/level.service'
