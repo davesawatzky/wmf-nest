@@ -174,9 +174,8 @@ export class TeacherService {
       )
 
       if (!teacherID && !email) {
-        throw new BadRequestException(
-          'Either teacherID or email must be provided',
-        )
+        this.logger.log('FindOne called without teacherID or email parameters')
+        return undefined
       }
 
       let teacher: tbl_user | null = null
