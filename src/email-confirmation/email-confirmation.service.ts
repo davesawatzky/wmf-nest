@@ -45,7 +45,7 @@ export class EmailConfirmationService {
       )}?token=${token}`
 
       await this.emailService.sendMail({
-        from: this.configService.get('EMAIL_USER'),
+        from: this.configService.get('EMAIL_USER') || 'noreply@wmf.local',
         to: email,
         subject: 'WMF account verification',
         template: './confirmation-email',
@@ -89,7 +89,7 @@ export class EmailConfirmationService {
       )}?token=${token}`
 
       await this.emailService.sendMail({
-        from: this.configService.get('EMAIL_USER'),
+        from: this.configService.get('EMAIL_USER') || 'noreply@wmf.local',
         to: email,
         subject: 'WMF password reset',
         template: './password-reset-template',

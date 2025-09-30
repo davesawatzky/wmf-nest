@@ -4,12 +4,16 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name)
 
-  constructor(private mailerService: MailerService) {}
+  constructor(
+    private mailerService: MailerService,
+    private configService: ConfigService,
+  ) {}
 
   async sendMail(options: ISendMailOptions): Promise<any> {
     try {
@@ -17,6 +21,7 @@ export class EmailService {
         to: options.to,
         subject: options.subject,
         template: options.template,
+        from: options.from,
       })
 
       const result = await this.mailerService.sendMail(options)
@@ -31,6 +36,7 @@ export class EmailService {
         `Failed to send email to ${options.to}: ${error.message}`,
         error.stack,
       )
+
       throw new InternalServerErrorException('Failed to send email')
     }
   }

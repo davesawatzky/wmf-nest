@@ -11,13 +11,10 @@ import 'reflect-metadata'
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     rawBody: true,
-    logger:
-      process.env.NODE_ENV === 'test'
-        ? false
-        : new ConsoleLogger({
-          prefix: 'WMF-Server',
-          logLevels: ['log', 'error', 'warn', 'debug'],
-        }),
+    logger: new ConsoleLogger({
+      prefix: 'WMF-Server',
+      logLevels: process.env.NODE_ENV === 'production' ? ['debug', 'warn', 'error'] : ['log', 'debug', 'warn', 'error'],
+    }),
   })
 
   app.use(

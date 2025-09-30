@@ -255,7 +255,7 @@ export class AuthService {
 
   async findOne(email: User['email']) {
     if (!email)
-      throw new BadRequestException('Email is required')
+      throw new BadRequestException('Email is required - findOne')
 
     this.logger.debug(`Finding user by email: ${email}`)
 
@@ -275,8 +275,7 @@ export class AuthService {
         }
       }
       else {
-        this.logger.warn(`User not found: ${email}`)
-        throw new NotFoundException('User not found')
+        this.logger.warn(`User not found: ${email}. New user?`)
       }
     }
     catch (error: any) {

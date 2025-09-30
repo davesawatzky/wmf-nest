@@ -11,13 +11,15 @@ import { EmailService } from './email.service'
     MailerModule.forRootAsync({
       useFactory: async (config: ConfigService) => ({
         transport: {
-          host: config.get('EMAIL_SERVER') || 'mail.davesawatzky.com',
-          port: config.get('SENDING_SMTP_PORT') || 465,
-          secure: true,
-          auth: {
-            user: config.get('EMAIL_USER') || 'info@davesawtzky.com',
-            pass: config.get('EMAIL_PASSWORD'),
-          },
+          host: config.get('EMAIL_SERVER'),
+          port: config.get('SENDING_SMTP_PORT'),
+          secure: config.get('EMAIL_SECURE') === 'true', // true for 465, false for other ports
+          auth: config.get('EMAIL_USER')
+            ? {
+                user: config.get('EMAIL_USER'),
+                pass: config.get('EMAIL_PASSWORD'),
+              }
+            : undefined,
         },
         template: {
           dir: join(__dirname, 'templates'),
