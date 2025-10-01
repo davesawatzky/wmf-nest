@@ -54,6 +54,7 @@ export class AuthResolver {
       context.res.cookie('diatonicToken', diatonicToken, {
         httpOnly: true,
         sameSite: 'lax',
+        secure: this.configService.get('NODE_ENV') === 'production',
         domain: this.configService.get('COOKIE_DOMAIN'),
         path: '/',
         maxAge: 1000 * 60 * 60 * 24, // 1 day
@@ -159,7 +160,13 @@ export class AuthResolver {
   @Query(() => String)
   @UseGuards(JwtAuthGuard)
   async logout(@Context() context) {
-    context.res.clearCookie('diatonicToken')
+    context.res.clearCookie('diatonicToken', {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: this.configService.get('NODE_ENV') === 'production',
+      domain: this.configService.get('COOKIE_DOMAIN'),
+      path: '/',
+    })
     return 'signedOut'
   }
 }
