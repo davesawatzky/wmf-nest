@@ -116,25 +116,20 @@ export class EmailConfirmationService {
     if (!email) {
       throw new BadRequestException('Email is required')
     }
-
     this.logger.debug(`Confirming email: ${email}`)
-
     try {
       const user = await this.userService.findOne(null, email)
-
       if (user.emailConfirmed) {
         throw new BadRequestException('Email already confirmed')
       }
-
-      await this.userService.update(user.id, { emailConfirmed: true })
-
+      const result = await this.userService.update(user.id, { emailConfirmed: true })
       this.logger.log(`Successfully confirmed email: ${email}`)
+      return result.user.emailConfirmed
     }
     catch (error: any) {
       if (error instanceof BadRequestException) {
         throw error
       }
-
       this.logger.error(
         `Failed to confirm email ${email}: ${error.message}`,
         error.stack,

@@ -23,7 +23,8 @@ export class EmailConfirmationController {
   @Post('confirm')
   async confirm(@Body() request: ConfirmationEmailDto) {
     const email = await this.authService.emailFromToken(request.token)
-    await this.emailConfirmationService.confirmEmail(email)
+    const result = await this.emailConfirmationService.confirmEmail(email)
+    return result
   }
 
   @Post('resend-confirmation-link')
