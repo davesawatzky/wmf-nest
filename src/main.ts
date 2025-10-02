@@ -13,7 +13,7 @@ async function bootstrap() {
     rawBody: true,
     logger: new ConsoleLogger({
       prefix: 'WMF-Server',
-      logLevels: process.env.NODE_ENV === 'production' ? ['debug', 'warn', 'error'] : ['log', 'debug', 'warn', 'error'],
+      logLevels: process.env.NODE_ENV === 'production' ? ['warn', 'error'] : ['log', 'debug', 'warn', 'error'],
     }),
   })
 
