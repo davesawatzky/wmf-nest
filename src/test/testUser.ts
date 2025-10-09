@@ -10,7 +10,6 @@ export function TestAdmin(): CredentialsSignup {
     schoolTeacher: false,
     instrument: 'piano',
     roles: ['admin'],
-    // permissions: [],
     isActive: false,
   }
 }
@@ -26,5 +25,44 @@ export function TestUser(): CredentialsSignup {
     instrument: 'piano',
     roles: ['user'],
     isActive: false,
+  }
+}
+
+export function TestPrivateTeacher(): CredentialsSignup {
+  return {
+    email: 'test_e2e_teacher@test.com',
+    firstName: 'Test',
+    lastName: 'Teacher',
+    password: 'David123!',
+    instrument: 'Guitar',
+    privateTeacher: true,
+    schoolTeacher: null,
+    roles: ['user'],
+    isActive: false,
+  }
+}
+
+export function TestSchoolTeacher(): CredentialsSignup {
+  return {
+    email: 'test_e2e_teacher@test.com',
+    firstName: 'Test',
+    lastName: 'Teacher',
+    password: 'David123!',
+    privateTeacher: false,
+    schoolTeacher: true,
+    roles: ['user'],
+    isActive: false,
+  }
+}
+
+export type TestUserType = 'admin' | 'user' | 'privateTeacher' | 'schoolTeacher'
+
+export function getTestUser(type: TestUserType): CredentialsSignup {
+  switch (type) {
+    case 'admin': return TestAdmin()
+    case 'user': return TestUser()
+    case 'privateTeacher': return TestPrivateTeacher()
+    case 'schoolTeacher': return TestSchoolTeacher()
+    default: throw new Error(`Unknown test user type: ${type}`)
   }
 }

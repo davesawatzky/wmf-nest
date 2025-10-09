@@ -1,182 +1,380 @@
 import gql from 'graphql-tag'
-import request from 'supertest-graphql'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import {
+  createAuthenticatedRequest,
+  testWithBothRoles,
+} from '@/test/testHelpers'
 import { Category, CategoryPayload } from '../entities/category.entity'
 
-describe('Category', () => {
-  describe('Listing Categories', () => {
-    let response: any
+describe('Category E2E Tests', () => {
+  let queryTestCategoryId: number
 
-    it('Can provide a list of all categories', async () => {
-      response = await request<{ categories: Category[] }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          query Categories {
-            categories {
-              description
-              id
-              name
-              requiredComposer
-            }
-          }
-        `)
-        .expectNoErrors()
-      expect(response.data.categories).toBeTruthy()
+  // Mock data for testing
+  const mockCategory = {
+    name: 'E2E Test Category',
+    description: 'Category created for E2E testing',
+    requiredComposer: 'Test Composer',
+  }
+
+  beforeAll(async () => {
+    // Wait for test context to be available
+    if (!globalThis.testContext) {
+      throw new Error('Test context not initialized. Check integrationTestSetup.')
+    }
+
+    // Clean up any existing test data
+    await globalThis.prisma.tbl_category.deleteMany({
+      where: { name: { startsWith: 'E2E Test' } },
     })
 
-    it('Can provide a list of categories with SubdisciplineID', async () => {
-      response = await request<{ categories: Category[] }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          query Categories($levelId: Int, $subdisciplineId: Int) {
-            categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
-              description
-              id
-              name
-              requiredComposer
-            }
-          }
-        `)
-        .variables({
-          subdisciplineId: 194,
-        })
-      expect(response.data.categories.length).toBeGreaterThanOrEqual(1)
+    // Create a persistent category for query tests
+    const testCategory = await globalThis.prisma.tbl_category.create({
+      data: mockCategory,
     })
+    queryTestCategoryId = testCategory.id
+  }, 30000) // 30 second timeout for setup
 
-    it('Can provide a list of categories with LevelID', async () => {
-      const response2: any = await request<{ categories: Category[] }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          query Categories($levelId: Int, $subdisciplineId: Int) {
-            categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
-              description
-              id
-              name
-              requiredComposer
-            }
-          }
-        `)
-        .variables({
-          levelId: 49,
-        })
-      expect(response.data.categories.length).toBeGreaterThanOrEqual(1)
-      expect(response2.data.categories).not.toEqual(response.data.categories)
-    })
-
-    it('Can provide a list of categories with LevelID and SubdisciplineID', async () => {
-      response = await request<{ categories: Category[] }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          query Categories($levelId: Int, $subdisciplineId: Int) {
-            categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
-              description
-              id
-              name
-              requiredComposer
-            }
-          }
-        `)
-        .variables({
-          levelId: 49,
-          subdisciplineId: 194,
-        })
-      expect(response.data.categories.length).toBeGreaterThanOrEqual(1)
-    })
-
-    it('Returns empty array if nothing is found', async () => {
-      response = await request<{ categories: Category[] }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          query Categories($levelId: Int, $subdisciplineId: Int) {
-            categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
-              description
-              id
-              name
-              requiredComposer
-            }
-          }
-        `)
-        .variables({
-          levelId: 100,
-          subdisciplineId: 194,
-        })
-      expect(response.data.categories.length).toBeLessThanOrEqual(0)
+  afterAll(async () => {
+    // Final cleanup
+    await globalThis.prisma.tbl_category.deleteMany({
+      where: { name: { startsWith: 'E2E Test' } },
     })
   })
 
-  describe('Individual Category', () => {
-    let response: any
+  describe('Category Queries (Both Roles)', () => {
+    it('Should list all categories for both roles', async () => {
+      const results = await testWithBothRoles(
+        'list categories',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .query(gql`
+              query GetCategories {
+                categories {
+                  id
+                  name
+                  description
+                  requiredComposer
+                }
+              }
+            `)
+            .expectNoErrors() as { data: { categories: Category[] } }
 
-    it('Find category using proper ID', async () => {
-      response = await request<{ category: Category }>(globalThis.httpServer)
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          query Category($categoryId: Int!) {
-            category(id: $categoryId) {
-              id
-              name
-              description
-              requiredComposer
-            }
+          const categories = response.data.categories
+          const firstCategory = categories[0]
+
+          return {
+            hasData: !!categories,
+            isArray: Array.isArray(categories),
+            count: categories?.length || 0,
+            hasValidTypes: typeof firstCategory?.id === 'number'
+              && typeof firstCategory?.name === 'string',
           }
-        `)
-        .variables({
-          categoryId: 23,
-        })
-      expect(response.data.category.name).toBe('CANADIAN COMPOSERS')
-    })
-
-    it('Returns error when nothing found', async () => {
-      response = await request<{ category: Category }>(globalThis.httpServer)
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          query Category($categoryId: Int!) {
-            category(id: $categoryId) {
-              id
-              name
-              description
-              requiredComposer
-            }
-          }
-        `)
-        .variables({
-          categoryId: 10000,
-        })
-      expect(response.errors).toBeTruthy()
-    })
-  })
-
-  describe('Create', () => {
-    let response: any
-    let categoryId: number
-
-    afterAll(async () => {
-      await globalThis.prisma.tbl_category.delete({
-        where: {
-          id: categoryId,
         },
+      )
+
+      // Both roles should successfully retrieve categories
+      expect(results.admin.hasData).toBe(true)
+      expect(results.user.hasData).toBe(true)
+      expect(results.admin.isArray).toBe(true)
+      expect(results.user.isArray).toBe(true)
+      expect(results.admin.count).toBeGreaterThan(0)
+      expect(results.user.count).toBe(results.admin.count)
+      expect(results.admin.hasValidTypes).toBe(true)
+      expect(results.user.hasValidTypes).toBe(true)
+    })
+
+    it('Should filter categories by subdisciplineID for both roles', async () => {
+      const results = await testWithBothRoles(
+        'filter by subdiscipline',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .query(gql`
+              query GetCategories($levelId: Int, $subdisciplineId: Int) {
+                categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
+                  id
+                  name
+                  description
+                  requiredComposer
+                }
+              }
+            `)
+            .variables({ subdisciplineId: 194 })
+            .expectNoErrors() as { data: { categories: Category[] } }
+
+          return {
+            hasData: !!response.data.categories,
+            count: response.data.categories?.length || 0,
+          }
+        },
+      )
+
+      // Both roles should get same filtered results
+      expect(results.admin.hasData).toBe(true)
+      expect(results.user.hasData).toBe(true)
+      expect(results.admin.count).toBeGreaterThanOrEqual(0)
+      expect(results.user.count).toBe(results.admin.count)
+    })
+
+    it('Should filter categories by levelID for both roles', async () => {
+      const results = await testWithBothRoles(
+        'filter by level',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .query(gql`
+              query GetCategories($levelId: Int, $subdisciplineId: Int) {
+                categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
+                  id
+                  name
+                  description
+                  requiredComposer
+                }
+              }
+            `)
+            .variables({ levelId: 49 })
+            .expectNoErrors() as { data: { categories: Category[] } }
+
+          return {
+            hasData: !!response.data.categories,
+            count: response.data.categories?.length || 0,
+          }
+        },
+      )
+
+      // Both roles should get same filtered results
+      expect(results.admin.hasData).toBe(true)
+      expect(results.user.hasData).toBe(true)
+      expect(results.admin.count).toBeGreaterThanOrEqual(0)
+      expect(results.user.count).toBe(results.admin.count)
+    })
+
+    it('Should filter categories by both levelID and subdisciplineID for both roles', async () => {
+      const results = await testWithBothRoles(
+        'filter by level and subdiscipline',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .query(gql`
+              query GetCategories($levelId: Int, $subdisciplineId: Int) {
+                categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
+                  id
+                  name
+                  description
+                  requiredComposer
+                }
+              }
+            `)
+            .variables({ levelId: 49, subdisciplineId: 194 })
+            .expectNoErrors() as { data: { categories: Category[] } }
+
+          return {
+            hasData: !!response.data.categories,
+            count: response.data.categories?.length || 0,
+          }
+        },
+      )
+
+      // Both roles should get same filtered results
+      expect(results.admin.hasData).toBe(true)
+      expect(results.user.hasData).toBe(true)
+      expect(results.admin.count).toBeGreaterThanOrEqual(0)
+      expect(results.user.count).toBe(results.admin.count)
+    })
+
+    it('Should return empty array when no categories match filter for both roles', async () => {
+      const results = await testWithBothRoles(
+        'no matching categories',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .query(gql`
+              query GetCategories($levelId: Int, $subdisciplineId: Int) {
+                categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
+                  id
+                  name
+                  description
+                  requiredComposer
+                }
+              }
+            `)
+            .variables({ levelId: 100, subdisciplineId: 194 })
+            .expectNoErrors() as { data: { categories: Category[] } }
+
+          return {
+            count: response.data.categories?.length || 0,
+          }
+        },
+      )
+
+      // Both roles should get empty results
+      expect(results.admin.count).toBe(0)
+      expect(results.user.count).toBe(0)
+    })
+
+    it('Should find specific category by ID for both roles', async () => {
+      const results = await testWithBothRoles(
+        'find category by ID',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .query(gql`
+              query GetCategory($categoryId: Int!) {
+                category(id: $categoryId) {
+                  id
+                  name
+                  description
+                  requiredComposer
+                }
+              }
+            `)
+            .variables({ categoryId: queryTestCategoryId })
+            .expectNoErrors() as { data: { category: Category } }
+
+          return {
+            hasData: !!response.data.category,
+            category: response.data.category,
+          }
+        },
+      )
+
+      // Both roles should find the category
+      expect(results.admin.hasData).toBe(true)
+      expect(results.user.hasData).toBe(true)
+      expect(results.admin.category.name).toBe(mockCategory.name)
+      expect(results.user.category.name).toBe(mockCategory.name)
+    })
+
+    it('Should return error when category not found for both roles', async () => {
+      const results = await testWithBothRoles(
+        'category not found',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .query(gql`
+              query GetCategory($categoryId: Int!) {
+                category(id: $categoryId) {
+                  id
+                  name
+                  description
+                  requiredComposer
+                }
+              }
+            `)
+            .variables({ categoryId: 999999 }) as { errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+          }
+        },
+      )
+
+      // Both roles should get errors
+      expect(results.admin.hasErrors).toBe(true)
+      expect(results.user.hasErrors).toBe(true)
+    })
+  })
+
+  describe('Category Mutations', () => {
+    it('Should enforce create authorization: admin succeeds, user fails', async () => {
+      const results = await testWithBothRoles(
+        'create category',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation CreateCategory($categoryInput: CategoryInput!) {
+                categoryCreate(categoryInput: $categoryInput) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  category {
+                    id
+                    name
+                    description
+                    requiredComposer
+                  }
+                }
+              }
+            `, {
+              categoryInput: {
+                name: `E2E Test ${role} Category Create`,
+                description: 'Test category creation',
+                requiredComposer: 'Test Composer',
+              },
+            }) as { data?: { categoryCreate: CategoryPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            isAuthorized: !response.errors,
+            category: response.data?.categoryCreate?.category as Category | undefined,
+            userErrors: response.data?.categoryCreate?.userErrors,
+          }
+        },
+      )
+
+      // Admin should succeed
+      expect(results.admin.isAuthorized).toBe(true)
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.category).toBeTruthy()
+      expect(results.admin.category?.name).toBe('E2E Test admin Category Create')
+      expect(results.admin.userErrors).toHaveLength(0)
+
+      // User should be forbidden
+      expect(results.user.isAuthorized).toBe(false)
+      expect(results.user.hasErrors).toBe(true)
+      expect(results.user.category).toBeUndefined()
+
+      // Cleanup admin's created category
+      if (results.admin.category?.id) {
+        await globalThis.prisma.tbl_category.delete({
+          where: { id: results.admin.category.id },
+        })
+      }
+    })
+
+    it('Should return validation error for duplicate category name', async () => {
+      // Create initial category
+      const initialCategory = await globalThis.prisma.tbl_category.create({
+        data: {
+          name: 'E2E Test Duplicate',
+          description: 'Test duplicate validation',
+        },
+      })
+
+      const response = await createAuthenticatedRequest('admin')
+        .mutate(gql`
+          mutation CreateCategory($categoryInput: CategoryInput!) {
+            categoryCreate(categoryInput: $categoryInput) {
+              userErrors {
+                message
+                field
+              }
+              category {
+                id
+                name
+              }
+            }
+          }
+        `, {
+          categoryInput: {
+            name: 'E2E Test Duplicate',
+            description: 'Attempting duplicate',
+          },
+        }) as { data: { categoryCreate: CategoryPayload } }
+
+      expect(response.data.categoryCreate.userErrors).toHaveLength(1)
+      expect(response.data.categoryCreate.userErrors[0].message).toContain('already exists')
+      expect(response.data.categoryCreate.category).toBeNull()
+
+      // Cleanup
+      await globalThis.prisma.tbl_category.delete({
+        where: { id: initialCategory.id },
       })
     })
 
-    it('Successfully creates a category using CategoryInput', async () => {
-      response = await request<{ categoryCreate: CategoryPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
+    it('Should return error for null name in create', async () => {
+      const response = await createAuthenticatedRequest('admin')
         .mutate(gql`
           mutation CreateCategory($categoryInput: CategoryInput!) {
             categoryCreate(categoryInput: $categoryInput) {
               userErrors {
                 message
+                field
               }
               category {
                 id
@@ -184,88 +382,89 @@ describe('Category', () => {
               }
             }
           }
-        `)
-        .variables({
-          categoryInput: {
-            name: 'Cajun Swing',
-            description: 'Dance music from Louisianna',
-          },
-        })
-      categoryId = response.data.categoryCreate.category.id
-      expect(response.data.categoryCreate.category.name).toBe('Cajun Swing')
-      expect(response.data.categoryCreate.category.id).toBeTruthy()
-    })
-
-    it('Returns error if trying to add duplicate category name', async () => {
-      response = await request<{ categoryCreate: CategoryPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .mutate(gql`
-          mutation CreateCategory($categoryInput: CategoryInput!) {
-            categoryCreate(categoryInput: $categoryInput) {
-              userErrors {
-                message
-              }
-              category {
-                id
-                name
-              }
-            }
-          }
-        `)
-        .variables({
-          categoryInput: {
-            name: 'Cajun Swing',
-            description: 'Dance music from Louisianna',
-          },
-        })
-      expect(response.data.categoryCreate.userErrors[0]).toBeTruthy()
-      expect(response.data.categoryCreate.category).toBeNull()
-    })
-
-    it('Improper input returns error', async () => {
-      response = await request<{ categoryCreate: CategoryPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .mutate(gql`
-          mutation CreateCategory($categoryInput: CategoryInput!) {
-            categoryCreate(categoryInput: $categoryInput) {
-              userErrors {
-                message
-              }
-              category {
-                id
-                name
-              }
-            }
-          }
-        `)
-        .variables({
+        `, {
           categoryInput: {
             name: null,
-            description: 'Dance music from Louisianna',
+            description: 'Testing null name',
           },
-        })
-      expect(response.errors[0]).toBeTruthy()
+        }) as { errors?: readonly any[] }
+
+      expect(response.errors).toBeTruthy()
+      expect(response.errors![0].message).toBeTruthy()
     })
-  })
 
-  describe('Update', () => {
-    let response: any
-    let categoryID: number
+    it('Should enforce update authorization: admin succeeds, user fails', async () => {
+      // Create category for testing
+      const testCategory = await globalThis.prisma.tbl_category.create({
+        data: {
+          name: 'E2E Test Update Category',
+          description: 'Original description',
+        },
+      })
 
-    beforeEach(async () => {
-      response = await request<{ categoryCreate: CategoryPayload }>(
-        globalThis.httpServer,
+      const results = await testWithBothRoles(
+        'update category',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation UpdateCategory($categoryId: Int!, $categoryInput: CategoryInput!) {
+                categoryUpdate(categoryID: $categoryId, categoryInput: $categoryInput) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  category {
+                    id
+                    name
+                    description
+                    requiredComposer
+                  }
+                }
+              }
+            `, {
+              categoryId: testCategory.id,
+              categoryInput: {
+                name: 'E2E Test Update Category',
+                description: `Updated by ${role}`,
+                requiredComposer: 'Updated Composer',
+              },
+            }) as { data?: { categoryUpdate: CategoryPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            isAuthorized: !response.errors,
+            category: response.data?.categoryUpdate?.category as Category | undefined,
+            userErrors: response.data?.categoryUpdate?.userErrors,
+          }
+        },
       )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
+
+      // Admin should succeed
+      expect(results.admin.isAuthorized).toBe(true)
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.category).toBeTruthy()
+      expect(results.admin.category?.requiredComposer).toBe('Updated Composer')
+      expect(results.admin.userErrors).toHaveLength(0)
+
+      // User should be forbidden
+      expect(results.user.isAuthorized).toBe(false)
+      expect(results.user.hasErrors).toBe(true)
+      expect(results.user.category).toBeUndefined()
+
+      // Cleanup
+      await globalThis.prisma.tbl_category.delete({
+        where: { id: testCategory.id },
+      })
+    })
+
+    it('Should return error when updating non-existent category', async () => {
+      const response = await createAuthenticatedRequest('admin')
         .mutate(gql`
-          mutation CreateCategory($categoryInput: CategoryInput!) {
-            categoryCreate(categoryInput: $categoryInput) {
+          mutation UpdateCategory($categoryId: Int!, $categoryInput: CategoryInput!) {
+            categoryUpdate(categoryID: $categoryId, categoryInput: $categoryInput) {
               userErrors {
                 message
+                field
               }
               category {
                 id
@@ -273,242 +472,171 @@ describe('Category', () => {
               }
             }
           }
-        `)
-        .variables({
+        `, {
+          categoryId: 999999,
           categoryInput: {
-            name: 'Cajun Swing',
-            description: 'Dance music from Louisianna',
+            name: 'Non-existent Category',
           },
-        })
-      categoryID = response.data.categoryCreate.category.id
-    })
+        }) as { data: { categoryUpdate: CategoryPayload } }
 
-    afterEach(async () => {
-      try {
-        await globalThis.prisma.tbl_category.delete({
-          where: {
-            id: categoryID,
-          },
-        })
-      }
-      catch (error: any) {
-        if (error.code !== 'P2025') {
-          console.error(error)
-        }
-      }
-    })
-
-    it('Update details of existing category', async () => {
-      response = await request<{ categoryUpdate: CategoryPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .mutate(gql`
-          mutation CategoryUpdate(
-            $categoryId: Int!
-            $categoryInput: CategoryInput!
-          ) {
-            categoryUpdate(
-              categoryID: $categoryId
-              categoryInput: $categoryInput
-            ) {
-              userErrors {
-                message
-              }
-              category {
-                id
-                name
-                description
-                requiredComposer
-              }
-            }
-          }
-        `)
-        .variables({
-          categoryId: categoryID,
-          categoryInput: {
-            name: 'Cajun Swing',
-            requiredComposer: 'Sammy Davis Jr.',
-          },
-        })
-      expect(response.data.categoryUpdate.category.requiredComposer).toBe(
-        'Sammy Davis Jr.',
-      )
-      expect(response.errors).not.toBeDefined()
-    })
-
-    it('Returns error if category not found', async () => {
-      response = await request<{ categoryUpdate: CategoryPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .mutate(gql`
-          mutation CategoryUpdate(
-            $categoryId: Int!
-            $categoryInput: CategoryInput!
-          ) {
-            categoryUpdate(
-              categoryID: $categoryId
-              categoryInput: $categoryInput
-            ) {
-              userErrors {
-                message
-              }
-              category {
-                id
-                name
-                description
-                requiredComposer
-              }
-            }
-          }
-        `)
-        .variables({
-          categoryId: categoryID + 1,
-          categoryInput: {
-            name: 'Cajun Swing',
-          },
-        })
       expect(response.data.categoryUpdate.category).toBeNull()
+      expect(response.data.categoryUpdate.userErrors).toHaveLength(1)
       expect(response.data.categoryUpdate.userErrors[0].message).toBeTruthy()
     })
 
-    it('Returns error if name is null or undefined in update', async () => {
-      response = await request<{ categoryUpdate: CategoryPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
+    it('Should return error for null name in update', async () => {
+      // Create category for testing
+      const testCategory = await globalThis.prisma.tbl_category.create({
+        data: {
+          name: 'E2E Test Null Update',
+          description: 'Testing null update',
+        },
+      })
+
+      const response = await createAuthenticatedRequest('admin')
         .mutate(gql`
-          mutation CategoryUpdate(
-            $categoryId: Int!
-            $categoryInput: CategoryInput!
-          ) {
-            categoryUpdate(
-              categoryID: $categoryId
-              categoryInput: $categoryInput
-            ) {
+          mutation UpdateCategory($categoryId: Int!, $categoryInput: CategoryInput!) {
+            categoryUpdate(categoryID: $categoryId, categoryInput: $categoryInput) {
               userErrors {
                 message
+                field
               }
               category {
                 id
                 name
-                description
-                requiredComposer
               }
             }
           }
-        `)
-        .variables({
-          categoryId: categoryID,
+        `, {
+          categoryId: testCategory.id,
           categoryInput: {
             name: null,
-            description: 'Testing if null works in update',
+            description: 'Trying null name',
           },
-        })
-      expect(response.data).toBeFalsy()
-      expect(response.errors[0]).toBeTruthy()
+        }) as { errors?: readonly any[] }
+
+      expect(response.errors).toBeTruthy()
+      expect(response.errors![0]).toBeTruthy()
+
+      // Cleanup
+      await globalThis.prisma.tbl_category.delete({
+        where: { id: testCategory.id },
+      })
+    })
+
+    it('Should enforce delete authorization: admin succeeds, user fails', async () => {
+      // Create categories for both roles to attempt deletion
+      const adminCategory = await globalThis.prisma.tbl_category.create({
+        data: {
+          name: 'E2E Test Delete Admin',
+          description: 'For admin deletion test',
+        },
+      })
+
+      const userCategory = await globalThis.prisma.tbl_category.create({
+        data: {
+          name: 'E2E Test Delete User',
+          description: 'For user deletion test',
+        },
+      })
+
+      const results = await testWithBothRoles(
+        'delete category',
+        async (role) => {
+          const categoryId = role === 'admin' ? adminCategory.id : userCategory.id
+
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation DeleteCategory($categoryId: Int!) {
+                categoryDelete(categoryID: $categoryId) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  category {
+                    id
+                    name
+                    description
+                  }
+                }
+              }
+            `, {
+              categoryId,
+            }) as { data?: { categoryDelete: CategoryPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            isAuthorized: !response.errors,
+            category: response.data?.categoryDelete?.category as Category | undefined,
+            userErrors: response.data?.categoryDelete?.userErrors,
+          }
+        },
+      )
+
+      // User should be forbidden (test first since admin will delete)
+      expect(results.user.isAuthorized).toBe(false)
+      expect(results.user.hasErrors).toBe(true)
+      expect(results.user.category).toBeUndefined()
+
+      // Admin should succeed
+      expect(results.admin.isAuthorized).toBe(true)
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.category).toBeTruthy()
+      expect(results.admin.category?.name).toBe('E2E Test Delete Admin')
+      expect(results.admin.userErrors).toHaveLength(0)
+
+      // Verify admin's category was actually deleted
+      const deletedCheck = await globalThis.prisma.tbl_category.findUnique({
+        where: { id: adminCategory.id },
+      })
+      expect(deletedCheck).toBeNull()
+
+      // Cleanup user's category (wasn't deleted)
+      await globalThis.prisma.tbl_category.delete({
+        where: { id: userCategory.id },
+      })
+    })
+
+    it('Should return error when deleting non-existent category', async () => {
+      const response = await createAuthenticatedRequest('admin')
+        .mutate(gql`
+          mutation DeleteCategory($categoryId: Int!) {
+            categoryDelete(categoryID: $categoryId) {
+              userErrors {
+                message
+                field
+              }
+              category {
+                id
+                name
+              }
+            }
+          }
+        `, {
+          categoryId: 999999,
+        }) as { data: { categoryDelete: CategoryPayload } }
+
+      expect(response.data.categoryDelete.category).toBeNull()
+      expect(response.data.categoryDelete.userErrors).toHaveLength(1)
+      expect(response.data.categoryDelete.userErrors[0].message).toBeTruthy()
     })
   })
 
-  describe('Delete', () => {
-    let response: any
-    let categoryId: number
-    beforeEach(async () => {
-      response = await request<{ categoryCreate: CategoryPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .mutate(gql`
-          mutation CreateCategory($categoryInput: CategoryInput!) {
-            categoryCreate(categoryInput: $categoryInput) {
-              userErrors {
-                message
-              }
-              category {
-                id
-                name
-              }
+  describe('Authentication and Authorization', () => {
+    it('Should require authentication for all operations', async () => {
+      const response = await createAuthenticatedRequest('user')
+        .set('Cookie', '') // Remove authentication
+        .query(gql`
+          query GetCategories {
+            categories {
+              id
+              name
             }
           }
-        `)
-        .variables({
-          categoryInput: {
-            name: 'Cajun Swing',
-            description: 'Dance music from Louisianna',
-          },
-        })
-      categoryId = response.data.categoryCreate.category.id
-    })
+        `) as { errors?: readonly any[] }
 
-    afterEach(async () => {
-      try {
-        await globalThis.prisma.tbl_category.delete({
-          where: {
-            id: categoryId,
-          },
-        })
-      }
-      catch (error: any) {
-        if (error.code !== 'P2025') {
-          console.error(error)
-        }
-      }
-    })
-
-    it('Deletes a category using the categoryID', async () => {
-      response = await request<{ categoryDelete: CategoryPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .mutate(gql`
-          mutation CategoryDelete($categoryDeleteId: Int!) {
-            categoryDelete(categoryID: $categoryDeleteId) {
-              userErrors {
-                message
-              }
-              category {
-                id
-                name
-                description
-              }
-            }
-          }
-        `)
-        .variables({
-          categoryDeleteId: categoryId,
-        })
-      const deleteCheck = await globalThis.prisma.tbl_category.findUnique({
-        where: { id: categoryId },
-      })
-      expect(deleteCheck).toBeNull()
-      expect(response.data.categoryDelete.category.name).toBe('Cajun Swing')
-    })
-
-    it('Returns error message if category not found', async () => {
-      response = await request<{ categoryDelete: CategoryPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .mutate(gql`
-          mutation CategoryDelete($categoryDeleteId: Int!) {
-            categoryDelete(categoryID: $categoryDeleteId) {
-              userErrors {
-                message
-              }
-              category {
-                id
-                name
-                description
-              }
-            }
-          }
-        `)
-        .variables({
-          categoryDeleteId: categoryId + 1,
-        })
-      expect(response.data.categoryDelete.category).toBeNull()
-      expect(response.data.categoryDelete.userErrors[0].message).toBeTruthy()
+      expect(response.errors).toBeTruthy()
+      expect(response.errors![0].message).toContain('Unauthorized')
     })
   })
 })

@@ -1,19 +1,39 @@
 import gql from 'graphql-tag'
-import request from 'supertest-graphql'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import {
+  createAuthenticatedRequest,
+  testWithBothRoles,
+} from '@/test/testHelpers'
 import {
   FieldConfig,
   FieldConfigPayload,
 } from '../entities/field-config.entity'
 
-describe('FieldConfig', () => {
+describe('Field Config E2E Tests', () => {
   let testFieldConfigId: number
+  let queryTestFieldConfigId: number
 
   beforeAll(async () => {
-    // Create test field config for testing queries
+    // Wait for test context to be available
+    if (!globalThis.testContext) {
+      throw new Error('Test context not initialized. Check integrationTestSetup.')
+    }
+
+    // Clean up any existing test data
+    await globalThis.prisma.tbl_field_config.deleteMany({
+      where: {
+        OR: [
+          { tableName: { startsWith: 'test_' } },
+          { fieldName: { startsWith: 'e2e_test_' } },
+        ],
+      },
+    })
+
+    // Create a persistent field config for query tests
     const testConfig = await globalThis.prisma.tbl_field_config.create({
       data: {
-        tableName: 'test_table',
-        fieldName: 'test_field',
+        tableName: 'test_query_table',
+        fieldName: 'e2e_test_query_field',
         submissionRequired: true,
         communityRequired: false,
         groupRequired: true,
@@ -23,396 +43,584 @@ describe('FieldConfig', () => {
         customFieldType: 'text',
       },
     })
-    testFieldConfigId = testConfig.id
-  })
+    queryTestFieldConfigId = testConfig.id
+  }, 30000) // 30 second timeout for setup
 
   afterAll(async () => {
-    // Clean up test data
+    // Final cleanup
     await globalThis.prisma.tbl_field_config.deleteMany({
       where: {
         OR: [
-          { id: testFieldConfigId },
-          { tableName: 'test_table' },
-          { tableName: 'new_test_table' },
+          { tableName: { startsWith: 'test_' } },
           { fieldName: { startsWith: 'e2e_test_' } },
         ],
       },
     })
   })
 
-  describe('Listing Field Configurations', () => {
-    let response: any
+  // Test read operations with both admin and user roles
+  describe('Field Config Queries (Both Roles)', () => {
+    it('Should list all field configurations for both roles', async () => {
+      const results = await testWithBothRoles(
+        'list field configs',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .query(gql`
+              query GetFieldConfigs {
+                fieldConfigs {
+                  id
+                  tableName
+                  fieldName
+                  submissionRequired
+                  communityRequired
+                  groupRequired
+                  schoolRequired
+                  soloRequired
+                  customField
+                  customFieldType
+                }
+              }
+            `)
+            .expectNoErrors() as { data: { fieldConfigs: FieldConfig[] } }
 
-    it('Can provide a list of all field configurations', async () => {
-      response = await request<{ fieldConfigs: FieldConfig[] }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          query FieldConfigs {
-            fieldConfigs {
-              id
-              tableName
-              fieldName
-              submissionRequired
-              communityRequired
-              groupRequired
-              schoolRequired
-              soloRequired
-              customField
-              customFieldType
-            }
+          const configs = response.data.fieldConfigs
+          const firstConfig = configs[0]
+
+          return {
+            hasData: !!configs,
+            isArray: Array.isArray(configs),
+            count: configs?.length || 0,
+            configs,
+            // Type validations
+            hasValidTypes: typeof firstConfig?.id === 'number'
+              && typeof firstConfig?.tableName === 'string'
+              && typeof firstConfig?.fieldName === 'string'
+              && typeof firstConfig?.submissionRequired === 'boolean'
+              && typeof firstConfig?.communityRequired === 'boolean'
+              && typeof firstConfig?.groupRequired === 'boolean'
+              && typeof firstConfig?.schoolRequired === 'boolean'
+              && typeof firstConfig?.soloRequired === 'boolean'
+              && typeof firstConfig?.customField === 'boolean',
+            // Verify test config is included
+            includesTestConfig: configs.some(
+              (config: FieldConfig) => config.id === queryTestFieldConfigId,
+            ),
           }
-        `)
-        .expectNoErrors()
-
-      expect(response.data.fieldConfigs).toBeTruthy()
-      expect(Array.isArray(response.data.fieldConfigs)).toBe(true)
-      expect(response.data.fieldConfigs.length).toBeGreaterThan(0)
-
-      // Verify our test config is included
-      const testConfig = response.data.fieldConfigs.find(
-        (config: FieldConfig) => config.id === testFieldConfigId,
+        },
       )
-      expect(testConfig).toBeTruthy()
-      expect(testConfig.tableName).toBe('test_table')
-      expect(testConfig.fieldName).toBe('test_field')
+
+      // Both roles should successfully retrieve field configs
+      expect(results.admin.hasData).toBe(true)
+      expect(results.admin.isArray).toBe(true)
+      expect(results.admin.hasValidTypes).toBe(true)
+      expect(results.admin.includesTestConfig).toBe(true)
+      expect(results.user.hasData).toBe(true)
+      expect(results.user.isArray).toBe(true)
+      expect(results.user.hasValidTypes).toBe(true)
+
+      // Both should see the same data (read-only operation)
+      expect(results.admin.count).toBeGreaterThan(0)
+      expect(results.user.count).toBe(results.admin.count)
     })
 
-    it('Returns field configurations with correct data types', async () => {
-      response = await request<{ fieldConfigs: FieldConfig[] }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          query FieldConfigs {
-            fieldConfigs {
-              id
-              tableName
-              fieldName
-              submissionRequired
-              communityRequired
-              groupRequired
-              schoolRequired
-              soloRequired
-              customField
-              customFieldType
-            }
+    it('Should find specific field configuration for both roles', async () => {
+      const results = await testWithBothRoles(
+        'find specific field config',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .query(gql`
+              query GetFieldConfig($tableName: String!, $fieldName: String!) {
+                fieldConfig(tableName: $tableName, fieldName: $fieldName) {
+                  id
+                  tableName
+                  fieldName
+                  submissionRequired
+                  communityRequired
+                  groupRequired
+                  schoolRequired
+                  soloRequired
+                  customField
+                  customFieldType
+                }
+              }
+            `, {
+              tableName: 'test_query_table',
+              fieldName: 'e2e_test_query_field',
+            })
+            .expectNoErrors() as { data: { fieldConfig: FieldConfig } }
+
+          return {
+            found: !!response.data.fieldConfig,
+            data: response.data.fieldConfig as FieldConfig | undefined,
           }
-        `)
-        .expectNoErrors()
-
-      const firstConfig = response.data.fieldConfigs[0]
-      expect(typeof firstConfig.id).toBe('number')
-      expect(typeof firstConfig.tableName).toBe('string')
-      expect(typeof firstConfig.fieldName).toBe('string')
-      expect(typeof firstConfig.submissionRequired).toBe('boolean')
-      expect(typeof firstConfig.communityRequired).toBe('boolean')
-      expect(typeof firstConfig.groupRequired).toBe('boolean')
-      expect(typeof firstConfig.schoolRequired).toBe('boolean')
-      expect(typeof firstConfig.soloRequired).toBe('boolean')
-      expect(typeof firstConfig.customField).toBe('boolean')
-    })
-  })
-
-  describe('Individual Field Configuration', () => {
-    let response: any
-
-    it('Can find field config using tableName and fieldName', async () => {
-      response = await request<{ fieldConfig: FieldConfig }>(
-        globalThis.httpServer,
+        },
       )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          query FieldConfig($tableName: String!, $fieldName: String!) {
-            fieldConfig(tableName: $tableName, fieldName: $fieldName) {
-              id
-              tableName
-              fieldName
-              submissionRequired
-              communityRequired
-              groupRequired
-              schoolRequired
-              soloRequired
-              customField
-              customFieldType
-            }
-          }
-        `)
-        .variables({
-          tableName: 'test_table',
-          fieldName: 'test_field',
-        })
-        .expectNoErrors()
 
-      expect(response.data.fieldConfig).toBeTruthy()
-      expect(response.data.fieldConfig.id).toBe(testFieldConfigId)
-      expect(response.data.fieldConfig.tableName).toBe('test_table')
-      expect(response.data.fieldConfig.fieldName).toBe('test_field')
-      expect(response.data.fieldConfig.submissionRequired).toBe(true)
-      expect(response.data.fieldConfig.groupRequired).toBe(true)
-      expect(response.data.fieldConfig.soloRequired).toBe(true)
-    })
+      // Both roles should find the same field config
+      expect(results.admin.found).toBe(true)
+      expect(results.user.found).toBe(true)
+      expect(results.admin.data).toBeTruthy()
+      expect(results.user.data).toBeTruthy()
 
-    it('Returns error when field config not found', async () => {
-      response = await request<{ fieldConfig: FieldConfig }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          query FieldConfig($tableName: String!, $fieldName: String!) {
-            fieldConfig(tableName: $tableName, fieldName: $fieldName) {
-              id
-              tableName
-              fieldName
-            }
-          }
-        `)
-        .variables({
-          tableName: 'nonexistent_table',
-          fieldName: 'nonexistent_field',
-        })
-
-      expect(response.errors).toBeTruthy()
-      expect(response.errors[0].message).toContain('not found')
-    })
-
-    it('Returns error when required parameters are missing', async () => {
-      response = await request<{ fieldConfig: FieldConfig }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          query FieldConfig($tableName: String!, $fieldName: String!) {
-            fieldConfig(tableName: $tableName, fieldName: $fieldName) {
-              id
-              tableName
-              fieldName
-            }
-          }
-        `)
-        .variables({
-          tableName: '',
-          fieldName: '',
-        })
-
-      expect(response.errors).toBeTruthy()
-    })
-  })
-
-  describe('Create Field Configuration', () => {
-    let response: any
-    let createdFieldConfigId: number
-
-    afterEach(async () => {
-      // Clean up created field config
-      if (createdFieldConfigId) {
-        await globalThis.prisma.tbl_field_config
-          .delete({
-            where: { id: createdFieldConfigId },
-          })
-          .catch(() => {}) // Ignore errors if already deleted
-        createdFieldConfigId = undefined
+      // Verify they retrieved the same record
+      if (results.admin.data && results.user.data) {
+        expect(results.user.data.id).toBe(results.admin.data.id)
+        expect(results.user.data.id).toBe(queryTestFieldConfigId)
+        expect(results.user.data.tableName).toBe(results.admin.data.tableName)
+        expect(results.user.data.fieldName).toBe(results.admin.data.fieldName)
+        expect(results.admin.data.tableName).toBe('test_query_table')
+        expect(results.admin.data.fieldName).toBe('e2e_test_query_field')
+        expect(results.admin.data.submissionRequired).toBe(true)
+        expect(results.admin.data.groupRequired).toBe(true)
+        expect(results.admin.data.soloRequired).toBe(true)
       }
     })
 
-    it('Successfully creates a field config using FieldConfigInput', async () => {
-      response = await request<{ fieldConfigCreate: FieldConfigPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .mutate(gql`
-          mutation CreateFieldConfig($fieldConfigInput: FieldConfigInput!) {
-            fieldConfigCreate(fieldConfigInput: $fieldConfigInput) {
-              userErrors {
-                message
-                field
+    it('Should handle query errors appropriately for both roles', async () => {
+      const results = await testWithBothRoles(
+        'query non-existent field config',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .query(gql`
+              query GetFieldConfig($tableName: String!, $fieldName: String!) {
+                fieldConfig(tableName: $tableName, fieldName: $fieldName) {
+                  id
+                  tableName
+                  fieldName
+                }
               }
-              fieldConfig {
-                id
-                tableName
-                fieldName
-                submissionRequired
-                communityRequired
-                groupRequired
-                schoolRequired
-                soloRequired
-                customField
-                customFieldType
-              }
-            }
+            `, {
+              tableName: 'nonexistent_table',
+              fieldName: 'nonexistent_field',
+            }) as { data?: { fieldConfig: FieldConfig }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            errorMessage: response.errors?.[0]?.message || '',
           }
-        `)
-        .variables({
-          fieldConfigInput: {
-            tableName: 'new_test_table',
-            fieldName: 'e2e_test_field_create',
-            submissionRequired: false,
-            communityRequired: true,
-            groupRequired: false,
-            schoolRequired: true,
-            soloRequired: false,
-            customField: true,
-            customFieldType: 'email',
-          },
-        })
-        .expectNoErrors()
+        },
+      )
 
-      createdFieldConfigId = response.data.fieldConfigCreate.fieldConfig.id
-
-      expect(response.data.fieldConfigCreate.userErrors).toEqual([])
-      expect(response.data.fieldConfigCreate.fieldConfig).toBeTruthy()
-      expect(response.data.fieldConfigCreate.fieldConfig.tableName).toBe(
-        'new_test_table',
-      )
-      expect(response.data.fieldConfigCreate.fieldConfig.fieldName).toBe(
-        'e2e_test_field_create',
-      )
-      expect(
-        response.data.fieldConfigCreate.fieldConfig.communityRequired,
-      ).toBe(true)
-      expect(response.data.fieldConfigCreate.fieldConfig.schoolRequired).toBe(
-        true,
-      )
-      expect(response.data.fieldConfigCreate.fieldConfig.customField).toBe(
-        true,
-      )
-      expect(response.data.fieldConfigCreate.fieldConfig.customFieldType).toBe(
-        'email',
-      )
+      // Both roles should get the same error
+      expect(results.admin.hasErrors).toBe(true)
+      expect(results.admin.errorMessage).toContain('not found')
+      expect(results.user.hasErrors).toBe(true)
+      expect(results.user.errorMessage).toContain('not found')
     })
 
-    it('Returns userError when trying to create duplicate field config', async () => {
-      response = await request<{ fieldConfigCreate: FieldConfigPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .mutate(gql`
-          mutation CreateFieldConfig($fieldConfigInput: FieldConfigInput!) {
-            fieldConfigCreate(fieldConfigInput: $fieldConfigInput) {
-              userErrors {
-                message
-                field
+    it('Should handle missing parameters appropriately for both roles', async () => {
+      const results = await testWithBothRoles(
+        'query with missing parameters',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .query(gql`
+              query GetFieldConfig($tableName: String!, $fieldName: String!) {
+                fieldConfig(tableName: $tableName, fieldName: $fieldName) {
+                  id
+                  tableName
+                  fieldName
+                }
               }
-              fieldConfig {
-                id
-                tableName
-                fieldName
-              }
-            }
+            `, {
+              tableName: '',
+              fieldName: '',
+            }) as { data?: { fieldConfig: FieldConfig }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
           }
-        `)
-        .variables({
-          fieldConfigInput: {
-            tableName: 'test_table',
-            fieldName: 'test_field',
-            submissionRequired: true,
-            communityRequired: false,
-            groupRequired: false,
-            schoolRequired: false,
-            soloRequired: false,
-            customField: false,
-            customFieldType: 'text',
-          },
-        })
-        .expectNoErrors()
-
-      expect(response.data.fieldConfigCreate.userErrors.length).toBeGreaterThan(
-        0,
+        },
       )
-      expect(response.data.fieldConfigCreate.userErrors[0].message).toContain(
-        'already exists',
-      )
-      expect(response.data.fieldConfigCreate.fieldConfig).toBeNull()
-    })
 
-    it('Returns error with invalid input data', async () => {
-      response = await request<{ fieldConfigCreate: FieldConfigPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .mutate(gql`
-          mutation CreateFieldConfig($fieldConfigInput: FieldConfigInput!) {
-            fieldConfigCreate(fieldConfigInput: $fieldConfigInput) {
-              userErrors {
-                message
-                field
-              }
-              fieldConfig {
-                id
-              }
-            }
-          }
-        `)
-        .variables({
-          fieldConfigInput: {
-            tableName: null,
-            fieldName: null,
-            submissionRequired: 'invalid',
-          },
-        })
-
-      expect(response.errors).toBeTruthy()
-      expect(response.errors[0].message).toContain('Variable')
-    })
-
-    it('Creates field config with minimal required fields', async () => {
-      response = await request<{ fieldConfigCreate: FieldConfigPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .mutate(gql`
-          mutation CreateFieldConfig($fieldConfigInput: FieldConfigInput!) {
-            fieldConfigCreate(fieldConfigInput: $fieldConfigInput) {
-              userErrors {
-                message
-                field
-              }
-              fieldConfig {
-                id
-                tableName
-                fieldName
-                customFieldType
-              }
-            }
-          }
-        `)
-        .variables({
-          fieldConfigInput: {
-            tableName: 'minimal_table',
-            fieldName: 'e2e_test_minimal_field',
-            submissionRequired: false,
-            communityRequired: false,
-            groupRequired: false,
-            schoolRequired: false,
-            soloRequired: false,
-            customField: false,
-          },
-        })
-        .expectNoErrors()
-
-      createdFieldConfigId = response.data.fieldConfigCreate.fieldConfig.id
-
-      expect(response.data.fieldConfigCreate.userErrors).toEqual([])
-      expect(response.data.fieldConfigCreate.fieldConfig).toBeTruthy()
-      expect(response.data.fieldConfigCreate.fieldConfig.tableName).toBe(
-        'minimal_table',
-      )
-      expect(response.data.fieldConfigCreate.fieldConfig.fieldName).toBe(
-        'e2e_test_minimal_field',
-      )
+      // Both roles should get errors for empty parameters
+      expect(results.admin.hasErrors).toBe(true)
+      expect(results.user.hasErrors).toBe(true)
     })
   })
 
-  describe('Update Field Configuration', () => {
-    let response: any
+  // Test authorization differences for mutations
+  describe('Field Config Mutations', () => {
+    const createInput = {
+      tableName: 'test_table',
+      fieldName: 'test_field',
+      submissionRequired: true,
+      customField: false,
+      soloRequired: true,
+      groupRequired: false,
+      schoolRequired: true,
+      communityRequired: false,
+    }
+
+    it('Should enforce create authorization: admin succeeds, user fails', async () => {
+      const results = await testWithBothRoles(
+        'create field config',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation CreateFieldConfig($fieldConfigInput: FieldConfigInput!) {
+                fieldConfigCreate(fieldConfigInput: $fieldConfigInput) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  fieldConfig {
+                    id
+                    tableName
+                    fieldName
+                  }
+                }
+              }
+            `, {
+              fieldConfigInput: {
+                ...createInput,
+                tableName: `test_${role}_table`, // Different table name per role
+              },
+            }) as { data?: { fieldConfigCreate: FieldConfigPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            isAuthorized: !response.errors,
+            fieldConfig: response.data?.fieldConfigCreate?.fieldConfig as FieldConfig | undefined,
+            userErrors: response.data?.fieldConfigCreate?.userErrors,
+          }
+        },
+      )
+
+      // Admin should succeed
+      expect(results.admin.isAuthorized).toBe(true)
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.fieldConfig).toBeTruthy()
+      expect(results.admin.userErrors).toHaveLength(0)
+
+      // Store admin's created ID for later tests
+      if (results.admin.fieldConfig) {
+        testFieldConfigId = results.admin.fieldConfig.id
+      }
+
+      // User should be forbidden
+      expect(results.user.isAuthorized).toBe(false)
+      expect(results.user.hasErrors).toBe(true)
+      expect(results.user.fieldConfig).toBeUndefined()
+    })
+
+    it('Should enforce update authorization: admin succeeds, user fails', async () => {
+      const updateInput = { ...createInput, submissionRequired: false }
+
+      const results = await testWithBothRoles(
+        'update field config',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation UpdateFieldConfig($fieldConfigID: Int!, $fieldConfigInput: FieldConfigInput!) {
+                fieldConfigUpdate(fieldConfigID: $fieldConfigID, fieldConfigInput: $fieldConfigInput) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  fieldConfig {
+                    id
+                    submissionRequired
+                  }
+                }
+              }
+            `, {
+              fieldConfigID: testFieldConfigId,
+              fieldConfigInput: updateInput,
+            }) as { data?: { fieldConfigUpdate: FieldConfigPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            isAuthorized: !response.errors,
+            fieldConfig: response.data?.fieldConfigUpdate?.fieldConfig as FieldConfig | undefined,
+            userErrors: response.data?.fieldConfigUpdate?.userErrors,
+          }
+        },
+      )
+
+      // Admin should succeed
+      expect(results.admin.isAuthorized).toBe(true)
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.fieldConfig).toBeTruthy()
+      expect(results.admin.fieldConfig?.submissionRequired).toBe(false)
+      expect(results.admin.userErrors).toHaveLength(0)
+
+      // User should be forbidden
+      expect(results.user.isAuthorized).toBe(false)
+      expect(results.user.hasErrors).toBe(true)
+      expect(results.user.fieldConfig).toBeUndefined()
+    })
+
+    it('Should enforce delete authorization: admin succeeds, user fails', async () => {
+      const results = await testWithBothRoles(
+        'delete field config',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation DeleteFieldConfig($fieldConfigID: Int!) {
+                fieldConfigDelete(fieldConfigID: $fieldConfigID) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  fieldConfig {
+                    id
+                    tableName
+                    fieldName
+                  }
+                }
+              }
+            `, { fieldConfigID: testFieldConfigId }) as { data?: { fieldConfigDelete: FieldConfigPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            isAuthorized: !response.errors,
+            fieldConfig: response.data?.fieldConfigDelete?.fieldConfig as FieldConfig | undefined,
+            userErrors: response.data?.fieldConfigDelete?.userErrors,
+          }
+        },
+      )
+
+      // User should be forbidden (tested first since admin will delete the record)
+      expect(results.user.isAuthorized).toBe(false)
+      expect(results.user.hasErrors).toBe(true)
+      expect(results.user.fieldConfig).toBeUndefined()
+
+      // Admin should succeed
+      expect(results.admin.isAuthorized).toBe(true)
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.fieldConfig).toBeTruthy()
+      expect(results.admin.fieldConfig?.id).toBe(testFieldConfigId)
+      expect(results.admin.userErrors).toHaveLength(0)
+    })
+
+    it('Should handle create with duplicate data: admin gets userError, user forbidden', async () => {
+      // First, create a record that we'll try to duplicate
+      await globalThis.prisma.tbl_field_config.create({
+        data: {
+          tableName: 'test_duplicate_table',
+          fieldName: 'test_duplicate_field',
+          submissionRequired: true,
+          customField: false,
+          soloRequired: true,
+          groupRequired: false,
+          schoolRequired: true,
+          communityRequired: false,
+        },
+      })
+
+      const results = await testWithBothRoles(
+        'create duplicate field config',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation CreateFieldConfig($fieldConfigInput: FieldConfigInput!) {
+                fieldConfigCreate(fieldConfigInput: $fieldConfigInput) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  fieldConfig {
+                    id
+                    tableName
+                    fieldName
+                  }
+                }
+              }
+            `, {
+              fieldConfigInput: {
+                tableName: 'test_duplicate_table',
+                fieldName: 'test_duplicate_field',
+                submissionRequired: true,
+                customField: false,
+                soloRequired: true,
+                groupRequired: false,
+                schoolRequired: true,
+                communityRequired: false,
+              },
+            }) as { data?: { fieldConfigCreate: FieldConfigPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            isAuthorized: !response.errors,
+            fieldConfig: response.data?.fieldConfigCreate?.fieldConfig as FieldConfig | undefined,
+            userErrors: response.data?.fieldConfigCreate?.userErrors,
+          }
+        },
+      )
+
+      // Admin is authorized but should get userError for duplicate
+      expect(results.admin.isAuthorized).toBe(true)
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.userErrors).toBeDefined()
+      expect(results.admin.userErrors!.length).toBeGreaterThan(0)
+      expect(results.admin.userErrors![0].message).toContain('already exists')
+      expect(results.admin.fieldConfig).toBeNull()
+
+      // User should be forbidden
+      expect(results.user.isAuthorized).toBe(false)
+      expect(results.user.hasErrors).toBe(true)
+    })
+
+    it('Should handle create with invalid input: both roles get GraphQL errors', async () => {
+      const results = await testWithBothRoles(
+        'create with invalid input',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation CreateFieldConfig($fieldConfigInput: FieldConfigInput!) {
+                fieldConfigCreate(fieldConfigInput: $fieldConfigInput) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  fieldConfig {
+                    id
+                  }
+                }
+              }
+            `, {
+              fieldConfigInput: {
+                tableName: null,
+                fieldName: null,
+                submissionRequired: 'invalid',
+              },
+            }) as { data?: { fieldConfigCreate: FieldConfigPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            errorMessage: response.errors?.[0]?.message || '',
+          }
+        },
+      )
+
+      // Both roles should get GraphQL validation errors
+      expect(results.admin.hasErrors).toBe(true)
+      expect(results.admin.errorMessage).toContain('Variable')
+      expect(results.user.hasErrors).toBe(true)
+      expect(results.user.errorMessage).toContain('Variable')
+    })
+
+    it('Should create with minimal required fields: admin succeeds, user forbidden', async () => {
+      const results = await testWithBothRoles(
+        'create minimal field config',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation CreateFieldConfig($fieldConfigInput: FieldConfigInput!) {
+                fieldConfigCreate(fieldConfigInput: $fieldConfigInput) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  fieldConfig {
+                    id
+                    tableName
+                    fieldName
+                    customFieldType
+                  }
+                }
+              }
+            `, {
+              fieldConfigInput: {
+                tableName: `test_minimal_${role}_table`,
+                fieldName: 'e2e_test_minimal_field',
+                submissionRequired: false,
+                communityRequired: false,
+                groupRequired: false,
+                schoolRequired: false,
+                soloRequired: false,
+                customField: false,
+              },
+            }) as { data?: { fieldConfigCreate: FieldConfigPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            isAuthorized: !response.errors,
+            fieldConfig: response.data?.fieldConfigCreate?.fieldConfig as FieldConfig | undefined,
+            userErrors: response.data?.fieldConfigCreate?.userErrors,
+          }
+        },
+      )
+
+      // Admin should succeed
+      expect(results.admin.isAuthorized).toBe(true)
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.fieldConfig).toBeTruthy()
+      expect(results.admin.fieldConfig?.tableName).toBe('test_minimal_admin_table')
+      expect(results.admin.fieldConfig?.fieldName).toBe('e2e_test_minimal_field')
+      expect(results.admin.userErrors).toHaveLength(0)
+
+      // User should be forbidden
+      expect(results.user.isAuthorized).toBe(false)
+      expect(results.user.hasErrors).toBe(true)
+    })
+
+    it('Should create with custom field type: admin succeeds, user forbidden', async () => {
+      const results = await testWithBothRoles(
+        'create custom field config',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation CreateFieldConfig($fieldConfigInput: FieldConfigInput!) {
+                fieldConfigCreate(fieldConfigInput: $fieldConfigInput) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  fieldConfig {
+                    id
+                    tableName
+                    fieldName
+                    customField
+                    customFieldType
+                  }
+                }
+              }
+            `, {
+              fieldConfigInput: {
+                tableName: `test_custom_${role}_table`,
+                fieldName: 'e2e_test_custom_field',
+                submissionRequired: true,
+                communityRequired: false,
+                groupRequired: false,
+                schoolRequired: false,
+                soloRequired: true,
+                customField: true,
+                customFieldType: 'date',
+              },
+            }) as { data?: { fieldConfigCreate: FieldConfigPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            isAuthorized: !response.errors,
+            fieldConfig: response.data?.fieldConfigCreate?.fieldConfig as FieldConfig | undefined,
+            userErrors: response.data?.fieldConfigCreate?.userErrors,
+          }
+        },
+      )
+
+      // Admin should succeed
+      expect(results.admin.isAuthorized).toBe(true)
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.fieldConfig).toBeTruthy()
+      expect(results.admin.fieldConfig?.customField).toBe(true)
+      expect(results.admin.fieldConfig?.customFieldType).toBe('date')
+      expect(results.admin.userErrors).toHaveLength(0)
+
+      // User should be forbidden
+      expect(results.user.isAuthorized).toBe(false)
+      expect(results.user.hasErrors).toBe(true)
+    })
+  })
+
+  describe('Field Config Update Tests', () => {
     let updateTestFieldConfigId: number
 
     beforeEach(async () => {
-      // Create a field config for updating
+      // Create a field config for updating in each test
       const testConfig = await globalThis.prisma.tbl_field_config.create({
         data: {
-          tableName: 'update_test_table',
+          tableName: 'test_update_table',
           fieldName: 'e2e_test_update_field',
           submissionRequired: false,
           communityRequired: false,
@@ -437,171 +645,190 @@ describe('FieldConfig', () => {
       }
     })
 
-    it('Successfully updates a field config', async () => {
-      response = await request<{ fieldConfigUpdate: FieldConfigPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .mutate(gql`
-          mutation UpdateFieldConfig(
-            $fieldConfigId: Int!
-            $fieldConfigInput: FieldConfigInput!
-          ) {
-            fieldConfigUpdate(
-              fieldConfigID: $fieldConfigId
-              fieldConfigInput: $fieldConfigInput
-            ) {
-              userErrors {
-                message
-                field
+    it('Should successfully update field config: admin succeeds, user forbidden', async () => {
+      const results = await testWithBothRoles(
+        'update field config',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation UpdateFieldConfig(
+                $fieldConfigId: Int!
+                $fieldConfigInput: FieldConfigInput!
+              ) {
+                fieldConfigUpdate(
+                  fieldConfigID: $fieldConfigId
+                  fieldConfigInput: $fieldConfigInput
+                ) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  fieldConfig {
+                    id
+                    tableName
+                    fieldName
+                    submissionRequired
+                    communityRequired
+                    groupRequired
+                    schoolRequired
+                    soloRequired
+                    customField
+                    customFieldType
+                  }
+                }
               }
-              fieldConfig {
-                id
-                tableName
-                fieldName
-                submissionRequired
-                communityRequired
-                groupRequired
-                schoolRequired
-                soloRequired
-                customField
-                customFieldType
-              }
-            }
-          }
-        `)
-        .variables({
-          fieldConfigId: updateTestFieldConfigId,
-          fieldConfigInput: {
-            tableName: 'updated_table',
-            fieldName: 'e2e_test_updated_field',
-            submissionRequired: true,
-            communityRequired: true,
-            groupRequired: true,
-            schoolRequired: true,
-            soloRequired: true,
-            customField: true,
-            customFieldType: 'number',
-          },
-        })
-        .expectNoErrors()
+            `, {
+              fieldConfigId: updateTestFieldConfigId,
+              fieldConfigInput: {
+                tableName: 'test_updated_table',
+                fieldName: 'e2e_test_updated_field',
+                submissionRequired: true,
+                communityRequired: true,
+                groupRequired: true,
+                schoolRequired: true,
+                soloRequired: true,
+                customField: true,
+                customFieldType: 'number',
+              },
+            }) as { data?: { fieldConfigUpdate: FieldConfigPayload }, errors?: readonly any[] }
 
-      expect(response.data.fieldConfigUpdate.userErrors).toEqual([])
-      expect(response.data.fieldConfigUpdate.fieldConfig).toBeTruthy()
-      expect(response.data.fieldConfigUpdate.fieldConfig.id).toBe(
-        updateTestFieldConfigId,
+          return {
+            hasErrors: !!response.errors,
+            isAuthorized: !response.errors,
+            fieldConfig: response.data?.fieldConfigUpdate?.fieldConfig as FieldConfig | undefined,
+            userErrors: response.data?.fieldConfigUpdate?.userErrors,
+          }
+        },
       )
-      expect(response.data.fieldConfigUpdate.fieldConfig.tableName).toBe(
-        'updated_table',
-      )
-      expect(response.data.fieldConfigUpdate.fieldConfig.fieldName).toBe(
-        'e2e_test_updated_field',
-      )
-      expect(
-        response.data.fieldConfigUpdate.fieldConfig.submissionRequired,
-      ).toBe(true)
-      expect(
-        response.data.fieldConfigUpdate.fieldConfig.communityRequired,
-      ).toBe(true)
-      expect(response.data.fieldConfigUpdate.fieldConfig.customFieldType).toBe(
-        'number',
-      )
+
+      // Admin should succeed
+      expect(results.admin.isAuthorized).toBe(true)
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.fieldConfig).toBeTruthy()
+      expect(results.admin.fieldConfig?.id).toBe(updateTestFieldConfigId)
+      expect(results.admin.fieldConfig?.tableName).toBe('test_updated_table')
+      expect(results.admin.fieldConfig?.fieldName).toBe('e2e_test_updated_field')
+      expect(results.admin.fieldConfig?.submissionRequired).toBe(true)
+      expect(results.admin.fieldConfig?.communityRequired).toBe(true)
+      expect(results.admin.fieldConfig?.customFieldType).toBe('number')
+      expect(results.admin.userErrors).toHaveLength(0)
+
+      // User should be forbidden
+      expect(results.user.isAuthorized).toBe(false)
+      expect(results.user.hasErrors).toBe(true)
     })
 
-    it('Returns userError when trying to update non-existent field config', async () => {
-      response = await request<{ fieldConfigUpdate: FieldConfigPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .mutate(gql`
-          mutation UpdateFieldConfig(
-            $fieldConfigId: Int!
-            $fieldConfigInput: FieldConfigInput!
-          ) {
-            fieldConfigUpdate(
-              fieldConfigID: $fieldConfigId
-              fieldConfigInput: $fieldConfigInput
-            ) {
-              userErrors {
-                message
-                field
+    it('Should handle update of non-existent field config: admin gets userError, user forbidden', async () => {
+      const results = await testWithBothRoles(
+        'update non-existent field config',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation UpdateFieldConfig(
+                $fieldConfigId: Int!
+                $fieldConfigInput: FieldConfigInput!
+              ) {
+                fieldConfigUpdate(
+                  fieldConfigID: $fieldConfigId
+                  fieldConfigInput: $fieldConfigInput
+                ) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  fieldConfig {
+                    id
+                  }
+                }
               }
-              fieldConfig {
-                id
-              }
-            }
-          }
-        `)
-        .variables({
-          fieldConfigId: 99999,
-          fieldConfigInput: {
-            tableName: 'non_existent_table',
-            fieldName: 'non_existent_field',
-            submissionRequired: true,
-            communityRequired: false,
-            groupRequired: false,
-            schoolRequired: false,
-            soloRequired: false,
-            customField: false,
-          },
-        })
-        .expectNoErrors()
+            `, {
+              fieldConfigId: 99999,
+              fieldConfigInput: {
+                tableName: 'non_existent_table',
+                fieldName: 'non_existent_field',
+                submissionRequired: true,
+                communityRequired: false,
+                groupRequired: false,
+                schoolRequired: false,
+                soloRequired: false,
+                customField: false,
+              },
+            }) as { data?: { fieldConfigUpdate: FieldConfigPayload }, errors?: readonly any[] }
 
-      expect(response.data.fieldConfigUpdate.userErrors.length).toBeGreaterThan(
-        0,
+          return {
+            hasErrors: !!response.errors,
+            isAuthorized: !response.errors,
+            fieldConfig: response.data?.fieldConfigUpdate?.fieldConfig as FieldConfig | undefined,
+            userErrors: response.data?.fieldConfigUpdate?.userErrors,
+          }
+        },
       )
-      expect(response.data.fieldConfigUpdate.userErrors[0].message).toContain(
-        'not found',
-      )
-      expect(response.data.fieldConfigUpdate.fieldConfig).toBeNull()
+
+      // Admin is authorized but should get userError
+      expect(results.admin.isAuthorized).toBe(true)
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.userErrors).toBeDefined()
+      expect(results.admin.userErrors!.length).toBeGreaterThan(0)
+      expect(results.admin.userErrors![0].message).toContain('not found')
+      expect(results.admin.fieldConfig).toBeNull()
+
+      // User should be forbidden
+      expect(results.user.isAuthorized).toBe(false)
+      expect(results.user.hasErrors).toBe(true)
     })
 
-    it('Returns error with invalid update input', async () => {
-      response = await request<{ fieldConfigUpdate: FieldConfigPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .mutate(gql`
-          mutation UpdateFieldConfig(
-            $fieldConfigId: Int!
-            $fieldConfigInput: FieldConfigInput!
-          ) {
-            fieldConfigUpdate(
-              fieldConfigID: $fieldConfigId
-              fieldConfigInput: $fieldConfigInput
-            ) {
-              userErrors {
-                message
-                field
+    it('Should handle update with invalid input: both roles get GraphQL errors', async () => {
+      const results = await testWithBothRoles(
+        'update with invalid input',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation UpdateFieldConfig(
+                $fieldConfigId: Int!
+                $fieldConfigInput: FieldConfigInput!
+              ) {
+                fieldConfigUpdate(
+                  fieldConfigID: $fieldConfigId
+                  fieldConfigInput: $fieldConfigInput
+                ) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  fieldConfig {
+                    id
+                  }
+                }
               }
-              fieldConfig {
-                id
-              }
-            }
-          }
-        `)
-        .variables({
-          fieldConfigId: updateTestFieldConfigId,
-          fieldConfigInput: {
-            tableName: null,
-            fieldName: '',
-            submissionRequired: 'invalid_boolean',
-          },
-        })
+            `, {
+              fieldConfigId: updateTestFieldConfigId,
+              fieldConfigInput: {
+                tableName: null,
+                fieldName: '',
+                submissionRequired: 'invalid_boolean',
+              },
+            }) as { data?: { fieldConfigUpdate: FieldConfigPayload }, errors?: readonly any[] }
 
-      expect(response.errors).toBeTruthy()
+          return {
+            hasErrors: !!response.errors,
+          }
+        },
+      )
+
+      // Both roles should get GraphQL validation errors
+      expect(results.admin.hasErrors).toBe(true)
+      expect(results.user.hasErrors).toBe(true)
     })
   })
 
-  describe('Delete Field Configuration', () => {
-    let response: any
+  describe('Field Config Delete Tests', () => {
     let deleteTestFieldConfigId: number
 
     beforeEach(async () => {
       // Create a field config for deletion
       const testConfig = await globalThis.prisma.tbl_field_config.create({
         data: {
-          tableName: 'delete_test_table',
+          tableName: 'test_delete_table',
           fieldName: 'e2e_test_delete_field',
           submissionRequired: false,
           communityRequired: false,
@@ -615,105 +842,6 @@ describe('FieldConfig', () => {
       deleteTestFieldConfigId = testConfig.id
     })
 
-    it('Successfully deletes a field config', async () => {
-      response = await request<{ fieldConfigDelete: FieldConfigPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .mutate(gql`
-          mutation DeleteFieldConfig($fieldConfigId: Int!) {
-            fieldConfigDelete(fieldConfigID: $fieldConfigId) {
-              userErrors {
-                message
-                field
-              }
-              fieldConfig {
-                id
-                tableName
-                fieldName
-              }
-            }
-          }
-        `)
-        .variables({
-          fieldConfigId: deleteTestFieldConfigId,
-        })
-        .expectNoErrors()
-
-      expect(response.data.fieldConfigDelete.userErrors).toEqual([])
-      expect(response.data.fieldConfigDelete.fieldConfig).toBeTruthy()
-      expect(response.data.fieldConfigDelete.fieldConfig.id).toBe(
-        deleteTestFieldConfigId,
-      )
-
-      // Verify the field config was actually deleted
-      const deletedConfig = await globalThis.prisma.tbl_field_config.findUnique(
-        {
-          where: { id: deleteTestFieldConfigId },
-        },
-      )
-      expect(deletedConfig).toBeNull()
-
-      deleteTestFieldConfigId = undefined // Prevent cleanup attempt
-    })
-
-    it('Returns userError when trying to delete non-existent field config', async () => {
-      response = await request<{ fieldConfigDelete: FieldConfigPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .mutate(gql`
-          mutation DeleteFieldConfig($fieldConfigId: Int!) {
-            fieldConfigDelete(fieldConfigID: $fieldConfigId) {
-              userErrors {
-                message
-                field
-              }
-              fieldConfig {
-                id
-              }
-            }
-          }
-        `)
-        .variables({
-          fieldConfigId: 99999,
-        })
-        .expectNoErrors()
-
-      expect(response.data.fieldConfigDelete.userErrors.length).toBeGreaterThan(
-        0,
-      )
-      expect(response.data.fieldConfigDelete.userErrors[0].message).toContain(
-        'not found',
-      )
-      expect(response.data.fieldConfigDelete.fieldConfig).toBeNull()
-    })
-
-    it('Returns error with invalid field config ID', async () => {
-      response = await request<{ fieldConfigDelete: FieldConfigPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .mutate(gql`
-          mutation DeleteFieldConfig($fieldConfigId: Int!) {
-            fieldConfigDelete(fieldConfigID: $fieldConfigId) {
-              userErrors {
-                message
-                field
-              }
-              fieldConfig {
-                id
-              }
-            }
-          }
-        `)
-        .variables({
-          fieldConfigId: null,
-        })
-
-      expect(response.errors).toBeTruthy()
-    })
-
     afterEach(async () => {
       // Clean up if deletion test failed
       if (deleteTestFieldConfigId) {
@@ -724,33 +852,139 @@ describe('FieldConfig', () => {
           .catch(() => {}) // Ignore errors if already deleted
       }
     })
+
+    it('Should successfully delete field config: admin succeeds, user forbidden', async () => {
+      const results = await testWithBothRoles(
+        'delete field config',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation DeleteFieldConfig($fieldConfigId: Int!) {
+                fieldConfigDelete(fieldConfigID: $fieldConfigId) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  fieldConfig {
+                    id
+                    tableName
+                    fieldName
+                  }
+                }
+              }
+            `, {
+              fieldConfigId: deleteTestFieldConfigId,
+            }) as { data?: { fieldConfigDelete: FieldConfigPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            isAuthorized: !response.errors,
+            fieldConfig: response.data?.fieldConfigDelete?.fieldConfig as FieldConfig | undefined,
+            userErrors: response.data?.fieldConfigDelete?.userErrors,
+          }
+        },
+      )
+
+      // User should be forbidden (tested first)
+      expect(results.user.isAuthorized).toBe(false)
+      expect(results.user.hasErrors).toBe(true)
+
+      // Admin should succeed
+      expect(results.admin.isAuthorized).toBe(true)
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.fieldConfig).toBeTruthy()
+      expect(results.admin.fieldConfig?.id).toBe(deleteTestFieldConfigId)
+      expect(results.admin.userErrors).toHaveLength(0)
+
+      // Verify the field config was actually deleted
+      const deletedConfig = await globalThis.prisma.tbl_field_config.findUnique({
+        where: { id: deleteTestFieldConfigId },
+      })
+      expect(deletedConfig).toBeNull()
+
+      deleteTestFieldConfigId = undefined // Prevent cleanup attempt
+    })
+
+    it('Should handle delete of non-existent field config: admin gets userError, user forbidden', async () => {
+      const results = await testWithBothRoles(
+        'delete non-existent field config',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation DeleteFieldConfig($fieldConfigId: Int!) {
+                fieldConfigDelete(fieldConfigID: $fieldConfigId) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  fieldConfig {
+                    id
+                  }
+                }
+              }
+            `, {
+              fieldConfigId: 99999,
+            }) as { data?: { fieldConfigDelete: FieldConfigPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            isAuthorized: !response.errors,
+            fieldConfig: response.data?.fieldConfigDelete?.fieldConfig as FieldConfig | undefined,
+            userErrors: response.data?.fieldConfigDelete?.userErrors,
+          }
+        },
+      )
+
+      // Admin is authorized but should get userError
+      expect(results.admin.isAuthorized).toBe(true)
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.userErrors).toBeDefined()
+      expect(results.admin.userErrors!.length).toBeGreaterThan(0)
+      expect(results.admin.userErrors![0].message).toContain('not found')
+      expect(results.admin.fieldConfig).toBeNull()
+
+      // User should be forbidden
+      expect(results.user.isAuthorized).toBe(false)
+      expect(results.user.hasErrors).toBe(true)
+    })
+
+    it('Should handle delete with invalid ID: both roles get GraphQL errors', async () => {
+      const results = await testWithBothRoles(
+        'delete with invalid ID',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation DeleteFieldConfig($fieldConfigId: Int!) {
+                fieldConfigDelete(fieldConfigID: $fieldConfigId) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  fieldConfig {
+                    id
+                  }
+                }
+              }
+            `, {
+              fieldConfigId: null,
+            }) as { data?: { fieldConfigDelete: FieldConfigPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+          }
+        },
+      )
+
+      // Both roles should get GraphQL validation errors
+      expect(results.admin.hasErrors).toBe(true)
+      expect(results.user.hasErrors).toBe(true)
+    })
   })
 
   describe('Authentication and Authorization', () => {
-    it('Requires authentication for all operations', async () => {
-      const response = await request<{ fieldConfigs: FieldConfig[] }>(
-        globalThis.httpServer,
-      ).query(gql`
-        query FieldConfigs {
-          fieldConfigs {
-            id
-            tableName
-            fieldName
-          }
-        }
-      `)
-
-      expect(response.errors).toBeTruthy()
-      expect(response.errors[0].message).toContain('Unauthorized')
-    })
-
-    it('Enforces read permissions for queries', async () => {
-      // Note: In a real scenario, you'd test with a user that lacks read permissions
-      // This test assumes the admin user has all permissions
-      const response = await request<{ fieldConfigs: FieldConfig[] }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
+    it('Should require authentication for all operations', async () => {
+      const response = await createAuthenticatedRequest('user')
+        .set('Cookie', '') // Remove authentication
         .query(gql`
           query FieldConfigs {
             fieldConfigs {
@@ -759,107 +993,10 @@ describe('FieldConfig', () => {
               fieldName
             }
           }
-        `)
-        .expectNoErrors()
+        `) as { errors?: readonly any[] }
 
-      expect(response.data.fieldConfigs).toBeTruthy()
-    })
-  })
-
-  describe('Data Validation and Business Logic', () => {
-    it('Validates performer type requirements consistency', async () => {
-      // Test business rule: at least one performer type should be required
-      const response = await request<{ fieldConfigCreate: FieldConfigPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .mutate(gql`
-          mutation CreateFieldConfig($fieldConfigInput: FieldConfigInput!) {
-            fieldConfigCreate(fieldConfigInput: $fieldConfigInput) {
-              userErrors {
-                message
-                field
-              }
-              fieldConfig {
-                id
-                tableName
-                fieldName
-              }
-            }
-          }
-        `)
-        .variables({
-          fieldConfigInput: {
-            tableName: 'validation_test_table',
-            fieldName: 'e2e_test_validation_field',
-            submissionRequired: false,
-            communityRequired: false,
-            groupRequired: false,
-            schoolRequired: false,
-            soloRequired: false,
-            customField: false,
-          },
-        })
-        .expectNoErrors()
-
-      // This should succeed - the business logic validation would be in the service layer
-      expect(response.data.fieldConfigCreate.fieldConfig).toBeTruthy()
-
-      // Clean up
-      await globalThis.prisma.tbl_field_config.delete({
-        where: { id: response.data.fieldConfigCreate.fieldConfig.id },
-      })
-    })
-
-    it('Handles custom field type validation', async () => {
-      const response = await request<{ fieldConfigCreate: FieldConfigPayload }>(
-        globalThis.httpServer,
-      )
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .mutate(gql`
-          mutation CreateFieldConfig($fieldConfigInput: FieldConfigInput!) {
-            fieldConfigCreate(fieldConfigInput: $fieldConfigInput) {
-              userErrors {
-                message
-                field
-              }
-              fieldConfig {
-                id
-                tableName
-                fieldName
-                customField
-                customFieldType
-              }
-            }
-          }
-        `)
-        .variables({
-          fieldConfigInput: {
-            tableName: 'custom_field_test_table',
-            fieldName: 'e2e_test_custom_field',
-            submissionRequired: true,
-            communityRequired: false,
-            groupRequired: false,
-            schoolRequired: false,
-            soloRequired: true,
-            customField: true,
-            customFieldType: 'date',
-          },
-        })
-        .expectNoErrors()
-
-      expect(response.data.fieldConfigCreate.userErrors).toEqual([])
-      expect(response.data.fieldConfigCreate.fieldConfig.customField).toBe(
-        true,
-      )
-      expect(response.data.fieldConfigCreate.fieldConfig.customFieldType).toBe(
-        'date',
-      )
-
-      // Clean up
-      await globalThis.prisma.tbl_field_config.delete({
-        where: { id: response.data.fieldConfigCreate.fieldConfig.id },
-      })
+      expect(response.errors).toBeTruthy()
+      expect(response.errors![0].message).toContain('Unauthorized')
     })
   })
 })

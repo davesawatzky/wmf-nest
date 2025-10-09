@@ -280,37 +280,143 @@ export async function setup(): Promise<void> {
   - `globalThis.admin`: Admin role flag
 
 #### E2E Test Patterns
-**Standard E2E Test Structure**:
+**CRITICAL**: All E2E tests MUST use the `testWithBothRoles` pattern to ensure proper authorization testing.
+
+**Test Helper Functions** (`src/test/testHelpers.ts`):
+```typescript
+// Available test helpers
+export type UserRole = 'admin' | 'user' | 'privateTeacher' | 'schoolTeacher'
+
+export function getAuthToken(role: UserRole): string
+export function getUserId(role: UserRole): number
+export function createAuthenticatedRequest<T>(role: UserRole): SuperTestGraphQL<T>
+export async function testWithBothRoles<T>(
+  testName: string,
+  testFn: (role: UserRole, token: string, userId: number) => Promise<T>
+): Promise<{ admin: T, user: T }>
+export async function expectAuthorized<T>(role: UserRole, operation: () => Promise<T>): Promise<T>
+export async function expectUnauthorized(role: UserRole, operation: () => Promise<any>): Promise<void>
+```
+
+**Standard E2E Test Structure with testWithBothRoles**:
 ```typescript
 import gql from 'graphql-tag'
-import request from 'supertest-graphql'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import {
+  createAuthenticatedRequest,
+  testWithBothRoles,
+} from '@/test/testHelpers'
+import {
+  Entity,
+  EntityPayload,
+} from '../entities/entity.entity'
 
 describe('Entity E2E Tests', () => {
-  let response: any
+  let testEntityId: number
 
-  it('Can perform GraphQL operation', async () => {
-    response = await request<{ entityQuery: Entity[] }>(globalThis.httpServer)
-      .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-      .query(gql`
-        query EntityQuery {
-          entities {
-            id
-            name
+  beforeAll(async () => {
+    // Wait for test context to be available
+    if (!globalThis.testContext) {
+      throw new Error('Test context not initialized. Check integrationTestSetup.')
+    }
+
+    // Clean up any existing test data
+    await globalThis.prisma.tbl_entity.deleteMany({
+      where: { name: { startsWith: 'test_' } },
+    })
+  }, 30000) // 30 second timeout for setup
+
+  afterAll(async () => {
+    // Final cleanup
+    await globalThis.prisma.tbl_entity.deleteMany({
+      where: { name: { startsWith: 'test_' } },
+    })
+  })
+
+  describe('Entity Queries (Both Roles)', () => {
+    it('Should list all entities for both roles', async () => {
+      const results = await testWithBothRoles(
+        'list entities',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .query(gql`
+              query GetEntities {
+                entities {
+                  id
+                  name
+                }
+              }
+            `)
+            .expectNoErrors() as { data: { entities: Entity[] } }
+
+          return {
+            hasData: !!response.data.entities,
+            count: response.data.entities?.length || 0,
           }
-        }
-      `)
-      .expectNoErrors()
-    
-    expect(response.data.entities).toBeTruthy()
+        },
+      )
+
+      // Both roles should successfully retrieve entities
+      expect(results.admin.hasData).toBe(true)
+      expect(results.user.hasData).toBe(true)
+      expect(results.admin.count).toBeGreaterThan(0)
+      expect(results.user.count).toBe(results.admin.count)
+    })
+  })
+
+  describe('Entity Mutations', () => {
+    it('Should enforce create authorization: admin succeeds, user fails', async () => {
+      const results = await testWithBothRoles(
+        'create entity',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation CreateEntity($entityInput: EntityInput!) {
+                entityCreate(entityInput: $entityInput) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  entity {
+                    id
+                    name
+                  }
+                }
+              }
+            `, {
+              entityInput: { name: `test_${role}_entity` },
+            }) as { data?: { entityCreate: EntityPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            isAuthorized: !response.errors,
+            entity: response.data?.entityCreate?.entity as Entity | undefined,
+            userErrors: response.data?.entityCreate?.userErrors,
+          }
+        },
+      )
+
+      // Admin should succeed
+      expect(results.admin.isAuthorized).toBe(true)
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.entity).toBeTruthy()
+      expect(results.admin.userErrors).toHaveLength(0)
+
+      // User should be forbidden
+      expect(results.user.isAuthorized).toBe(false)
+      expect(results.user.hasErrors).toBe(true)
+      expect(results.user.entity).toBeUndefined()
+    })
   })
 })
 ```
 
 **Test Data Management**:
-- **Setup**: Use `beforeEach` for creating test data
-- **Cleanup**: Use `afterEach`/`afterAll` for data cleanup
+- **Setup**: Use `beforeAll` for persistent test data, `beforeEach` for per-test data
+- **Cleanup**: Use `afterAll` for final cleanup, `afterEach` for per-test cleanup
 - **Database Access**: Direct Prisma access via `globalThis.prisma`
-- **Authentication**: Automatic admin token injection
+- **Authentication**: Use `createAuthenticatedRequest(role)` helper
+- **Test Context**: Access via `globalThis.testContext` with admin/user tokens and IDs
 
 #### Unit Testing Patterns
 **Service Unit Tests**:
@@ -414,11 +520,145 @@ export default defineConfig({
 
 #### Testing Best Practices
 **E2E Testing Guidelines**:
-1. **Authentication**: Always use `globalThis.diatonicToken` for authenticated requests
-2. **Data Cleanup**: Clean up test data in `afterEach` or `afterAll` hooks
-3. **Error Handling**: Test both success and error scenarios
-4. **GraphQL Patterns**: Use `supertest-graphql` with `.expectNoErrors()` for successful operations
-5. **Database State**: Leverage `globalThis.prisma` for direct database assertions
+1. **CRITICAL - Use testWithBothRoles**: ALL E2E tests MUST use `testWithBothRoles` to test admin vs user authorization
+2. **Type Safety**: Always type GraphQL responses with proper entity types (e.g., `as { data: { entities: Entity[] } }`)
+3. **Readonly Errors**: Use `errors?: readonly any[]` for GraphQL error types to match supertest-graphql
+4. **Data Cleanup**: Clean up test data in `afterAll` (for persistent data) or `afterEach` (for per-test data) hooks
+5. **Error Scenarios**: Test both success and error scenarios for all operations
+6. **Authorization Patterns**: 
+   - Queries: Both admin and user should succeed (read access)
+   - Mutations: Admin succeeds, user gets forbidden errors (write access)
+7. **GraphQL Response Structure**: Use `.expectNoErrors()` only when expecting success, handle errors explicitly for authorization tests
+8. **Test Organization**: Group tests by operation type (Queries, Mutations, etc.)
+9. **Descriptive Test Names**: Use clear names like "Should enforce create authorization: admin succeeds, user fails"
+10. **Consistent Return Objects**: Return structured objects with `hasErrors`, `isAuthorized`, entity data, and `userErrors`
+
+**TypeScript Typing in Tests**:
+```typescript
+// Query response typing
+const response = await createAuthenticatedRequest(role)
+  .query(gql`...`)
+  .expectNoErrors() as { data: { entities: Entity[] } }
+
+// Mutation response typing (with potential errors)
+const response = await createAuthenticatedRequest(role)
+  .mutate(gql`...`)
+  as { data?: { entityCreate: EntityPayload }, errors?: readonly any[] }
+
+// Return structured test data
+return {
+  hasErrors: !!response.errors,
+  isAuthorized: !response.errors,
+  entity: response.data?.entityCreate?.entity as Entity | undefined,
+  userErrors: response.data?.entityCreate?.userErrors,
+}
+```
+
+**E2E Test File Structure**:
+```typescript
+describe('Entity E2E Tests', () => {
+  let testEntityId: number
+
+  beforeAll(async () => {
+    // Setup: Check test context, create persistent test data
+  }, 30000)
+
+  afterAll(async () => {
+    // Cleanup: Remove all test data
+  })
+
+  describe('Entity Queries (Both Roles)', () => {
+    it('Should list all entities for both roles', async () => {
+      const results = await testWithBothRoles(/* ... */)
+      // Assert admin behavior
+      // Assert user behavior
+      // Compare results when appropriate
+    })
+
+    it('Should find specific entity for both roles', async () => {
+      const results = await testWithBothRoles(/* ... */)
+      // Both roles should get same data
+    })
+
+    it('Should handle query errors appropriately for both roles', async () => {
+      const results = await testWithBothRoles(/* ... */)
+      // Both roles should get same errors
+    })
+  })
+
+  describe('Entity Mutations', () => {
+    it('Should enforce create authorization: admin succeeds, user fails', async () => {
+      const results = await testWithBothRoles(/* ... */)
+      // Admin assertions
+      // User assertions (forbidden)
+    })
+
+    it('Should enforce update authorization: admin succeeds, user fails', async () => {
+      const results = await testWithBothRoles(/* ... */)
+      // Admin assertions
+      // User assertions (forbidden)
+    })
+
+    it('Should enforce delete authorization: admin succeeds, user fails', async () => {
+      const results = await testWithBothRoles(/* ... */)
+      // User assertions first (since admin will delete)
+      // Admin assertions
+    })
+
+    it('Should handle validation errors for both roles', async () => {
+      const results = await testWithBothRoles(/* ... */)
+      // Both roles should get same validation errors
+    })
+  })
+
+  describe('Entity Update Tests', () => {
+    beforeEach(async () => {
+      // Create entity for each update test
+    })
+
+    afterEach(async () => {
+      // Clean up test entity
+    })
+
+    it('Should successfully update entity: admin succeeds, user forbidden', async () => {
+      const results = await testWithBothRoles(/* ... */)
+    })
+  })
+
+  describe('Authentication and Authorization', () => {
+    it('Should require authentication for all operations', async () => {
+      const response = await createAuthenticatedRequest('user')
+        .set('Cookie', '') // Remove authentication
+        .query(gql`...`) as { errors?: readonly any[] }
+
+      expect(response.errors).toBeTruthy()
+      expect(response.errors![0].message).toContain('Unauthorized')
+    })
+  })
+})
+```
+
+**Authorization Testing Patterns**:
+```typescript
+// For read operations (queries) - both roles should succeed
+expect(results.admin.hasData).toBe(true)
+expect(results.user.hasData).toBe(true)
+expect(results.user.count).toBe(results.admin.count)
+
+// For write operations (mutations) - admin succeeds, user fails
+expect(results.admin.isAuthorized).toBe(true)
+expect(results.admin.hasErrors).toBe(false)
+expect(results.admin.entity).toBeTruthy()
+expect(results.admin.userErrors).toHaveLength(0)
+
+expect(results.user.isAuthorized).toBe(false)
+expect(results.user.hasErrors).toBe(true)
+expect(results.user.entity).toBeUndefined()
+
+// For validation errors - both roles should get same errors
+expect(results.admin.hasErrors).toBe(true)
+expect(results.user.hasErrors).toBe(true)
+```
 
 **Unit Testing Guidelines**:
 1. **Mocking**: Mock external dependencies, especially database services
@@ -579,10 +819,33 @@ import { PrismaService } from '@/prisma/prisma.service'
 ```
 
 ## Testing Patterns
-- **E2E tests**: Use `globalThis.httpServer` and `globalThis.prisma` from setup
-- **Authentication**: Set `Cookie: diatonicToken=${globalThis.diatonicToken}`
-- **GraphQL queries**: Use `supertest-graphql` with `.expectNoErrors()`
-- **Cleanup**: Always clean up test data in `afterAll`/`afterEach` hooks
+**CRITICAL**: All E2E tests MUST use the `testWithBothRoles` pattern from `src/test/testHelpers.ts`.
+
+### E2E Test Requirements
+1. **Use testWithBothRoles**: Every E2E test must test both admin and user roles simultaneously
+2. **Type GraphQL Responses**: Always cast responses with proper entity types
+3. **Test Authorization**: Verify that admin has write access and user has read-only access
+4. **Structure Tests Consistently**: Group by Queries (both roles succeed) and Mutations (admin succeeds, user fails)
+5. **Clean Test Data**: Use `beforeAll`/`afterAll` for persistent data, `beforeEach`/`afterEach` for per-test data
+
+### Test Helper Usage
+```typescript
+import { createAuthenticatedRequest, testWithBothRoles } from '@/test/testHelpers'
+
+// Create authenticated requests for specific roles
+const response = await createAuthenticatedRequest('admin').query(gql`...`)
+const response = await createAuthenticatedRequest('user').mutate(gql`...`)
+
+// Test with both roles automatically
+const results = await testWithBothRoles('operation name', async (role) => {
+  const response = await createAuthenticatedRequest(role).query(gql`...`)
+  return { hasData: !!response.data }
+})
+// results = { admin: { hasData: true }, user: { hasData: true } }
+```
+
+### Example Test Structure
+See the field-config E2E tests (`src/submissions/field-config/test/field-config.e2e-spec.ts`) for a complete reference implementation with 18 comprehensive tests covering queries, mutations, updates, deletes, and authorization.
 
 ## Configuration Notes
 - **Environment files**: `.env.development`, `.env.test`, `.env.production`

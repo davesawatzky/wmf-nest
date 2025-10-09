@@ -175,7 +175,7 @@ export class TeacherService {
 
       if (!teacherID && !email) {
         this.logger.log('FindOne called without teacherID or email parameters')
-        return undefined
+        return null
       }
 
       let teacher: tbl_user | null = null
@@ -192,10 +192,10 @@ export class TeacherService {
       }
 
       if (!teacher) {
-        this.logger.warn(
-          `Teacher not found with ${teacherID ? `ID: ${teacherID}` : `email: ${email}`}`,
+        this.logger.log(
+          `Teacher not found with ${teacherID ? `ID: ${teacherID}` : `email: ${email}`} - available for creations`,
         )
-        throw new NotFoundException('Teacher not found')
+        return null
       }
 
       // Check if the user is actually a teacher
@@ -238,6 +238,7 @@ export class TeacherService {
 
       // Remove sensitive fields from response
       const { password, roles, ...teacherResponse } = teacher
+      console.error(teacherResponse)
 
       return {
         userErrors: [],

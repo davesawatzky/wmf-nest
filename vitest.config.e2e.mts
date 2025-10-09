@@ -1,8 +1,12 @@
-import { resolve } from 'node:path'
+import { dirname, resolve } from 'node:path'
 import process from 'node:process'
+import { fileURLToPath } from 'node:url'
 import swc from 'unplugin-swc'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { defineConfig } from 'vitest/config'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 export default defineConfig({
   test: {
@@ -12,18 +16,13 @@ export default defineConfig({
     globals: true,
     globalSetup: './src/test/globalSetup_e2e.ts',
     setupFiles: [
-      './src/test/integrationTestAdminSetup.ts',
-      // './src/test/integrationTestUserSetup.ts',
+      './src/test/integrationTestSetup.ts',
     ],
-    // fileParallelism: false,
-    // maxConcurrency: 1,
-    pool: 'forks',
+    // Use threads pool for UI compatibility (forks don't work well with UI)
+    pool: 'threads',
     poolOptions: {
       threads: {
         singleThread: true,
-      },
-      forks: {
-        singleFork: true,
       },
     },
     server: {
@@ -31,12 +30,14 @@ export default defineConfig({
         fallbackCJS: true,
       },
     },
+    ui: true,
+    open: true, // Set to false to prevent auto-opening, manually navigate to URL
   },
   resolve: {
     alias: {
-      '@': './src',
-      '@src': './src',
-      '@test': './test',
+      '@': resolve(__dirname, 'src'),
+      '@src': resolve(__dirname, 'src'),
+      '@test': resolve(__dirname, 'test'),
     },
   },
   plugins: [

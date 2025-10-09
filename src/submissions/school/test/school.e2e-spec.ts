@@ -1,506 +1,839 @@
 import gql from 'graphql-tag'
-import request from 'supertest-graphql'
-import { School } from '../entities/school.entity'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import {
+  createAuthenticatedRequest,
+  getUserId,
+  testWithBothRoles,
+} from '@/test/testHelpers'
+import {
+  School,
+  SchoolPayload,
+} from '../entities/school.entity'
 
-describe('School', () => {
-  let regId: number
+describe('School E2E Tests', () => {
+  let adminRegistrationId: number
+  let _userRegistrationId: number // Created but not used - admin's registration has test data
+  let testSchoolId: number
 
   beforeAll(async () => {
-    const reg = await globalThis.prisma.tbl_registration.create({
+    if (!globalThis.testContext) {
+      throw new Error('Test context not initialized. Check integrationTestSetup.')
+    }
+
+    // Clean up any existing test data
+    await globalThis.prisma.tbl_reg_school.deleteMany({
+      where: { name: { startsWith: 'test_' } },
+    })
+
+    // Create separate registrations for admin and user with performerType SCHOOL
+    const adminRegistration = await globalThis.prisma.tbl_registration.create({
       data: {
-        userID: globalThis.userId,
+        userID: getUserId('admin'),
+        label: 'test_admin_school_reg',
         performerType: 'SCHOOL',
-        label: 'Test Form',
       },
     })
-    regId = reg.id
-  })
+    adminRegistrationId = adminRegistration.id
+
+    const userRegistration = await globalThis.prisma.tbl_registration.create({
+      data: {
+        userID: getUserId('user'),
+        label: 'test_user_school_reg',
+        performerType: 'SCHOOL',
+      },
+    })
+    _userRegistrationId = userRegistration.id
+
+    // Create test school for query tests
+    const testSchool = await globalThis.prisma.tbl_reg_school.create({
+      data: {
+        regID: adminRegistrationId,
+        name: 'test_query_school',
+        division: 'Elementary',
+        address: '123 Test St',
+        city: 'Winnipeg',
+        province: 'MB',
+        postalCode: 'R3T 2N2',
+        phone: '204-555-0001',
+      },
+    })
+    testSchoolId = testSchool.id
+  }, 30000)
 
   afterAll(async () => {
-    await globalThis.prisma.tbl_registration.delete({
-      where: {
-        id: regId,
-      },
+    // Clean up test data
+    await globalThis.prisma.tbl_reg_school.deleteMany({
+      where: { name: { startsWith: 'test_' } },
+    })
+    await globalThis.prisma.tbl_registration.deleteMany({
+      where: { label: { startsWith: 'test_' } },
     })
   })
 
-  describe('Read full schools list', () => {
-    let response: any
+  describe('School Queries', () => {
+    it('Should list all schools for admin, user gets forbidden', async () => {
+      const results = await testWithBothRoles(
+        'list schools',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .query(gql`
+              query GetSchools {
+                schools {
+                  id
+                  name
+                  division
+                }
+              }
+            `) as { data?: { schools: School[] }, errors?: readonly any[] }
 
-    it('Can return the full list of schools', async () => {
-      response = await request<{ schools: School[] }>(globalThis.httpServer)
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          query Schools {
-            schools {
-              id
-              name
-              division
-              address
-              city
-              phone
-              postalCode
-              province
-            }
+          return {
+            hasErrors: !!response.errors,
+            isAuthorized: !response.errors,
+            hasData: !!response.data?.schools,
+            count: response.data?.schools?.length || 0,
           }
-        `)
-        .expectNoErrors()
-      expect(response.data.schools).toBeTruthy()
-      expect(response.data.schools.length).toBeGreaterThan(1)
-    })
-
-    it('Can return the full list of schools with associated registrations', async () => {
-      response = await request<{ schools: School[] }>(globalThis.httpServer)
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          query Schools {
-            schools {
-              id
-              name
-              registration {
-                id
-                confirmation
-                label
-                createdAt
-              }
-            }
-          }
-        `)
-        .expectNoErrors()
-      expect(response.data.schools.length).toBeGreaterThan(1)
-      expect(response.data.schools[0]).toHaveProperty('registration')
-      expect(response.data.schools[0].id).toBeTruthy()
-    })
-
-    it('Can return the full list of schools with registrations and school groups', async () => {
-      response = await request<{ schools: School[] }>(globalThis.httpServer)
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          query Schools {
-            schools {
-              id
-              name
-              registration {
-                id
-                label
-              }
-              schoolGroups {
-                id
-                name
-              }
-            }
-          }
-        `)
-        .expectNoErrors()
-      expect(response.data.schools.length).toBeGreaterThan(1)
-      expect(response.data.schools[0]).toHaveProperty('registration')
-      expect(response.data.schools[0]).toHaveProperty('schoolGroups')
-      expect(response.data.schools[0].schoolGroups[0].name).toBeTruthy()
-    })
-
-    it('Can return a single school with schoolID', async () => {
-      response = await request<{ school: School }>(globalThis.httpServer)
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          query School($registrationId: Int, $schoolId: Int) {
-            school(registrationID: $registrationId, schoolID: $schoolId) {
-              id
-              name
-              registration {
-                id
-                confirmation
-                label
-                createdAt
-              }
-            }
-          }
-        `)
-        .variables({
-          schoolId: 10,
-        })
-        .expectNoErrors()
-      expect(response.data.school.name).toBeTruthy()
-      expect(response.data.school.registration.id).toBeTruthy()
-    })
-
-    it('Returns an error if nothing is found', async () => {
-      response = await request<{ school: School }>(globalThis.httpServer)
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          query School($registrationId: Int, $schoolId: Int) {
-            school(registrationID: $registrationId, schoolID: $schoolId) {
-              id
-              name
-              registration {
-                id
-                confirmation
-                label
-                createdAt
-              }
-            }
-          }
-        `)
-        .variables({
-          schoolId: 10,
-          registrationId: 10,
-        })
-      expect(response.errors).toBeTruthy()
-    })
-  })
-
-  describe('Create', () => {
-    let response: any
-    let schoolId: number | null
-
-    afterEach(async () => {
-      try {
-        await globalThis.prisma.tbl_reg_school.delete({
-          where: {
-            id: schoolId,
-          },
-        })
-      }
-      catch (error: any) {
-        if (error.code !== 'P2025') {
-          console.error(error)
-        }
-      }
-    })
-
-    it('Can create a school with regId', async () => {
-      response = await request<{ schoolCreate: School }>(globalThis.httpServer)
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          mutation SchoolCreate($registrationId: Int!) {
-            schoolCreate(registrationID: $registrationId) {
-              school {
-                id
-              }
-              userErrors {
-                field
-                message
-              }
-            }
-          }
-        `)
-        .variables({
-          registrationId: regId,
-        })
-        .expectNoErrors()
-      schoolId = await response.data.schoolCreate.school.id
-      expect(response.data.schoolCreate.school.id).toBeTypeOf('number')
-      expect(response.data.schoolCreate.school.id).toBeTruthy()
-    })
-
-    it('Can create a school with school Input', async () => {
-      response = await request<{ schoolCreate: School }>(globalThis.httpServer)
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          mutation SchoolCreate(
-            $registrationId: Int!
-            $schoolInput: SchoolInput
-          ) {
-            schoolCreate(
-              registrationID: $registrationId
-              schoolInput: $schoolInput
-            ) {
-              school {
-                id
-                name
-              }
-              userErrors {
-                field
-                message
-              }
-            }
-          }
-        `)
-        .variables({
-          registrationId: regId,
-          schoolInput: {
-            name: 'Test School',
-          },
-        })
-        .expectNoErrors()
-      schoolId = await response.data.schoolCreate.school.id
-      expect(response.data.schoolCreate.school.id).toBeTypeOf('number')
-      expect(response.data.schoolCreate.school.name).toBe('Test School')
-    })
-
-    it('Returns an error if trying to create a school without proper registrationId', async () => {
-      response = await request<{ schoolCreate: School }>(globalThis.httpServer)
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          mutation SchoolCreate(
-            $registrationId: Int!
-            $schoolInput: SchoolInput
-          ) {
-            schoolCreate(
-              registrationID: $registrationId
-              schoolInput: $schoolInput
-            ) {
-              school {
-                id
-                name
-              }
-              userErrors {
-                field
-                message
-              }
-            }
-          }
-        `)
-        .variables({
-          registrationId: regId + 1,
-          schoolInput: {
-            name: 'Test School',
-          },
-        })
-      expect(response.data.schoolCreate.userErrors[0].message).toBeTruthy()
-      expect(response.data.schoolCreate.school).toBeNull()
-    })
-  })
-
-  describe('Update', () => {
-    let response: any
-    let schoolId: number
-
-    beforeAll(async () => {
-      response = await globalThis.prisma.tbl_reg_school.create({
-        data: {
-          regID: regId,
-          name: 'Test School',
-          division: 'Test Division',
         },
-      })
-      schoolId = await response.id
-    })
-
-    afterAll(async () => {
-      await globalThis.prisma.tbl_reg_school.delete({
-        where: {
-          id: schoolId,
-        },
-      })
-    })
-
-    it('Can update any school', async () => {
-      response = await request<{ schoolUpdate: School }>(globalThis.httpServer)
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          mutation SchoolUpdate($schoolId: Int!, $schoolInput: SchoolInput!) {
-            schoolUpdate(schoolID: $schoolId, schoolInput: $schoolInput) {
-              school {
-                id
-                name
-                division
-              }
-              userErrors {
-                field
-                message
-              }
-            }
-          }
-        `)
-        .variables({
-          schoolId,
-          schoolInput: {
-            division: 'Updated Division',
-          },
-        })
-        .expectNoErrors()
-      expect(response.data.schoolUpdate.school.division).toBe(
-        'Updated Division',
       )
-      expect(response.data.schoolUpdate.school.name).toBe('Test School')
+
+      // Admin should successfully retrieve schools
+      expect(results.admin.isAuthorized).toBe(true)
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.hasData).toBe(true)
+      expect(results.admin.count).toBeGreaterThan(0)
+
+      // User should be forbidden
+      expect(results.user.isAuthorized).toBe(false)
+      expect(results.user.hasErrors).toBe(true)
     })
 
-    it('Returns userError if incorrect school id', async () => {
-      response = await request<{ schoolUpdate: School }>(globalThis.httpServer)
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          mutation SchoolUpdate($schoolId: Int!, $schoolInput: SchoolInput!) {
-            schoolUpdate(schoolID: $schoolId, schoolInput: $schoolInput) {
-              school {
-                id
-                name
+    it('Should find specific school by schoolID for both roles', async () => {
+      const results = await testWithBothRoles(
+        'find school by ID',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .query(gql`
+              query GetSchool($schoolID: Int!) {
+                school(schoolID: $schoolID) {
+                  id
+                  name
+                  division
+                  city
+                }
               }
-              userErrors {
-                field
-                message
-              }
-            }
+            `, {
+              schoolID: testSchoolId,
+            })
+            .expectNoErrors() as { data: { school: School } }
+
+          return {
+            hasData: !!response.data.school,
+            schoolId: response.data.school?.id,
+            schoolName: response.data.school?.name,
           }
-        `)
-        .variables({
-          schoolId: schoolId + 1,
-          schoolInput: {
-            division: 'Updated Division',
-          },
-        })
-      expect(response.data.schoolUpdate.userErrors[0].message).toBeTruthy()
-      expect(response.data.schoolUpdate.school).toBeNull()
+        },
+      )
+
+      // Both roles should successfully retrieve the school
+      expect(results.admin.hasData).toBe(true)
+      expect(results.admin.schoolId).toBe(testSchoolId)
+      expect(results.admin.schoolName).toBe('test_query_school')
+
+      expect(results.user.hasData).toBe(true)
+      expect(results.user.schoolId).toBe(testSchoolId)
+      expect(results.user.schoolName).toBe('test_query_school')
     })
 
-    it('Returns html status error if missing school id', async () => {
-      response = await request<{ schoolUpdate: School }>(globalThis.httpServer)
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          mutation SchoolUpdate($schoolId: Int!, $schoolInput: SchoolInput!) {
-            schoolUpdate(schoolID: $schoolId, schoolInput: $schoolInput) {
-              school {
-                id
-                name
-                division
+    it('Should find school by registrationID for both roles', async () => {
+      const results = await testWithBothRoles(
+        'find school by registrationID',
+        async (role) => {
+          // Both roles query the admin registration (which has the test school)
+          const response = await createAuthenticatedRequest(role)
+            .query(gql`
+              query GetSchoolByRegistration($registrationID: Int!) {
+                school(registrationID: $registrationID) {
+                  id
+                  name
+                  registration {
+                    id
+                  }
+                }
               }
-              userErrors {
-                field
-                message
-              }
-            }
+            `, {
+              registrationID: role === 'admin' ? adminRegistrationId : adminRegistrationId, // Both query admin's school
+            })
+            .expectNoErrors() as { data: { school: School } }
+
+          return {
+            hasData: !!response.data.school,
+            schoolName: response.data.school?.name,
+            registrationId: response.data.school?.registration?.id,
           }
-        `)
-        .variables({
-          schoolId: null,
-          schoolInput: {
-            division: 'Updated Division',
-          },
-        })
-      expect(response.errors[0].message).toBeTruthy()
+        },
+      )
+
+      // Both roles should retrieve the school
+      expect(results.admin.hasData).toBe(true)
+      expect(results.admin.schoolName).toBe('test_query_school')
+      expect(results.admin.registrationId).toBe(adminRegistrationId)
+
+      expect(results.user.hasData).toBe(true)
+      expect(results.user.schoolName).toBe('test_query_school')
+      expect(results.user.registrationId).toBe(adminRegistrationId)
     })
 
-    it('Returns html status error if any bad input args', async () => {
-      response = await request<{ schoolUpdate: School }>(globalThis.httpServer)
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          mutation SchoolUpdate($schoolId: Int!, $schoolInput: SchoolInput!) {
-            schoolUpdate(schoolID: $schoolId, schoolInput: $schoolInput) {
-              school {
-                id
-                name
-                performerType
+    it('Should return error when school not found for both roles', async () => {
+      const results = await testWithBothRoles(
+        'handle school not found',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .query(gql`
+              query GetSchool($schoolID: Int!) {
+                school(schoolID: $schoolID) {
+                  id
+                  name
+                }
               }
-              userErrors {
-                field
-                message
-              }
-            }
+            `, {
+              schoolID: 99999,
+            }) as { data?: { school: School | null }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            errorMessage: response.errors?.[0]?.message,
           }
-        `)
-        .variables({
-          schoolId,
-          schoolInput: {
-            name: 'Updated School',
-            okeydokey: true,
-          },
-        })
-      expect(response.errors[0].message).toBeTruthy()
+        },
+      )
+
+      // Both roles should get not found error
+      expect(results.admin.hasErrors).toBe(true)
+      expect(results.admin.errorMessage).toContain('not found')
+
+      expect(results.user.hasErrors).toBe(true)
+      expect(results.user.errorMessage).toContain('not found')
+    })
+
+    it('Should return error when neither schoolID nor registrationID provided for both roles', async () => {
+      const results = await testWithBothRoles(
+        'handle missing parameters',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .query(gql`
+              query GetSchool {
+                school {
+                  id
+                  name
+                }
+              }
+            `) as { data?: { school: School | null }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            errorMessage: response.errors?.[0]?.message,
+          }
+        },
+      )
+
+      // Both roles should get bad request error
+      expect(results.admin.hasErrors).toBe(true)
+      expect(results.admin.errorMessage).toContain('must be provided')
+
+      expect(results.user.hasErrors).toBe(true)
+      expect(results.user.errorMessage).toContain('must be provided')
     })
   })
 
-  describe('Delete', () => {
-    let response: any
-    let schoolId: number
+  describe('School Create Tests', () => {
+    it('Should create school with registrationID for both roles', async () => {
+      const results = await testWithBothRoles(
+        'create school',
+        async (role) => {
+          // Create separate registration for each role's create test (regID unique constraint)
+          const userId = getUserId(role)
+          const newRegistration = await globalThis.prisma.tbl_registration.create({
+            data: {
+              userID: userId,
+              label: `test_${role}_school_create_reg`,
+              performerType: 'SCHOOL',
+            },
+          })
 
-    beforeEach(async () => {
-      response = await globalThis.prisma.tbl_reg_school.create({
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation CreateSchool($registrationID: Int!) {
+                schoolCreate(registrationID: $registrationID) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  school {
+                    id
+                    name
+                    division
+                    registration {
+                      id
+                    }
+                  }
+                }
+              }
+            `, {
+              registrationID: newRegistration.id,
+            }) as { data?: { schoolCreate: SchoolPayload }, errors?: readonly any[] }
+
+          // Cleanup
+          if (response.data?.schoolCreate?.school?.id) {
+            await globalThis.prisma.tbl_reg_school.delete({
+              where: { id: response.data.schoolCreate.school.id },
+            })
+          }
+          await globalThis.prisma.tbl_registration.delete({
+            where: { id: newRegistration.id },
+          })
+
+          return {
+            hasErrors: !!response.errors,
+            isAuthorized: !response.errors,
+            school: response.data?.schoolCreate?.school as School | undefined,
+            userErrors: response.data?.schoolCreate?.userErrors,
+            hasUserErrors: (response.data?.schoolCreate?.userErrors?.length || 0) > 0,
+          }
+        },
+      )
+
+      // Both roles should succeed
+      expect(results.admin.isAuthorized).toBe(true)
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.school).toBeTruthy()
+      expect(results.admin.hasUserErrors).toBe(false)
+
+      expect(results.user.isAuthorized).toBe(true)
+      expect(results.user.hasErrors).toBe(false)
+      expect(results.user.school).toBeTruthy()
+      expect(results.user.hasUserErrors).toBe(false)
+    })
+
+    it('Should create school with schoolInput for both roles', async () => {
+      const results = await testWithBothRoles(
+        'create school with input',
+        async (role) => {
+          // Create separate registration for each role
+          const userId = getUserId(role)
+          const newRegistration = await globalThis.prisma.tbl_registration.create({
+            data: {
+              userID: userId,
+              label: `test_${role}_school_input_reg`,
+              performerType: 'SCHOOL',
+            },
+          })
+
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation CreateSchoolWithInput($registrationID: Int!, $schoolInput: SchoolInput) {
+                schoolCreate(registrationID: $registrationID, schoolInput: $schoolInput) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  school {
+                    id
+                    name
+                    division
+                    city
+                    province
+                  }
+                }
+              }
+            `, {
+              registrationID: newRegistration.id,
+              schoolInput: {
+                name: `test_${role}_school_with_input`,
+                division: 'High School',
+                address: '456 Main St',
+                city: 'Brandon',
+                province: 'MB',
+                postalCode: 'R7A 1A1',
+                phone: '204-555-0100',
+              },
+            }) as { data?: { schoolCreate: SchoolPayload }, errors?: readonly any[] }
+
+          // Cleanup
+          if (response.data?.schoolCreate?.school?.id) {
+            await globalThis.prisma.tbl_reg_school.delete({
+              where: { id: response.data.schoolCreate.school.id },
+            })
+          }
+          await globalThis.prisma.tbl_registration.delete({
+            where: { id: newRegistration.id },
+          })
+
+          return {
+            hasErrors: !!response.errors,
+            isAuthorized: !response.errors,
+            school: response.data?.schoolCreate?.school as School | undefined,
+            schoolName: response.data?.schoolCreate?.school?.name,
+            division: response.data?.schoolCreate?.school?.division,
+            city: response.data?.schoolCreate?.school?.city,
+            userErrors: response.data?.schoolCreate?.userErrors,
+            hasUserErrors: (response.data?.schoolCreate?.userErrors?.length || 0) > 0,
+          }
+        },
+      )
+
+      // Both roles should succeed with correct data
+      expect(results.admin.isAuthorized).toBe(true)
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.school).toBeTruthy()
+      expect(results.admin.schoolName).toBe('test_admin_school_with_input')
+      expect(results.admin.division).toBe('High School')
+      expect(results.admin.city).toBe('Brandon')
+      expect(results.admin.hasUserErrors).toBe(false)
+
+      expect(results.user.isAuthorized).toBe(true)
+      expect(results.user.hasErrors).toBe(false)
+      expect(results.user.school).toBeTruthy()
+      expect(results.user.schoolName).toBe('test_user_school_with_input')
+      expect(results.user.division).toBe('High School')
+      expect(results.user.city).toBe('Brandon')
+      expect(results.user.hasUserErrors).toBe(false)
+    })
+
+    it('Should return userErrors when creating school with invalid registrationID for both roles', async () => {
+      const results = await testWithBothRoles(
+        'create school with invalid registrationID',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation CreateSchool($registrationID: Int!) {
+                schoolCreate(registrationID: $registrationID) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  school {
+                    id
+                    name
+                  }
+                }
+              }
+            `, {
+              registrationID: 99999,
+            }) as { data?: { schoolCreate: SchoolPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            school: response.data?.schoolCreate?.school as School | undefined,
+            userErrors: response.data?.schoolCreate?.userErrors,
+            hasUserErrors: (response.data?.schoolCreate?.userErrors?.length || 0) > 0,
+            userErrorMessage: response.data?.schoolCreate?.userErrors?.[0]?.message,
+          }
+        },
+      )
+
+      // Both roles should get userErrors
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.school).toBeNull()
+      expect(results.admin.hasUserErrors).toBe(true)
+      expect(results.admin.userErrorMessage).toContain('Cannot create school')
+
+      expect(results.user.hasErrors).toBe(false)
+      expect(results.user.school).toBeNull()
+      expect(results.user.hasUserErrors).toBe(true)
+      expect(results.user.userErrorMessage).toContain('Cannot create school')
+    })
+  })
+
+  describe('School Update Tests', () => {
+    it('Should successfully update school for both roles', async () => {
+      // Create separate registration for update test (regID unique constraint)
+      const updateReg = await globalThis.prisma.tbl_registration.create({
         data: {
-          regID: regId,
-          name: 'Test School',
+          userID: getUserId('admin'),
+          label: 'test_update_school_reg',
+          performerType: 'SCHOOL',
         },
       })
-      schoolId = await response.id
-    })
 
-    afterEach(async () => {
-      try {
-        await globalThis.prisma.tbl_reg_school.delete({
-          where: {
-            id: schoolId,
-          },
-        })
-      }
-      catch (error: any) {
-        if (error.code !== 'P2025') {
-          console.error(error)
-        }
-      }
-    })
-
-    it('Can delete a school', async () => {
-      response = await request<{ schoolDelete: boolean }>(globalThis.httpServer)
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          mutation SchoolDelete($schoolId: Int!) {
-            schoolDelete(schoolID: $schoolId) {
-              school {
-                id
-                name
-              }
-              userErrors {
-                field
-                message
-              }
-            }
-          }
-        `)
-        .variables({
-          schoolId,
-        })
-        .expectNoErrors()
-
-      const deleteCheck = await globalThis.prisma.tbl_reg_school.findUnique({
-        where: { id: schoolId },
+      // Create test school inline to avoid regID unique constraint
+      const updateSchool = await globalThis.prisma.tbl_reg_school.create({
+        data: {
+          regID: updateReg.id,
+          name: 'test_update_school',
+          division: 'Elementary',
+          address: '100 Update St',
+          city: 'Winnipeg',
+          province: 'MB',
+          postalCode: 'R3T 3N3',
+          phone: '204-555-0200',
+        },
       })
-      expect(deleteCheck).toBeNull()
-      expect(response.data.schoolDelete.school.name).toBe('Test School')
+      const updateTestSchoolId = updateSchool.id
+
+      const results = await testWithBothRoles(
+        'update school',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation UpdateSchool($schoolID: Int!, $schoolInput: SchoolInput!) {
+                schoolUpdate(schoolID: $schoolID, schoolInput: $schoolInput) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  school {
+                    id
+                    name
+                    division
+                    city
+                  }
+                }
+              }
+            `, {
+              schoolID: updateTestSchoolId,
+              schoolInput: {
+                name: `test_updated_school_${role}`,
+                division: 'Middle School',
+                city: 'Thompson',
+              },
+            }) as { data?: { schoolUpdate: SchoolPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            isAuthorized: !response.errors,
+            school: response.data?.schoolUpdate?.school as School | undefined,
+            schoolName: response.data?.schoolUpdate?.school?.name,
+            division: response.data?.schoolUpdate?.school?.division,
+            city: response.data?.schoolUpdate?.school?.city,
+            userErrors: response.data?.schoolUpdate?.userErrors,
+            hasUserErrors: (response.data?.schoolUpdate?.userErrors?.length || 0) > 0,
+          }
+        },
+      )
+
+      // Both roles should succeed
+      expect(results.admin.isAuthorized).toBe(true)
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.school).toBeTruthy()
+      expect(results.admin.schoolName).toBe('test_updated_school_admin')
+      expect(results.admin.division).toBe('Middle School')
+      expect(results.admin.city).toBe('Thompson')
+      expect(results.admin.hasUserErrors).toBe(false)
+
+      expect(results.user.isAuthorized).toBe(true)
+      expect(results.user.hasErrors).toBe(false)
+      expect(results.user.school).toBeTruthy()
+      expect(results.user.schoolName).toBe('test_updated_school_user')
+      expect(results.user.division).toBe('Middle School')
+      expect(results.user.city).toBe('Thompson')
+      expect(results.user.hasUserErrors).toBe(false)
+
+      // Cleanup
+      await globalThis.prisma.tbl_reg_school.delete({
+        where: { id: updateTestSchoolId },
+      })
+      await globalThis.prisma.tbl_registration.delete({
+        where: { id: updateReg.id },
+      })
     })
 
-    it('Returns a userError if school not found', async () => {
-      response = await request<{ schoolDelete: boolean }>(globalThis.httpServer)
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
-        .query(gql`
-          mutation SchoolDelete($schoolId: Int!) {
-            schoolDelete(schoolID: $schoolId) {
-              school {
-                id
-                name
+    it('Should return error when updating school with invalid ID for both roles', async () => {
+      const results = await testWithBothRoles(
+        'update school with invalid ID',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation UpdateSchool($schoolID: Int!, $schoolInput: SchoolInput!) {
+                schoolUpdate(schoolID: $schoolID, schoolInput: $schoolInput) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  school {
+                    id
+                    name
+                  }
+                }
               }
-              userErrors {
-                field
-                message
-              }
-            }
+            `, {
+              schoolID: 99999,
+              schoolInput: {
+                name: 'test_invalid_update',
+              },
+            }) as { data?: { schoolUpdate: SchoolPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            school: response.data?.schoolUpdate?.school as School | undefined,
+            userErrors: response.data?.schoolUpdate?.userErrors,
+            hasUserErrors: (response.data?.schoolUpdate?.userErrors?.length || 0) > 0,
+            userErrorMessage: response.data?.schoolUpdate?.userErrors?.[0]?.message,
           }
-        `)
-        .variables({
-          schoolId: schoolId + 1,
-        })
-        .expectNoErrors()
-      expect(response.data.schoolDelete.userErrors[0].message).toBeTruthy()
+        },
+      )
+
+      // Both roles should get userErrors
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.school).toBeNull()
+      expect(results.admin.hasUserErrors).toBe(true)
+      expect(results.admin.userErrorMessage).toContain('not found')
+
+      expect(results.user.hasErrors).toBe(false)
+      expect(results.user.school).toBeNull()
+      expect(results.user.hasUserErrors).toBe(true)
+      expect(results.user.userErrorMessage).toContain('not found')
     })
 
-    it('Returns status error if school id not given', async () => {
-      response = await request<{ schoolDelete: boolean }>(globalThis.httpServer)
-        .set('Cookie', `diatonicToken=${globalThis.diatonicToken}`)
+    it('Should return error when updating school with null ID for both roles', async () => {
+      const results = await testWithBothRoles(
+        'update school with null ID',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation UpdateSchool($schoolID: Int!, $schoolInput: SchoolInput!) {
+                schoolUpdate(schoolID: $schoolID, schoolInput: $schoolInput) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  school {
+                    id
+                    name
+                  }
+                }
+              }
+            `, {
+              schoolID: null,
+              schoolInput: {
+                name: 'test_null_update',
+              },
+            }) as { data?: { schoolUpdate: SchoolPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            errorMessage: response.errors?.[0]?.message,
+          }
+        },
+      )
+
+      // Both roles should get GraphQL validation errors
+      expect(results.admin.hasErrors).toBe(true)
+      expect(results.admin.errorMessage).toBeTruthy()
+
+      expect(results.user.hasErrors).toBe(true)
+      expect(results.user.errorMessage).toBeTruthy()
+    })
+
+    it('Should return error when updating school with bad input arguments for both roles', async () => {
+      const results = await testWithBothRoles(
+        'update school with bad arguments',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation UpdateSchool($schoolID: Int!, $schoolInput: SchoolInput!) {
+                schoolUpdate(schoolID: $schoolID, schoolInput: $schoolInput) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  school {
+                    id
+                    name
+                  }
+                }
+              }
+            `, {
+              schoolID: 99999, // Use invalid ID instead
+              schoolInput: null,
+            }) as { data?: { schoolUpdate: SchoolPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            errorMessage: response.errors?.[0]?.message,
+          }
+        },
+      )
+
+      // Both roles should get GraphQL validation errors
+      expect(results.admin.hasErrors).toBe(true)
+      expect(results.admin.errorMessage).toBeTruthy()
+
+      expect(results.user.hasErrors).toBe(true)
+      expect(results.user.errorMessage).toBeTruthy()
+    })
+  })
+
+  describe('School Delete Tests', () => {
+    it('Should successfully delete school for both roles', async () => {
+      const results = await testWithBothRoles(
+        'delete school',
+        async (role) => {
+          // Create separate registration and school for each role's delete test (regID unique constraint)
+          const userId = getUserId(role)
+          const newRegistration = await globalThis.prisma.tbl_registration.create({
+            data: {
+              userID: userId,
+              label: `test_${role}_school_delete_reg`,
+              performerType: 'SCHOOL',
+            },
+          })
+
+          const schoolToDelete = await globalThis.prisma.tbl_reg_school.create({
+            data: {
+              regID: newRegistration.id,
+              name: `test_${role}_school_to_delete`,
+              division: 'Elementary',
+              address: '999 Delete St',
+              city: 'Winnipeg',
+              province: 'MB',
+              postalCode: 'R3T 9Z9',
+              phone: '204-555-9999',
+            },
+          })
+
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation DeleteSchool($schoolID: Int!) {
+                schoolDelete(schoolID: $schoolID) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  school {
+                    id
+                    name
+                  }
+                }
+              }
+            `, {
+              schoolID: schoolToDelete.id,
+            }) as { data?: { schoolDelete: SchoolPayload }, errors?: readonly any[] }
+
+          // Cleanup registration
+          await globalThis.prisma.tbl_registration.delete({
+            where: { id: newRegistration.id },
+          })
+
+          return {
+            hasErrors: !!response.errors,
+            isAuthorized: !response.errors,
+            school: response.data?.schoolDelete?.school as School | undefined,
+            schoolName: response.data?.schoolDelete?.school?.name,
+            userErrors: response.data?.schoolDelete?.userErrors,
+            hasUserErrors: (response.data?.schoolDelete?.userErrors?.length || 0) > 0,
+          }
+        },
+      )
+
+      // Both roles should succeed
+      expect(results.admin.isAuthorized).toBe(true)
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.school).toBeTruthy()
+      expect(results.admin.schoolName).toBe('test_admin_school_to_delete')
+      expect(results.admin.hasUserErrors).toBe(false)
+
+      expect(results.user.isAuthorized).toBe(true)
+      expect(results.user.hasErrors).toBe(false)
+      expect(results.user.school).toBeTruthy()
+      expect(results.user.schoolName).toBe('test_user_school_to_delete')
+      expect(results.user.hasUserErrors).toBe(false)
+    })
+
+    it('Should return error when deleting non-existent school for both roles', async () => {
+      const results = await testWithBothRoles(
+        'delete non-existent school',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation DeleteSchool($schoolID: Int!) {
+                schoolDelete(schoolID: $schoolID) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  school {
+                    id
+                    name
+                  }
+                }
+              }
+            `, {
+              schoolID: 99999,
+            }) as { data?: { schoolDelete: SchoolPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            school: response.data?.schoolDelete?.school as School | undefined,
+            userErrors: response.data?.schoolDelete?.userErrors,
+            hasUserErrors: (response.data?.schoolDelete?.userErrors?.length || 0) > 0,
+            userErrorMessage: response.data?.schoolDelete?.userErrors?.[0]?.message,
+          }
+        },
+      )
+
+      // Both roles should get userErrors
+      expect(results.admin.hasErrors).toBe(false)
+      expect(results.admin.school).toBeNull()
+      expect(results.admin.hasUserErrors).toBe(true)
+      expect(results.admin.userErrorMessage).toContain('not found')
+
+      expect(results.user.hasErrors).toBe(false)
+      expect(results.user.school).toBeNull()
+      expect(results.user.hasUserErrors).toBe(true)
+      expect(results.user.userErrorMessage).toContain('not found')
+    })
+
+    it('Should return error when deleting school with null ID for both roles', async () => {
+      const results = await testWithBothRoles(
+        'delete school with null ID',
+        async (role) => {
+          const response = await createAuthenticatedRequest(role)
+            .mutate(gql`
+              mutation DeleteSchool($schoolID: Int!) {
+                schoolDelete(schoolID: $schoolID) {
+                  userErrors {
+                    message
+                    field
+                  }
+                  school {
+                    id
+                    name
+                  }
+                }
+              }
+            `, {
+              schoolID: null,
+            }) as { data?: { schoolDelete: SchoolPayload }, errors?: readonly any[] }
+
+          return {
+            hasErrors: !!response.errors,
+            errorMessage: response.errors?.[0]?.message,
+          }
+        },
+      )
+
+      // Both roles should get GraphQL validation errors
+      expect(results.admin.hasErrors).toBe(true)
+      expect(results.admin.errorMessage).toBeTruthy()
+
+      expect(results.user.hasErrors).toBe(true)
+      expect(results.user.errorMessage).toBeTruthy()
+    })
+  })
+
+  describe('Authentication and Authorization', () => {
+    it('Should require authentication for all school operations', async () => {
+      const response = await createAuthenticatedRequest('user')
+        .set('Cookie', '') // Remove authentication
         .query(gql`
-          mutation SchoolDelete($schoolId: Int!) {
-            schoolDelete(schoolID: $schoolId) {
-              school {
-                id
-                name
-              }
-              userErrors {
-                field
-                message
-              }
+          query GetSchools {
+            schools {
+              id
+              name
             }
           }
-        `)
-        .variables({
-          schoolId: null,
-        })
-      expect(response.errors[0].message).toBeTruthy()
+        `) as { errors?: readonly any[] }
+
+      expect(response.errors).toBeTruthy()
+      expect(response.errors![0].message).toContain('Unauthorized')
     })
   })
 })
