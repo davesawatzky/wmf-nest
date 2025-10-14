@@ -32,7 +32,7 @@ async function bootstrap() {
             `'self'`,
             'apollo-server-landing-page.cdn.apollographql.com',
           ],
-          frameSrc: [`'self'`, 'sandbox.embed.apollographql.com'],
+          frameSrc: [`'self'`, 'https://api.stripe.com', 'sandbox.embed.apollographql.com'],
         },
       },
     }),
