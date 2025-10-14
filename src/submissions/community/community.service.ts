@@ -91,7 +91,7 @@ export class CommunityService {
     }
     catch (error: any) {
       this.logger.error('Error fetching all communities', error)
-      throw new InternalServerErrorException('Unable to fetch communities')
+      // throw new InternalServerErrorException('Unable to fetch communities')
     }
   }
 
@@ -104,9 +104,9 @@ export class CommunityService {
         this.logger.warn(
           'findOne called without registrationID or communityID',
         )
-        throw new BadRequestException(
-          'Either registrationID or communityID must be provided',
-        )
+        // throw new BadRequestException(
+        //   'Either registrationID or communityID must be provided',
+        // )
       }
 
       this.logger.log(
@@ -130,7 +130,7 @@ export class CommunityService {
         this.logger.warn(
           `Community not found with registrationID: ${registrationID}, communityID: ${communityID}`,
         )
-        throw new NotFoundException('Community not found')
+        // throw new NotFoundException('Community not found')
       }
 
       return community
@@ -140,13 +140,13 @@ export class CommunityService {
         error instanceof BadRequestException
         || error instanceof NotFoundException
       ) {
-        throw error
+        // throw error
       }
       this.logger.error(
         `Error finding community with registrationID: ${registrationID}, communityID: ${communityID}`,
         error,
       )
-      throw new InternalServerErrorException('Unable to find community')
+      // throw new InternalServerErrorException('Unable to find community')
     }
   }
 

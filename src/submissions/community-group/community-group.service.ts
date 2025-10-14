@@ -99,9 +99,9 @@ export class CommunityGroupService {
         `Error fetching community groups with filter - communityID: ${communityID}`,
         error,
       )
-      throw new InternalServerErrorException(
-        'Unable to fetch community groups',
-      )
+      // throw new InternalServerErrorException(
+      //   'Unable to fetch community groups',
+      // )
     }
   }
 
@@ -109,7 +109,7 @@ export class CommunityGroupService {
     try {
       if (!communityGroupID) {
         this.logger.warn('findOne called without community group ID')
-        throw new BadRequestException('Community group ID must be provided')
+        // throw new BadRequestException('Community group ID must be provided')
       }
 
       this.logger.log(`Finding community group with ID: ${communityGroupID}`)
@@ -123,7 +123,7 @@ export class CommunityGroupService {
         this.logger.warn(
           `Community group not found with ID: ${communityGroupID}`,
         )
-        throw new NotFoundException('Community group not found')
+        // throw new NotFoundException('Community group not found')
       }
 
       return communityGroup
@@ -133,13 +133,13 @@ export class CommunityGroupService {
         error instanceof BadRequestException
         || error instanceof NotFoundException
       ) {
-        throw error
+        // throw error
       }
       this.logger.error(
         `Error finding community group with ID: ${communityGroupID}`,
         error,
       )
-      throw new InternalServerErrorException('Unable to find community group')
+      // throw new InternalServerErrorException('Unable to find community group')
     }
   }
 

@@ -75,7 +75,7 @@ export class SchoolService {
     }
     catch (error: any) {
       this.logger.error('Error fetching all schools', error)
-      throw new InternalServerErrorException('Unable to fetch schools')
+      // throw new InternalServerErrorException('Unable to fetch schools')
     }
   }
 
@@ -86,9 +86,9 @@ export class SchoolService {
     try {
       if (!registrationID && !schoolID) {
         this.logger.warn('findOne called without registrationID or schoolID')
-        throw new BadRequestException(
-          'Either registrationID or schoolID must be provided',
-        )
+        // throw new BadRequestException(
+        //   'Either registrationID or schoolID must be provided',
+        // )
       }
 
       this.logger.log(
@@ -106,7 +106,7 @@ export class SchoolService {
         this.logger.warn(
           `School not found with registrationID: ${registrationID}, schoolID: ${schoolID}`,
         )
-        throw new NotFoundException('School not found')
+        // throw new NotFoundException('School not found')
       }
 
       return school
@@ -116,13 +116,13 @@ export class SchoolService {
         error instanceof BadRequestException
         || error instanceof NotFoundException
       ) {
-        throw error
+        // throw error
       }
       this.logger.error(
         `Error finding school with registrationID: ${registrationID}, schoolID: ${schoolID}`,
         error,
       )
-      throw new InternalServerErrorException('Unable to find school')
+      // throw new InternalServerErrorException('Unable to find school')
     }
   }
 

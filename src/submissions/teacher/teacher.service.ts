@@ -88,9 +88,9 @@ export class TeacherService {
     try {
       this.logger.log(`Finding all teachers of type: ${teacherType}`)
 
-      if (!teacherType) {
-        throw new BadRequestException('Teacher type must be specified')
-      }
+      // if (!teacherType) {
+      //   throw new BadRequestException('Teacher type must be specified')
+      // }
 
       let teachersData = []
 
@@ -106,9 +106,9 @@ export class TeacherService {
           orderBy: { lastName: 'asc' },
         })
       }
-      else {
-        throw new BadRequestException('Invalid teacher type specified')
-      }
+      // else {
+      //   throw new BadRequestException('Invalid teacher type specified')
+      // }
 
       if (!teachersData || teachersData.length === 0) {
         this.logger.warn(`No teachers found for type: ${teacherType}`)
@@ -153,14 +153,14 @@ export class TeacherService {
     catch (error: any) {
       // Re-throw known exceptions
       if (error instanceof BadRequestException) {
-        throw error
+        // throw error
       }
 
       this.logger.error(
         `Failed to find teachers of type: ${teacherType}`,
         error,
       )
-      throw new InternalServerErrorException('Failed to retrieve teachers')
+      // throw new InternalServerErrorException('Failed to retrieve teachers')
     }
   }
 
@@ -203,7 +203,7 @@ export class TeacherService {
         this.logger.warn(
           `User found but is not a teacher: ${teacherID || email}`,
         )
-        throw new NotFoundException('User is not a teacher')
+        // throw new NotFoundException('User is not a teacher')
       }
 
       // Remove sensitive fields from response
@@ -216,14 +216,14 @@ export class TeacherService {
         error instanceof BadRequestException
         || error instanceof NotFoundException
       ) {
-        throw error
+        // throw error
       }
 
       this.logger.error(
         `Failed to find teacher by ${teacherID ? `ID: ${teacherID}` : `email: ${email}`}`,
         error,
       )
-      throw new InternalServerErrorException('Failed to retrieve teacher')
+      // throw new InternalServerErrorException('Failed to retrieve teacher')
     }
   }
 

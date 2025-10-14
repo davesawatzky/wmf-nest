@@ -150,7 +150,7 @@ export class RegistrationService {
         `Error fetching registrations with filters - userID: ${userID}, performerType: ${performerType}, teacherID: ${teacherID}`,
         error,
       )
-      throw new InternalServerErrorException('Unable to fetch registrations')
+      // throw new InternalServerErrorException('Unable to fetch registrations')
     }
   }
 
@@ -158,7 +158,7 @@ export class RegistrationService {
     try {
       if (!id) {
         this.logger.warn('findOne called without registration ID')
-        throw new BadRequestException('Registration ID must be provided')
+        // throw new BadRequestException('Registration ID must be provided')
       }
 
       this.logger.log(`Finding registration with ID: ${id}`)
@@ -169,7 +169,7 @@ export class RegistrationService {
 
       if (!registration) {
         this.logger.warn(`Registration not found with ID: ${id}`)
-        throw new NotFoundException('Registration not found')
+        // throw new NotFoundException('Registration not found')
       }
 
       return registration
@@ -179,10 +179,10 @@ export class RegistrationService {
         error instanceof BadRequestException
         || error instanceof NotFoundException
       ) {
-        throw error
+        // throw error
       }
       this.logger.error(`Error finding registration with ID: ${id}`, error)
-      throw new InternalServerErrorException('Unable to find registration')
+      // throw new InternalServerErrorException('Unable to find registration')
     }
   }
 

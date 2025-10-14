@@ -32,7 +32,7 @@ export class UserService {
     }
     catch (error: any) {
       this.logger.error('Failed to fetch all users', error)
-      throw new InternalServerErrorException('Failed to fetch users')
+      // throw new InternalServerErrorException('Failed to fetch users')
     }
   }
 
@@ -44,9 +44,9 @@ export class UserService {
 
       if (!userID && !email) {
         this.logger.warn('FindOne called without userID or email parameters')
-        throw new BadRequestException(
-          'Either userID or email must be provided',
-        )
+        // throw new BadRequestException(
+        //   'Either userID or email must be provided',
+        // )
       }
 
       let response: tbl_user
@@ -66,7 +66,7 @@ export class UserService {
         this.logger.warn(
           `User not found with ${userID ? `ID: ${userID}` : `email: ${email}`}`,
         )
-        throw new NotFoundException('User not found')
+        // throw new NotFoundException('User not found')
       }
 
       // Remove password from response
@@ -84,14 +84,14 @@ export class UserService {
         error instanceof BadRequestException
         || error instanceof NotFoundException
       ) {
-        throw error
+        // throw error
       }
 
       this.logger.error(
         `Failed to find user by ${userID ? `ID: ${userID}` : `email: ${email}`}`,
         error,
       )
-      throw new InternalServerErrorException('Failed to retrieve user')
+      // throw new InternalServerErrorException('Failed to retrieve user')
     }
   }
 
