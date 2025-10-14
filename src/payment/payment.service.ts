@@ -32,9 +32,9 @@ export class PaymentService {
         'Missing required parameters for payment intent creation',
         { regID, WMFconfirmationId, tokenId },
       )
-      // throw new BadRequestException(
-      //   'Registration ID, confirmation ID, and token ID are required',
-      // )
+      throw new BadRequestException(
+        'Registration ID, confirmation ID, and token ID are required',
+      )
     }
 
     try {
@@ -44,7 +44,7 @@ export class PaymentService {
         this.logger.warn(
           `Invalid total amount for registration ID ${regID}: ${totalAmt}`,
         )
-        // throw new BadRequestException('Invalid total amount for payment')
+        throw new BadRequestException('Invalid total amount for payment')
       }
 
       const confirmationToken
@@ -69,15 +69,15 @@ export class PaymentService {
       return paymentIntent
     }
     catch (error: any) {
-      // if (error instanceof BadRequestException) {
-      //   throw error
-      // }
+      if (error instanceof BadRequestException) {
+        throw error
+      }
 
       this.logger.error(
         `Failed to create payment intent for registration ID ${regID}: ${error.message}`,
         error.stack,
       )
-      // throw new InternalServerErrorException('Failed to create payment intent')
+      throw new InternalServerErrorException('Failed to create payment intent')
     }
   }
 
@@ -89,9 +89,9 @@ export class PaymentService {
         regID,
         tokenId,
       })
-      // throw new BadRequestException(
-      //   'Registration ID and token ID are required',
-      // )
+      throw new BadRequestException(
+        'Registration ID and token ID are required',
+      )
     }
 
     try {
@@ -101,7 +101,7 @@ export class PaymentService {
         this.logger.warn(
           `Invalid total amount for registration ID ${regID}: ${totalAmt}`,
         )
-        // throw new BadRequestException('Invalid total amount for payment')
+        throw new BadRequestException('Invalid total amount for payment')
       }
 
       const confirmationToken
@@ -117,15 +117,15 @@ export class PaymentService {
       return { amount, stripeFee, totalAmount, confirmationToken }
     }
     catch (error: any) {
-      // if (error instanceof BadRequestException) {
-      //   throw error
-      // }
+      if (error instanceof BadRequestException) {
+        throw error
+      }
 
       this.logger.error(
         `Failed to summarize payment for registration ID ${regID}: ${error.message}`,
         error.stack,
       )
-      // throw new InternalServerErrorException('Failed to summarize payment')
+      throw new InternalServerErrorException('Failed to summarize payment')
     }
   }
 
@@ -192,7 +192,7 @@ export class PaymentService {
         `Webhook signature verification failed: ${err.message}`,
         err.stack,
       )
-      // throw new HttpException(`Webhook Error: ${err.message}`, 400)
+      throw new HttpException(`Webhook Error: ${err.message}`, 400)
     }
 
     // Handle the event
@@ -247,7 +247,7 @@ export class PaymentService {
         `Error processing webhook event ${event.type}: ${error.message}`,
         error.stack,
       )
-      // throw new InternalServerErrorException('Failed to process webhook event')
+      throw new InternalServerErrorException('Failed to process webhook event')
     }
   }
 }

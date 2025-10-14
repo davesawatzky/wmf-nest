@@ -25,15 +25,17 @@ async function bootstrap() {
           imgSrc: [
             `'self'`,
             'data:',
+            'https://*.stripe.com',
             'apollo-server-landing-page.cdn.apollographql.com',
           ],
-          scriptSrc: [`'self'`, 'https://js.stripe.com', `'unsafe-inline'`, `https:`],
+          scriptSrc: [`'self'`, 'https://js.stripe.com', `'unsafe-inline'`, 'https://m.stripe.network', `https:`],
           manifestSrc: [
             `'self'`,
             'apollo-server-landing-page.cdn.apollographql.com',
           ],
-          frameSrc: [`'self'`, 'https://js.stripe.com', 'https://hooks.stripe.com', 'sandbox.embed.apollographql.com'],
-          connectSrc: [`'self'`, 'https://api.stripe.com'],
+          frameSrc: [`'self'`, 'https://js.stripe.com', 'https://hooks.stripe.com', 'https://m.stripe.network', 'sandbox.embed.apollographql.com'],
+          connectSrc: [`'self'`, 'https://api.stripe.com', 'm.stripe.network', 'https://uploads.stripe.com'],
+          styleSrc: [`'self'`, `'unsafe-inline'`, 'https://fonts.googleapis.com'],
 
         },
       },
