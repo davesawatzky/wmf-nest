@@ -27,12 +27,14 @@ async function bootstrap() {
             'data:',
             'apollo-server-landing-page.cdn.apollographql.com',
           ],
-          scriptSrc: [`'self'`, `'unsafe-inline'`, `https:`],
+          scriptSrc: [`'self'`, 'https://js.stripe.com', `'unsafe-inline'`, `https:`],
           manifestSrc: [
             `'self'`,
             'apollo-server-landing-page.cdn.apollographql.com',
           ],
-          // frameSrc: [`'self'`, 'https://api.stripe.com', 'sandbox.embed.apollographql.com'],
+          frameSrc: [`'self'`, 'https://js.stripe.com', 'https://hooks.stripe.com', 'sandbox.embed.apollographql.com'],
+          connectSrc: [`'self'`, 'https://api.stripe.com'],
+
         },
       },
     }),
