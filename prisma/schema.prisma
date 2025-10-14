@@ -43,15 +43,10 @@ model tbl_classlist {
   performerType     tbl_performer_type @default(SOLO) @map("performer_type")
   price             Decimal?           @db.Decimal(7, 2)
   description       String             @db.Text
-  date              DateTime?          @db.Date
-  time              DateTime?          @db.Time(0)
-  venueAbbr         String?            @map("venue_abbr") @db.VarChar(10)
-  classOrder        Int?               @map("class_order")
   tbl_class_type    tbl_class_type     @relation(fields: [classTypeID], references: [id], onUpdate: Restrict)
   tbl_category      tbl_category       @relation(fields: [categoryID], references: [id], onUpdate: Restrict)
   tbl_level         tbl_level          @relation(fields: [levelID], references: [id], onUpdate: Restrict)
   tbl_subdiscipline tbl_subdiscipline  @relation(fields: [subdisciplineID], references: [id], onUpdate: Restrict)
-  tbl_venue         tbl_venue?         @relation(fields: [venueAbbr], references: [venueAbbr], onUpdate: Restrict)
   tbl_class_trophy  tbl_class_trophy[]
 
   @@index([classTypeID])
@@ -396,16 +391,6 @@ model tbl_item {
   updatedAt        DateTime     @default(now()) @map("updated_at") @db.Timestamp(3)
   createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamp(3)
   tbl_order_item   tbl_order_item[]
-}
-
-model tbl_venue {
-  venueAbbr     String   @id @map("venue_abbr") @db.VarChar(10)
-  name          String   @db.Text
-  address       String?  @db.Text
-  city          String?  @default("Winnipeg") @db.Text
-  province      String?  @default("MB") @db.Text
-  postalCode    String?  @map("postal_code") @db.Text
-  tbl_classlist tbl_classlist[]
 }
 
 enum tbl_performer_type {
