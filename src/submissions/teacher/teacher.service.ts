@@ -238,7 +238,6 @@ export class TeacherService {
 
       // Remove sensitive fields from response
       const { password, roles, ...teacherResponse } = teacher
-      console.error(teacherResponse)
 
       return {
         userErrors: [],
