@@ -1,6 +1,8 @@
 /* eslint-disable perfectionist/sort-imports */
 import { join } from 'node:path'
 import process from 'node:process'
+import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup'
+import { APP_FILTER } from '@nestjs/core'
 import { AuthModule } from '@/auth/auth.module'
 import { AbilityModule } from '@/ability/ability.module'
 import { FieldConfigModule } from '@/submissions/field-config/field-config.module'
@@ -40,7 +42,12 @@ import { OrderItemModule } from './submissions/order-item/order-item.module'
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
 
 @Module({
+  providers: [{
+    provide: APP_FILTER,
+    useClass: SentryGlobalFilter,
+  }],
   imports: [
+    SentryModule.forRoot(),
     ConfigModule.forRoot({
       envFilePath: `.env.${process.env.NODE_ENV}`,
       isGlobal: true,
@@ -94,5 +101,6 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
     OrderModule,
     OrderItemModule,
   ],
+
 })
 export class AppModule {}

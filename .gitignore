@@ -51,3 +51,6 @@ apollo.config.js
 *.sql
 *.sh
 
+
+# Sentry Config File
+.env.sentry-build-plugin
