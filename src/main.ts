@@ -14,7 +14,6 @@ import 'reflect-metadata'
 import './sentry'
 
 const SentryWinstonTransport = Sentry.createSentryWinstonTransport(Transport, {
-  
   levels: process.env.NODE_ENV === 'production' ? ['error', 'warn'] : ['error', 'warn', 'info', 'debug'],
 })
 
@@ -58,15 +57,39 @@ async function bootstrap() {
             'https://*.stripe.com',
             'apollo-server-landing-page.cdn.apollographql.com',
           ],
-          scriptSrc: [`'self'`, 'https://js.stripe.com', `'unsafe-inline'`, 'https://m.stripe.network', 'https:'],
+          scriptSrc: [
+            `'self'`,
+            'https://js.stripe.com',
+            `'unsafe-inline'`,
+            'https://m.stripe.network',
+            'https:',
+          ],
           manifestSrc: [
             `'self'`,
             'apollo-server-landing-page.cdn.apollographql.com',
           ],
-          frameSrc: [`'self'`, 'https://js.stripe.com', 'https://hooks.stripe.com', 'https://m.stripe.network', 'sandbox.embed.apollographql.com'],
-          connectSrc: [`'self'`, 'https://api.stripe.com', 'm.stripe.network', 'https://uploads.stripe.com', 'https://sentry.io', 'https://o4510241126481920.ingest.sentry.io', 'wss://sandbox.embed.apollographql.com', 'https://sandbox.embed.apollographql.com', 'https://apollo-server-landing-page.cdn.apollographql.com'],
-          styleSrc: [`'self'`, `'unsafe-inline'`, 'https://fonts.googleapis.com'],
-
+          frameSrc: [
+            `'self'`,
+            'https://js.stripe.com',
+            'https://hooks.stripe.com',
+            'https://m.stripe.network',
+            'sandbox.embed.apollographql.com',
+          ],
+          connectSrc: [
+            `'self'`,
+            'https://api.stripe.com',
+            'm.stripe.network',
+            'https://uploads.stripe.com',
+            'https://sentry.io',
+            'wss://sandbox.embed.apollographql.com',
+            'https://sandbox.embed.apollographql.com',
+            'https://apollo-server-landing-page.cdn.apollographql.com',
+          ],
+          styleSrc: [
+            `'self'`,
+            `'unsafe-inline'`,
+            'https://fonts.googleapis.com',
+          ],
         },
       },
     }),
