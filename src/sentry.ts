@@ -6,7 +6,7 @@ Sentry.init({
   // Setting this option to true will send default PII data to Sentry.
   // For example, automatic IP address collection on events
   environment: process.env.NODE_ENV,
-  tracesSampleRate: 1.0,
+  tracesSampleRate: 0.5,
   sendDefaultPii: true,
   integrations: [
     // send console.log, console.warn, and console.error calls as logs to Sentry
