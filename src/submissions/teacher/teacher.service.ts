@@ -203,7 +203,6 @@ export class TeacherService {
         this.logger.warn(
           `User found but is not a teacher: ${teacherID || email}`,
         )
-        // throw new NotFoundException('User is not a teacher')
       }
 
       // Remove sensitive fields from response

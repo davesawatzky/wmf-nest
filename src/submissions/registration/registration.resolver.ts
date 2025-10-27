@@ -79,10 +79,10 @@ export class RegistrationResolver {
     // const skip = (page - 1) * take
     return await this.registrationService.findAll(
       context.req.user.roles.includes('admin')
-        ? undefined
+        ? null
         : context.req.user.id,
       performerType,
-      undefined,
+      null,
       // skip,
       // take,
       // sortField,
@@ -158,7 +158,7 @@ export class RegistrationResolver {
   async performers(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
-    return await this.performerService.findAll(registrationID)
+    return await this.performerService.findAll(registrationID, null)
   }
 
   @ResolveField(() => [RegisteredClass])
@@ -176,7 +176,7 @@ export class RegistrationResolver {
   async group(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
-    return await this.groupService.findOne(registrationID)
+    return await this.groupService.findOne(registrationID, null)
   }
 
   @ResolveField(() => Community)
@@ -185,7 +185,7 @@ export class RegistrationResolver {
   async community(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
-    return await this.communityService.findOne(registrationID)
+    return await this.communityService.findOne(registrationID, null)
   }
 
   @ResolveField(() => Teacher)
@@ -193,7 +193,7 @@ export class RegistrationResolver {
   @CheckAbilities({ action: Action.Read, subject: Teacher })
   async teacher(@Parent() registration: tbl_registration) {
     const { teacherID }: { teacherID: Teacher['id'] } = registration
-    return await this.teacherService.findOne(teacherID)
+    return await this.teacherService.findOne(teacherID, null)
   }
 
   @ResolveField(() => School)
@@ -202,6 +202,6 @@ export class RegistrationResolver {
   async school(@Parent() registration: tbl_registration) {
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
-    return await this.schoolService.findOne(registrationID)
+    return await this.schoolService.findOne(registrationID, null)
   }
 }

@@ -130,7 +130,6 @@ export class CommunityService {
         this.logger.warn(
           `Community not found with registrationID: ${registrationID}, communityID: ${communityID}`,
         )
-        // throw new NotFoundException('Community not found')
       }
 
       return community

@@ -99,8 +99,8 @@ export class TeacherResolver {
     const { id }: { id: Teacher['id'] } = teacher
     const teacherID = id
     return await this.registrationService.findAll(
-      undefined,
-      undefined,
+      null,
+      null,
       teacherID,
     )
   }

@@ -136,7 +136,7 @@ export class RegistrationService {
       //   mergedWhere.OR.push(...searchFilterWhere.OR)
       // }
 
-      return await this.prisma.tbl_registration.findMany({
+      const result = await this.prisma.tbl_registration.findMany({
         // skip,
         // take,
         where: mergedWhere,
@@ -144,6 +144,7 @@ export class RegistrationService {
         // [sortField || 'createdAt']: sortOrder || undefined,
         // },
       })
+      return result
     }
     catch (error: any) {
       this.logger.error(

@@ -2,7 +2,7 @@ import process from 'node:process'
 import * as Sentry from '@sentry/nestjs'
 
 Sentry.init({
-  dsn: process.env.SENTRY_DSN,
+  dsn: process.env.NODE_ENV === 'production' ? process.env.SENTRY_DSN : undefined,
   // Setting this option to true will send default PII data to Sentry.
   // For example, automatic IP address collection on events
   environment: process.env.NODE_ENV,
