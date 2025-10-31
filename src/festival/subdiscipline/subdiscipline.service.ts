@@ -130,7 +130,7 @@ export class SubdisciplineService {
       })
 
       if (!subdiscipline) {
-        this.logger.warn(`Subdiscipline not found with ID: ${id}`)
+        this.logger.error(`Subdiscipline not found with ID: ${id}`)
         throw new NotFoundException(`Subdiscipline with ID ${id} not found`)
       }
 

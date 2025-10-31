@@ -32,50 +32,50 @@ export class UserService {
     }
     catch (error: any) {
       this.logger.error('Failed to fetch all users', error)
-      // throw new InternalServerErrorException('Failed to fetch users')
+      throw new InternalServerErrorException('Failed to fetch users')
     }
   }
 
   async findOne(userID?: tbl_user['id'], email?: tbl_user['email']) {
     try {
+      if (!userID && !email) {
+        this.logger.warn('FindOne called without userID or email parameters')
+        throw new BadRequestException(
+          'Either userID or email must be provided',
+        )
+      }
+
       this.logger.log(
         `Finding user by ${userID ? `ID: ${userID}` : `email: ${email}`}`,
       )
 
-      if (!userID && !email) {
-        this.logger.warn('FindOne called without userID or email parameters')
-        // throw new BadRequestException(
-        //   'Either userID or email must be provided',
-        // )
-      }
-
-      let response: tbl_user
+      let user: tbl_user
 
       if (userID) {
-        response = await this.prisma.tbl_user.findUnique({
+        user = await this.prisma.tbl_user.findUnique({
           where: { id: userID },
         })
       }
       else if (email) {
-        response = await this.prisma.tbl_user.findUnique({
+        user = await this.prisma.tbl_user.findUnique({
           where: { email },
         })
       }
 
-      if (!response) {
+      if (!user) {
         this.logger.warn(
           `User not found with ${userID ? `ID: ${userID}` : `email: ${email}`}`,
         )
-        // throw new NotFoundException('User not found')
+        throw new NotFoundException('User not found')
       }
 
       // Remove password from response
-      if (Object.prototype.hasOwnProperty.call(response, 'password')) {
-        const { password, ...user } = response
-        return user
+      if (Object.prototype.hasOwnProperty.call(user, 'password')) {
+        const { password, ...userDetails } = user
+        return userDetails
       }
       else {
-        return response
+        return user
       }
     }
     catch (error: any) {
@@ -84,14 +84,14 @@ export class UserService {
         error instanceof BadRequestException
         || error instanceof NotFoundException
       ) {
-        // throw error
+        throw error
       }
 
       this.logger.error(
         `Failed to find user by ${userID ? `ID: ${userID}` : `email: ${email}`}`,
         error,
       )
-      // throw new InternalServerErrorException('Failed to retrieve user')
+      throw new InternalServerErrorException('Failed to retrieve user')
     }
   }
 

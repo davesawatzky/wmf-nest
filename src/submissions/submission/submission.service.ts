@@ -1,5 +1,11 @@
 import { randomInt } from 'node:crypto'
-import { Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common'
 import { tbl_registration } from '@prisma/client'
 import { PerformerType } from '@/common.entity'
 import { PrismaService } from '@/prisma/prisma.service'
@@ -8,6 +14,8 @@ import { Submission } from '@/submissions/submission/entities/submission.entity'
 
 @Injectable()
 export class SubmissionService {
+  private readonly logger = new Logger(SubmissionService.name)
+
   constructor(
     private prisma: PrismaService,
     private registrationService: RegistrationService,
@@ -16,138 +24,190 @@ export class SubmissionService {
   private requiredField = []
 
   async submissions(performerType?: PerformerType) {
-    return await this.prisma.tbl_registration.findMany({
-      where: {
-        performerType,
-      },
-    })
+    try {
+      this.logger.log(`Fetching submissions${performerType ? ` with performerType: ${performerType}` : ' (all)'}`)
+
+      return await this.prisma.tbl_registration.findMany({
+        where: {
+          performerType,
+        },
+      })
+    }
+    catch (error: any) {
+      this.logger.error(`Failed to fetch submissions: ${error.message}`, error.stack)
+      throw new InternalServerErrorException('Failed to fetch submissions')
+    }
   }
 
   async submit(id: tbl_registration['id']) {
-    this.requiredField = await this.prisma.tbl_field_config.findMany()
-
-    const performerType = (await this.registrationService.findOne(id))
-      .performerType
-
-    let verified = true
-    let registration = {}
-
-    switch (performerType) {
-      case 'SOLO':
-        registration = await this.prisma.tbl_registration.findUnique({
-          where: { id },
-          include: {
-            tbl_reg_performer: true,
-            // tbl_reg_teacher: true,
-            tbl_reg_class: {
-              include: {
-                tbl_reg_selection: true,
-              },
-            },
-          },
-        })
-        break
-
-      case 'GROUP':
-        registration = await this.prisma.tbl_registration.findUnique({
-          where: { id },
-          include: {
-            tbl_reg_group: true,
-            tbl_reg_performer: true,
-            // tbl_reg_teacher: true,
-            tbl_reg_class: {
-              include: {
-                tbl_reg_selection: true,
-              },
-            },
-          },
-        })
-
-        break
-
-      case 'COMMUNITY':
-        registration = await this.prisma.tbl_registration.findUnique({
-          where: {
-            id,
-          },
-          include: {
-            tbl_reg_community: true,
-            // tbl_reg_teacher: true,
-            tbl_reg_class: {
-              include: {
-                tbl_reg_selection: true,
-              },
-            },
-          },
-        })
-
-        break
-
-      case 'SCHOOL':
-        registration = await this.prisma.tbl_registration.findUnique({
-          where: { id },
-          include: {
-            tbl_reg_school: {
-              include: {
-                tbl_reg_schoolgroup: true,
-              },
-            },
-            // tbl_reg_teacher: true,
-            tbl_reg_class: {
-              include: {
-                tbl_reg_selection: true,
-              },
-            },
-          },
-        })
-        break
-
-      default:
-        verified = false
-        break
+    // ✅ Defensive check - ensure id is provided
+    if (!id) {
+      this.logger.error('submit failed - Registration ID is required')
+      throw new BadRequestException('Registration ID is required')
     }
 
-    verified = this.emptyValueCheck(registration, 'tbl_registration')
+    try {
+      this.logger.log(`Processing submission for registration ID: ${id}`)
 
-    if (verified === false) {
-      return {
-        userErrors: [
-          {
-            message:
-              'Submission cancelled. Please complete all required fields before submitting.',
-            field: [],
-          },
-        ],
-        submission: null,
+      this.requiredField = await this.prisma.tbl_field_config.findMany()
+
+      const registration = await this.registrationService.findOne(id)
+
+      if (!registration) {
+        this.logger.error(`submit failed - Registration not found for ID: ${id}`)
+        throw new NotFoundException(`Registration with ID ${id} not found`)
       }
-    }
 
-    const submissionData: Submission = await {
-      submittedAt: new Date(),
-      confirmation: `WMF-${id}-${randomInt(1000, 9999)}`,
-    }
+      const performerType = registration.performerType
 
-    // return {
-    //   userErrors: [],
-    //   submission: this.prisma.tbl_registration.update({
-    //     where: { id },
-    //     data: {
-    //       submittedAt: submissionData.submittedAt,
-    //       confirmation: submissionData.confirmation,
-    //     },
-    //   }),
-    // }
+      if (!performerType) {
+        this.logger.error(`submit failed - No performerType for registration ID: ${id}`)
+        throw new BadRequestException('Registration must have a performer type')
+      }
 
-    return (
-      await this.prisma.tbl_registration.update({
+      let verified = true
+      let registrationData = {}
+
+      switch (performerType) {
+        case 'SOLO':
+          registrationData = await this.prisma.tbl_registration.findUnique({
+            where: { id },
+            include: {
+              tbl_reg_performer: true,
+              // tbl_reg_teacher: true,
+              tbl_reg_class: {
+                include: {
+                  tbl_reg_selection: true,
+                },
+              },
+            },
+          })
+          break
+
+        case 'GROUP':
+          registrationData = await this.prisma.tbl_registration.findUnique({
+            where: { id },
+            include: {
+              tbl_reg_group: true,
+              tbl_reg_performer: true,
+              // tbl_reg_teacher: true,
+              tbl_reg_class: {
+                include: {
+                  tbl_reg_selection: true,
+                },
+              },
+            },
+          })
+
+          break
+
+        case 'COMMUNITY':
+          registrationData = await this.prisma.tbl_registration.findUnique({
+            where: {
+              id,
+            },
+            include: {
+              tbl_reg_community: true,
+              // tbl_reg_teacher: true,
+              tbl_reg_class: {
+                include: {
+                  tbl_reg_selection: true,
+                },
+              },
+            },
+          })
+
+          break
+
+        case 'SCHOOL':
+          registrationData = await this.prisma.tbl_registration.findUnique({
+            where: { id },
+            include: {
+              tbl_reg_school: {
+                include: {
+                  tbl_reg_schoolgroup: true,
+                },
+              },
+              // tbl_reg_teacher: true,
+              tbl_reg_class: {
+                include: {
+                  tbl_reg_selection: true,
+                },
+              },
+            },
+          })
+          break
+
+        default:
+          this.logger.error(`submit failed - Invalid performerType: ${performerType}`)
+          verified = false
+          break
+      }
+
+      if (!verified) {
+        return {
+          userErrors: [
+            {
+              message: 'Invalid performer type',
+              field: ['performerType'],
+            },
+          ],
+          submission: null,
+        }
+      }
+
+      verified = this.emptyValueCheck(registrationData, 'tbl_registration')
+
+      if (verified === false) {
+        this.logger.warn(`Submission cancelled for registration ID: ${id} - Required fields missing`)
+        return {
+          userErrors: [
+            {
+              message:
+                'Submission cancelled. Please complete all required fields before submitting.',
+              field: [],
+            },
+          ],
+          submission: null,
+        }
+      }
+
+      const submissionData: Submission = await {
+        submittedAt: new Date(),
+        confirmation: `WMF-${id}-${randomInt(1000, 9999)}`,
+      }
+
+      // return {
+      //   userErrors: [],
+      //   submission: this.prisma.tbl_registration.update({
+      //     where: { id },
+      //     data: {
+      //       submittedAt: submissionData.submittedAt,
+      //       confirmation: submissionData.confirmation,
+      //     },
+      //   }),
+      // }
+
+      const _updatedRegistration = await this.prisma.tbl_registration.update({
         where: { id },
         data: { ...submissionData },
-      }),
-      {
+      })
+
+      this.logger.log(`Successfully submitted registration ID: ${id}, confirmation: ${submissionData.confirmation}`)
+
+      return {
         userErrors: [],
         submission: submissionData,
       }
-    )
+    }
+    catch (error: any) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error
+      }
+
+      this.logger.error(`Failed to submit registration ID ${id}: ${error.message}`, error.stack)
+      throw new InternalServerErrorException('Failed to submit registration')
+    }
   }
 
   private isObj(obj: any): boolean {

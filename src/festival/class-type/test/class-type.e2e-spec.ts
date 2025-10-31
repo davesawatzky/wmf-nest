@@ -119,7 +119,7 @@ describe('ClassType E2E Tests', () => {
       expect(results.user.hasData).toBe(true)
       expect(results.admin.count).toBeGreaterThan(0)
       expect(results.user.count).toBe(results.admin.count)
-      
+
       // Check that at least one classType has festival classes
       if (results.admin.hasRelations) {
         expect(results.user.hasRelations).toBe(true)

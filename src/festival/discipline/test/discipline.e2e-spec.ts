@@ -270,7 +270,7 @@ describe('Discipline E2E Tests', () => {
             .expectNoErrors() as { data: { disciplines: Discipline[] } }
 
           const disciplineWithInstruments = response.data.disciplines.find(
-            d => d.instruments && d.instruments.length > 0
+            d => d.instruments && d.instruments.length > 0,
           )
 
           return {
@@ -316,7 +316,7 @@ describe('Discipline E2E Tests', () => {
             .expectNoErrors() as { data: { disciplines: Discipline[] } }
 
           const disciplineWithSubdisciplines = response.data.disciplines.find(
-            d => d.subdisciplines && d.subdisciplines.length > 0
+            d => d.subdisciplines && d.subdisciplines.length > 0,
           )
 
           return {

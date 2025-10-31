@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common'
+import { BadRequestException, Logger, UseGuards } from '@nestjs/common'
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { tbl_field_config } from '@prisma/client'
 import { CheckAbilities } from '@/ability/abilities.decorator'
@@ -15,6 +15,8 @@ import { FieldConfigService } from './field-config.service'
 @Resolver(() => FieldConfig)
 @UseGuards(JwtAuthGuard)
 export class FieldConfigResolver {
+  private readonly logger = new Logger(FieldConfigResolver.name)
+
   constructor(private readonly fieldConfigService: FieldConfigService) {}
 
   /** Queries */
@@ -22,6 +24,7 @@ export class FieldConfigResolver {
   @Query(() => [FieldConfig])
   @CheckAbilities({ action: Action.Read, subject: FieldConfig })
   async fieldConfigs() {
+    this.logger.log('Fetching all field configurations')
     return await this.fieldConfigService.findAll()
   }
 
@@ -33,6 +36,17 @@ export class FieldConfigResolver {
     @Args('fieldName', { type: () => String })
     fieldName: tbl_field_config['fieldName'],
   ) {
+    if (!tableName || tableName.trim() === '') {
+      this.logger.error('fieldConfig query failed - tableName is required')
+      throw new BadRequestException('Table name is required')
+    }
+
+    if (!fieldName || fieldName.trim() === '') {
+      this.logger.error('fieldConfig query failed - fieldName is required')
+      throw new BadRequestException('Field name is required')
+    }
+
+    this.logger.log(`Fetching field config for table: ${tableName}, field: ${fieldName}`)
     return await this.fieldConfigService.findOne(tableName, fieldName)
   }
 
@@ -45,6 +59,12 @@ export class FieldConfigResolver {
     @Args('fieldConfigInput', { type: () => FieldConfigInput })
     fieldConfigInput: FieldConfigInput,
   ) {
+    if (!fieldConfigInput) {
+      this.logger.error('fieldConfigCreate mutation failed - fieldConfigInput is required')
+      throw new BadRequestException('Field config input is required')
+    }
+
+    this.logger.log(`Creating field config for table: ${fieldConfigInput.tableName}, field: ${fieldConfigInput.fieldName}`)
     return await this.fieldConfigService.create(fieldConfigInput)
   }
 
@@ -57,6 +77,17 @@ export class FieldConfigResolver {
     @Args('fieldConfigInput', { type: () => FieldConfigInput })
     fieldConfigInput: FieldConfigInput,
   ) {
+    if (!fieldConfigID) {
+      this.logger.error('fieldConfigUpdate mutation failed - fieldConfigID is required')
+      throw new BadRequestException('Field config ID is required')
+    }
+
+    if (!fieldConfigInput) {
+      this.logger.error('fieldConfigUpdate mutation failed - fieldConfigInput is required')
+      throw new BadRequestException('Field config input is required')
+    }
+
+    this.logger.log(`Updating field config ID: ${fieldConfigID}`)
     return await this.fieldConfigService.update(
       fieldConfigID,
       fieldConfigInput,
@@ -70,6 +101,12 @@ export class FieldConfigResolver {
     @Args('fieldConfigID', { type: () => Int })
     fieldConfigID: FieldConfig['id'],
   ) {
+    if (!fieldConfigID) {
+      this.logger.error('fieldConfigDelete mutation failed - fieldConfigID is required')
+      throw new BadRequestException('Field config ID is required')
+    }
+
+    this.logger.log(`Deleting field config ID: ${fieldConfigID}`)
     return await this.fieldConfigService.remove(fieldConfigID)
   }
 }

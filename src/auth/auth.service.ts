@@ -254,8 +254,10 @@ export class AuthService {
   }
 
   async findOne(email: User['email']) {
-    if (!email)
+    if (!email) {
+      this.logger.error('Find one called without email')
       throw new BadRequestException('Email is required - findOne')
+    }
 
     this.logger.debug(`Finding user by email: ${email}`)
 
@@ -276,6 +278,7 @@ export class AuthService {
       }
       else {
         this.logger.warn(`User not found: ${email}. New user?`)
+        throw new NotFoundException('User not found')
       }
     }
     catch (error: any) {
@@ -295,8 +298,10 @@ export class AuthService {
   }
 
   async checkIfPasswordExists(id: User['id']) {
-    if (!id)
+    if (!id) {
+      this.logger.error('Check if password exists called without user ID')
       throw new BadRequestException('User ID is required')
+    }
 
     this.logger.debug(`Checking password existence for user ID: ${id}`)
 
@@ -415,8 +420,10 @@ export class AuthService {
   }
 
   async setPasswordChangePending(id: User['id']) {
-    if (!id)
+    if (!id) {
+      this.logger.error('Set password change pending called without user ID')
       throw new BadRequestException('User ID is required')
+    }
 
     this.logger.debug(`Setting password change pending for user ID: ${id}`)
 
@@ -444,8 +451,10 @@ export class AuthService {
   }
 
   async checkIfPasswordResetPending(id: User['id']) {
-    if (!id)
+    if (!id) {
+      this.logger.error('Check if password reset pending called without user ID')
       throw new BadRequestException('User ID is required')
+    }
 
     this.logger.debug(
       `Checking password reset pending status for user ID: ${id}`,
@@ -548,8 +557,10 @@ export class AuthService {
   }
 
   public async emailFromToken(token: string) {
-    if (!token)
+    if (!token) {
+      this.logger.error('Email from token called without token')
       throw new BadRequestException('Token is required')
+    }
 
     this.logger.debug('Extracting email from verification token')
 
@@ -564,7 +575,6 @@ export class AuthService {
       }
 
       this.logger.warn('Invalid token payload structure')
-      throw new BadRequestException('Invalid token payload')
     }
     catch (error: any) {
       this.logger.error(
@@ -573,6 +583,7 @@ export class AuthService {
       )
 
       if (error?.name === 'TokenExpiredError') {
+        this.logger.warn('Email confirmation token has expired')
         throw new BadRequestException('Email confirmation token expired')
       }
       throw new BadRequestException('Bad confirmation token')
@@ -589,7 +600,7 @@ export class AuthService {
         `Failed to validate token and get user: ${error.message}`,
         error.stack,
       )
-      return null
+      throw new BadRequestException('Invalid token')
     }
   }
 }

@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common'
+import { BadRequestException, Logger, UseGuards } from '@nestjs/common'
 import {
   Args,
   Int,
@@ -20,6 +20,8 @@ import { TrophyService } from './trophy.service'
 @Resolver(() => Trophy)
 @UseGuards(JwtAuthGuard)
 export class TrophyResolver {
+  private readonly logger = new Logger(TrophyResolver.name)
+
   constructor(private readonly trophyService: TrophyService) {}
 
   /** Queries */
@@ -28,6 +30,7 @@ export class TrophyResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Trophy })
   async trophies() {
+    this.logger.log('Fetching all trophies')
     return await this.trophyService.findAll()
   }
 
@@ -35,6 +38,12 @@ export class TrophyResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Trophy })
   async trophy(@Args('id', { type: () => Int }) id: Trophy['id']) {
+    if (!id) {
+      this.logger.error('trophy query failed - No trophy ID provided')
+      throw new BadRequestException('Trophy ID is required')
+    }
+
+    this.logger.log(`Fetching trophy with ID: ${id}`)
     return await this.trophyService.findOne(id)
   }
 
@@ -44,6 +53,17 @@ export class TrophyResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Create, subject: Trophy })
   async trophyCreate(@Args('trophyInput') trophyInput: TrophyInput) {
+    if (!trophyInput) {
+      this.logger.error('trophyCreate mutation failed - No input provided')
+      throw new BadRequestException('Trophy input is required')
+    }
+
+    if (!trophyInput.name?.trim()) {
+      this.logger.error('trophyCreate mutation failed - Name is required')
+      throw new BadRequestException('Trophy name is required')
+    }
+
+    this.logger.log(`Creating trophy: ${trophyInput.name}`)
     return await this.trophyService.create(trophyInput)
   }
 
@@ -54,6 +74,22 @@ export class TrophyResolver {
     @Args('trophyID', { type: () => Int }) trophyID: Trophy['id'],
     @Args('trophyInput') trophyInput: TrophyInput,
   ) {
+    if (!trophyID) {
+      this.logger.error('trophyUpdate mutation failed - No trophy ID provided')
+      throw new BadRequestException('Trophy ID is required')
+    }
+
+    if (!trophyInput) {
+      this.logger.error('trophyUpdate mutation failed - No input provided')
+      throw new BadRequestException('Trophy input is required')
+    }
+
+    if (trophyInput.name !== undefined && !trophyInput.name?.trim()) {
+      this.logger.error('trophyUpdate mutation failed - Name cannot be empty')
+      throw new BadRequestException('Trophy name cannot be empty')
+    }
+
+    this.logger.log(`Updating trophy ID: ${trophyID}`)
     return await this.trophyService.update(trophyID, trophyInput)
   }
 
@@ -63,6 +99,12 @@ export class TrophyResolver {
   async trophyDelete(
     @Args('trophyID', { type: () => Int }) trophyID: Trophy['id'],
   ) {
+    if (!trophyID) {
+      this.logger.error('trophyDelete mutation failed - No trophy ID provided')
+      throw new BadRequestException('Trophy ID is required')
+    }
+
+    this.logger.log(`Deleting trophy ID: ${trophyID}`)
     return await this.trophyService.remove(trophyID)
   }
 
@@ -72,6 +114,13 @@ export class TrophyResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: FestivalClass })
   async festivalClasses(@Parent() trophy: Trophy) {
+    if (!trophy?.id) {
+      this.logger.error('festivalClasses field resolver failed - Invalid trophy parent')
+      throw new BadRequestException('Invalid trophy')
+    }
+
+    this.logger.debug(`Fetching festival classes for trophy ID: ${trophy.id}`)
+
     const { id }: { id: Trophy['id'] } = trophy
     return await this.trophyService.findTrophyClasses(id)
   }

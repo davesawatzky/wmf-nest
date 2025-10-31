@@ -1,3 +1,4 @@
+import { BadRequestException, Logger } from '@nestjs/common'
 import { UseGuards } from '@nestjs/common/decorators'
 import {
   Args,
@@ -24,6 +25,8 @@ import { PerformerService } from './performer.service'
 @Resolver(() => Performer)
 @UseGuards(JwtAuthGuard)
 export class PerformerResolver {
+  private readonly logger = new Logger(PerformerResolver.name)
+
   constructor(
     private readonly performerService: PerformerService,
     private readonly registrationService: RegistrationService,
@@ -40,8 +43,11 @@ export class PerformerResolver {
     @Args('registrationID', { type: () => Int, nullable: true })
     registrationID: tbl_registration['id'],
   ) {
+    const isAdmin = context.req.user?.roles?.includes('admin')
+    this.logger.log(`Fetching performers${isAdmin ? ' (admin query)' : registrationID ? ` for registration ID: ${registrationID}` : ''}`)
+
     return await this.performerService.findAll(
-      context.req.user.roles.includes('admin') ? undefined : registrationID,
+      isAdmin ? undefined : registrationID,
     )
   }
 
@@ -52,6 +58,12 @@ export class PerformerResolver {
     @Args('performerID', { type: () => Int })
     performerID: Performer['id'],
   ) {
+    if (!performerID) {
+      this.logger.error('performer query failed - performerID is required')
+      throw new BadRequestException('Performer ID is required')
+    }
+
+    this.logger.log(`Fetching performer ID: ${performerID}`)
     return await this.performerService.findOne(performerID)
   }
 
@@ -66,6 +78,12 @@ export class PerformerResolver {
     @Args('performerInput', { type: () => PerformerInput, nullable: true })
     performerInput: Partial<PerformerInput>,
   ) {
+    if (!registrationID) {
+      this.logger.error('performerCreate mutation failed - registrationID is required')
+      throw new BadRequestException('Registration ID is required')
+    }
+
+    this.logger.log(`Creating performer for registration ID: ${registrationID}`)
     return await this.performerService.create(registrationID, performerInput)
   }
 
@@ -78,6 +96,17 @@ export class PerformerResolver {
     @Args('performerInput', { type: () => PerformerInput })
     performerInput: Partial<PerformerInput>,
   ) {
+    if (!performerID) {
+      this.logger.error('performerUpdate mutation failed - performerID is required')
+      throw new BadRequestException('Performer ID is required')
+    }
+
+    if (!performerInput || Object.keys(performerInput).length === 0) {
+      this.logger.error('performerUpdate mutation failed - performerInput is required')
+      throw new BadRequestException('Performer input is required')
+    }
+
+    this.logger.log(`Updating performer ID: ${performerID}`)
     return await this.performerService.update(performerID, performerInput)
   }
 
@@ -88,6 +117,12 @@ export class PerformerResolver {
     @Args('performerID', { type: () => Int })
     performerID: Performer['id'],
   ) {
+    if (!performerID) {
+      this.logger.error('performerDelete mutation failed - performerID is required')
+      throw new BadRequestException('Performer ID is required')
+    }
+
+    this.logger.log(`Deleting performer ID: ${performerID}`)
     return await this.performerService.remove(performerID)
   }
 
@@ -98,6 +133,13 @@ export class PerformerResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Registration })
   async registration(@Parent() performer: tbl_reg_performer) {
+    if (!performer?.regID) {
+      this.logger.error('registration field resolver failed - Invalid performer or missing regID')
+      throw new BadRequestException('Invalid performer')
+    }
+
+    this.logger.debug(`Fetching registration for performer ID: ${performer.id}`)
+
     const regID = performer.regID
     return await this.registrationService.findOne(regID)
   }

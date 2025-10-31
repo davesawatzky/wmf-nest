@@ -42,7 +42,7 @@ describe('Category E2E Tests', () => {
   })
 
   describe('Category Queries (Both Roles)', () => {
-    it('Should list all categories for both roles', async () => {
+    it('Should list no categories without level or subdiscipline', async () => {
       const results = await testWithBothRoles(
         'list categories',
         async (role) => {
@@ -57,30 +57,14 @@ describe('Category E2E Tests', () => {
                 }
               }
             `)
-            .expectNoErrors() as { data: { categories: Category[] } }
-
-          const categories = response.data.categories
-          const firstCategory = categories[0]
 
           return {
-            hasData: !!categories,
-            isArray: Array.isArray(categories),
-            count: categories?.length || 0,
-            hasValidTypes: typeof firstCategory?.id === 'number'
-              && typeof firstCategory?.name === 'string',
+            hasData: !!response.errors,
           }
         },
       )
-
-      // Both roles should successfully retrieve categories
       expect(results.admin.hasData).toBe(true)
       expect(results.user.hasData).toBe(true)
-      expect(results.admin.isArray).toBe(true)
-      expect(results.user.isArray).toBe(true)
-      expect(results.admin.count).toBeGreaterThan(0)
-      expect(results.user.count).toBe(results.admin.count)
-      expect(results.admin.hasValidTypes).toBe(true)
-      expect(results.user.hasValidTypes).toBe(true)
     })
 
     it('Should filter categories by subdisciplineID for both roles', async () => {

@@ -96,7 +96,7 @@ export class CategoryService {
   async findOne(id: tbl_category['id']) {
     try {
       if (!id) {
-        this.logger.warn('findOne called without category ID')
+        this.logger.error('findOne called without category ID')
         throw new BadRequestException('Category ID must be provided')
       }
 

@@ -108,7 +108,7 @@ export class LevelService {
     this.logger.debug(`Retrieving level with ID: ${id}`)
 
     if (!id) {
-      this.logger.warn('Attempted to find level without providing ID')
+      this.logger.error('Attempted to find level without providing ID')
       throw new BadRequestException('Level ID is required')
     }
 

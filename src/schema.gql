@@ -616,7 +616,6 @@ type Registration {
   payedAmt: Float
   performerType: PerformerType!
   performers: [Performer!]
-  photoPermission: String
   registeredClasses: [RegisteredClass!]
   school: School
   submittedAt: DateTime
@@ -632,7 +631,6 @@ input RegistrationInput {
   label: String
   payedAmt: Float
   performerType: PerformerType
-  photoPermission: String
   submittedAt: DateTime
   teacherID: Int
   totalAmt: Float

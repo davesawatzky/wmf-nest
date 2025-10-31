@@ -310,11 +310,11 @@ describe('Teacher E2E Tests', () => {
       )
 
       // Both roles should get errors for non-existent teacher
-      expect(results.admin.hasErrors).toBe(false)
-      expect(results.admin.errorMessage).toBe(undefined)
+      expect(results.admin.hasErrors).toBe(true)
+      expect(results.admin.errorMessage).toBeTruthy()
 
-      expect(results.user.hasErrors).toBe(false)
-      expect(results.user.errorMessage).toBe(undefined)
+      expect(results.user.hasErrors).toBe(true)
+      expect(results.user.errorMessage).toBeTruthy()
     })
 
     it('Should require teacher type for teachers query', async () => {

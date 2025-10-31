@@ -149,9 +149,8 @@ export class DisciplineService {
   }
 
   async findOne(id: tbl_discipline['id']) {
-    this.logger.debug(`Retrieving discipline with ID: ${id}`)
     if (!id) {
-      this.logger.warn('Attempted to find discipline without providing ID')
+      this.logger.error('Attempted to find discipline without providing ID')
       throw new BadRequestException('Discipline ID is required')
     }
     try {

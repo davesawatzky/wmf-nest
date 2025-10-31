@@ -244,7 +244,7 @@ export class FestivalClassService {
     this.logger.debug(`Retrieving festival class with ID: ${id}`)
 
     if (!id) {
-      this.logger.warn('Attempted to find festival class without providing ID')
+      this.logger.error('Attempted to find festival class without providing ID')
       throw new BadRequestException('Festival class ID is required')
     }
 
@@ -254,7 +254,7 @@ export class FestivalClassService {
       })
 
       if (!festivalClass) {
-        this.logger.warn(`Festival class not found with ID: ${id}`)
+        this.logger.error(`Festival class not found with ID: ${id}`)
         throw new NotFoundException(`Festival class with ID ${id} not found`)
       }
 
@@ -285,7 +285,7 @@ export class FestivalClassService {
     )
 
     if (!classNumber) {
-      this.logger.warn(
+      this.logger.error(
         'Attempted to find festival class without providing class number',
       )
       throw new BadRequestException('Festival class number is required')
@@ -297,7 +297,7 @@ export class FestivalClassService {
       })
 
       if (!festivalClass) {
-        this.logger.warn(
+        this.logger.error(
           `Festival class not found with class number: ${classNumber}`,
         )
         throw new NotFoundException(

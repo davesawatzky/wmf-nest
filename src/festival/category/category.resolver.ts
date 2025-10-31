@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common'
+import { BadRequestException, Logger, UseGuards } from '@nestjs/common'
 import {
   Args,
   Int,
@@ -23,6 +23,8 @@ import { Category, CategoryPayload } from './entities/category.entity'
 @Resolver(() => Category)
 @UseGuards(JwtAuthGuard)
 export class CategoryResolver {
+  private readonly logger = new Logger(CategoryResolver.name)
+
   constructor(
     private readonly categoryService: CategoryService,
     private readonly festivalClassService: FestivalClassService,
@@ -39,6 +41,14 @@ export class CategoryResolver {
     @Args('subdisciplineID', { type: () => Int, nullable: true })
     subdisciplineID: tbl_subdiscipline['id'] | null,
   ) {
+    if (!levelID && !subdisciplineID) {
+      this.logger.error(
+        'categories query failed - Neither levelID nor subdisciplineID was provided',
+      )
+      throw new BadRequestException(
+        'Either levelID or subdisciplineID must be provided',
+      )
+    }
     return await this.categoryService.findAll(levelID, subdisciplineID)
   }
 
@@ -46,6 +56,10 @@ export class CategoryResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Category })
   async category(@Args('id', { type: () => Int }) id: Category['id']) {
+    if (!id) {
+      this.logger.error('category query failed - No category ID was provided')
+      throw new BadRequestException('Category ID must be provided')
+    }
     return await this.categoryService.findOne(id)
   }
 
@@ -66,6 +80,10 @@ export class CategoryResolver {
     categoryID: Category['id'],
     @Args('categoryInput') categoryInput: CategoryInput,
   ) {
+    if (!categoryID) {
+      this.logger.error('categoryUpdate mutation failed - No category ID provided')
+      throw new BadRequestException('Category ID must be provided')
+    }
     return await this.categoryService.update(categoryID, categoryInput)
   }
 
@@ -75,6 +93,10 @@ export class CategoryResolver {
   async categoryDelete(
     @Args('categoryID', { type: () => Int }) categoryID: Category['id'],
   ) {
+    if (!categoryID) {
+      this.logger.error('categoryDelete mutation failed - No category ID provided')
+      throw new BadRequestException('Category ID must be provided')
+    }
     return await this.categoryService.remove(categoryID)
   }
 
@@ -90,6 +112,20 @@ export class CategoryResolver {
     subdisciplineID: tbl_subdiscipline['id'],
     @Args('levelID', { type: () => Int }) levelID: tbl_level['id'],
   ) {
+    if (!performerType || !subdisciplineID || !levelID) {
+      this.logger.error(
+        'festivalClasses field resolver failed - Missing required parameters',
+        { performerType, subdisciplineID, levelID, categoryID: category.id },
+      )
+      throw new BadRequestException(
+        'performerType, subdisciplineID, and levelID are required',
+      )
+    }
+
+    this.logger.debug(
+      `Fetching festival classes for category ${category.id} with filters`,
+      { performerType, subdisciplineID, levelID },
+    )
     const categoryID = category.id
     return await this.festivalClassService.findAll(
       performerType,

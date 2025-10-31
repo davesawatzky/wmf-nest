@@ -90,7 +90,7 @@ export class TrophyService {
     this.logger.debug(`Retrieving classes for trophy with ID: ${trophyID}`)
 
     if (!trophyID) {
-      this.logger.warn(
+      this.logger.error(
         'Attempted to find trophy classes without providing trophy ID',
       )
       throw new BadRequestException('Trophy ID is required')
@@ -137,7 +137,7 @@ export class TrophyService {
       })
 
       if (!trophy) {
-        this.logger.warn(`Trophy not found with ID: ${id}`)
+        this.logger.error(`Trophy not found with ID: ${id}`)
         throw new NotFoundException('Trophy not found')
       }
 

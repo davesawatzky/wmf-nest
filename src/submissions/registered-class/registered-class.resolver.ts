@@ -1,3 +1,4 @@
+import { BadRequestException, Logger } from '@nestjs/common'
 import { UseGuards } from '@nestjs/common/decorators'
 import {
   Args,
@@ -28,6 +29,8 @@ import { RegisteredClassService } from './registered-class.service'
 @Resolver(() => RegisteredClass)
 @UseGuards(JwtAuthGuard)
 export class RegisteredClassResolver {
+  private readonly logger = new Logger(RegisteredClassResolver.name)
+
   constructor(
     private readonly registeredClassService: RegisteredClassService,
     private readonly selectionService: SelectionService,
@@ -44,8 +47,11 @@ export class RegisteredClassResolver {
     @Args('registrationID', { nullable: true, type: () => Int })
     registrationID: tbl_registration['id'] | null,
   ) {
+    const isAdmin = context.req.user?.roles?.includes('admin')
+    this.logger.log(`Fetching registered classes${isAdmin ? ' (admin query)' : registrationID ? ` for registration ID: ${registrationID}` : ''}`)
+
     return await this.registeredClassService.findAll(
-      context.req.user.roles.includes('admin') ? null : registrationID,
+      isAdmin ? null : registrationID,
     )
   }
 
@@ -54,6 +60,12 @@ export class RegisteredClassResolver {
     @Args('registeredClassID', { type: () => Int })
     registeredClassID: RegisteredClass['id'],
   ) {
+    if (!registeredClassID) {
+      this.logger.error('registeredClass query failed - registeredClassID is required')
+      throw new BadRequestException('Registered class ID is required')
+    }
+
+    this.logger.log(`Fetching registered class ID: ${registeredClassID}`)
     return await this.registeredClassService.findOne(registeredClassID)
   }
 
@@ -69,6 +81,12 @@ export class RegisteredClassResolver {
     })
     registeredClass: Partial<RegisteredClassInput> | null,
   ) {
+    if (!registrationID) {
+      this.logger.error('registeredClassCreate mutation failed - registrationID is required')
+      throw new BadRequestException('Registration ID is required')
+    }
+
+    this.logger.log(`Creating registered class for registration ID: ${registrationID}`)
     return await this.registeredClassService.create(
       registrationID,
       registeredClass,
@@ -82,6 +100,17 @@ export class RegisteredClassResolver {
     @Args('registeredClassInput', { type: () => RegisteredClassInput })
     registeredClassInput: Partial<RegisteredClassInput>,
   ) {
+    if (!registeredClassID) {
+      this.logger.error('registeredClassUpdate mutation failed - registeredClassID is required')
+      throw new BadRequestException('Registered class ID is required')
+    }
+
+    if (!registeredClassInput || Object.keys(registeredClassInput).length === 0) {
+      this.logger.error('registeredClassUpdate mutation failed - registeredClassInput is required')
+      throw new BadRequestException('Registered class input is required')
+    }
+
+    this.logger.log(`Updating registered class ID: ${registeredClassID}`)
     return await this.registeredClassService.update(
       registeredClassID,
       registeredClassInput,
@@ -93,6 +122,12 @@ export class RegisteredClassResolver {
     @Args('registeredClassID', { type: () => Int })
     registeredClassID: RegisteredClass['id'],
   ) {
+    if (!registeredClassID) {
+      this.logger.error('registeredClassDelete mutation failed - registeredClassID is required')
+      throw new BadRequestException('Registered class ID is required')
+    }
+
+    this.logger.log(`Deleting registered class ID: ${registeredClassID}`)
     return await this.registeredClassService.remove(registeredClassID)
   }
 
@@ -100,6 +135,13 @@ export class RegisteredClassResolver {
 
   @ResolveField(() => [Selection])
   async selections(@Parent() registeredClass: tbl_reg_class) {
+    if (!registeredClass?.id) {
+      this.logger.error('selections field resolver failed - Invalid registeredClass or missing id')
+      throw new BadRequestException('Invalid registered class')
+    }
+
+    this.logger.debug(`Fetching selections for registered class ID: ${registeredClass.id}`)
+
     const { id }: { id: RegisteredClass['id'] } = registeredClass
     const registeredClassID = id
     return await this.selectionService.findAll(registeredClassID)
@@ -107,14 +149,21 @@ export class RegisteredClassResolver {
 
   @ResolveField(() => [Performer])
   async performers(@Parent() registeredClass: tbl_reg_class) {
+    if (!registeredClass) {
+      this.logger.error('performers field resolver failed - Invalid registeredClass')
+      throw new BadRequestException('Invalid registered class')
+    }
+
     const { classNumber }: { classNumber: RegisteredClass['classNumber'] }
       = registeredClass
+
     if (!classNumber) {
+      this.logger.debug(`No classNumber for registered class ID: ${registeredClass.id}, returning empty array`)
       return []
     }
-    else {
-      const registeredClassNumber = classNumber
-      return await this.performerService.findAll(null, registeredClassNumber)
-    }
+
+    this.logger.debug(`Fetching performers for registered class ID: ${registeredClass.id}, classNumber: ${classNumber}`)
+    const registeredClassNumber = classNumber
+    return await this.performerService.findAll(null, registeredClassNumber)
   }
 }

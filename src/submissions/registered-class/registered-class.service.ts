@@ -128,17 +128,17 @@ export class RegisteredClassService {
         `Error fetching registered classes with filter - registrationID: ${registrationID}`,
         error,
       )
-      // throw new InternalServerErrorException(
-      //   'Unable to fetch registered classes',
-      // )
+      throw new InternalServerErrorException(
+        'Unable to fetch registered classes',
+      )
     }
   }
 
   async findOne(registeredClassID: tbl_reg_class['id']) {
     try {
       if (!registeredClassID) {
-        this.logger.warn('findOne called without registered class ID')
-        // throw new BadRequestException('Registered class ID must be provided')
+        this.logger.error('findOne called without registered class ID')
+        throw new BadRequestException('Registered class ID must be provided')
       }
 
       this.logger.log(`Finding registered class with ID: ${registeredClassID}`)
@@ -151,7 +151,7 @@ export class RegisteredClassService {
         this.logger.warn(
           `Registered class not found with ID: ${registeredClassID}`,
         )
-        // throw new NotFoundException('Registered class not found')
+        throw new NotFoundException('Registered class not found')
       }
 
       return registeredClass
@@ -161,13 +161,13 @@ export class RegisteredClassService {
         error instanceof BadRequestException
         || error instanceof NotFoundException
       ) {
-        // throw error
+        throw error
       }
       this.logger.error(
         `Error finding registered class with ID: ${registeredClassID}`,
         error,
       )
-      // throw new InternalServerErrorException('Unable to find registered class')
+      throw new InternalServerErrorException('Unable to find registered class')
     }
   }
 

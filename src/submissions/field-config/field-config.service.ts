@@ -44,7 +44,7 @@ export class FieldConfigService {
     )
 
     if (!tableName || !fieldName) {
-      this.logger.warn(
+      this.logger.error(
         'Attempted to find field configuration without required parameters',
       )
       throw new BadRequestException(
@@ -58,7 +58,7 @@ export class FieldConfigService {
       })
 
       if (!fieldConfig) {
-        this.logger.warn(
+        this.logger.error(
           `Field configuration not found for table: ${tableName}, field: ${fieldName}`,
         )
         throw new NotFoundException(

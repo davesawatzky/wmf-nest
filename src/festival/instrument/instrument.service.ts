@@ -106,7 +106,7 @@ export class InstrumentService {
   async findOne(id?: tbl_instrument['id'], name?: tbl_instrument['name']) {
     this.logger.debug(`Retrieving instrument with ID: ${id}, name: ${name}`)
     if (!id && !name) {
-      this.logger.warn(
+      this.logger.error(
         'Attempted to find instrument without providing ID or name',
       )
       throw new BadRequestException('Either instrument ID or name is required')
@@ -129,9 +129,7 @@ export class InstrumentService {
         })
         if (!instrument) {
           this.logger.warn(`Instrument not found with name: ${name}`)
-          throw new NotFoundException(
-            `Instrument with name '${name}' not found`,
-          )
+          return null
         }
         this.logger.log(`Successfully retrieved instrument with name: ${name}`)
       }

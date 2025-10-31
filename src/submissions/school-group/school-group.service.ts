@@ -108,19 +108,20 @@ export class SchoolGroupService {
         `Failed to find school groups${schoolID ? ` for school ID: ${schoolID}` : ''}`,
         error,
       )
-      // throw new InternalServerErrorException(
-      //   'Failed to retrieve school groups',
-      // )
+      throw new InternalServerErrorException(
+        'Failed to retrieve school groups',
+      )
     }
   }
 
   async findOne(schoolGroupID: tbl_reg_schoolgroup['id']) {
     try {
-      this.logger.log(`Finding school group with ID: ${schoolGroupID}`)
+      if (!schoolGroupID) {
+        this.logger.error('findOne called without school group ID')
+        throw new BadRequestException('School group ID is required')
+      }
 
-      // if (!schoolGroupID) {
-      //   throw new BadRequestException('School group ID is required')
-      // }
+      this.logger.log(`Finding school group with ID: ${schoolGroupID}`)
 
       const schoolGroup = await this.prisma.tbl_reg_schoolgroup.findUnique({
         where: { id: schoolGroupID },
@@ -128,25 +129,24 @@ export class SchoolGroupService {
 
       if (!schoolGroup) {
         this.logger.warn(`School group not found with ID: ${schoolGroupID}`)
-        // throw new NotFoundException('School group not found')
+        throw new NotFoundException('School group not found')
       }
 
       return schoolGroup
     }
     catch (error: any) {
-      // Re-throw known exceptions
       if (
         error instanceof BadRequestException
         || error instanceof NotFoundException
       ) {
-        // throw error
+        throw error
       }
 
       this.logger.error(
         `Failed to find school group with ID: ${schoolGroupID}`,
         error,
       )
-      // throw new InternalServerErrorException('Failed to retrieve school group')
+      throw new InternalServerErrorException('Failed to retrieve school group')
     }
   }
 

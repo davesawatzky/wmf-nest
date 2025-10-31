@@ -28,7 +28,7 @@ export class PaymentService {
     )
 
     if (!regID || !WMFconfirmationId || !tokenId) {
-      this.logger.warn(
+      this.logger.error(
         'Missing required parameters for payment intent creation',
         { regID, WMFconfirmationId, tokenId },
       )
@@ -85,7 +85,7 @@ export class PaymentService {
     this.logger.debug(`Summarizing payment for registration ID: ${regID}`)
 
     if (!regID || !tokenId) {
-      this.logger.warn('Missing required parameters for payment summary', {
+      this.logger.error('Missing required parameters for payment summary', {
         regID,
         tokenId,
       })

@@ -1,3 +1,4 @@
+import { BadRequestException, Logger } from '@nestjs/common'
 import { UseGuards } from '@nestjs/common/decorators'
 import {
   Args,
@@ -22,6 +23,8 @@ import { GroupService } from './group.service'
 @Resolver(() => Group)
 @UseGuards(JwtAuthGuard)
 export class GroupResolver {
+  private readonly logger = new Logger(GroupResolver.name)
+
   constructor(
     private readonly groupService: GroupService,
     private readonly registrationService: RegistrationService,
@@ -36,6 +39,7 @@ export class GroupResolver {
     @Args('registrationID', { type: () => Int, nullable: true })
     registrationID: Registration['id'],
   ) {
+    this.logger.log(`Fetching groups${registrationID ? ` for registration ID: ${registrationID}` : ' (admin query)'}`)
     return await this.groupService.findAll(registrationID)
   }
 
@@ -48,6 +52,12 @@ export class GroupResolver {
     @Args('groupID', { type: () => Int, nullable: true })
     groupID: Group['id'],
   ) {
+    if (!registrationID && !groupID) {
+      this.logger.error('group query failed - Either registrationID or groupID is required')
+      throw new BadRequestException('Either registration ID or group ID is required')
+    }
+
+    this.logger.log(`Fetching group${registrationID ? ` for registration ID: ${registrationID}` : ` with ID: ${groupID}`}`)
     return await this.groupService.findOne(registrationID, groupID)
   }
 
@@ -60,6 +70,12 @@ export class GroupResolver {
     @Args('registrationID', { type: () => Int })
     registrationID: tbl_registration['id'],
   ) {
+    if (!registrationID) {
+      this.logger.error('groupCreate mutation failed - registrationID is required')
+      throw new BadRequestException('Registration ID is required')
+    }
+
+    this.logger.log(`Creating group for registration ID: ${registrationID}`)
     return await this.groupService.create(registrationID)
   }
 
@@ -71,6 +87,17 @@ export class GroupResolver {
     @Args('groupInput', { type: () => GroupInput })
     groupInput: Partial<GroupInput>,
   ) {
+    if (!groupID) {
+      this.logger.error('groupUpdate mutation failed - groupID is required')
+      throw new BadRequestException('Group ID is required')
+    }
+
+    if (!groupInput || Object.keys(groupInput).length === 0) {
+      this.logger.error('groupUpdate mutation failed - groupInput is required')
+      throw new BadRequestException('Group input is required')
+    }
+
+    this.logger.log(`Updating group ID: ${groupID}`)
     return await this.groupService.update(groupID, groupInput)
   }
 
@@ -80,6 +107,12 @@ export class GroupResolver {
   async groupDelete(
     @Args('groupID', { type: () => Int }) groupID: Group['id'],
   ) {
+    if (!groupID) {
+      this.logger.error('groupDelete mutation failed - groupID is required')
+      throw new BadRequestException('Group ID is required')
+    }
+
+    this.logger.log(`Deleting group ID: ${groupID}`)
     return await this.groupService.remove(groupID)
   }
 
@@ -90,6 +123,13 @@ export class GroupResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Registration })
   async registration(@Parent() group: tbl_reg_group) {
+    if (!group?.regID) {
+      this.logger.error('registration field resolver failed - Invalid group or missing regID')
+      throw new BadRequestException('Invalid group')
+    }
+
+    this.logger.debug(`Fetching registration for group ID: ${group.id}`)
+
     const regID = group.regID
     return await this.registrationService.findOne(regID)
   }

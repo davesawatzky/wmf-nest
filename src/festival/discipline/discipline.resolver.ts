@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common'
+import { BadRequestException, Logger, UseGuards } from '@nestjs/common'
 import {
   Args,
   Int,
@@ -25,6 +25,8 @@ import { Discipline, DisciplinePayload } from './entities/discipline.entity'
 @Resolver(() => Discipline)
 @UseGuards(JwtAuthGuard)
 export class DisciplineResolver {
+  private readonly logger = new Logger(DisciplineResolver.name)
+
   constructor(
     private readonly disciplineService: DisciplineService,
     private readonly subdisciplineService: SubdisciplineService,
@@ -42,6 +44,9 @@ export class DisciplineResolver {
     @Args('instrument', { type: () => String, nullable: true })
     instrument: Instrument['name'] | null,
   ) {
+    this.logger.log(
+      `Fetching disciplines with filters - performerType: ${performerType}, instrument: ${instrument}`,
+    )
     return await this.disciplineService.findAll(performerType, instrument)
   }
 
@@ -49,6 +54,11 @@ export class DisciplineResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Discipline })
   async discipline(@Args('id', { type: () => Int }) id: Discipline['id']) {
+    if (!id) {
+      this.logger.error('discipline query failed - No discipline ID was provided')
+      throw new BadRequestException('Discipline ID is required')
+    }
+    this.logger.log(`Fetching discipline with ID: ${id}`)
     return await this.disciplineService.findOne(id)
   }
 
@@ -60,6 +70,15 @@ export class DisciplineResolver {
   async disciplineCreate(
     @Args('disciplineInput') disciplineInput: DisciplineInput,
   ) {
+    if (!disciplineInput) {
+      this.logger.error('disciplineCreate mutation failed - No input provided')
+      throw new BadRequestException('Discipline input is required')
+    }
+    if (!disciplineInput.name?.trim()) {
+      this.logger.error('disciplineCreate mutation failed - Name is required')
+      throw new BadRequestException('Discipline name is required')
+    }
+    this.logger.log(`Creating discipline: ${disciplineInput.name}`)
     return await this.disciplineService.create(disciplineInput)
   }
 
@@ -70,6 +89,19 @@ export class DisciplineResolver {
     @Args('disciplineID', { type: () => Int }) disciplineID: Discipline['id'],
     @Args('disciplineInput') disciplineInput: DisciplineInput,
   ) {
+    if (!disciplineID) {
+      this.logger.error('disciplineUpdate mutation failed - No discipline ID provided')
+      throw new BadRequestException('Discipline ID is required')
+    }
+    if (!disciplineInput) {
+      this.logger.error('disciplineUpdate mutation failed - No input provided')
+      throw new BadRequestException('Discipline input is required')
+    }
+    if (disciplineInput.name !== undefined && !disciplineInput.name?.trim()) {
+      this.logger.error('disciplineUpdate mutation failed - Name cannot be empty')
+      throw new BadRequestException('Discipline name cannot be empty')
+    }
+    this.logger.log(`Updating discipline ID: ${disciplineID}`)
     return await this.disciplineService.update(disciplineID, disciplineInput)
   }
 
@@ -79,6 +111,11 @@ export class DisciplineResolver {
   async disciplineDelete(
     @Args('disciplineID', { type: () => Int }) disciplineID: Discipline['id'],
   ) {
+    if (!disciplineID) {
+      this.logger.error('disciplineDelete mutation failed - No discipline ID provided')
+      throw new BadRequestException('Discipline ID is required')
+    }
+    this.logger.log(`Deleting discipline ID: ${disciplineID}`)
     return await this.disciplineService.remove(disciplineID)
   }
 
@@ -93,6 +130,13 @@ export class DisciplineResolver {
     @Args('performerType', { type: () => PerformerType, nullable: true })
     performerType: PerformerType | null,
   ) {
+    if (!discipline?.id) {
+      this.logger.error('subdisciplines field resolver failed - Invalid discipline parent')
+      throw new BadRequestException('Invalid discipline')
+    }
+    this.logger.debug(
+      `Fetching subdisciplines for discipline ID: ${discipline.id} with performerType: ${performerType}`,
+    )
     const { id } = discipline
     return await this.subdisciplineService.findAll(id, performerType)
   }
@@ -100,8 +144,13 @@ export class DisciplineResolver {
   @ResolveField(() => [Instrument])
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Instrument })
-  async instruments(@Parent() { id }: tbl_discipline) {
-    const disciplineID = id
+  async instruments(@Parent() discipline: tbl_discipline) {
+    if (!discipline?.id) {
+      this.logger.error('instruments field resolver failed - Invalid discipline parent')
+      throw new BadRequestException('Invalid discipline')
+    }
+    this.logger.debug(`Fetching instruments for discipline ID: ${discipline.id}`)
+    const disciplineID = discipline.id
     return await this.instrumentService.findAll(disciplineID)
   }
 }

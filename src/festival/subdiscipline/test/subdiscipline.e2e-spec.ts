@@ -206,7 +206,7 @@ describe('Subdiscipline E2E Tests', () => {
             hasData: !!response.data.subdisciplines,
             count: response.data.subdisciplines?.length || 0,
             hasGuitarSubdiscipline: response.data.subdisciplines.some(
-              s => s.name.includes('GUITAR')
+              s => s.name.includes('GUITAR'),
             ),
           }
         },
@@ -241,7 +241,7 @@ describe('Subdiscipline E2E Tests', () => {
             .expectNoErrors() as { data: { subdisciplines: Subdiscipline[] } }
 
           const subdisciplineWithCategories = response.data.subdisciplines.find(
-            s => s.categories && s.categories.length > 0
+            s => s.categories && s.categories.length > 0,
           )
 
           return {
@@ -281,7 +281,7 @@ describe('Subdiscipline E2E Tests', () => {
             .expectNoErrors() as { data: { subdisciplines: Subdiscipline[] } }
 
           const subdisciplineWithLevels = response.data.subdisciplines.find(
-            s => s.levels && s.levels.length > 0
+            s => s.levels && s.levels.length > 0,
           )
 
           return {
@@ -321,7 +321,7 @@ describe('Subdiscipline E2E Tests', () => {
             .expectNoErrors() as { data: { subdisciplines: Subdiscipline[] } }
 
           const subdisciplineWithClasses = response.data.subdisciplines.find(
-            s => s.festivalClasses && s.festivalClasses.length > 0
+            s => s.festivalClasses && s.festivalClasses.length > 0,
           )
 
           return {

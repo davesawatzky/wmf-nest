@@ -95,7 +95,7 @@ export class ClassTypeService {
     this.logger.debug(`Retrieving class type with ID: ${id}`)
 
     if (!id) {
-      this.logger.warn('Attempted to find class type without providing ID')
+      this.logger.error('Attempted to find class type without providing ID')
       throw new BadRequestException('Class type ID is required')
     }
 
@@ -105,7 +105,7 @@ export class ClassTypeService {
       })
 
       if (!classType) {
-        this.logger.warn(`Class type not found with ID: ${id}`)
+        this.logger.error(`Class type not found with ID: ${id}`)
         throw new NotFoundException(`Class type with ID ${id} not found`)
       }
 

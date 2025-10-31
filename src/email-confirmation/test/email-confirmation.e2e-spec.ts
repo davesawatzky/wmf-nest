@@ -1,9 +1,7 @@
-import type { INestApplication } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import request from 'supertest'
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
-import { EmailConfirmationService } from '../email-confirmation.service'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 /**
  * Email Confirmation E2E Tests
@@ -13,7 +11,7 @@ import { EmailConfirmationService } from '../email-confirmation.service'
         .post('/email-confirmation/resend-password-link')
         .send({ email: passwordResetUser.email })
         .expect(201)
- 
+
       // Verify successful response (no errors)
       expect(response.status).toBe(201)
     })ints for email verification and password reset workflows.
@@ -25,11 +23,11 @@ import { EmailConfirmationService } from '../email-confirmation.service'
       await globalThis.prisma.tbl_user.deleteMany({
         where: { email: 'test_concurrent@test.com' },
       })
- 
+
       // Create new test user for concurrency test
       const bcrypt = await import('bcrypt')
       const hashedPassword = await bcrypt.hash('TestPass123!', 10)
- 
+
       const testUser = await globalThis.prisma.tbl_user.create({n/resend-password-link
  *
  * Pattern:

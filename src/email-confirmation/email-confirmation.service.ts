@@ -23,9 +23,11 @@ export class EmailConfirmationService {
 
   public async sendVerificationLink(userName: string, email: string) {
     if (!userName) {
+      this.logger.error('Send verification link called without user name')
       throw new BadRequestException('User name is required')
     }
     if (!email) {
+      this.logger.error('Send verification link called without email')
       throw new BadRequestException('Email is required')
     }
 
@@ -70,6 +72,7 @@ export class EmailConfirmationService {
 
   public async sendPasswordResetLink(email: string) {
     if (!email) {
+      this.logger.warn('Password reset link requested without email')
       throw new BadRequestException('Email is required')
     }
 
@@ -120,7 +123,8 @@ export class EmailConfirmationService {
     try {
       const user = await this.userService.findOne(null, email)
       if (user.emailConfirmed) {
-        throw new BadRequestException('Email already confirmed')
+        this.logger.log('Email already confirmed')
+        return user.emailConfirmed
       }
       const result = await this.userService.update(user.id, { emailConfirmed: true })
       this.logger.log(`Successfully confirmed email: ${email}`)

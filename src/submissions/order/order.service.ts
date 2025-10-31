@@ -52,7 +52,7 @@ export class OrderService {
       })
 
       if (!order) {
-        this.logger.warn(
+        this.logger.error(
           `Order not found with ID: ${orderID}, userID: ${userID}`,
         )
         throw new NotFoundException('Order not found')

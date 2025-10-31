@@ -86,11 +86,12 @@ export class TeacherService {
 
   async findAll(teacherType: TeacherTypeInput['teacherType']) {
     try {
-      this.logger.log(`Finding all teachers of type: ${teacherType}`)
+      if (!teacherType) {
+        this.logger.warn('Teacher type not specified for findAll')
+        throw new BadRequestException('Teacher type must be specified')
+      }
 
-      // if (!teacherType) {
-      //   throw new BadRequestException('Teacher type must be specified')
-      // }
+      this.logger.log(`Finding all teachers of type: ${teacherType}`)
 
       let teachersData = []
 
@@ -106,9 +107,10 @@ export class TeacherService {
           orderBy: { lastName: 'asc' },
         })
       }
-      // else {
-      //   throw new BadRequestException('Invalid teacher type specified')
-      // }
+      else {
+        this.logger.warn('Invalid teacher type specified for findAll')
+        throw new BadRequestException('Invalid teacher type specified')
+      }
 
       if (!teachersData || teachersData.length === 0) {
         this.logger.warn(`No teachers found for type: ${teacherType}`)
@@ -153,14 +155,14 @@ export class TeacherService {
     catch (error: any) {
       // Re-throw known exceptions
       if (error instanceof BadRequestException) {
-        // throw error
+        throw error
       }
 
       this.logger.error(
         `Failed to find teachers of type: ${teacherType}`,
         error,
       )
-      // throw new InternalServerErrorException('Failed to retrieve teachers')
+      throw new InternalServerErrorException('Failed to retrieve teachers')
     }
   }
 
@@ -175,7 +177,7 @@ export class TeacherService {
 
       if (!teacherID && !email) {
         this.logger.log('FindOne called without teacherID or email parameters')
-        return null
+        throw new BadRequestException('Either teacherID or email must be provided')
       }
 
       let teacher: tbl_user | null = null
@@ -184,18 +186,23 @@ export class TeacherService {
         teacher = await this.prisma.tbl_user.findUnique({
           where: { id: teacherID },
         })
+        if (!teacher) {
+          this.logger.log(
+            `Teacher not found with ID: ${teacherID}`,
+          )
+          throw new NotFoundException('Teacher not found')
+        }
       }
       else if (email) {
         teacher = await this.prisma.tbl_user.findUnique({
           where: { email },
         })
-      }
-
-      if (!teacher) {
-        this.logger.log(
-          `Teacher not found with ${teacherID ? `ID: ${teacherID}` : `email: ${email}`} - available for creations`,
-        )
-        return null
+        if (!teacher) {
+          this.logger.log(
+            `Teacher not found with email: ${email}`,
+          )
+          return null
+        }
       }
 
       // Check if the user is actually a teacher
@@ -203,6 +210,7 @@ export class TeacherService {
         this.logger.warn(
           `User found but is not a teacher: ${teacherID || email}`,
         )
+        return null
       }
 
       // Remove sensitive fields from response
@@ -215,14 +223,14 @@ export class TeacherService {
         error instanceof BadRequestException
         || error instanceof NotFoundException
       ) {
-        // throw error
+        throw error
       }
 
       this.logger.error(
         `Failed to find teacher by ${teacherID ? `ID: ${teacherID}` : `email: ${email}`}`,
         error,
       )
-      // throw new InternalServerErrorException('Failed to retrieve teacher')
+      throw new InternalServerErrorException('Failed to retrieve teacher')
     }
   }
 

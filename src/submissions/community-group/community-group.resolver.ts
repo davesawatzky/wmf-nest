@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common'
+import { BadRequestException, Logger, UseGuards } from '@nestjs/common'
 import {
   Args,
   Int,
@@ -25,6 +25,8 @@ import {
 @Resolver(() => CommunityGroup)
 @UseGuards(JwtAuthGuard)
 export class CommunityGroupResolver {
+  private readonly logger = new Logger(CommunityGroupResolver.name)
+
   constructor(
     private readonly communityGroupService: CommunityGroupService,
     private readonly communityService: CommunityService,
@@ -39,6 +41,7 @@ export class CommunityGroupResolver {
     @Args('communityID', { type: () => Int, nullable: true })
     communityID: tbl_reg_communitygroup['communityID'],
   ) {
+    this.logger.log(`Fetching community groups${communityID ? ` for community ID: ${communityID}` : ''}`)
     return await this.communityGroupService.findAll(communityID)
   }
 
@@ -49,6 +52,12 @@ export class CommunityGroupResolver {
     @Args('communityGroupID', { type: () => Int })
     communityGroupID: tbl_reg_communitygroup['id'],
   ) {
+    if (!communityGroupID) {
+      this.logger.error('communityGroup query failed - communityGroupID is required')
+      throw new BadRequestException('Community group ID is required')
+    }
+
+    this.logger.log(`Fetching community group ID: ${communityGroupID}`)
     return await this.communityGroupService.findOne(communityGroupID)
   }
 
@@ -66,6 +75,12 @@ export class CommunityGroupResolver {
     })
     communityGroupInput: Partial<CommunityGroupInput>,
   ) {
+    if (!communityID) {
+      this.logger.error('communityGroupCreate mutation failed - communityID is required')
+      throw new BadRequestException('Community ID is required')
+    }
+
+    this.logger.log(`Creating community group for community ID: ${communityID}`)
     return await this.communityGroupService.create(
       communityID,
       communityGroupInput,
@@ -81,6 +96,17 @@ export class CommunityGroupResolver {
     @Args('communityGroupInput', { type: () => CommunityGroupInput })
     communityGroupInput: Partial<CommunityGroupInput>,
   ) {
+    if (!communityGroupID) {
+      this.logger.error('communityGroupUpdate mutation failed - communityGroupID is required')
+      throw new BadRequestException('Community group ID is required')
+    }
+
+    if (!communityGroupInput || Object.keys(communityGroupInput).length === 0) {
+      this.logger.error('communityGroupUpdate mutation failed - communityGroupInput is required')
+      throw new BadRequestException('Community group input is required')
+    }
+
+    this.logger.log(`Updating community group ID: ${communityGroupID}`)
     return await this.communityGroupService.update(
       communityGroupID,
       communityGroupInput,
@@ -94,6 +120,12 @@ export class CommunityGroupResolver {
     @Args('communityGroupID', { type: () => Int })
     communityGroupID: CommunityGroup['id'],
   ) {
+    if (!communityGroupID) {
+      this.logger.error('communityGroupDelete mutation failed - communityGroupID is required')
+      throw new BadRequestException('Community group ID is required')
+    }
+
+    this.logger.log(`Deleting community group ID: ${communityGroupID}`)
     return await this.communityGroupService.remove(communityGroupID)
   }
 
@@ -104,6 +136,13 @@ export class CommunityGroupResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Community })
   async community(@Parent() communityGroup: tbl_reg_communitygroup) {
+    if (!communityGroup?.communityID) {
+      this.logger.error('community field resolver failed - Invalid communityGroup or missing communityID')
+      throw new BadRequestException('Invalid community group')
+    }
+
+    this.logger.debug(`Fetching community for community group ID: ${communityGroup.id}`)
+
     const communityID = communityGroup.communityID
     return await this.communityService.findOne(undefined, communityID)
   }

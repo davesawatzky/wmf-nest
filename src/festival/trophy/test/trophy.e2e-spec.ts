@@ -102,7 +102,7 @@ describe('Trophy E2E Tests', () => {
             .expectNoErrors() as { data: { trophies: Trophy[] } }
 
           const trophyWithClasses = response.data.trophies.find(
-            t => t.festivalClasses && t.festivalClasses.length > 0
+            t => t.festivalClasses && t.festivalClasses.length > 0,
           )
 
           return {

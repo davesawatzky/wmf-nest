@@ -1,10 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-local'
 import { AuthService } from './auth.service'
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
+  private readonly logger = new Logger(LocalStrategy.name)
   constructor(private authService: AuthService) {
     super({
       usernameField: 'email',
@@ -14,8 +15,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   // Check to see if user exists
   async validate(username: string, password: string): Promise<any> {
     const user = await this.authService.validateUser(username, password)
-    if (!user)
+    if (!user) {
+      this.logger.warn(`Unauthorized access attempt with email: ${username}`)
       throw new UnauthorizedException('Incorrect Email or Password')
+    }
 
     return user
   }
