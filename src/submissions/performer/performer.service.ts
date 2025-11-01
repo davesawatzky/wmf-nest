@@ -24,6 +24,19 @@ export class PerformerService {
     performerInput?: Partial<PerformerInput>,
   ) {
     try {
+      if (!registrationID) {
+        this.logger.error('Performer creation failed - registrationID is required')
+        return {
+          userErrors: [
+            {
+              message: 'Registration ID is required',
+              field: ['registrationId'],
+            },
+          ],
+          performer: null,
+        }
+      }
+
       this.logger.log(
         `Creating performer for registration ID: ${registrationID}`,
       )
@@ -161,9 +174,7 @@ export class PerformerService {
 
       if (!performer) {
         this.logger.warn(`Performer not found with ID: ${performerID}`)
-        // throw new NotFoundException('Performer not found')
       }
-
       return performer
     }
     catch (error: any) {
@@ -180,6 +191,17 @@ export class PerformerService {
     performerInput: Partial<PerformerInput>,
   ) {
     try {
+      if (!performerID || !performerInput) {
+        return {
+          userErrors: [
+            {
+              message: 'Performer ID and input data must be provided',
+              field: ['id', 'performerInput'],
+            },
+          ],
+          performer: null,
+        }
+      }
       this.logger.log(`Updating performer with ID: ${performerID}`)
 
       const performer = await this.prisma.tbl_reg_performer.update({
@@ -257,6 +279,17 @@ export class PerformerService {
 
   async remove(performerID: tbl_reg_performer['id']) {
     try {
+      if (!performerID) {
+        return {
+          userErrors: [
+            {
+              message: 'Performer ID must be provided',
+              field: ['id'],
+            },
+          ],
+          performer: null,
+        }
+      }
       this.logger.log(`Deleting performer with ID: ${performerID}`)
 
       const performer = await this.prisma.tbl_reg_performer.delete({

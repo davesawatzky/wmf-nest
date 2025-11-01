@@ -17,6 +17,17 @@ export class GroupService {
 
   async create(registrationID: tbl_registration['id']) {
     try {
+      if (!registrationID) {
+        return {
+          userErrors: [
+            {
+              message: 'Registration ID is required to create a group',
+              field: ['registrationId'],
+            },
+          ],
+          group: null,
+        }
+      }
       this.logger.log(`Creating group for registration ID: ${registrationID}`)
 
       const group = await this.prisma.tbl_reg_group.create({
@@ -130,7 +141,6 @@ export class GroupService {
         this.logger.warn(
           `Group not found with registrationID: ${registrationID}, groupID: ${groupID}`,
         )
-        throw new NotFoundException('Group not found')
       }
 
       return group
@@ -152,6 +162,17 @@ export class GroupService {
 
   async update(groupID: tbl_reg_group['id'], groupInput: Partial<GroupInput>) {
     try {
+      if (!groupID || !groupInput) {
+        return {
+          userErrors: [
+            {
+              message: 'Group ID and input data are required for update',
+              field: ['id', ...Object.keys(groupInput || {})],
+            },
+          ],
+          group: null,
+        }
+      }
       this.logger.log(`Updating group with ID: ${groupID}`)
 
       const group = await this.prisma.tbl_reg_group.update({
@@ -228,6 +249,17 @@ export class GroupService {
 
   async remove(groupID: tbl_reg_group['id']) {
     try {
+      if (!groupID) {
+        return {
+          userErrors: [
+            {
+              message: 'Group ID is required to delete a group',
+              field: ['id'],
+            },
+          ],
+          group: null,
+        }
+      }
       this.logger.log(`Deleting group with ID: ${groupID}`)
 
       const group = await this.prisma.tbl_reg_group.delete({
