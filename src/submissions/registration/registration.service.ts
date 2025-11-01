@@ -181,7 +181,6 @@ export class RegistrationService {
 
       if (!registration) {
         this.logger.warn(`Registration not found with ID: ${id}`)
-        return null
       }
 
       return registration

@@ -163,7 +163,6 @@ export class RegisteredClassService {
         this.logger.warn(
           `Registered class not found with ID: ${registeredClassID}`,
         )
-        return null
       }
       return registeredClass
     }
