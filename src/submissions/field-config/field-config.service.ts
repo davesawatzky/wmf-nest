@@ -39,10 +39,6 @@ export class FieldConfigService {
   }
 
   async findOne(tableName: string, fieldName: string) {
-    this.logger.debug(
-      `Retrieving field configuration for table: ${tableName}, field: ${fieldName}`,
-    )
-
     if (!tableName || !fieldName) {
       this.logger.error(
         'Attempted to find field configuration without required parameters',
@@ -61,14 +57,13 @@ export class FieldConfigService {
         this.logger.error(
           `Field configuration not found for table: ${tableName}, field: ${fieldName}`,
         )
-        throw new NotFoundException(
-          `Field configuration not found for table '${tableName}' and field '${fieldName}'`,
+      }
+      else {
+        this.logger.log(
+          `Successfully retrieved field configuration for ${tableName}.${fieldName}`,
         )
       }
 
-      this.logger.log(
-        `Successfully retrieved field configuration for ${tableName}.${fieldName}`,
-      )
       return fieldConfig
     }
     catch (error: any) {
@@ -98,6 +93,17 @@ export class FieldConfigService {
     let userErrors: UserError[]
 
     try {
+      if (!fieldConfigInput) {
+        return {
+          userErrors: [
+            {
+              message: 'Field config input data is required',
+              field: ['fieldConfigInput'],
+            },
+          ],
+          fieldConfig: null,
+        }
+      }
       userErrors = []
       fieldConfig = await this.prisma.tbl_field_config.create({
         data: {
@@ -155,6 +161,17 @@ export class FieldConfigService {
     let userErrors: UserError[]
 
     try {
+      if (!fieldConfigInput || !fieldConfigID) {
+        return {
+          userErrors: [
+            {
+              message: 'Field config ID and input data are required',
+              field: ['fieldConfigID', 'fieldConfigInput'],
+            },
+          ],
+          fieldConfig: null,
+        }
+      }
       userErrors = []
       fieldConfig = await this.prisma.tbl_field_config.update({
         where: { id: fieldConfigID },
@@ -225,6 +242,18 @@ export class FieldConfigService {
     let userErrors: UserError[]
 
     try {
+      if (!fieldConfigID) {
+        return {
+          userErrors: [
+            {
+              message: 'Field config ID is required to delete a field configuration',
+              field: ['id'],
+            },
+          ],
+          fieldConfig: null,
+        }
+      }
+
       userErrors = []
       fieldConfig = await this.prisma.tbl_field_config.delete({
         where: { id: fieldConfigID },

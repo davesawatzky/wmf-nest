@@ -36,16 +36,6 @@ export class FieldConfigResolver {
     @Args('fieldName', { type: () => String })
     fieldName: tbl_field_config['fieldName'],
   ) {
-    if (!tableName || tableName.trim() === '') {
-      this.logger.error('fieldConfig query failed - tableName is required')
-      throw new BadRequestException('Table name is required')
-    }
-
-    if (!fieldName || fieldName.trim() === '') {
-      this.logger.error('fieldConfig query failed - fieldName is required')
-      throw new BadRequestException('Field name is required')
-    }
-
     this.logger.log(`Fetching field config for table: ${tableName}, field: ${fieldName}`)
     return await this.fieldConfigService.findOne(tableName, fieldName)
   }
@@ -59,11 +49,6 @@ export class FieldConfigResolver {
     @Args('fieldConfigInput', { type: () => FieldConfigInput })
     fieldConfigInput: FieldConfigInput,
   ) {
-    if (!fieldConfigInput) {
-      this.logger.error('fieldConfigCreate mutation failed - fieldConfigInput is required')
-      throw new BadRequestException('Field config input is required')
-    }
-
     this.logger.log(`Creating field config for table: ${fieldConfigInput.tableName}, field: ${fieldConfigInput.fieldName}`)
     return await this.fieldConfigService.create(fieldConfigInput)
   }
@@ -77,16 +62,6 @@ export class FieldConfigResolver {
     @Args('fieldConfigInput', { type: () => FieldConfigInput })
     fieldConfigInput: FieldConfigInput,
   ) {
-    if (!fieldConfigID) {
-      this.logger.error('fieldConfigUpdate mutation failed - fieldConfigID is required')
-      throw new BadRequestException('Field config ID is required')
-    }
-
-    if (!fieldConfigInput) {
-      this.logger.error('fieldConfigUpdate mutation failed - fieldConfigInput is required')
-      throw new BadRequestException('Field config input is required')
-    }
-
     this.logger.log(`Updating field config ID: ${fieldConfigID}`)
     return await this.fieldConfigService.update(
       fieldConfigID,
@@ -101,11 +76,6 @@ export class FieldConfigResolver {
     @Args('fieldConfigID', { type: () => Int })
     fieldConfigID: FieldConfig['id'],
   ) {
-    if (!fieldConfigID) {
-      this.logger.error('fieldConfigDelete mutation failed - fieldConfigID is required')
-      throw new BadRequestException('Field config ID is required')
-    }
-
     this.logger.log(`Deleting field config ID: ${fieldConfigID}`)
     return await this.fieldConfigService.remove(fieldConfigID)
   }

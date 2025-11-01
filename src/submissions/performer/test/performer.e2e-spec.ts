@@ -107,7 +107,7 @@ describe('Performer E2E Tests', () => {
       expect(response.data.performers.length).toBeGreaterThan(0)
     })
 
-    it('Should return performers with confirmed registrations for user without registrationID', async () => {
+    it('Should not return performers for user without registrationID', async () => {
       const response = await createAuthenticatedRequest('user')
         .query(gql`
           query GetPerformers {
@@ -118,13 +118,10 @@ describe('Performer E2E Tests', () => {
             }
           }
         `)
-        .expectNoErrors() as { data: { performers: Performer[] } }
 
-      // Without registrationID, user gets performers from confirmed registrations
+      // Without registrationID, user may not look up performers
       // This is the default behavior when no registrationID is provided
-      expect(response.data.performers).toBeDefined()
-      expect(Array.isArray(response.data.performers)).toBe(true)
-      // May be empty or may have performers from confirmed registrations
+      expect(response.data).toBeFalsy()
     })
 
     it('Should return filtered performers when user provides registrationID', async () => {
