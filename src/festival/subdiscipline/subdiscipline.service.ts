@@ -26,6 +26,17 @@ export class SubdisciplineService {
     let userErrors: UserError[] = []
 
     try {
+      if (!subdisciplineInput) {
+        return {
+          userErrors: [
+            {
+              message: 'Subdiscipline input data must be provided',
+              field: [],
+            },
+          ],
+          subdiscipline: null,
+        }
+      }
       subdiscipline = await this.prisma.tbl_subdiscipline.create({
         data: {
           ...subdisciplineInput,
@@ -87,6 +98,11 @@ export class SubdisciplineService {
     )
 
     try {
+      if (!performerType || !disciplineID) {
+        this.logger.debug(
+          'No performerType or disciplineID filter provided, retrieving all subdisciplines',
+        )
+      }
       const subdisciplines = await this.prisma.tbl_subdiscipline.findMany({
         where: {
           performerType: performerType ?? undefined,
@@ -131,10 +147,10 @@ export class SubdisciplineService {
 
       if (!subdiscipline) {
         this.logger.error(`Subdiscipline not found with ID: ${id}`)
-        throw new NotFoundException(`Subdiscipline with ID ${id} not found`)
       }
-
-      this.logger.log(`Successfully retrieved subdiscipline with ID: ${id}`)
+      else {
+        this.logger.log(`Successfully retrieved subdiscipline with ID: ${id}`)
+      }
       return {
         ...subdiscipline,
         performerType: subdiscipline.performerType as PerformerType,
@@ -147,7 +163,6 @@ export class SubdisciplineService {
       ) {
         throw error
       }
-
       this.logger.error(
         `Failed to retrieve subdiscipline with ID ${id}: ${error.message}`,
         error.stack,
@@ -170,6 +185,17 @@ export class SubdisciplineService {
     let userErrors: UserError[] = []
 
     try {
+      if (!id || !subdisciplineInput) {
+        return {
+          userErrors: [
+            {
+              message: 'Subdiscipline ID and update data must be provided',
+              field: ['id', 'input'],
+            },
+          ],
+          subdiscipline: null,
+        }
+      }
       subdiscipline = await this.prisma.tbl_subdiscipline.update({
         where: { id },
         data: { ...subdisciplineInput },
@@ -237,6 +263,17 @@ export class SubdisciplineService {
     let userErrors: UserError[] = []
 
     try {
+      if (!id) {
+        return {
+          userErrors: [
+            {
+              message: 'Subdiscipline ID is required to delete a subdiscipline',
+              field: ['id'],
+            },
+          ],
+          subdiscipline: null,
+        }
+      }
       subdiscipline = await this.prisma.tbl_subdiscipline.delete({
         where: { id },
       })

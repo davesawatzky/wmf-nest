@@ -17,6 +17,17 @@ export class CategoryService {
 
   async create(categoryInput: CategoryInput) {
     try {
+      if (!categoryInput) {
+        return {
+          userErrors: [
+            {
+              message: 'Category input data must be provided',
+              field: [],
+            },
+          ],
+          category: null,
+        }
+      }
       this.logger.log(`Creating category with name: ${categoryInput.name}`)
 
       const category = await this.prisma.tbl_category.create({
@@ -68,6 +79,10 @@ export class CategoryService {
     subdisciplineID?: tbl_subdiscipline['id'],
   ) {
     try {
+      if (!levelID && !subdisciplineID) {
+        this.logger.log('Must have  at least one filter to fetch categories')
+        return null
+      }
       this.logger.log(
         `Fetching categories with filters - levelID: ${levelID}, subdisciplineID: ${subdisciplineID}`,
       )
@@ -97,7 +112,7 @@ export class CategoryService {
     try {
       if (!id) {
         this.logger.error('findOne called without category ID')
-        throw new BadRequestException('Category ID must be provided')
+        return null
       }
 
       this.logger.log(`Finding category with ID: ${id}`)
@@ -108,7 +123,6 @@ export class CategoryService {
 
       if (!category) {
         this.logger.warn(`Category not found with ID: ${id}`)
-        throw new NotFoundException('Category not found')
       }
 
       return category
@@ -127,6 +141,17 @@ export class CategoryService {
 
   async update(id: tbl_category['id'], categoryInput: CategoryInput) {
     try {
+      if (!id || !categoryInput) {
+        return {
+          userErrors: [
+            {
+              message: 'Category ID and input data must be provided',
+              field: ['id', 'categoryInput'],
+            },
+          ],
+          category: null,
+        }
+      }
       this.logger.log(`Updating category with ID: ${id}`)
 
       const category = await this.prisma.tbl_category.update({
@@ -204,6 +229,17 @@ export class CategoryService {
 
   async remove(id: tbl_category['id']) {
     try {
+      if (!id) {
+        return {
+          userErrors: [
+            {
+              message: 'Category ID must be provided',
+              field: ['id'],
+            },
+          ],
+          category: null,
+        }
+      }
       this.logger.log(`Deleting category with ID: ${id}`)
 
       const category = await this.prisma.tbl_category.delete({

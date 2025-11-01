@@ -23,6 +23,17 @@ export class InstrumentService {
     let instrument: tbl_instrument
     let userErrors: UserError[] = []
     try {
+      if (!instrumentInput) {
+        return {
+          userErrors: [
+            {
+              message: 'Instrument input data must be provided',
+              field: [],
+            },
+          ],
+          instrument: null,
+        }
+      }
       instrument = await this.prisma.tbl_instrument.create({
         data: { ...instrumentInput },
       })
@@ -119,9 +130,10 @@ export class InstrumentService {
         })
         if (!instrument) {
           this.logger.warn(`Instrument not found with ID: ${id}`)
-          throw new NotFoundException(`Instrument with ID ${id} not found`)
         }
-        this.logger.log(`Successfully retrieved instrument with ID: ${id}`)
+ else {
+          this.logger.log(`Successfully retrieved instrument with ID: ${id}`)
+        }
       }
       else if (name) {
         instrument = await this.prisma.tbl_instrument.findFirst({
@@ -160,6 +172,17 @@ export class InstrumentService {
     let instrument: tbl_instrument
     let userErrors: UserError[] = []
     try {
+      if (!instrumentID || !inst) {
+        return {
+          userErrors: [
+            {
+              message: 'Instrument ID and update data must be provided',
+              field: ['id', 'input'],
+            },
+          ],
+          instrument: null,
+        }
+      }
       instrument = await this.prisma.tbl_instrument.update({
         where: {
           id: instrumentID,
@@ -224,6 +247,17 @@ export class InstrumentService {
     let instrument: tbl_instrument
     let userErrors: UserError[] = []
     try {
+      if (!id) {
+        return {
+          userErrors: [
+            {
+              message: 'Instrument ID must be provided for deletion',
+              field: ['id'],
+            },
+          ],
+          instrument: null,
+        }
+      }
       instrument = await this.prisma.tbl_instrument.delete({
         where: { id },
       })

@@ -24,6 +24,17 @@ export class DisciplineService {
     let discipline: tbl_discipline
     let userErrors: UserError[] = []
     try {
+      if (!disciplineInput) {
+        return {
+          userErrors: [
+            {
+              message: 'Discipline input data must be provided',
+              field: [],
+            },
+          ],
+          discipline: null,
+        }
+      }
       discipline = await this.prisma.tbl_discipline.create({
         data: { ...disciplineInput },
       })
@@ -76,7 +87,7 @@ export class DisciplineService {
     )
     try {
       let disciplines: tbl_discipline[]
-      if (!!performerType && !instrument) {
+      if (performerType && !instrument) {
         disciplines = await this.prisma.tbl_discipline.findMany({
           where: {
             tbl_subdiscipline: {
@@ -94,7 +105,7 @@ export class DisciplineService {
           },
         })
       }
-      else if (!!instrument && !performerType) {
+      else if (instrument && !performerType) {
         disciplines = await this.prisma.tbl_discipline.findMany({
           where: {
             tbl_instrument: {
@@ -108,7 +119,7 @@ export class DisciplineService {
           },
         })
       }
-      else if (!!instrument && !!performerType) {
+      else if (instrument && performerType) {
         disciplines = await this.prisma.tbl_discipline.findMany({
           where: {
             tbl_instrument: {
@@ -159,7 +170,6 @@ export class DisciplineService {
       })
       if (!discipline) {
         this.logger.warn(`Discipline not found with ID: ${id}`)
-        throw new NotFoundException(`Discipline with ID ${id} not found`)
       }
       this.logger.log(`Successfully retrieved discipline with ID: ${id}`)
       return discipline
@@ -189,6 +199,17 @@ export class DisciplineService {
     let discipline: tbl_discipline
     let userErrors: UserError[] = []
     try {
+      if (!id || !DisciplineInput) {
+        return {
+          userErrors: [
+            {
+              message: 'Discipline ID and input data are required for update',
+              field: ['id', 'DisciplineInput'],
+            },
+          ],
+          discipline: null,
+        }
+      }
       discipline = await this.prisma.tbl_discipline.update({
         where: { id },
         data: { ...DisciplineInput },
@@ -247,6 +268,17 @@ export class DisciplineService {
     let discipline: tbl_discipline
     let userErrors: UserError[] = []
     try {
+      if (!disciplineID) {
+        return {
+          userErrors: [
+            {
+              message: 'Discipline ID must be provided for deletion',
+              field: ['id'],
+            },
+          ],
+          discipline: null,
+        }
+      }
       discipline = await this.prisma.tbl_discipline.delete({
         where: { id: disciplineID },
       })

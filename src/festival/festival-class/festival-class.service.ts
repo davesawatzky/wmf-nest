@@ -212,7 +212,6 @@ export class FestivalClassService {
     this.logger.debug(
       `Searching festival classes with criteria: ${JSON.stringify(festivalClassSearch)}`,
     )
-
     const { subdisciplineID, levelID, categoryID } = festivalClassSearch
 
     try {
@@ -255,10 +254,10 @@ export class FestivalClassService {
 
       if (!festivalClass) {
         this.logger.error(`Festival class not found with ID: ${id}`)
-        throw new NotFoundException(`Festival class with ID ${id} not found`)
       }
-
-      this.logger.log(`Successfully retrieved festival class with ID: ${id}`)
+      else {
+        this.logger.log(`Successfully retrieved festival class with ID: ${id}`)
+      }
       return festivalClass
     }
     catch (error: any) {
@@ -300,14 +299,12 @@ export class FestivalClassService {
         this.logger.error(
           `Festival class not found with class number: ${classNumber}`,
         )
-        throw new NotFoundException(
-          `Festival class with class number ${classNumber} not found`,
+      }
+      else {
+        this.logger.log(
+          `Successfully retrieved festival class with class number: ${classNumber}`,
         )
       }
-
-      this.logger.log(
-        `Successfully retrieved festival class with class number: ${classNumber}`,
-      )
       return festivalClass
     }
     catch (error: any) {
@@ -340,6 +337,17 @@ export class FestivalClassService {
     let userErrors: UserError[] = []
 
     try {
+      if (!festivalClassID || !festivalClassInput) {
+        return {
+          userErrors: [
+            {
+              message: 'Festival class ID and update data must be provided',
+              field: ['id', 'input'],
+            },
+          ],
+          festivalClass: null,
+        }
+      }
       // Validate foreign key references
       const [category, level, subdiscipline] = await Promise.all([
         this.prisma.tbl_category.findUnique({
@@ -450,6 +458,17 @@ export class FestivalClassService {
     let userErrors: UserError[] = []
 
     try {
+      if (!id) {
+        return {
+          userErrors: [
+            {
+              message: 'Festival class ID must be provided',
+              field: ['id'],
+            },
+          ],
+          festivalClass: null,
+        }
+      }
       festivalClass = await this.prisma.tbl_classlist.delete({
         where: { id },
       })

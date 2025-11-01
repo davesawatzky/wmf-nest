@@ -71,11 +71,6 @@ export class SubdisciplineResolver {
     @Args('subdisciplineID', { type: () => Int })
     subdisciplineID: Subdiscipline['id'],
   ) {
-    if (!subdisciplineID) {
-      this.logger.error('subdiscipline query failed - No subdiscipline ID provided')
-      throw new BadRequestException('Subdiscipline ID is required')
-    }
-
     this.logger.log(`Fetching subdiscipline with ID: ${subdisciplineID}`)
     return await this.subdisciplineService.findOne(subdisciplineID)
   }
@@ -89,16 +84,6 @@ export class SubdisciplineResolver {
     @Args('subdisciplineInput')
     subdisciplineInput: SubdisciplineInput,
   ): Promise<SubdisciplinePayload> {
-    if (!subdisciplineInput) {
-      this.logger.error('subdisciplineCreate mutation failed - No input provided')
-      throw new BadRequestException('Subdiscipline input is required')
-    }
-
-    if (!subdisciplineInput.name?.trim()) {
-      this.logger.error('subdisciplineCreate mutation failed - Name is required')
-      throw new BadRequestException('Subdiscipline name is required')
-    }
-
     this.logger.log(`Creating subdiscipline: ${subdisciplineInput.name}`)
     return await this.subdisciplineService.create(subdisciplineInput)
   }
@@ -112,21 +97,6 @@ export class SubdisciplineResolver {
     @Args('subdisciplineInput', { type: () => SubdisciplineInput })
     subdisciplineInput: SubdisciplineInput,
   ) {
-    if (!subdisciplineID) {
-      this.logger.error('subdisciplineUpdate mutation failed - No subdiscipline ID provided')
-      throw new BadRequestException('Subdiscipline ID is required')
-    }
-
-    if (!subdisciplineInput) {
-      this.logger.error('subdisciplineUpdate mutation failed - No input provided')
-      throw new BadRequestException('Subdiscipline input is required')
-    }
-
-    if (subdisciplineInput.name !== undefined && !subdisciplineInput.name?.trim()) {
-      this.logger.error('subdisciplineUpdate mutation failed - Name cannot be empty')
-      throw new BadRequestException('Subdiscipline name cannot be empty')
-    }
-
     this.logger.log(`Updating subdiscipline ID: ${subdisciplineID}`)
     return await this.subdisciplineService.update(
       subdisciplineID,
@@ -141,11 +111,6 @@ export class SubdisciplineResolver {
     @Args('subdisciplineID', { type: () => Int })
     subdisciplineID: Subdiscipline['id'],
   ) {
-    if (!subdisciplineID) {
-      this.logger.error('subdisciplineDelete mutation failed - No subdiscipline ID provided')
-      throw new BadRequestException('Subdiscipline ID is required')
-    }
-
     this.logger.log(`Deleting subdiscipline ID: ${subdisciplineID}`)
     return await this.subdisciplineService.remove(subdisciplineID)
   }
@@ -166,13 +131,11 @@ export class SubdisciplineResolver {
   ) {
     if (!subdiscipline?.id) {
       this.logger.error('festivalClasses field resolver failed - Invalid subdiscipline parent')
-      throw new BadRequestException('Invalid subdiscipline')
+      return null
     }
-
     this.logger.debug(
       `Fetching festival classes for subdiscipline ID: ${subdiscipline.id} with filters - performerType: ${performerType}, levelID: ${levelID}, categoryID: ${categoryID}`,
     )
-
     const subdisciplineID = subdiscipline.id
     return await this.festivalClassService.findAll(
       performerType,
@@ -188,11 +151,9 @@ export class SubdisciplineResolver {
   async categories(@Parent() subdiscipline: tbl_subdiscipline) {
     if (!subdiscipline?.id) {
       this.logger.error('categories field resolver failed - Invalid subdiscipline parent')
-      throw new BadRequestException('Invalid subdiscipline')
+      return null
     }
-
     this.logger.debug(`Fetching categories for subdiscipline ID: ${subdiscipline.id}`)
-
     const subdisciplineID = subdiscipline.id
     return await this.categoryService.findAll(undefined, subdisciplineID)
   }
@@ -203,11 +164,9 @@ export class SubdisciplineResolver {
   async levels(@Parent() subdiscipline: tbl_subdiscipline) {
     if (!subdiscipline?.id) {
       this.logger.error('levels field resolver failed - Invalid subdiscipline parent')
-      throw new BadRequestException('Invalid subdiscipline')
+      return null
     }
-
     this.logger.debug(`Fetching levels for subdiscipline ID: ${subdiscipline.id}`)
-
     const subdisciplineID = subdiscipline.id
     return await this.levelService.findAll(undefined, subdisciplineID)
   }
@@ -218,11 +177,9 @@ export class SubdisciplineResolver {
   async discipline(@Parent() subdiscipline: tbl_subdiscipline) {
     if (!subdiscipline?.disciplineID) {
       this.logger.error('discipline field resolver failed - Invalid subdiscipline or missing disciplineID')
-      throw new BadRequestException('Invalid subdiscipline')
+      return null
     }
-
     this.logger.debug(`Fetching discipline for subdiscipline ID: ${subdiscipline.id}`)
-
     const disciplineID = subdiscipline.disciplineID
     return await this.disciplineService.findOne(disciplineID)
   }

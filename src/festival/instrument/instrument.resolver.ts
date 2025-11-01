@@ -50,11 +50,6 @@ export class InstrumentResolver {
     @Args('name', { type: () => String, nullable: true })
     name: Instrument['name'] | null,
   ) {
-    if (!id && !name?.trim()) {
-      this.logger.error('instrument query failed - Either ID or name must be provided')
-      throw new BadRequestException('Either instrument ID or name must be provided')
-    }
-
     this.logger.log(
       `Fetching instrument${id ? ` by ID: ${id}` : ` by name: ${name}`}`,
     )
@@ -70,16 +65,6 @@ export class InstrumentResolver {
   async instrumentCreate(
     @Args('instrumentInput') instrumentInput: InstrumentInput,
   ) {
-    if (!instrumentInput) {
-      this.logger.error('instrumentCreate mutation failed - No input provided')
-      throw new BadRequestException('Instrument input is required')
-    }
-
-    if (!instrumentInput.name?.trim()) {
-      this.logger.error('instrumentCreate mutation failed - Name is required')
-      throw new BadRequestException('Instrument name is required')
-    }
-
     this.logger.log(`Creating instrument: ${instrumentInput.name}`)
     return await this.instrumentService.create(instrumentInput)
   }
@@ -93,21 +78,6 @@ export class InstrumentResolver {
     instrumentID: Instrument['id'],
     @Args('instrumentInput') instrumentInput: InstrumentInput,
   ) {
-    if (!instrumentID) {
-      this.logger.error('instrumentUpdate mutation failed - No instrument ID provided')
-      throw new BadRequestException('Instrument ID is required')
-    }
-
-    if (!instrumentInput) {
-      this.logger.error('instrumentUpdate mutation failed - No input provided')
-      throw new BadRequestException('Instrument input is required')
-    }
-
-    if (instrumentInput.name !== undefined && !instrumentInput.name?.trim()) {
-      this.logger.error('instrumentUpdate mutation failed - Name cannot be empty')
-      throw new BadRequestException('Instrument name cannot be empty')
-    }
-
     this.logger.log(`Updating instrument ID: ${instrumentID}`)
     return await this.instrumentService.update(instrumentID, instrumentInput)
   }
@@ -119,11 +89,6 @@ export class InstrumentResolver {
   async instrumentDelete(
     @Args('instrumentID', { type: () => Int }) instrumentID: Instrument['id'],
   ) {
-    if (!instrumentID) {
-      this.logger.error('instrumentDelete mutation failed - No instrument ID provided')
-      throw new BadRequestException('Instrument ID is required')
-    }
-
     this.logger.log(`Deleting instrument ID: ${instrumentID}`)
     return await this.instrumentService.remove(instrumentID)
   }
@@ -137,11 +102,9 @@ export class InstrumentResolver {
   async discipline(@Parent() instrument: tbl_instrument) {
     if (!instrument?.disciplineID) {
       this.logger.error('discipline field resolver failed - Invalid instrument or missing disciplineID')
-      throw new BadRequestException('Invalid instrument')
+      return null
     }
-
     this.logger.debug(`Fetching discipline for instrument ID: ${instrument.id}`)
-
     const { disciplineID }: { disciplineID: tbl_instrument['disciplineID'] }
       = instrument
     return await this.disciplineService.findOne(disciplineID)

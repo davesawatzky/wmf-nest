@@ -27,6 +27,17 @@ export class LevelService {
     let userErrors: UserError[] = []
 
     try {
+      if (!levelInput) {
+        return {
+          userErrors: [
+            {
+              message: 'Level input data must be provided',
+              field: [],
+            },
+          ],
+          level: null,
+        }
+      }
       level = await this.prisma.tbl_level.create({
         data: { ...levelInput },
       })
@@ -78,6 +89,10 @@ export class LevelService {
     )
 
     try {
+      if (!categoryID && !subdisciplineID) {
+        this.logger.log('No filters provided, retrieving all levels')
+        throw new BadRequestException('At least one filter (categoryID or subdisciplineID) must be provided')
+      }
       const levels = await this.prisma.tbl_level.findMany({
         where: {
           tbl_classlist: {
@@ -92,7 +107,12 @@ export class LevelService {
         },
       })
 
-      this.logger.log(`Successfully retrieved ${levels.length} levels`)
+      if (!levels) {
+        this.logger.warn('No levels found with the provided filters')
+      }
+      else {
+        this.logger.log(`Successfully retrieved ${levels.length} levels`)
+      }
       return levels
     }
     catch (error: any) {
@@ -150,6 +170,17 @@ export class LevelService {
     let userErrors: UserError[] = []
 
     try {
+      if (!id || !levelInput) {
+        return {
+          userErrors: [
+            {
+              message: 'Level ID and input data must be provided',
+              field: ['id', 'input'],
+            },
+          ],
+          level: null,
+        }
+      }
       level = await this.prisma.tbl_level.update({
         where: { id },
         data: { ...levelInput },
@@ -213,6 +244,17 @@ export class LevelService {
     let userErrors: UserError[] = []
 
     try {
+      if (!id) {
+        return {
+          userErrors: [
+            {
+              message: 'Level ID is required to delete a level',
+              field: ['id'],
+            },
+          ],
+          level: null,
+        }
+      }
       level = await this.prisma.tbl_level.delete({
         where: { id },
       })

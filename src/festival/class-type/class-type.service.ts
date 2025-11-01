@@ -25,6 +25,17 @@ export class ClassTypeService {
     let userErrors: UserError[] = []
 
     try {
+      if (!classTypeInput) {
+        return {
+          userErrors: [
+            {
+              message: 'Class type input data must be provided',
+              field: ['classTypeInput'],
+            },
+          ],
+          classType: null,
+        }
+      }
       classType = await this.prisma.tbl_class_type.create({
         data: { ...classTypeInput },
       })
@@ -106,10 +117,10 @@ export class ClassTypeService {
 
       if (!classType) {
         this.logger.error(`Class type not found with ID: ${id}`)
-        throw new NotFoundException(`Class type with ID ${id} not found`)
       }
-
-      this.logger.log(`Successfully retrieved class type with ID: ${id}`)
+      else {
+        this.logger.log(`Successfully retrieved class type with ID: ${id}`)
+      }
       return classType
     }
     catch (error: any) {
@@ -137,6 +148,17 @@ export class ClassTypeService {
     let userErrors: UserError[] = []
 
     try {
+      if (!id || !classTypeInput) {
+        return {
+          userErrors: [
+            {
+              message: 'Class type ID and update data must be provided',
+              field: ['id', 'classTypeInput'],
+            },
+          ],
+          classType: null,
+        }
+      }
       classType = await this.prisma.tbl_class_type.update({
         where: { id },
         data: { ...classTypeInput },
@@ -201,6 +223,17 @@ export class ClassTypeService {
     let userErrors: UserError[] = []
 
     try {
+      if (!id) {
+        return {
+          userErrors: [
+            {
+              message: 'Class type ID must be provided',
+              field: ['id'],
+            },
+          ],
+          classType: null,
+        }
+      }
       classType = await this.prisma.tbl_class_type.delete({
         where: { id },
       })

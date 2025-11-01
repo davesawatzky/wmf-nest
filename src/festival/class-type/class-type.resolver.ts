@@ -43,10 +43,6 @@ export class ClassTypeResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: ClassType })
   async classType(@Args('id', { type: () => Int }) id: ClassType['id']) {
-    if (!id) {
-      this.logger.error('classType query failed - No class type ID was provided')
-      throw new BadRequestException('Class type ID is required')
-    }
     this.logger.log(`Fetching class type with ID: ${id}`)
     return await this.classTypeService.findOne(id)
   }
@@ -59,14 +55,6 @@ export class ClassTypeResolver {
   async classTypeCreate(
     @Args('classTypeInput') classTypeInput: ClassTypeInput,
   ) {
-    if (!classTypeInput) {
-      this.logger.error('classTypeCreate mutation failed - No input provided')
-      throw new BadRequestException('Class type input is required')
-    }
-    if (!classTypeInput.name?.trim()) {
-      this.logger.error('classTypeCreate mutation failed - Name is required')
-      throw new BadRequestException('Class type name is required')
-    }
     this.logger.log(`Creating class type: ${classTypeInput.name}`)
     return await this.classTypeService.create(classTypeInput)
   }
@@ -78,18 +66,6 @@ export class ClassTypeResolver {
     @Args('classTypeID', { type: () => Int }) classTypeID: ClassType['id'],
     @Args('classTypeInput') classTypeInput: ClassTypeInput,
   ) {
-    if (!classTypeID) {
-      this.logger.error('classTypeUpdate mutation failed - No class type ID provided')
-      throw new BadRequestException('Class type ID is required')
-    }
-    if (!classTypeInput) {
-      this.logger.error('classTypeUpdate mutation failed - No input provided')
-      throw new BadRequestException('Class type input is required')
-    }
-    if (classTypeInput.name !== undefined && !classTypeInput.name?.trim()) {
-      this.logger.error('classTypeUpdate mutation failed - Name cannot be empty')
-      throw new BadRequestException('Class type name cannot be empty')
-    }
     this.logger.log(`Updating class type ID: ${classTypeID}`)
     return await this.classTypeService.update(classTypeID, classTypeInput)
   }
@@ -100,10 +76,6 @@ export class ClassTypeResolver {
   async classTypeDelete(
     @Args('classTypeID', { type: () => Int }) classTypeID: ClassType['id'],
   ) {
-    if (!classTypeID) {
-      this.logger.error('classTypeDelete mutation failed - No class type ID provided')
-      throw new BadRequestException('Class type ID is required')
-    }
     this.logger.log(`Deleting class type ID: ${classTypeID}`)
     return await this.classTypeService.remove(classTypeID)
   }
@@ -115,7 +87,7 @@ export class ClassTypeResolver {
   async festivalClasses(@Parent() classType: tbl_class_type) {
     if (!classType?.id) {
       this.logger.error('festivalClasses field resolver failed - Invalid class type parent')
-      throw new BadRequestException('Invalid class type')
+      return null
     }
     this.logger.debug(`Fetching festival classes for class type ID: ${classType.id}`)
     const classTypeID = classType.id

@@ -79,16 +79,9 @@ export class FestivalClassResolver {
     @Args('festivalClassSearch', { type: () => FestivalClassSearchArgs })
     festivalClassSearch: FestivalClassSearchArgs,
   ) {
-    // ✅ Input validation
-    if (!festivalClassSearch) {
-      this.logger.error('festivalClassSearch query failed - No search criteria provided')
-      throw new BadRequestException('Search criteria are required')
-    }
-
     this.logger.log(
       `Searching festival classes with criteria: ${JSON.stringify(festivalClassSearch)}`,
     )
-
     return await this.festivalClassService.search(festivalClassSearch)
   }
 
@@ -98,12 +91,6 @@ export class FestivalClassResolver {
   async festivalClass(
     @Args('id', { type: () => Int }) id: FestivalClass['id'],
   ) {
-    // ✅ Input validation
-    if (!id) {
-      this.logger.error('festivalClass query failed - No festival class ID provided')
-      throw new BadRequestException('Festival class ID is required')
-    }
-
     this.logger.log(`Fetching festival class with ID: ${id}`)
     return await this.festivalClassService.findById(id)
   }
@@ -115,12 +102,6 @@ export class FestivalClassResolver {
     @Args('festivalClassNumber', { type: () => String })
     festivalClassNumber: FestivalClass['classNumber'],
   ) {
-    // ✅ Input validation
-    if (!festivalClassNumber?.trim()) {
-      this.logger.error('festivalClassByNumber query failed - No class number provided')
-      throw new BadRequestException('Festival class number is required')
-    }
-
     this.logger.log(`Fetching festival class with number: ${festivalClassNumber}`)
     return await this.festivalClassService.findByNumber(festivalClassNumber)
   }
@@ -134,21 +115,6 @@ export class FestivalClassResolver {
     @Args('festivalClassInput')
     festivalClassInput: FestivalClassInput,
   ) {
-    if (!festivalClassInput) {
-      this.logger.error('festivalClassCreate mutation failed - No input provided')
-      throw new BadRequestException('Festival class input is required')
-    }
-
-    if (!festivalClassInput.classNumber?.trim()) {
-      this.logger.error('festivalClassCreate mutation failed - Class number is required')
-      throw new BadRequestException('Class number is required')
-    }
-
-    if (!festivalClassInput.performerType) {
-      this.logger.error('festivalClassCreate mutation failed - Performer type is required')
-      throw new BadRequestException('Performer type is required')
-    }
-
     this.logger.log(`Creating festival class: ${festivalClassInput.classNumber}`)
     return await this.festivalClassService.create(festivalClassInput)
   }
@@ -162,21 +128,6 @@ export class FestivalClassResolver {
     @Args('festivalClassInput', { type: () => FestivalClassInput })
     festivalClassInput: FestivalClassInput,
   ) {
-    if (!festivalClassID) {
-      this.logger.error('festivalClassUpdate mutation failed - No festival class ID provided')
-      throw new BadRequestException('Festival class ID is required')
-    }
-
-    if (!festivalClassInput) {
-      this.logger.error('festivalClassUpdate mutation failed - No input provided')
-      throw new BadRequestException('Festival class input is required')
-    }
-
-    if (festivalClassInput.classNumber !== undefined && !festivalClassInput.classNumber?.trim()) {
-      this.logger.error('festivalClassUpdate mutation failed - Class number cannot be empty')
-      throw new BadRequestException('Class number cannot be empty')
-    }
-
     this.logger.log(`Updating festival class ID: ${festivalClassID}`)
     return await this.festivalClassService.update(
       festivalClassID,
@@ -191,11 +142,6 @@ export class FestivalClassResolver {
     @Args('festivalClassID', { type: () => Int })
     festivalClassID: FestivalClass['id'],
   ) {
-    if (!festivalClassID) {
-      this.logger.error('festivalClassDelete mutation failed - No festival class ID provided')
-      throw new BadRequestException('Festival class ID is required')
-    }
-
     this.logger.log(`Deleting festival class ID: ${festivalClassID}`)
     return await this.festivalClassService.remove(festivalClassID)
   }
@@ -208,11 +154,9 @@ export class FestivalClassResolver {
   async trophies(@Parent() festivalClass: FestivalClass) {
     if (!festivalClass?.classNumber) {
       this.logger.error('trophies field resolver failed - Invalid festival class parent')
-      throw new BadRequestException('Invalid festival class')
+      return null
     }
-
     this.logger.debug(`Fetching trophies for festival class: ${festivalClass.classNumber}`)
-
     const { classNumber }: { classNumber: FestivalClass['classNumber'] }
       = festivalClass
     return await this.festivalClassService.findClassTrophies(classNumber)
@@ -224,11 +168,9 @@ export class FestivalClassResolver {
   async level(@Parent() festivalClass: tbl_classlist) {
     if (!festivalClass?.levelID) {
       this.logger.error('level field resolver failed - Invalid festival class or missing levelID')
-      throw new BadRequestException('Invalid festival class')
+      return null
     }
-
     this.logger.debug(`Fetching level for festival class ID: ${festivalClass.id}`)
-
     const { levelID }: { levelID: tbl_classlist['levelID'] } = festivalClass
     return await this.levelService.findOne(levelID)
   }
@@ -239,11 +181,9 @@ export class FestivalClassResolver {
   async subdiscipline(@Parent() festivalClass: tbl_classlist) {
     if (!festivalClass?.subdisciplineID) {
       this.logger.error('subdiscipline field resolver failed - Invalid festival class or missing subdisciplineID')
-      throw new BadRequestException('Invalid festival class')
+      return null
     }
-
     this.logger.debug(`Fetching subdiscipline for festival class ID: ${festivalClass.id}`)
-
     const {
       subdisciplineID,
     }: { subdisciplineID: tbl_classlist['subdisciplineID'] } = festivalClass
@@ -256,11 +196,9 @@ export class FestivalClassResolver {
   async category(@Parent() festivalClass: tbl_classlist) {
     if (!festivalClass?.categoryID) {
       this.logger.error('category field resolver failed - Invalid festival class or missing categoryID')
-      throw new BadRequestException('Invalid festival class')
+      return null
     }
-
     this.logger.debug(`Fetching category for festival class ID: ${festivalClass.id}`)
-
     const { categoryID }: { categoryID: tbl_classlist['categoryID'] }
       = festivalClass
     return await this.categoryService.findOne(categoryID)
@@ -272,11 +210,9 @@ export class FestivalClassResolver {
   async classType(@Parent() festivalClass: tbl_classlist) {
     if (!festivalClass?.classTypeID) {
       this.logger.error('classType field resolver failed - Invalid festival class or missing classTypeID')
-      throw new BadRequestException('Invalid festival class')
+      return null
     }
-
     this.logger.debug(`Fetching class type for festival class ID: ${festivalClass.id}`)
-
     const { classTypeID }: { classTypeID: tbl_class_type['id'] }
       = festivalClass
     return await this.classTypeService.findOne(classTypeID)

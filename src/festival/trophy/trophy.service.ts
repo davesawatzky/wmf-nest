@@ -25,6 +25,17 @@ export class TrophyService {
     let userErrors: UserError[] = []
 
     try {
+      if (!trophyInput) {
+        return {
+          userErrors: [
+            {
+              message: 'Trophy input data must be provided',
+              field: [],
+            },
+          ],
+          trophy: null,
+        }
+      }
       trophy = await this.prisma.tbl_trophy.create({
         data: { ...trophyInput },
       })
@@ -138,12 +149,12 @@ export class TrophyService {
 
       if (!trophy) {
         this.logger.error(`Trophy not found with ID: ${id}`)
-        throw new NotFoundException('Trophy not found')
       }
-
-      this.logger.log(
-        `Successfully retrieved trophy: ${trophy.name} (ID: ${id})`,
-      )
+      else {
+        this.logger.log(
+          `Successfully retrieved trophy: ${trophy.name} (ID: ${id})`,
+        )
+      }
       return trophy
     }
     catch (error: any) {
@@ -153,7 +164,6 @@ export class TrophyService {
       ) {
         throw error
       }
-
       this.logger.error(
         `Failed to retrieve trophy with ID ${id}: ${error.message}`,
         error.stack,
@@ -169,6 +179,17 @@ export class TrophyService {
     let userErrors: UserError[]
 
     try {
+      if (!id || !trophyInput) {
+        return {
+          userErrors: [
+            {
+              message: 'Trophy ID and update data must be provided',
+              field: ['id', 'input'],
+            },
+          ],
+          trophy: null,
+        }
+      }
       userErrors = []
       trophy = await this.prisma.tbl_trophy.update({
         where: { id },
@@ -236,6 +257,17 @@ export class TrophyService {
     let userErrors: UserError[]
 
     try {
+      if (!id) {
+        return {
+          userErrors: [
+            {
+              message: 'Trophy ID must be provided for deletion',
+              field: ['id'],
+            },
+          ],
+          trophy: null,
+        }
+      }
       userErrors = []
       trophy = await this.prisma.tbl_trophy.delete({
         where: { id },
