@@ -21,7 +21,7 @@ export class RegisteredClassService {
     registeredClass: Partial<RegisteredClassInput>,
   ) {
     try {
-      if (!registrationID || !registeredClass) {
+      if (!registrationID) {
         return {
           userErrors: [
             {
