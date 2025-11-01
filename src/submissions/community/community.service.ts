@@ -20,6 +20,17 @@ export class CommunityService {
     communityInput?: Partial<CommunityInput>,
   ) {
     try {
+      if (!registrationID) {
+        return {
+          userErrors: [
+            {
+              message: 'Registration ID is required to create a community',
+              field: ['registrationId'],
+            },
+          ],
+          community: null,
+        }
+      }
       this.logger.log(
         `Creating community for registration ID: ${registrationID}`,
       )
@@ -130,7 +141,6 @@ export class CommunityService {
         this.logger.warn(
           `Community not found with registrationID: ${registrationID}, communityID: ${communityID}`,
         )
-        throw new NotFoundException('Community not found')
       }
 
       return community
@@ -155,6 +165,17 @@ export class CommunityService {
     communityInput: Partial<CommunityInput>,
   ) {
     try {
+      if (!communityID || !communityInput) {
+        return {
+          userErrors: [
+            {
+              message: 'Community ID and input are required for update',
+              field: ['id', 'communityInput'],
+            },
+          ],
+          community: null,
+        }
+      }
       this.logger.log(`Updating community with ID: ${communityID}`)
 
       const community = await this.prisma.tbl_reg_community.update({
@@ -232,6 +253,17 @@ export class CommunityService {
 
   async remove(communityID: tbl_reg_community['id']) {
     try {
+      if (!communityID) {
+        return {
+          userErrors: [
+            {
+              message: 'Community ID is required for deletion',
+              field: ['id'],
+            },
+          ],
+          community: null,
+        }
+      }
       this.logger.log(`Deleting community with ID: ${communityID}`)
 
       const community = await this.prisma.tbl_reg_community.delete({

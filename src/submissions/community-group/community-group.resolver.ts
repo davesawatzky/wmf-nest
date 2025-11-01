@@ -52,11 +52,6 @@ export class CommunityGroupResolver {
     @Args('communityGroupID', { type: () => Int })
     communityGroupID: tbl_reg_communitygroup['id'],
   ) {
-    if (!communityGroupID) {
-      this.logger.error('communityGroup query failed - communityGroupID is required')
-      throw new BadRequestException('Community group ID is required')
-    }
-
     this.logger.log(`Fetching community group ID: ${communityGroupID}`)
     return await this.communityGroupService.findOne(communityGroupID)
   }
@@ -75,11 +70,6 @@ export class CommunityGroupResolver {
     })
     communityGroupInput: Partial<CommunityGroupInput>,
   ) {
-    if (!communityID) {
-      this.logger.error('communityGroupCreate mutation failed - communityID is required')
-      throw new BadRequestException('Community ID is required')
-    }
-
     this.logger.log(`Creating community group for community ID: ${communityID}`)
     return await this.communityGroupService.create(
       communityID,
@@ -96,16 +86,6 @@ export class CommunityGroupResolver {
     @Args('communityGroupInput', { type: () => CommunityGroupInput })
     communityGroupInput: Partial<CommunityGroupInput>,
   ) {
-    if (!communityGroupID) {
-      this.logger.error('communityGroupUpdate mutation failed - communityGroupID is required')
-      throw new BadRequestException('Community group ID is required')
-    }
-
-    if (!communityGroupInput || Object.keys(communityGroupInput).length === 0) {
-      this.logger.error('communityGroupUpdate mutation failed - communityGroupInput is required')
-      throw new BadRequestException('Community group input is required')
-    }
-
     this.logger.log(`Updating community group ID: ${communityGroupID}`)
     return await this.communityGroupService.update(
       communityGroupID,
@@ -120,11 +100,6 @@ export class CommunityGroupResolver {
     @Args('communityGroupID', { type: () => Int })
     communityGroupID: CommunityGroup['id'],
   ) {
-    if (!communityGroupID) {
-      this.logger.error('communityGroupDelete mutation failed - communityGroupID is required')
-      throw new BadRequestException('Community group ID is required')
-    }
-
     this.logger.log(`Deleting community group ID: ${communityGroupID}`)
     return await this.communityGroupService.remove(communityGroupID)
   }
@@ -138,12 +113,10 @@ export class CommunityGroupResolver {
   async community(@Parent() communityGroup: tbl_reg_communitygroup) {
     if (!communityGroup?.communityID) {
       this.logger.error('community field resolver failed - Invalid communityGroup or missing communityID')
-      throw new BadRequestException('Invalid community group')
+      return null
     }
-
     this.logger.debug(`Fetching community for community group ID: ${communityGroup.id}`)
-
     const communityID = communityGroup.communityID
-    return await this.communityService.findOne(undefined, communityID)
+    return await this.communityService.findOne(null, communityID)
   }
 }

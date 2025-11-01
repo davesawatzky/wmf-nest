@@ -20,6 +20,18 @@ export class CommunityGroupService {
     communityGroupInput?: Partial<CommunityGroupInput>,
   ) {
     try {
+      if (!communityID) {
+        this.logger.error('Community group creation failed - communityID is required')
+        return {
+          userErrors: [
+            {
+              message: 'Community ID is required to create a community group',
+              field: ['communityId'],
+            },
+          ],
+          communityGroup: null,
+        }
+      }
       this.logger.log(
         `Creating community group for community ID: ${communityID}`,
       )
@@ -123,9 +135,7 @@ export class CommunityGroupService {
         this.logger.warn(
           `Community group not found with ID: ${communityGroupID}`,
         )
-        throw new NotFoundException('Community group not found')
       }
-
       return communityGroup
     }
     catch (error: any) {
@@ -148,6 +158,19 @@ export class CommunityGroupService {
     communityGroupInput: Partial<CommunityGroupInput>,
   ) {
     try {
+      if (!communityGroupID || !communityGroupInput) {
+        this.logger.error('Community group update failed - Invalid input')
+        return {
+          userErrors: [
+            {
+              message: 'Invalid input',
+              field: ['communityGroupID', 'communityGroupInput'],
+            },
+          ],
+          communityGroup: null,
+        }
+      }
+
       this.logger.log(`Updating community group with ID: ${communityGroupID}`)
 
       const communityGroup = await this.prisma.tbl_reg_communitygroup.update({
@@ -227,6 +250,17 @@ export class CommunityGroupService {
 
   async remove(communityGroupID: tbl_reg_communitygroup['id']) {
     try {
+      if (!communityGroupID) {
+        return {
+          userErrors: [
+            {
+              message: 'Community group ID is required for deletion',
+              field: ['id'],
+            },
+          ],
+          communityGroup: null,
+        }
+      }
       this.logger.log(`Deleting community group with ID: ${communityGroupID}`)
 
       const communityGroup = await this.prisma.tbl_reg_communitygroup.delete({
