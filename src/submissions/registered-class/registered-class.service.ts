@@ -21,6 +21,18 @@ export class RegisteredClassService {
     registeredClass: Partial<RegisteredClassInput>,
   ) {
     try {
+      if (!registrationID || !registeredClass) {
+        return {
+          userErrors: [
+            {
+              message:
+                'Registration ID and registered class data are required to create a registered class',
+              field: ['registrationId', 'registeredClass'],
+            },
+          ],
+          registeredClass: null,
+        }
+      }
       this.logger.log(
         `Creating registered class for registration ID: ${registrationID}`,
       )
@@ -92,6 +104,7 @@ export class RegisteredClassService {
         `Fetching registered classes with filter - registrationID: ${registrationID}`,
       )
 
+      // Can only run if role is admin
       if (!registrationID) {
         const confirmedRegistrations
           = await this.prisma.tbl_registration.findMany({
@@ -146,14 +159,12 @@ export class RegisteredClassService {
       const registeredClass = await this.prisma.tbl_reg_class.findUnique({
         where: { id: registeredClassID },
       })
-
       if (!registeredClass) {
         this.logger.warn(
           `Registered class not found with ID: ${registeredClassID}`,
         )
-        // throw new NotFoundException('Registered class not found')
+        return null
       }
-
       return registeredClass
     }
     catch (error: any) {
@@ -176,6 +187,18 @@ export class RegisteredClassService {
     registeredClassInput: RegisteredClassInput,
   ) {
     try {
+      if (!registeredClassID || !registeredClassInput) {
+        return {
+          userErrors: [
+            {
+              message:
+                'Registered class ID and update data are required to update a registered class',
+              field: ['id', 'registeredClass'],
+            },
+          ],
+          registeredClass: null,
+        }
+      }
       this.logger.log(
         `Updating registered class with ID: ${registeredClassID}`,
       )
@@ -258,6 +281,17 @@ export class RegisteredClassService {
 
   async remove(registeredClassID: tbl_reg_class['id']) {
     try {
+      if (!registeredClassID) {
+        return {
+          userErrors: [
+            {
+              message: 'Registered class ID is required to delete a registered class',
+              field: ['id'],
+            },
+          ],
+          registeredClass: null,
+        }
+      }
       this.logger.log(
         `Deleting registered class with ID: ${registeredClassID}`,
       )

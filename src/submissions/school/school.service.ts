@@ -20,6 +20,18 @@ export class SchoolService {
     schoolInput?: Partial<SchoolInput>,
   ) {
     try {
+      if (!registrationID) {
+        return {
+          userErrors: [
+            {
+              message: 'Registration ID is required to create a school',
+              field: ['registrationId'],
+            },
+          ],
+          school: null,
+        }
+      }
+
       this.logger.log(`Creating school for registration ID: ${registrationID}`)
 
       const school = await this.prisma.tbl_reg_school.create({
@@ -106,9 +118,8 @@ export class SchoolService {
         this.logger.warn(
           `School not found with registrationID: ${registrationID}, schoolID: ${schoolID}`,
         )
-        throw new NotFoundException('School not found')
+        return null
       }
-
       return school
     }
     catch (error: any) {
@@ -131,6 +142,18 @@ export class SchoolService {
     schoolInput: Partial<SchoolInput>,
   ) {
     try {
+      if (!schoolID || !schoolInput) {
+        return {
+          userErrors: [
+            {
+              message: 'School ID and input data are required for update',
+              field: ['id', 'schoolInput'],
+            },
+          ],
+          school: null,
+        }
+      }
+
       this.logger.log(`Updating school with ID: ${schoolID}`)
 
       const school = await this.prisma.tbl_reg_school.update({
@@ -207,6 +230,18 @@ export class SchoolService {
 
   async remove(schoolID: tbl_reg_school['id']) {
     try {
+      if (!schoolID) {
+        return {
+          userErrors: [
+            {
+              message: 'School ID is required to delete a school',
+              field: ['id'],
+            },
+          ],
+          school: null,
+        }
+      }
+
       this.logger.log(`Deleting school with ID: ${schoolID}`)
 
       const school = await this.prisma.tbl_reg_school.delete({

@@ -129,9 +129,8 @@ export class SchoolGroupService {
 
       if (!schoolGroup) {
         this.logger.warn(`School group not found with ID: ${schoolGroupID}`)
-        throw new NotFoundException('School group not found')
+        return null
       }
-
       return schoolGroup
     }
     catch (error: any) {
@@ -141,7 +140,6 @@ export class SchoolGroupService {
       ) {
         throw error
       }
-
       this.logger.error(
         `Failed to find school group with ID: ${schoolGroupID}`,
         error,
@@ -155,6 +153,18 @@ export class SchoolGroupService {
     schoolGroupInput: Partial<SchoolGroupInput>,
   ) {
     try {
+      if (!schoolGroupID || !schoolGroupInput) {
+        return {
+          userErrors: [
+            {
+              message: 'School group ID and update data must be provided',
+              field: ['id', 'input'],
+            },
+          ],
+          schoolGroup: null,
+        }
+      }
+
       this.logger.log(`Updating school group with ID: ${schoolGroupID}`)
 
       const schoolGroup = await this.prisma.tbl_reg_schoolgroup.update({
@@ -231,6 +241,17 @@ export class SchoolGroupService {
 
   async remove(schoolGroupID: tbl_reg_schoolgroup['id']) {
     try {
+      if (!schoolGroupID) {
+        return {
+          userErrors: [
+            {
+              message: 'School group ID must be provided for deletion',
+              field: ['id'],
+            },
+          ],
+          schoolGroup: null,
+        }
+      }
       this.logger.log(`Deleting school group with ID: ${schoolGroupID}`)
 
       const schoolGroup = await this.prisma.tbl_reg_schoolgroup.delete({

@@ -38,10 +38,6 @@ export class TeacherResolver {
     @Args('teacherType', { type: () => String })
     teacherType: TeacherTypeInput['teacherType'],
   ) {
-    if (!teacherType || teacherType.trim() === '') {
-      this.logger.error('teachers query failed - teacherType is required')
-      throw new BadRequestException('Teacher type is required')
-    }
     this.logger.log(`Fetching teachers with type: ${teacherType}`)
     return await this.teacherService.findAll(teacherType)
   }
@@ -53,10 +49,6 @@ export class TeacherResolver {
     @Args('teacherEmail', { type: () => String, nullable: true })
     teacherEmail: Teacher['email'] | null,
   ) {
-    if (!teacherID && (!teacherEmail || teacherEmail.trim() === '')) {
-      this.logger.error('teacher query failed - Either teacherID or teacherEmail is required')
-      throw new BadRequestException('Either teacher ID or teacher email is required')
-    }
     this.logger.log(`Fetching teacher${teacherID ? ` with ID: ${teacherID}` : ` with email: ${teacherEmail}`}`)
     return await this.teacherService.findOne(teacherID, teacherEmail)
   }
@@ -65,19 +57,16 @@ export class TeacherResolver {
   async myStudents(@Context() context) {
     if (!context?.req?.user) {
       this.logger.error('myStudents query failed - User context missing')
-      throw new BadRequestException('User authentication required')
+      return null
     }
-
     const userID
       = context.req.user.privateTeacher || context.req.user.schoolTeacher
         ? context.req.user.id
         : null
-
     if (!userID) {
       this.logger.warn('myStudents query - User is not a teacher')
       return null
     }
-
     this.logger.log(`Fetching students for teacher user ID: ${userID}`)
     return await this.teacherService.findOne(userID)
   }
@@ -122,6 +111,10 @@ export class TeacherResolver {
   /** Field Resolver */
   @ResolveField(() => [Registration])
   async registrations(@Parent() teacher: Teacher) {
+    if (!teacher?.id) {
+      this.logger.error('registrations field resolver failed - Invalid teacher or missing id')
+      return null
+    }
     this.logger.log(`Fetching registrations for teacher ID: ${teacher.id}`)
     const { id }: { id: Teacher['id'] } = teacher
     const teacherID = id

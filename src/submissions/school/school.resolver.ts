@@ -52,12 +52,6 @@ export class SchoolResolver {
     @Args('schoolID', { type: () => Int, nullable: true })
     schoolID: School['id'],
   ) {
-    // ✅ Defensive check - at least one parameter is required
-    if (!registrationID && !schoolID) {
-      this.logger.error('school query failed - Either registrationID or schoolID is required')
-      throw new BadRequestException('Either registration ID or school ID is required')
-    }
-
     this.logger.log(`Fetching school${registrationID ? ` for registration ID: ${registrationID}` : ` with ID: ${schoolID}`}`)
     return await this.schoolService.findOne(registrationID, schoolID)
   }
@@ -73,12 +67,6 @@ export class SchoolResolver {
     @Args('schoolInput', { type: () => SchoolInput, nullable: true })
     schoolInput: Partial<SchoolInput>,
   ) {
-    // ✅ Defensive check - ensure registrationID is provided
-    if (!registrationID) {
-      this.logger.error('schoolCreate mutation failed - registrationID is required')
-      throw new BadRequestException('Registration ID is required')
-    }
-
     this.logger.log(`Creating school for registration ID: ${registrationID}`)
     return await this.schoolService.create(registrationID, schoolInput)
   }
@@ -92,17 +80,6 @@ export class SchoolResolver {
     @Args('schoolInput', { type: () => SchoolInput })
     schoolInput: Partial<SchoolInput>,
   ) {
-    // ✅ Defensive checks - ensure schoolID and input are provided
-    if (!schoolID) {
-      this.logger.error('schoolUpdate mutation failed - schoolID is required')
-      throw new BadRequestException('School ID is required')
-    }
-
-    if (!schoolInput || Object.keys(schoolInput).length === 0) {
-      this.logger.error('schoolUpdate mutation failed - schoolInput is required')
-      throw new BadRequestException('School input is required')
-    }
-
     this.logger.log(`Updating school ID: ${schoolID}`)
     return await this.schoolService.update(schoolID, schoolInput)
   }
@@ -114,12 +91,6 @@ export class SchoolResolver {
     @Args('schoolID', { type: () => Int })
     schoolID: tbl_reg_school['id'],
   ) {
-    // ✅ Defensive check - ensure schoolID is provided
-    if (!schoolID) {
-      this.logger.error('schoolDelete mutation failed - schoolID is required')
-      throw new BadRequestException('School ID is required')
-    }
-
     this.logger.log(`Deleting school ID: ${schoolID}`)
     return await this.schoolService.remove(schoolID)
   }
@@ -131,14 +102,11 @@ export class SchoolResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: SchoolGroup })
   async schoolGroups(@Parent() school: tbl_reg_school) {
-    // ✅ Defensive check - ensure parent exists and has id
     if (!school?.id) {
       this.logger.error('schoolGroups field resolver failed - Invalid school or missing id')
-      throw new BadRequestException('Invalid school')
+      return null
     }
-
     this.logger.debug(`Fetching school groups for school ID: ${school.id}`)
-
     const { id }: { id: School['id'] } = school
     const schoolID = id
     return await this.schoolGroupService.findAll(schoolID)
@@ -148,14 +116,11 @@ export class SchoolResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Registration })
   async registration(@Parent() school: tbl_reg_school) {
-    // ✅ Defensive check - ensure parent exists and has regID
     if (!school?.regID) {
       this.logger.error('registration field resolver failed - Invalid school or missing regID')
-      throw new BadRequestException('Invalid school')
+      return null
     }
-
     this.logger.debug(`Fetching registration for school ID: ${school.id}`)
-
     const regId = school.regID
     return await this.registrationService.findOne(regId)
   }

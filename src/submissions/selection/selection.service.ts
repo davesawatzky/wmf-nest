@@ -110,6 +110,7 @@ export class SelectionService {
 
       if (!selection) {
         this.logger.error(`Selection not found with ID: ${selectionID}`)
+        return null
       }
       else {
         this.logger.log(`Successfully retrieved selection ID: ${selectionID}`)
@@ -135,7 +136,7 @@ export class SelectionService {
     selectionID: tbl_reg_selection['id'],
     selectionInput: Partial<SelectionInput>,
   ) {
-    if (!selectionID && !selectionInput) {
+    if (!selectionID || !selectionInput) {
       return {
         userErrors: [
           {

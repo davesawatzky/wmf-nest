@@ -101,11 +101,6 @@ export class RegistrationResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Registration })
   async registration(@Args('id', { type: () => Int }) id: Registration['id']) {
-    if (!id) {
-      this.logger.error('registration query failed - id is required')
-      // throw new BadRequestException('Registration ID is required')
-    }
-
     this.logger.log(`Fetching registration ID: ${id}`)
     return await this.registrationService.findOne(id)
   }
@@ -122,22 +117,11 @@ export class RegistrationResolver {
     @Args('label', { type: () => String })
     label: Registration['label'],
   ) {
-    if (!performerType) {
-      this.logger.error('registrationCreate mutation failed - performerType is required')
-      // throw new BadRequestException('Performer type is required')
-    }
-
     let newLabel = label
     if (!newLabel || newLabel.trim() === '') {
       newLabel = 'Registration Form'
     }
-
     const userID = context.req.user?.id
-    if (!userID) {
-      this.logger.error('registrationCreate mutation failed - user context missing')
-      // throw new BadRequestException('User authentication required')
-    }
-
     this.logger.log(`Creating registration for user ID: ${userID}, performerType: ${performerType}, label: ${newLabel}`)
     return await this.registrationService.create(
       userID,
@@ -155,15 +139,6 @@ export class RegistrationResolver {
     @Args('registrationInput', { type: () => RegistrationInput })
     registrationInput: Partial<RegistrationInput>,
   ) {
-    if (!registrationID) {
-      this.logger.error('registrationUpdate mutation failed - registrationID is required')
-      // throw new BadRequestException('Registration ID is required')
-    }
-
-    if (!registrationInput || Object.keys(registrationInput).length === 0) {
-      this.logger.error('registrationUpdate mutation failed - registrationInput is required')
-      // throw new BadRequestException('Registration input is required')
-    }
     this.logger.log(`Updating registration ID: ${registrationID}`)
     return await this.registrationService.update(
       registrationID,
@@ -178,11 +153,6 @@ export class RegistrationResolver {
     @Args('registrationID', { type: () => Int })
     registrationID: Registration['id'],
   ) {
-    if (!registrationID) {
-      this.logger.error('registrationDelete mutation failed - registrationID is required')
-      // throw new BadRequestException('Registration ID is required')
-    }
-
     this.logger.log(`Deleting registration ID: ${registrationID}`)
     return await this.registrationService.remove(registrationID)
   }
@@ -195,11 +165,9 @@ export class RegistrationResolver {
   async user(@Parent() registration: tbl_registration) {
     if (!registration?.userID) {
       this.logger.error('user field resolver failed - Invalid registration or missing userID')
-      // throw new BadRequestException('Invalid registration')
+      return null
     }
-
     this.logger.debug(`Fetching user for registration ID: ${registration.id}`)
-
     const { userID }: { userID: tbl_registration['userID'] } = registration
     return await this.userService.findOne(userID)
   }
@@ -210,11 +178,9 @@ export class RegistrationResolver {
   async performers(@Parent() registration: tbl_registration) {
     if (!registration?.id) {
       this.logger.error('performers field resolver failed - Invalid registration or missing id')
-      // throw new BadRequestException('Invalid registration')
+      return null
     }
-
     this.logger.debug(`Fetching performers for registration ID: ${registration.id}`)
-
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return await this.performerService.findAll(registrationID, null)
@@ -226,11 +192,9 @@ export class RegistrationResolver {
   async registeredClasses(@Parent() registration: tbl_registration) {
     if (!registration?.id) {
       this.logger.error('registeredClasses field resolver failed - Invalid registration or missing id')
-      // throw new BadRequestException('Invalid registration')
+      return null
     }
-
     this.logger.debug(`Fetching registered classes for registration ID: ${registration.id}`)
-
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return await this.registeredClassService.findAll(registrationID)
@@ -242,11 +206,9 @@ export class RegistrationResolver {
   async group(@Parent() registration: tbl_registration) {
     if (!registration?.id) {
       this.logger.error('group field resolver failed - Invalid registration or missing id')
-      // throw new BadRequestException('Invalid registration')
+      return null
     }
-
     this.logger.debug(`Fetching group for registration ID: ${registration.id}`)
-
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return await this.groupService.findOne(registrationID, null)
@@ -258,11 +220,9 @@ export class RegistrationResolver {
   async community(@Parent() registration: tbl_registration) {
     if (!registration?.id) {
       this.logger.error('community field resolver failed - Invalid registration or missing id')
-      // throw new BadRequestException('Invalid registration')
+      return null
     }
-
     this.logger.debug(`Fetching community for registration ID: ${registration.id}`)
-
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return await this.communityService.findOne(registrationID, null)
@@ -274,17 +234,14 @@ export class RegistrationResolver {
   async teacher(@Parent() registration: tbl_registration) {
     if (!registration) {
       this.logger.error('teacher field resolver failed - Invalid registration')
-      // throw new BadRequestException('Invalid registration')
+      return null
     }
-
     const { teacherID }: { teacherID: Teacher['id'] } = registration
-
     // Teacher is optional, so return null if not set
     if (!teacherID) {
       this.logger.debug(`No teacher assigned to registration ID: ${registration.id}`)
       return null
     }
-
     this.logger.debug(`Fetching teacher for registration ID: ${registration.id}`)
     return await this.teacherService.findOne(teacherID, null)
   }
@@ -295,11 +252,9 @@ export class RegistrationResolver {
   async school(@Parent() registration: tbl_registration) {
     if (!registration?.id) {
       this.logger.error('school field resolver failed - Invalid registration or missing id')
-      // throw new BadRequestException('Invalid registration')
+      return null
     }
-
     this.logger.debug(`Fetching school for registration ID: ${registration.id}`)
-
     const { id }: { id: Registration['id'] } = registration
     const registrationID = id
     return await this.schoolService.findOne(registrationID, null)

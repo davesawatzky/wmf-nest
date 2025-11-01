@@ -25,6 +25,18 @@ export class RegistrationService {
     label: tbl_registration['label'],
   ) {
     try {
+      if (!userID || !performerType || !label) {
+        return {
+          userErrors: [
+            {
+              message: 'userID, performerType, and label are required to create a registration',
+              field: ['userID', 'performerType', 'label'],
+            },
+          ],
+          registration: null,
+        }
+      }
+
       this.logger.log(
         `Creating registration for user ID: ${userID}, performerType: ${performerType}, label: ${label}`,
       )
@@ -169,7 +181,7 @@ export class RegistrationService {
 
       if (!registration) {
         this.logger.warn(`Registration not found with ID: ${id}`)
-        // throw new NotFoundException('Registration not found')
+        return null
       }
 
       return registration
@@ -191,6 +203,18 @@ export class RegistrationService {
     registrationInput: Partial<RegistrationInput>,
   ) {
     try {
+      if (!registrationID || !registrationInput) {
+        this.logger.warn('Update called with missing parameters')
+        return {
+          userErrors: [
+            {
+              message: 'registrationID and registrationInput are required',
+              field: ['registrationID', 'registrationInput'],
+            },
+          ],
+          registration: null,
+        }
+      }
       this.logger.log(`Updating registration with ID: ${registrationID}`)
 
       const registration = await this.prisma.tbl_registration.update({
@@ -270,6 +294,17 @@ export class RegistrationService {
 
   async remove(id: tbl_registration['id']) {
     try {
+      if (!id) {
+        return {
+          userErrors: [
+            {
+              message: 'Registration ID is required for deletion',
+              field: ['id'],
+            },
+          ],
+          registration: null,
+        }
+      }
       this.logger.log(`Deleting registration with ID: ${id}`)
 
       const registration = await this.prisma.tbl_registration.delete({

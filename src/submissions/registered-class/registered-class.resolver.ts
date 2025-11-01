@@ -48,8 +48,11 @@ export class RegisteredClassResolver {
     registrationID: tbl_registration['id'] | null,
   ) {
     const isAdmin = context.req.user?.roles?.includes('admin')
+    if (!isAdmin && !registrationID) {
+      this.logger.error('registeredClasses query failed - registrationID is required for non-admin users')
+      throw new BadRequestException('Registration ID is required')
+    }
     this.logger.log(`Fetching registered classes${isAdmin ? ' (admin query)' : registrationID ? ` for registration ID: ${registrationID}` : ''}`)
-
     return await this.registeredClassService.findAll(
       isAdmin ? null : registrationID,
     )
@@ -60,11 +63,6 @@ export class RegisteredClassResolver {
     @Args('registeredClassID', { type: () => Int })
     registeredClassID: RegisteredClass['id'],
   ) {
-    if (!registeredClassID) {
-      this.logger.error('registeredClass query failed - registeredClassID is required')
-      // throw new BadRequestException('Registered class ID is required')
-    }
-
     this.logger.log(`Fetching registered class ID: ${registeredClassID}`)
     return await this.registeredClassService.findOne(registeredClassID)
   }
@@ -81,11 +79,6 @@ export class RegisteredClassResolver {
     })
     registeredClass: Partial<RegisteredClassInput> | null,
   ) {
-    if (!registrationID) {
-      this.logger.error('registeredClassCreate mutation failed - registrationID is required')
-      // throw new BadRequestException('Registration ID is required')
-    }
-
     this.logger.log(`Creating registered class for registration ID: ${registrationID}`)
     return await this.registeredClassService.create(
       registrationID,
@@ -100,16 +93,6 @@ export class RegisteredClassResolver {
     @Args('registeredClassInput', { type: () => RegisteredClassInput })
     registeredClassInput: Partial<RegisteredClassInput>,
   ) {
-    if (!registeredClassID) {
-      this.logger.error('registeredClassUpdate mutation failed - registeredClassID is required')
-      // throw new BadRequestException('Registered class ID is required')
-    }
-
-    if (!registeredClassInput || Object.keys(registeredClassInput).length === 0) {
-      this.logger.error('registeredClassUpdate mutation failed - registeredClassInput is required')
-      // throw new BadRequestException('Registered class input is required')
-    }
-
     this.logger.log(`Updating registered class ID: ${registeredClassID}`)
     return await this.registeredClassService.update(
       registeredClassID,
@@ -122,11 +105,6 @@ export class RegisteredClassResolver {
     @Args('registeredClassID', { type: () => Int })
     registeredClassID: RegisteredClass['id'],
   ) {
-    if (!registeredClassID) {
-      this.logger.error('registeredClassDelete mutation failed - registeredClassID is required')
-      // throw new BadRequestException('Registered class ID is required')
-    }
-
     this.logger.log(`Deleting registered class ID: ${registeredClassID}`)
     return await this.registeredClassService.remove(registeredClassID)
   }
@@ -137,11 +115,9 @@ export class RegisteredClassResolver {
   async selections(@Parent() registeredClass: tbl_reg_class) {
     if (!registeredClass?.id) {
       this.logger.error('selections field resolver failed - Invalid registeredClass or missing id')
-      // throw new BadRequestException('Invalid registered class')
+      return null
     }
-
     this.logger.debug(`Fetching selections for registered class ID: ${registeredClass.id}`)
-
     const { id }: { id: RegisteredClass['id'] } = registeredClass
     const registeredClassID = id
     return await this.selectionService.findAll(registeredClassID)
@@ -151,9 +127,8 @@ export class RegisteredClassResolver {
   async performers(@Parent() registeredClass: tbl_reg_class) {
     if (!registeredClass) {
       this.logger.error('performers field resolver failed - Invalid registeredClass')
-      // throw new BadRequestException('Invalid registered class')
+      return
     }
-
     const { classNumber }: { classNumber: RegisteredClass['classNumber'] }
       = registeredClass
 
