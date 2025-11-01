@@ -18,7 +18,6 @@ export class UserService {
     try {
       this.logger.log('Fetching all users')
       const users = await this.prisma.tbl_user.findMany()
-
       // Remove passwords from all users
       const usersWithoutPasswords = users.map((user) => {
         if (Object.prototype.hasOwnProperty.call(user, 'password')) {
@@ -66,7 +65,6 @@ export class UserService {
         this.logger.warn(
           `User not found with ${userID ? `ID: ${userID}` : `email: ${email}`}`,
         )
-        throw new NotFoundException('User not found')
       }
 
       // Remove password from response
@@ -97,6 +95,19 @@ export class UserService {
 
   async update(userID: tbl_user['id'], userInput: UserInput) {
     try {
+      if (!userID || !userInput) {
+        this.logger.warn('Update called without userID or userInput')
+        return {
+          userErrors: [
+            {
+              message: 'User ID and input data are required',
+              field: ['id', 'userInput'],
+            },
+          ],
+          user: null,
+        }
+      }
+
       this.logger.log(`Updating user ${userID}`)
 
       const user = await this.prisma.tbl_user.update({
@@ -161,6 +172,19 @@ export class UserService {
 
   async remove(userID: tbl_user['id']) {
     try {
+      if (!userID) {
+        this.logger.warn('Remove called without userID')
+        return {
+          userErrors: [
+            {
+              message: 'User ID is required',
+              field: ['id'],
+            },
+          ],
+          user: null,
+        }
+      }
+
       this.logger.log(`Deleting user ${userID}`)
 
       const user = await this.prisma.tbl_user.delete({

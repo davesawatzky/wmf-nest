@@ -234,8 +234,20 @@ export class TeacherService {
     }
   }
 
-  async update(teacherID: number, teacherInput: TeacherInput) {
+  async update(teacherID: number, teacherInput: Partial<TeacherInput>) {
     try {
+      if (!teacherID || !teacherInput) {
+        this.logger.warn('Teacher update called without ID or input data')
+        return {
+          userErrors: [
+            {
+              message: 'Teacher ID and input data are required for update',
+              field: ['id', 'teacherInput'],
+            },
+          ],
+          teacher: null,
+        }
+      }
       this.logger.log(`Updating teacher ${teacherID}`)
 
       const teacher = await this.prisma.tbl_user.update({
@@ -301,6 +313,18 @@ export class TeacherService {
 
   async remove(teacherID: tbl_user['id']) {
     try {
+      if (!teacherID) {
+        this.logger.warn('Teacher deletion called without ID')
+        return {
+          userErrors: [
+            {
+              message: 'Teacher ID is required for deletion',
+              field: ['id'],
+            },
+          ],
+          teacher: null,
+        }
+      }
       this.logger.log(`Deleting teacher ${teacherID}`)
 
       const teacher = await this.prisma.tbl_user.delete({

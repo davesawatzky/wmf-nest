@@ -18,7 +18,15 @@ export class SelectionService {
 
   async create(registeredClassID: number) {
     if (!registeredClassID) {
-      throw new BadRequestException('Registered class ID is required')
+      return {
+        userErrors: [
+          {
+            message: 'Registered class ID is required',
+            field: ['registeredClassID'],
+          },
+        ],
+        selection: null,
+      }
     }
 
     let selection: tbl_reg_selection | null
@@ -102,12 +110,10 @@ export class SelectionService {
 
       if (!selection) {
         this.logger.error(`Selection not found with ID: ${selectionID}`)
-        // throw new NotFoundException(
-        //   `Selection with ID ${selectionID} not found`,
-        // )
       }
-
-      this.logger.log(`Successfully retrieved selection ID: ${selectionID}`)
+      else {
+        this.logger.log(`Successfully retrieved selection ID: ${selectionID}`)
+      }
       return selection
     }
     catch (error: any) {
@@ -117,7 +123,6 @@ export class SelectionService {
       ) {
         throw error
       }
-
       this.logger.error(
         `Failed to retrieve selection ID ${selectionID}: ${error.message}`,
         error.stack,
@@ -130,8 +135,16 @@ export class SelectionService {
     selectionID: tbl_reg_selection['id'],
     selectionInput: Partial<SelectionInput>,
   ) {
-    if (!selectionID) {
-      throw new BadRequestException('Selection ID is required')
+    if (!selectionID && !selectionInput) {
+      return {
+        userErrors: [
+          {
+            message: 'Selection ID and update data are required',
+            field: ['selectionID', 'selectionInput'],
+          },
+        ],
+        selection: null,
+      }
     }
 
     let selection: tbl_reg_selection | null
@@ -174,13 +187,20 @@ export class SelectionService {
         selection = null
       }
     }
-
     return { userErrors, selection }
   }
 
   async remove(selectionID: tbl_reg_selection['id']) {
     if (!selectionID) {
-      throw new BadRequestException('Selection ID is required')
+      return {
+        userErrors: [
+          {
+            message: 'Selection ID is required',
+            field: ['selectionID'],
+          },
+        ],
+        selection: null,
+      }
     }
 
     let selection: tbl_reg_selection | null
