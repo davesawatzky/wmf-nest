@@ -34,7 +34,7 @@ export class SelectionResolver {
     // ✅ Defensive check - ensure selectionID is provided
     if (!selectionID) {
       this.logger.error('selection query failed - selectionID is required')
-      throw new BadRequestException('Selection ID is required')
+      // throw new BadRequestException('Selection ID is required')
     }
 
     this.logger.log(`Fetching selection ID: ${selectionID}`)
@@ -51,7 +51,7 @@ export class SelectionResolver {
     // ✅ Defensive check - ensure registeredClassID is provided
     if (!registeredClassID) {
       this.logger.error('selectionCreate mutation failed - registeredClassID is required')
-      throw new BadRequestException('Registered class ID is required')
+      // throw new BadRequestException('Registered class ID is required')
     }
 
     this.logger.log(`Creating selection for registered class ID: ${registeredClassID}`)
@@ -68,12 +68,12 @@ export class SelectionResolver {
     // ✅ Defensive checks - ensure selectionID and input are provided
     if (!selectionID) {
       this.logger.error('selectionUpdate mutation failed - selectionID is required')
-      throw new BadRequestException('Selection ID is required')
+      // throw new BadRequestException('Selection ID is required')
     }
 
     if (!selectionInput || Object.keys(selectionInput).length === 0) {
       this.logger.error('selectionUpdate mutation failed - selectionInput is required')
-      throw new BadRequestException('Selection input is required')
+      // throw new BadRequestException('Selection input is required')
     }
 
     this.logger.log(`Updating selection ID: ${selectionID}`)
@@ -88,7 +88,7 @@ export class SelectionResolver {
     // ✅ Defensive check - ensure selectionID is provided
     if (!selectionID) {
       this.logger.error('selectionDelete mutation failed - selectionID is required')
-      throw new BadRequestException('Selection ID is required')
+      // throw new BadRequestException('Selection ID is required')
     }
 
     this.logger.log(`Deleting selection ID: ${selectionID}`)

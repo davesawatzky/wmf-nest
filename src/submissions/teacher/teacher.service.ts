@@ -109,7 +109,7 @@ export class TeacherService {
       }
       else {
         this.logger.warn('Invalid teacher type specified for findAll')
-        throw new BadRequestException('Invalid teacher type specified')
+        // throw new BadRequestException('Invalid teacher type specified')
       }
 
       if (!teachersData || teachersData.length === 0) {
@@ -190,7 +190,7 @@ export class TeacherService {
           this.logger.log(
             `Teacher not found with ID: ${teacherID}`,
           )
-          throw new NotFoundException('Teacher not found')
+          // throw new NotFoundException('Teacher not found')
         }
       }
       else if (email) {

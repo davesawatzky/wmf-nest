@@ -62,7 +62,7 @@ export class RegisteredClassResolver {
   ) {
     if (!registeredClassID) {
       this.logger.error('registeredClass query failed - registeredClassID is required')
-      throw new BadRequestException('Registered class ID is required')
+      // throw new BadRequestException('Registered class ID is required')
     }
 
     this.logger.log(`Fetching registered class ID: ${registeredClassID}`)
@@ -83,7 +83,7 @@ export class RegisteredClassResolver {
   ) {
     if (!registrationID) {
       this.logger.error('registeredClassCreate mutation failed - registrationID is required')
-      throw new BadRequestException('Registration ID is required')
+      // throw new BadRequestException('Registration ID is required')
     }
 
     this.logger.log(`Creating registered class for registration ID: ${registrationID}`)
@@ -102,12 +102,12 @@ export class RegisteredClassResolver {
   ) {
     if (!registeredClassID) {
       this.logger.error('registeredClassUpdate mutation failed - registeredClassID is required')
-      throw new BadRequestException('Registered class ID is required')
+      // throw new BadRequestException('Registered class ID is required')
     }
 
     if (!registeredClassInput || Object.keys(registeredClassInput).length === 0) {
       this.logger.error('registeredClassUpdate mutation failed - registeredClassInput is required')
-      throw new BadRequestException('Registered class input is required')
+      // throw new BadRequestException('Registered class input is required')
     }
 
     this.logger.log(`Updating registered class ID: ${registeredClassID}`)
@@ -124,7 +124,7 @@ export class RegisteredClassResolver {
   ) {
     if (!registeredClassID) {
       this.logger.error('registeredClassDelete mutation failed - registeredClassID is required')
-      throw new BadRequestException('Registered class ID is required')
+      // throw new BadRequestException('Registered class ID is required')
     }
 
     this.logger.log(`Deleting registered class ID: ${registeredClassID}`)
@@ -137,7 +137,7 @@ export class RegisteredClassResolver {
   async selections(@Parent() registeredClass: tbl_reg_class) {
     if (!registeredClass?.id) {
       this.logger.error('selections field resolver failed - Invalid registeredClass or missing id')
-      throw new BadRequestException('Invalid registered class')
+      // throw new BadRequestException('Invalid registered class')
     }
 
     this.logger.debug(`Fetching selections for registered class ID: ${registeredClass.id}`)
@@ -151,7 +151,7 @@ export class RegisteredClassResolver {
   async performers(@Parent() registeredClass: tbl_reg_class) {
     if (!registeredClass) {
       this.logger.error('performers field resolver failed - Invalid registeredClass')
-      throw new BadRequestException('Invalid registered class')
+      // throw new BadRequestException('Invalid registered class')
     }
 
     const { classNumber }: { classNumber: RegisteredClass['classNumber'] }

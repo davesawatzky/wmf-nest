@@ -60,7 +60,7 @@ export class PerformerResolver {
   ) {
     if (!performerID) {
       this.logger.error('performer query failed - performerID is required')
-      throw new BadRequestException('Performer ID is required')
+      // throw new BadRequestException('Performer ID is required')
     }
 
     this.logger.log(`Fetching performer ID: ${performerID}`)
@@ -80,7 +80,7 @@ export class PerformerResolver {
   ) {
     if (!registrationID) {
       this.logger.error('performerCreate mutation failed - registrationID is required')
-      throw new BadRequestException('Registration ID is required')
+      // throw new BadRequestException('Registration ID is required')
     }
 
     this.logger.log(`Creating performer for registration ID: ${registrationID}`)
@@ -98,12 +98,12 @@ export class PerformerResolver {
   ) {
     if (!performerID) {
       this.logger.error('performerUpdate mutation failed - performerID is required')
-      throw new BadRequestException('Performer ID is required')
+      // throw new BadRequestException('Performer ID is required')
     }
 
     if (!performerInput || Object.keys(performerInput).length === 0) {
       this.logger.error('performerUpdate mutation failed - performerInput is required')
-      throw new BadRequestException('Performer input is required')
+      // throw new BadRequestException('Performer input is required')
     }
 
     this.logger.log(`Updating performer ID: ${performerID}`)
@@ -119,7 +119,7 @@ export class PerformerResolver {
   ) {
     if (!performerID) {
       this.logger.error('performerDelete mutation failed - performerID is required')
-      throw new BadRequestException('Performer ID is required')
+      // throw new BadRequestException('Performer ID is required')
     }
 
     this.logger.log(`Deleting performer ID: ${performerID}`)
@@ -135,7 +135,7 @@ export class PerformerResolver {
   async registration(@Parent() performer: tbl_reg_performer) {
     if (!performer?.regID) {
       this.logger.error('registration field resolver failed - Invalid performer or missing regID')
-      throw new BadRequestException('Invalid performer')
+      // throw new BadRequestException('Invalid performer')
     }
 
     this.logger.debug(`Fetching registration for performer ID: ${performer.id}`)
