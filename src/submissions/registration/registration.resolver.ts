@@ -16,26 +16,20 @@ import { AbilitiesGuard } from '@/ability/abilities.guard'
 import { Action } from '@/ability/ability.factory'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { PerformerType } from '@/common.entity'
-import { CommunityService } from '@/submissions/community/community.service'
 import { Community } from '@/submissions/community/entities/community.entity'
 import { Group } from '@/submissions/group/entities/group.entity'
-import { GroupService } from '@/submissions/group/group.service'
 import { Performer } from '@/submissions/performer/entities/performer.entity'
-import { PerformerService } from '@/submissions/performer/performer.service'
 import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity'
-import { RegisteredClassService } from '@/submissions/registered-class/registered-class.service'
 import { School } from '@/submissions/school/entities/school.entity'
-import { SchoolService } from '@/submissions/school/school.service'
 import { Teacher } from '@/submissions/teacher/entities/teacher.entity'
-import { TeacherService } from '@/submissions/teacher/teacher.service'
 import { User } from '@/user/entities/user.entity'
-import { UserService } from '@/user/user.service'
 // import { RegistrationSearchFilters } from './dto/registration-search-filters.input'
 import { RegistrationInput } from './dto/registration.input'
 import {
   Registration,
   RegistrationPayload,
 } from './entities/registration.entity'
+import { RegistrationDataLoader } from './registration.dataloader'
 import { RegistrationService } from './registration.service'
 
 @Resolver(() => Registration)
@@ -45,13 +39,7 @@ export class RegistrationResolver {
 
   constructor(
     private readonly registrationService: RegistrationService,
-    private readonly performerService: PerformerService,
-    private readonly userService: UserService,
-    private readonly registeredClassService: RegisteredClassService,
-    private readonly groupService: GroupService,
-    private readonly communityService: CommunityService,
-    private readonly schoolService: SchoolService,
-    private readonly teacherService: TeacherService,
+    private readonly registrationDataLoader: RegistrationDataLoader,
   ) {}
 
   /** Queries */
@@ -164,12 +152,12 @@ export class RegistrationResolver {
   @CheckAbilities({ action: Action.Read, subject: User })
   async user(@Parent() registration: tbl_registration) {
     if (!registration?.userID) {
-      this.logger.error('user field resolver failed - Invalid registration or missing userID')
+      this.logger.warn('user field resolver - missing userID')
       return null
     }
     this.logger.debug(`Fetching user for registration ID: ${registration.id}`)
-    const { userID }: { userID: tbl_registration['userID'] } = registration
-    return await this.userService.findOne(userID)
+    // Use DataLoader to batch user queries
+    return await this.registrationDataLoader.userLoader.load(registration.userID)
   }
 
   @ResolveField(() => [Performer])
@@ -177,13 +165,12 @@ export class RegistrationResolver {
   @CheckAbilities({ action: Action.Read, subject: Performer })
   async performers(@Parent() registration: tbl_registration) {
     if (!registration?.id) {
-      this.logger.error('performers field resolver failed - Invalid registration or missing id')
+      this.logger.warn('performers field resolver - missing id')
       return null
     }
     this.logger.debug(`Fetching performers for registration ID: ${registration.id}`)
-    const { id }: { id: Registration['id'] } = registration
-    const registrationID = id
-    return await this.performerService.findAll(registrationID, null)
+    // Use DataLoader to batch performers queries
+    return await this.registrationDataLoader.performersLoader.load(registration.id)
   }
 
   @ResolveField(() => [RegisteredClass])
@@ -191,13 +178,12 @@ export class RegistrationResolver {
   @CheckAbilities({ action: Action.Read, subject: RegisteredClass })
   async registeredClasses(@Parent() registration: tbl_registration) {
     if (!registration?.id) {
-      this.logger.error('registeredClasses field resolver failed - Invalid registration or missing id')
+      this.logger.warn('registeredClasses field resolver - missing id')
       return null
     }
     this.logger.debug(`Fetching registered classes for registration ID: ${registration.id}`)
-    const { id }: { id: Registration['id'] } = registration
-    const registrationID = id
-    return await this.registeredClassService.findAll(registrationID)
+    // Use DataLoader to batch registered classes queries
+    return await this.registrationDataLoader.registeredClassesLoader.load(registration.id)
   }
 
   @ResolveField(() => Group)
@@ -205,13 +191,12 @@ export class RegistrationResolver {
   @CheckAbilities({ action: Action.Read, subject: Group })
   async group(@Parent() registration: tbl_registration) {
     if (!registration?.id) {
-      this.logger.error('group field resolver failed - Invalid registration or missing id')
+      this.logger.warn('group field resolver - missing id')
       return null
     }
     this.logger.debug(`Fetching group for registration ID: ${registration.id}`)
-    const { id }: { id: Registration['id'] } = registration
-    const registrationID = id
-    return await this.groupService.findOne(registrationID, null)
+    // Use DataLoader to batch group queries
+    return await this.registrationDataLoader.groupLoader.load(registration.id)
   }
 
   @ResolveField(() => Community)
@@ -219,13 +204,12 @@ export class RegistrationResolver {
   @CheckAbilities({ action: Action.Read, subject: Community })
   async community(@Parent() registration: tbl_registration) {
     if (!registration?.id) {
-      this.logger.error('community field resolver failed - Invalid registration or missing id')
+      this.logger.warn('community field resolver - missing id')
       return null
     }
     this.logger.debug(`Fetching community for registration ID: ${registration.id}`)
-    const { id }: { id: Registration['id'] } = registration
-    const registrationID = id
-    return await this.communityService.findOne(registrationID, null)
+    // Use DataLoader to batch community queries
+    return await this.registrationDataLoader.communityLoader.load(registration.id)
   }
 
   @ResolveField(() => Teacher)
@@ -233,7 +217,7 @@ export class RegistrationResolver {
   @CheckAbilities({ action: Action.Read, subject: Teacher })
   async teacher(@Parent() registration: tbl_registration) {
     if (!registration) {
-      this.logger.error('teacher field resolver failed - Invalid registration')
+      this.logger.warn('teacher field resolver - invalid registration')
       return null
     }
     const { teacherID }: { teacherID: Teacher['id'] } = registration
@@ -243,7 +227,8 @@ export class RegistrationResolver {
       return null
     }
     this.logger.debug(`Fetching teacher for registration ID: ${registration.id}`)
-    return await this.teacherService.findOne(teacherID, null)
+    // Use DataLoader to batch teacher queries
+    return await this.registrationDataLoader.teacherLoader.load(teacherID)
   }
 
   @ResolveField(() => School)
@@ -251,12 +236,11 @@ export class RegistrationResolver {
   @CheckAbilities({ action: Action.Read, subject: School })
   async school(@Parent() registration: tbl_registration) {
     if (!registration?.id) {
-      this.logger.error('school field resolver failed - Invalid registration or missing id')
+      this.logger.warn('school field resolver - missing id')
       return null
     }
     this.logger.debug(`Fetching school for registration ID: ${registration.id}`)
-    const { id }: { id: Registration['id'] } = registration
-    const registrationID = id
-    return await this.schoolService.findOne(registrationID, null)
+    // Use DataLoader to batch school queries
+    return await this.registrationDataLoader.schoolLoader.load(registration.id)
   }
 }

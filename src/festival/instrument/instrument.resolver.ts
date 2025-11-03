@@ -13,10 +13,10 @@ import { CheckAbilities } from '@/ability/abilities.decorator'
 import { AbilitiesGuard } from '@/ability/abilities.guard'
 import { Action } from '@/ability/ability.factory'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { DisciplineService } from '@/festival/discipline/discipline.service'
 import { Discipline } from '@/festival/discipline/entities/discipline.entity'
 import { InstrumentInput } from './dto/instrument.input'
 import { Instrument, InstrumentPayload } from './entities/instrument.entity'
+import { InstrumentDataLoader } from './instrument.dataloader'
 import { InstrumentService } from './instrument.service'
 
 @Resolver(() => Instrument)
@@ -25,7 +25,7 @@ export class InstrumentResolver {
 
   constructor(
     private readonly instrumentService: InstrumentService,
-    private readonly disciplineService: DisciplineService,
+    private readonly instrumentDataLoader: InstrumentDataLoader,
   ) {}
 
   /** Queries */
@@ -101,12 +101,10 @@ export class InstrumentResolver {
   @UseGuards(JwtAuthGuard)
   async discipline(@Parent() instrument: tbl_instrument) {
     if (!instrument?.disciplineID) {
-      this.logger.error('discipline field resolver failed - Invalid instrument or missing disciplineID')
+      this.logger.warn('discipline field resolver - missing disciplineID')
       return null
     }
-    this.logger.debug(`Fetching discipline for instrument ID: ${instrument.id}`)
-    const { disciplineID }: { disciplineID: tbl_instrument['disciplineID'] }
-      = instrument
-    return await this.disciplineService.findOne(disciplineID)
+    // Use DataLoader to batch discipline queries
+    return await this.instrumentDataLoader.disciplineLoader.load(instrument.disciplineID)
   }
 }

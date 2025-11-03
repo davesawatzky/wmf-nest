@@ -19,19 +19,17 @@ import { AbilitiesGuard } from '@/ability/abilities.guard'
 import { Action } from '@/ability/ability.factory'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { PerformerType } from '@/common.entity'
-import { CategoryService } from '@/festival/category/category.service'
 import { Category } from '@/festival/category/entities/category.entity'
-import { DisciplineService } from '@/festival/discipline/discipline.service'
 import { Discipline } from '@/festival/discipline/entities/discipline.entity'
 import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
 import { FestivalClassService } from '@/festival/festival-class/festival-class.service'
 import { Level } from '@/festival/level/entities/level.entity'
-import { LevelService } from '@/festival/level/level.service'
 import { SubdisciplineInput } from './dto/subdiscipline.input'
 import {
   Subdiscipline,
   SubdisciplinePayload,
 } from './entities/subdiscipline.entity'
+import { SubdisciplineDataLoader } from './subdiscipline.dataloader'
 import { SubdisciplineService } from './subdiscipline.service'
 
 @Resolver(() => Subdiscipline)
@@ -41,10 +39,8 @@ export class SubdisciplineResolver {
 
   constructor(
     private readonly subdisciplineService: SubdisciplineService,
-    private readonly categoryService: CategoryService,
-    private readonly levelService: LevelService,
+    private readonly subdisciplineDataLoader: SubdisciplineDataLoader,
     private readonly festivalClassService: FestivalClassService,
-    private readonly disciplineService: DisciplineService,
   ) {}
 
   /** Queries */
@@ -150,12 +146,12 @@ export class SubdisciplineResolver {
   @CheckAbilities({ action: Action.Read, subject: Category })
   async categories(@Parent() subdiscipline: tbl_subdiscipline) {
     if (!subdiscipline?.id) {
-      this.logger.error('categories field resolver failed - Invalid subdiscipline parent')
+      this.logger.warn('categories field resolver - missing id')
       return null
     }
     this.logger.debug(`Fetching categories for subdiscipline ID: ${subdiscipline.id}`)
-    const subdisciplineID = subdiscipline.id
-    return await this.categoryService.findAll(undefined, subdisciplineID)
+    // Use DataLoader to batch category queries
+    return await this.subdisciplineDataLoader.categoriesLoader.load(subdiscipline.id)
   }
 
   @ResolveField(() => [Level])
@@ -163,12 +159,12 @@ export class SubdisciplineResolver {
   @CheckAbilities({ action: Action.Read, subject: Level })
   async levels(@Parent() subdiscipline: tbl_subdiscipline) {
     if (!subdiscipline?.id) {
-      this.logger.error('levels field resolver failed - Invalid subdiscipline parent')
+      this.logger.warn('levels field resolver - missing id')
       return null
     }
     this.logger.debug(`Fetching levels for subdiscipline ID: ${subdiscipline.id}`)
-    const subdisciplineID = subdiscipline.id
-    return await this.levelService.findAll(undefined, subdisciplineID)
+    // Use DataLoader to batch level queries
+    return await this.subdisciplineDataLoader.levelsLoader.load(subdiscipline.id)
   }
 
   @ResolveField(() => Discipline)
@@ -176,11 +172,10 @@ export class SubdisciplineResolver {
   @CheckAbilities({ action: Action.Read, subject: Discipline })
   async discipline(@Parent() subdiscipline: tbl_subdiscipline) {
     if (!subdiscipline?.disciplineID) {
-      this.logger.error('discipline field resolver failed - Invalid subdiscipline or missing disciplineID')
+      this.logger.warn('discipline field resolver - missing disciplineID')
       return null
     }
-    this.logger.debug(`Fetching discipline for subdiscipline ID: ${subdiscipline.id}`)
-    const disciplineID = subdiscipline.disciplineID
-    return await this.disciplineService.findOne(disciplineID)
+    // Use DataLoader to batch discipline queries
+    return await this.subdisciplineDataLoader.disciplineLoader.load(subdiscipline.disciplineID)
   }
 }

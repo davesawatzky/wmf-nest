@@ -78,6 +78,399 @@ Uses role-based permissions with CASL abilities:
 - **Actions**: `Manage`, `Create`, `Read`, `Update`, `Delete`
 - **All resolvers**: Must use `@UseGuards(JwtAuthGuard)` at class level
 
+### DataLoader Pattern for N+1 Query Optimization
+**CRITICAL**: Use DataLoader to prevent N+1 query problems in GraphQL field resolvers. The application implements request-scoped batch loading for all complex entity relationships.
+
+#### DataLoader Architecture
+**Core Principles**:
+- **Request-scoped**: Each GraphQL request gets fresh DataLoader instances (`Scope.REQUEST`)
+- **Batching**: Collects multiple `load()` calls within a single tick and executes one batch query
+- **Caching**: Within a request, identical keys return cached results
+- **Ordering**: Results must be returned in the same order as input IDs (use Map-based ordering)
+
+#### Standard DataLoader Service Pattern
+```typescript
+import { Injectable, Logger, Scope } from '@nestjs/common'
+import DataLoader from 'dataloader'
+import { PrismaService } from '@/prisma/prisma.service'
+
+@Injectable({ scope: Scope.REQUEST })
+export class EntityDataLoader {
+  private readonly logger = new Logger(EntityDataLoader.name)
+
+  constructor(private readonly prisma: PrismaService) {}
+
+  // Simple one-to-one relationship loader
+  public readonly relatedEntityLoader = new DataLoader<number, RelatedEntity | null>(
+    async (ids: readonly number[]) => {
+      const startTime = performance.now()
+      this.logger.debug(`Batching ${ids.length} relatedEntity queries`)
+
+      const entities = await this.prisma.tbl_related_entity.findMany({
+        where: { id: { in: [...ids] } },
+      })
+
+      // Map-based ordering: CRITICAL for correct result alignment
+      const entityMap = new Map(entities.map(entity => [entity.id, entity]))
+      const orderedResults = ids.map(id => entityMap.get(id) ?? null)
+
+      this.logger.log(
+        `Fetched ${orderedResults.length} related entities in ${(performance.now() - startTime).toFixed(2)}ms`
+      )
+      return orderedResults
+    }
+  )
+
+  // Many-to-many relationship via direct foreign key array
+  public readonly childrenLoader = new DataLoader<number, ChildEntity[]>(
+    async (parentIds: readonly number[]) => {
+      const startTime = performance.now()
+      this.logger.debug(`Batching ${parentIds.length} children queries`)
+
+      const children = await this.prisma.tbl_child.findMany({
+        where: { parentId: { in: [...parentIds] } },
+      })
+
+      // Group by parent ID
+      const childrenByParent = new Map<number, ChildEntity[]>()
+      for (const child of children) {
+        const existing = childrenByParent.get(child.parentId) || []
+        existing.push(child)
+        childrenByParent.set(child.parentId, existing)
+      }
+
+      const orderedResults = parentIds.map(id => childrenByParent.get(id) ?? [])
+
+      this.logger.log(
+        `Fetched children for ${parentIds.length} parents in ${(performance.now() - startTime).toFixed(2)}ms`
+      )
+      return orderedResults
+    }
+  )
+
+  // Indirect many-to-many via junction table (two-step query pattern)
+  public readonly associatedEntitiesLoader = new DataLoader<number, AssociatedEntity[]>(
+    async (entityIds: readonly number[]) => {
+      const startTime = performance.now()
+      this.logger.debug(`Batching ${entityIds.length} associated entity queries`)
+
+      // Step 1: Get junction table records
+      const junctionRecords = await this.prisma.tbl_junction.findMany({
+        where: { entityId: { in: [...entityIds] } },
+        select: { entityId: true, associatedId: true },
+      })
+
+      // Step 2: Get unique associated IDs
+      const associatedIds = [...new Set(junctionRecords.map(j => j.associatedId))]
+      
+      // Step 3: Fetch associated entities
+      const associatedEntities = await this.prisma.tbl_associated.findMany({
+        where: { id: { in: associatedIds } },
+      })
+
+      // Step 4: Map entities by ID for fast lookup
+      const entityMap = new Map(associatedEntities.map(e => [e.id, e]))
+
+      // Step 5: Group by original entity ID and deduplicate
+      const entitiesByParent = new Map<number, AssociatedEntity[]>()
+      for (const junction of junctionRecords) {
+        const entity = entityMap.get(junction.associatedId)
+        if (entity) {
+          const existing = entitiesByParent.get(junction.entityId) || []
+          // Deduplicate: check if entity already exists
+          if (!existing.find(e => e.id === entity.id)) {
+            existing.push(entity)
+          }
+          entitiesByParent.set(junction.entityId, existing)
+        }
+      }
+
+      const orderedResults = entityIds.map(id => entitiesByParent.get(id) ?? [])
+
+      this.logger.log(
+        `Fetched associated entities for ${entityIds.length} entities in ${(performance.now() - startTime).toFixed(2)}ms`
+      )
+      return orderedResults
+    }
+  )
+}
+```
+
+#### DataLoader Integration Patterns
+
+**1. Module Configuration**:
+```typescript
+@Module({
+  providers: [
+    EntityService,
+    EntityResolver,
+    EntityDataLoader, // Add DataLoader as request-scoped provider
+  ],
+  exports: [EntityService],
+})
+export class EntityModule {}
+```
+
+**2. Resolver Integration**:
+```typescript
+@Resolver(() => Entity)
+@UseGuards(JwtAuthGuard)
+export class EntityResolver {
+  constructor(
+    private readonly entityService: EntityService,
+    private readonly entityDataLoader: EntityDataLoader, // Inject DataLoader
+  ) {}
+
+  // Standard query - use service
+  @Query(() => [Entity])
+  @CheckAbilities({ action: Action.Read, subject: Entity })
+  async entities() {
+    return await this.entityService.findAll()
+  }
+
+  // Field resolver - use DataLoader
+  @ResolveField(() => RelatedEntity, { nullable: true })
+  async relatedEntity(@Parent() entity: Entity) {
+    if (!entity.relatedEntityId) return null
+    return await this.entityDataLoader.relatedEntityLoader.load(entity.relatedEntityId)
+  }
+
+  // Field resolver for array - use DataLoader
+  @ResolveField(() => [ChildEntity])
+  async children(@Parent() entity: Entity) {
+    return await this.entityDataLoader.childrenLoader.load(entity.id)
+  }
+
+  // Field resolver for many-to-many - use DataLoader
+  @ResolveField(() => [AssociatedEntity])
+  async associatedEntities(@Parent() entity: Entity) {
+    return await this.entityDataLoader.associatedEntitiesLoader.load(entity.id)
+  }
+}
+```
+
+**3. Remove Service Dependencies**:
+When implementing DataLoader, remove service dependencies that were only used for field resolution:
+```typescript
+// BEFORE (N+1 problem)
+constructor(
+  private readonly entityService: EntityService,
+  private readonly relatedEntityService: RelatedEntityService, // ❌ Only used in field resolver
+) {}
+
+@ResolveField(() => RelatedEntity)
+async relatedEntity(@Parent() entity: Entity) {
+  return await this.relatedEntityService.findOne(entity.relatedEntityId) // ❌ N+1 queries
+}
+
+// AFTER (batched)
+constructor(
+  private readonly entityService: EntityService,
+  private readonly entityDataLoader: EntityDataLoader, // ✅ Batch loading
+) {}
+
+@ResolveField(() => RelatedEntity)
+async relatedEntity(@Parent() entity: Entity) {
+  return await this.entityDataLoader.relatedEntityLoader.load(entity.relatedEntityId) // ✅ Batched
+}
+```
+
+#### Relationship Type Patterns
+
+**Simple One-to-One** (e.g., Instrument → Discipline):
+```typescript
+// Direct foreign key relationship
+public readonly disciplineLoader = new DataLoader<number, Discipline | null>(
+  async (disciplineIds: readonly number[]) => {
+    const disciplines = await this.prisma.tbl_discipline.findMany({
+      where: { id: { in: [...disciplineIds] } },
+    })
+    const disciplineMap = new Map(disciplines.map(d => [d.id, d]))
+    return disciplineIds.map(id => disciplineMap.get(id) ?? null)
+  }
+)
+```
+
+**One-to-Many** (e.g., FestivalClass → Selections):
+```typescript
+// Parent has multiple children via foreign key
+public readonly selectionsLoader = new DataLoader<number, Selection[]>(
+  async (classIds: readonly number[]) => {
+    const selections = await this.prisma.tbl_reg_selection.findMany({
+      where: { classId: { in: [...classIds] } },
+    })
+    const selectionsByClass = new Map<number, Selection[]>()
+    for (const selection of selections) {
+      const existing = selectionsByClass.get(selection.classId) || []
+      existing.push(selection)
+      selectionsByClass.set(selection.classId, existing)
+    }
+    return classIds.map(id => selectionsByClass.get(id) ?? [])
+  }
+)
+```
+
+**Direct Many-to-Many via Junction Table** (e.g., FestivalClass → Trophies):
+```typescript
+// Junction table with both IDs directly
+public readonly trophiesLoader = new DataLoader<number, Trophy[]>(
+  async (classIds: readonly number[]) => {
+    // Get junction records
+    const junctions = await this.prisma.tbl_class_trophy.findMany({
+      where: { classId: { in: [...classIds] } },
+      select: { classId: true, trophyId: true },
+    })
+    
+    // Get unique trophy IDs
+    const trophyIds = [...new Set(junctions.map(j => j.trophyId))]
+    
+    // Fetch trophies
+    const trophies = await this.prisma.tbl_trophy.findMany({
+      where: { id: { in: trophyIds } },
+    })
+    
+    // Map and group
+    const trophyMap = new Map(trophies.map(t => [t.id, t]))
+    const trophiesByClass = new Map<number, Trophy[]>()
+    
+    for (const junction of junctions) {
+      const trophy = trophyMap.get(junction.trophyId)
+      if (trophy) {
+        const existing = trophiesByClass.get(junction.classId) || []
+        existing.push(trophy)
+        trophiesByClass.set(junction.classId, existing)
+      }
+    }
+    
+    return classIds.map(id => trophiesByClass.get(id) ?? [])
+  }
+)
+```
+
+**Indirect Many-to-Many via Junction Entity** (e.g., Subdiscipline → Categories):
+```typescript
+// Entities related through intermediate entity (not direct junction table)
+// Example: Subdiscipline → FestivalClass → Category
+public readonly categoriesLoader = new DataLoader<number, Category[]>(
+  async (subdisciplineIds: readonly number[]) => {
+    // Step 1: Get junction records (festival classes link subdisciplines to categories)
+    const festivalClasses = await this.prisma.tbl_classlist.findMany({
+      where: { subdisciplineID: { in: [...subdisciplineIds] } },
+      select: { subdisciplineID: true, categoryID: true },
+    })
+    
+    // Step 2: Get unique category IDs
+    const categoryIds = [...new Set(festivalClasses.map(fc => fc.categoryID))]
+    
+    // Step 3: Fetch categories
+    const categories = await this.prisma.tbl_category.findMany({
+      where: { id: { in: categoryIds } },
+    })
+    
+    // Step 4: Map and group with deduplication
+    const categoryMap = new Map(categories.map(c => [c.id, c]))
+    const categoriesBySubdiscipline = new Map<number, Category[]>()
+    
+    for (const fc of festivalClasses) {
+      const category = categoryMap.get(fc.categoryID)
+      if (category) {
+        const existing = categoriesBySubdiscipline.get(fc.subdisciplineID) || []
+        // Deduplicate: multiple classes may share same category
+        if (!existing.find(c => c.id === category.id)) {
+          existing.push(category)
+        }
+        categoriesBySubdiscipline.set(fc.subdisciplineID, existing)
+      }
+    }
+    
+    return subdisciplineIds.map(id => categoriesBySubdiscipline.get(id) ?? [])
+  }
+)
+```
+
+#### Performance Metrics
+
+**Implemented DataLoaders**:
+
+1. **FestivalClass** (5 loaders):
+   - `subdisciplineLoader`, `levelLoader`, `categoryLoader`, `classTypeLoader`, `trophiesLoader`
+   - Performance: 98% query reduction (251 → 6 queries for 50 classes)
+
+2. **Registration** (7 loaders):
+   - `performersLoader`, `groupLoader`, `schoolLoader`, `communityLoader`, `registeredClassesLoader`, `teacherLoader`, `userLoader`
+   - Performance: 98% query reduction (351 → 8 queries)
+
+3. **Subdiscipline** (3 loaders):
+   - `disciplineLoader`, `categoriesLoader`, `levelsLoader`
+   - Performance: 90% query reduction (61 → 6 queries)
+   - Special case: Indirect many-to-many via `tbl_classlist` junction entity
+
+4. **Instrument** (1 loader):
+   - `disciplineLoader`
+   - Performance: 96% query reduction (51 → 2 queries for 50 instruments)
+
+#### DataLoader Best Practices
+
+**DO**:
+- ✅ Use `Scope.REQUEST` for all DataLoader services
+- ✅ Include comprehensive logging (batch size on entry, result count and duration on completion)
+- ✅ Use Map-based ordering to ensure results match input ID order
+- ✅ Handle null cases gracefully (`?? null` for single entities, `?? []` for arrays)
+- ✅ Deduplicate results for indirect many-to-many relationships
+- ✅ Use two-step queries for junction table relationships (more efficient than includes)
+- ✅ Spread readonly arrays into mutable arrays (`[...ids]`) for Prisma queries
+- ✅ Remove service dependencies that are only used for field resolution
+
+**DON'T**:
+- ❌ Don't use DataLoader for top-level queries (only field resolvers)
+- ❌ Don't call service methods from field resolvers (causes N+1 problems)
+- ❌ Don't forget to deduplicate when multiple junction records point to same entity
+- ❌ Don't return results in arbitrary order (must match input ID order)
+- ❌ Don't use `include` in DataLoader queries (fetch separately for better batching)
+- ❌ Don't inject multiple service dependencies when DataLoader can handle field resolution
+
+#### When to Implement DataLoader
+
+**Implement DataLoader when**:
+- Entity has GraphQL field resolvers that fetch related data
+- Relationship involves foreign keys to other tables
+- Field resolver calls another service's `findOne()` or `findMany()` method
+- Lists of entities are commonly queried (e.g., festival classes, registrations)
+- N+1 query problems are evident in logs or performance monitoring
+
+**Skip DataLoader when**:
+- Entity has no field resolvers
+- All data is fetched in the main query (no separate field resolution)
+- Entity is rarely queried in lists
+- Relationships are simple scalar values (IDs only, no entity fetching)
+
+#### Logging and Monitoring
+
+**Standard logging pattern**:
+```typescript
+const startTime = performance.now()
+this.logger.debug(`Batching ${ids.length} entity queries`)
+
+// ... fetch logic ...
+
+this.logger.log(
+  `Fetched ${results.length} entities in ${(performance.now() - startTime).toFixed(2)}ms`
+)
+```
+
+**What to monitor**:
+- Batch sizes: Should be > 1 for effective batching
+- Query duration: Should scale sublinearly with batch size
+- Result counts: Verify correct entity fetching
+- Memory usage: Watch for heap pressure with large batches
+
+**Troubleshooting**:
+- **Batch size always 1**: Check if DataLoader is request-scoped (Scope.REQUEST)
+- **Wrong results returned**: Verify Map-based ordering matches input ID order
+- **Missing results**: Check null handling and deduplication logic
+- **Slow queries**: Ensure database indexes on foreign keys
+- **Memory issues**: Configure Node.js heap size (`NODE_OPTIONS='--max-old-space-size=4096'`)
+
 ### Festival Domain Logic
 **CRITICAL**: The system manages a complex music festival with hierarchical class organization and multi-type performer registrations.
 

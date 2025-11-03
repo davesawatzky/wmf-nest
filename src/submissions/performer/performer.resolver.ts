@@ -16,10 +16,10 @@ import { AbilitiesGuard } from '@/ability/abilities.guard'
 import { Action } from '@/ability/ability.factory'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { Registration } from '@/submissions/registration/entities/registration.entity'
-import { RegistrationService } from '@/submissions/registration/registration.service'
 import { SelectionService } from '../selection/selection.service'
 import { PerformerInput } from './dto/performer.input'
 import { Performer, PerformerPayload } from './entities/performer.entity'
+import { PerformerDataLoader } from './performer.dataloader'
 import { PerformerService } from './performer.service'
 
 @Resolver(() => Performer)
@@ -29,7 +29,7 @@ export class PerformerResolver {
 
   constructor(
     private readonly performerService: PerformerService,
-    private readonly registrationService: RegistrationService,
+    private readonly performerDataLoader: PerformerDataLoader,
     private readonly selectionService: SelectionService,
   ) {}
 
@@ -116,8 +116,8 @@ export class PerformerResolver {
       return null
     }
     this.logger.debug(`Fetching registration for performer ID: ${performer.id}`)
-    const regID = performer.regID
-    return await this.registrationService.findOne(regID)
+    // Use DataLoader to batch registration queries
+    return await this.performerDataLoader.registrationLoader.load(performer.regID)
   }
 
   // @ResolveField(() => [Selection])

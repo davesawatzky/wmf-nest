@@ -15,9 +15,8 @@ import { Action } from '@/ability/ability.factory'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { PerformerType } from '@/common.entity'
 import { Instrument } from '@/festival/instrument/entities/instrument.entity'
-import { InstrumentService } from '@/festival/instrument/instrument.service'
 import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity'
-import { SubdisciplineService } from '@/festival/subdiscipline/subdiscipline.service'
+import { DisciplineDataLoader } from './discipline.dataloader'
 import { DisciplineService } from './discipline.service'
 import { DisciplineInput } from './dto/discipline.input'
 import { Discipline, DisciplinePayload } from './entities/discipline.entity'
@@ -29,8 +28,7 @@ export class DisciplineResolver {
 
   constructor(
     private readonly disciplineService: DisciplineService,
-    private readonly subdisciplineService: SubdisciplineService,
-    private readonly instrumentService: InstrumentService,
+    private readonly disciplineDataLoader: DisciplineDataLoader,
   ) {}
 
   /** Queries */
@@ -109,8 +107,15 @@ export class DisciplineResolver {
     this.logger.debug(
       `Fetching subdisciplines for discipline ID: ${discipline.id} with performerType: ${performerType}`,
     )
-    const { id } = discipline
-    return await this.subdisciplineService.findAll(id, performerType)
+
+    // Use DataLoader based on whether performerType filter is provided
+    if (performerType) {
+      const cacheKey = `${discipline.id}-${performerType}`
+      return await this.disciplineDataLoader.subdisciplinesByPerformerTypeLoader.load(cacheKey)
+    }
+    else {
+      return await this.disciplineDataLoader.subdisciplinesLoader.load(discipline.id)
+    }
   }
 
   @ResolveField(() => [Instrument])
@@ -121,8 +126,7 @@ export class DisciplineResolver {
       this.logger.error('instruments field resolver failed - Invalid discipline parent')
       return null
     }
-    this.logger.debug(`Fetching instruments for discipline ID: ${discipline.id}`)
-    const disciplineID = discipline.id
-    return await this.instrumentService.findAll(disciplineID)
+    // Use DataLoader to batch instrument queries
+    return await this.disciplineDataLoader.instrumentsLoader.load(discipline.id)
   }
 }

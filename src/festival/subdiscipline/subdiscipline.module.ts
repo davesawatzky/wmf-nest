@@ -4,11 +4,12 @@ import { CategoryModule } from '@/festival/category/category.module'
 import { DisciplineModule } from '@/festival/discipline/discipline.module'
 import { FestivalClassModule } from '@/festival/festival-class/festival-class.module'
 import { LevelModule } from '@/festival/level/level.module'
+import { SubdisciplineDataLoader } from './subdiscipline.dataloader'
 import { SubdisciplineResolver } from './subdiscipline.resolver'
 import { SubdisciplineService } from './subdiscipline.service'
 
 @Module({
-  providers: [SubdisciplineResolver, SubdisciplineService],
+  providers: [SubdisciplineResolver, SubdisciplineService, SubdisciplineDataLoader],
   imports: [
     forwardRef(() => DisciplineModule),
     forwardRef(() => FestivalClassModule),

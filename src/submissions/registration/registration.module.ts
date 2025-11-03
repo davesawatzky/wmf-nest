@@ -8,11 +8,12 @@ import { RegisteredClassModule } from '@/submissions/registered-class/registered
 import { SchoolModule } from '@/submissions/school/school.module'
 import { TeacherModule } from '@/submissions/teacher/teacher.module'
 import { UserModule } from '@/user/user.module'
+import { RegistrationDataLoader } from './registration.dataloader'
 import { RegistrationResolver } from './registration.resolver'
 import { RegistrationService } from './registration.service'
 
 @Module({
-  providers: [RegistrationResolver, RegistrationService],
+  providers: [RegistrationResolver, RegistrationService, RegistrationDataLoader],
   imports: [
     forwardRef(() => UserModule),
     PerformerModule,

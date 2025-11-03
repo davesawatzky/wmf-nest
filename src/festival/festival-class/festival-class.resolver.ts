@@ -158,9 +158,6 @@ export class FestivalClassResolver {
       this.logger.warn('trophies field resolver - missing classNumber')
       return null
     }
-
-    this.logger.debug(`Fetching trophies for festival class: ${festivalClass.classNumber}`)
-
     // Use DataLoader to batch trophy queries
     return await this.festivalClassDataLoader.trophiesLoader.load(festivalClass.classNumber)
   }
@@ -173,9 +170,6 @@ export class FestivalClassResolver {
       this.logger.warn('level field resolver - missing levelID')
       return null
     }
-
-    this.logger.debug(`Fetching level for festival class ID: ${festivalClass.id}`)
-
     // Use DataLoader to batch level queries
     return await this.festivalClassDataLoader.levelLoader.load(festivalClass.levelID)
   }
@@ -188,9 +182,6 @@ export class FestivalClassResolver {
       this.logger.warn('subdiscipline field resolver - missing subdisciplineID')
       return null
     }
-
-    this.logger.debug(`Fetching subdiscipline for festival class ID: ${festivalClass.id}`)
-
     // Use DataLoader to batch subdiscipline queries
     return await this.festivalClassDataLoader.subdisciplineLoader.load(festivalClass.subdisciplineID)
   }
@@ -203,9 +194,6 @@ export class FestivalClassResolver {
       this.logger.warn('category field resolver - missing categoryID')
       return null
     }
-
-    this.logger.debug(`Fetching category for festival class ID: ${festivalClass.id}`)
-
     // Use DataLoader to batch category queries
     return await this.festivalClassDataLoader.categoryLoader.load(festivalClass.categoryID)
   }
@@ -218,9 +206,6 @@ export class FestivalClassResolver {
       this.logger.warn('classType field resolver - missing classTypeID')
       return null
     }
-
-    this.logger.debug(`Fetching class type for festival class ID: ${festivalClass.id}`)
-
     // Use DataLoader to batch class type queries
     return await this.festivalClassDataLoader.classTypeLoader.load(festivalClass.classTypeID)
   }
