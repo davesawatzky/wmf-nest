@@ -2,11 +2,12 @@ import { Module } from '@nestjs/common'
 import { AbilityModule } from '@/ability/ability.module'
 import { SelectionModule } from '@/submissions/selection/selection.module'
 import { PerformerModule } from '../performer/performer.module'
+import { RegisteredClassDataLoader } from './registered-class.dataloader'
 import { RegisteredClassResolver } from './registered-class.resolver'
 import { RegisteredClassService } from './registered-class.service'
 
 @Module({
-  providers: [RegisteredClassResolver, RegisteredClassService],
+  providers: [RegisteredClassResolver, RegisteredClassService, RegisteredClassDataLoader],
   imports: [SelectionModule, AbilityModule, PerformerModule],
   exports: [RegisteredClassService],
 })

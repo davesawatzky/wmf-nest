@@ -12,13 +12,13 @@ import {
 } from '@nestjs/graphql'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { Registration } from '@/submissions/registration/entities/registration.entity'
-import { RegistrationService } from '@/submissions/registration/registration.service'
 import {
   Teacher,
   TeacherPayload,
 } from '@/submissions/teacher/entities/teacher.entity'
 import { TeacherInput } from './dto/teacher.input'
 import { TeacherTypeInput } from './dto/teacherType.input'
+import { TeacherDataLoader } from './teacher.dataloader'
 import { TeacherService } from './teacher.service'
 
 @Resolver(() => Teacher)
@@ -28,7 +28,7 @@ export class TeacherResolver {
 
   constructor(
     private readonly teacherService: TeacherService,
-    private readonly registrationService: RegistrationService,
+    private readonly teacherDataLoader: TeacherDataLoader,
   ) {}
 
   /** Queries */
@@ -115,13 +115,8 @@ export class TeacherResolver {
       this.logger.error('registrations field resolver failed - Invalid teacher or missing id')
       return null
     }
-    this.logger.log(`Fetching registrations for teacher ID: ${teacher.id}`)
-    const { id }: { id: Teacher['id'] } = teacher
-    const teacherID = id
-    return await this.registrationService.findAll(
-      undefined,
-      undefined,
-      teacherID,
-    )
+    this.logger.debug(`Fetching registrations for teacher ID: ${teacher.id}`)
+    // Use DataLoader to batch registration queries
+    return await this.teacherDataLoader.registrationsLoader.load(teacher.id)
   }
 }

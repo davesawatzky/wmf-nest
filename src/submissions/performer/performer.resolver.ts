@@ -115,7 +115,6 @@ export class PerformerResolver {
       this.logger.error('registration field resolver failed - Invalid performer or missing regID')
       return null
     }
-    this.logger.debug(`Fetching registration for performer ID: ${performer.id}`)
     // Use DataLoader to batch registration queries
     return await this.performerDataLoader.registrationLoader.load(performer.regID)
   }

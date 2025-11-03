@@ -149,7 +149,6 @@ export class SubdisciplineResolver {
       this.logger.warn('categories field resolver - missing id')
       return null
     }
-    this.logger.debug(`Fetching categories for subdiscipline ID: ${subdiscipline.id}`)
     // Use DataLoader to batch category queries
     return await this.subdisciplineDataLoader.categoriesLoader.load(subdiscipline.id)
   }
@@ -162,7 +161,6 @@ export class SubdisciplineResolver {
       this.logger.warn('levels field resolver - missing id')
       return null
     }
-    this.logger.debug(`Fetching levels for subdiscipline ID: ${subdiscipline.id}`)
     // Use DataLoader to batch level queries
     return await this.subdisciplineDataLoader.levelsLoader.load(subdiscipline.id)
   }

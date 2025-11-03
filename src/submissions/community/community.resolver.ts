@@ -13,10 +13,9 @@ import { CheckAbilities } from '@/ability/abilities.decorator'
 import { AbilitiesGuard } from '@/ability/abilities.guard'
 import { Action } from '@/ability/ability.factory'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { CommunityGroupService } from '@/submissions/community-group/community-group.service'
 import { CommunityGroup } from '@/submissions/community-group/entities/community-group.entity'
 import { Registration } from '@/submissions/registration/entities/registration.entity'
-import { RegistrationService } from '@/submissions/registration/registration.service'
+import { CommunityDataLoader } from './community.dataloader'
 import { CommunityService } from './community.service'
 import { CommunityInput } from './dto/community.input'
 import { Community, CommunityPayload } from './entities/community.entity'
@@ -28,8 +27,7 @@ export class CommunityResolver {
 
   constructor(
     private readonly communityService: CommunityService,
-    private readonly communityGroupService: CommunityGroupService,
-    private readonly registrationService: RegistrationService,
+    private readonly communityDataLoader: CommunityDataLoader,
   ) {}
 
   /** Queries */
@@ -108,10 +106,8 @@ export class CommunityResolver {
       this.logger.error('communityGroups field resolver failed - Invalid community parent')
       return null
     }
-    this.logger.debug(`Fetching community groups for community ID: ${community.id}`)
-    const { id }: { id: Community['id'] } = community
-    const communityID = id
-    return await this.communityGroupService.findAll(communityID)
+    // Use DataLoader to batch community group queries
+    return await this.communityDataLoader.communityGroupsLoader.load(community.id)
   }
 
   @ResolveField(() => Registration)
@@ -122,8 +118,7 @@ export class CommunityResolver {
       this.logger.error('registration field resolver failed - Invalid community or missing regID')
       return null
     }
-    this.logger.debug(`Fetching registration for community ID: ${community.id}`)
-    const regID = community.regID
-    return await this.registrationService.findOne(regID)
+    // Use DataLoader to batch registration queries
+    return await this.communityDataLoader.registrationLoader.load(community.regID)
   }
 }

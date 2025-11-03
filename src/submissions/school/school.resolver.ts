@@ -15,11 +15,10 @@ import { AbilitiesGuard } from '@/ability/abilities.guard'
 import { Action } from '@/ability/ability.factory'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { Registration } from '@/submissions/registration/entities/registration.entity'
-import { RegistrationService } from '@/submissions/registration/registration.service'
 import { SchoolGroup } from '@/submissions/school-group/entities/school-group.entity'
-import { SchoolGroupService } from '@/submissions/school-group/school-group.service'
 import { SchoolInput } from './dto/school.input'
 import { School, SchoolPayload } from './entities/school.entity'
+import { SchoolDataLoader } from './school.dataloader'
 import { SchoolService } from './school.service'
 
 @Resolver(() => School)
@@ -29,8 +28,7 @@ export class SchoolResolver {
 
   constructor(
     private readonly schoolService: SchoolService,
-    private readonly schoolGroupService: SchoolGroupService,
-    private readonly registrationService: RegistrationService,
+    private readonly schoolDataLoader: SchoolDataLoader,
   ) {}
 
   /** Queries */
@@ -106,10 +104,8 @@ export class SchoolResolver {
       this.logger.error('schoolGroups field resolver failed - Invalid school or missing id')
       return null
     }
-    this.logger.debug(`Fetching school groups for school ID: ${school.id}`)
-    const { id }: { id: School['id'] } = school
-    const schoolID = id
-    return await this.schoolGroupService.findAll(schoolID)
+    // Use DataLoader to batch school group queries
+    return await this.schoolDataLoader.schoolGroupsLoader.load(school.id)
   }
 
   @ResolveField(() => Registration)
@@ -120,8 +116,7 @@ export class SchoolResolver {
       this.logger.error('registration field resolver failed - Invalid school or missing regID')
       return null
     }
-    this.logger.debug(`Fetching registration for school ID: ${school.id}`)
-    const regId = school.regID
-    return await this.registrationService.findOne(regId)
+    // Use DataLoader to batch registration queries
+    return await this.schoolDataLoader.registrationLoader.load(school.regID)
   }
 }

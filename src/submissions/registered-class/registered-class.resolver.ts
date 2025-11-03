@@ -17,13 +17,12 @@ import { Action } from '@/ability/ability.factory'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { Performer } from '@/submissions/performer/entities/performer.entity'
 import { Selection } from '@/submissions/selection/entities/selection.entity'
-import { SelectionService } from '@/submissions/selection/selection.service'
-import { PerformerService } from '../performer/performer.service'
 import { RegisteredClassInput } from './dto/registered-class.input'
 import {
   RegisteredClass,
   RegisteredClassPayload,
 } from './entities/registered-class.entity'
+import { RegisteredClassDataLoader } from './registered-class.dataloader'
 import { RegisteredClassService } from './registered-class.service'
 
 @Resolver(() => RegisteredClass)
@@ -33,8 +32,7 @@ export class RegisteredClassResolver {
 
   constructor(
     private readonly registeredClassService: RegisteredClassService,
-    private readonly selectionService: SelectionService,
-    private readonly performerService: PerformerService,
+    private readonly registeredClassDataLoader: RegisteredClassDataLoader,
   ) {}
 
   /** Queries */
@@ -117,10 +115,8 @@ export class RegisteredClassResolver {
       this.logger.error('selections field resolver failed - Invalid registeredClass or missing id')
       return null
     }
-    this.logger.debug(`Fetching selections for registered class ID: ${registeredClass.id}`)
-    const { id }: { id: RegisteredClass['id'] } = registeredClass
-    const registeredClassID = id
-    return await this.selectionService.findAll(registeredClassID)
+    // Use DataLoader to batch selection queries
+    return await this.registeredClassDataLoader.selectionsLoader.load(registeredClass.id)
   }
 
   @ResolveField(() => [Performer])
@@ -137,8 +133,7 @@ export class RegisteredClassResolver {
       return []
     }
 
-    this.logger.debug(`Fetching performers for registered class ID: ${registeredClass.id}, classNumber: ${classNumber}`)
-    const registeredClassNumber = classNumber
-    return await this.performerService.findAll(null, registeredClassNumber)
+    // Use DataLoader to batch performer queries
+    return await this.registeredClassDataLoader.performersLoader.load(classNumber)
   }
 }

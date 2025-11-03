@@ -155,7 +155,6 @@ export class RegistrationResolver {
       this.logger.warn('user field resolver - missing userID')
       return null
     }
-    this.logger.debug(`Fetching user for registration ID: ${registration.id}`)
     // Use DataLoader to batch user queries
     return await this.registrationDataLoader.userLoader.load(registration.userID)
   }
@@ -168,7 +167,6 @@ export class RegistrationResolver {
       this.logger.warn('performers field resolver - missing id')
       return null
     }
-    this.logger.debug(`Fetching performers for registration ID: ${registration.id}`)
     // Use DataLoader to batch performers queries
     return await this.registrationDataLoader.performersLoader.load(registration.id)
   }
@@ -181,7 +179,6 @@ export class RegistrationResolver {
       this.logger.warn('registeredClasses field resolver - missing id')
       return null
     }
-    this.logger.debug(`Fetching registered classes for registration ID: ${registration.id}`)
     // Use DataLoader to batch registered classes queries
     return await this.registrationDataLoader.registeredClassesLoader.load(registration.id)
   }
@@ -194,7 +191,6 @@ export class RegistrationResolver {
       this.logger.warn('group field resolver - missing id')
       return null
     }
-    this.logger.debug(`Fetching group for registration ID: ${registration.id}`)
     // Use DataLoader to batch group queries
     return await this.registrationDataLoader.groupLoader.load(registration.id)
   }
@@ -207,7 +203,6 @@ export class RegistrationResolver {
       this.logger.warn('community field resolver - missing id')
       return null
     }
-    this.logger.debug(`Fetching community for registration ID: ${registration.id}`)
     // Use DataLoader to batch community queries
     return await this.registrationDataLoader.communityLoader.load(registration.id)
   }
@@ -226,7 +221,6 @@ export class RegistrationResolver {
       this.logger.debug(`No teacher assigned to registration ID: ${registration.id}`)
       return null
     }
-    this.logger.debug(`Fetching teacher for registration ID: ${registration.id}`)
     // Use DataLoader to batch teacher queries
     return await this.registrationDataLoader.teacherLoader.load(teacherID)
   }
@@ -239,7 +233,6 @@ export class RegistrationResolver {
       this.logger.warn('school field resolver - missing id')
       return null
     }
-    this.logger.debug(`Fetching school for registration ID: ${registration.id}`)
     // Use DataLoader to batch school queries
     return await this.registrationDataLoader.schoolLoader.load(registration.id)
   }

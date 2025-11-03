@@ -14,7 +14,7 @@ import { AbilitiesGuard } from '@/ability/abilities.guard'
 import { Action } from '@/ability/ability.factory'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
-import { FestivalClassService } from '@/festival/festival-class/festival-class.service'
+import { ClassTypeDataLoader } from './class-type.dataloader'
 import { ClassTypeService } from './class-type.service'
 import { ClassTypeInput } from './dto/class-type.input'
 import { ClassType, ClassTypePayload } from './entities/class-type.entity'
@@ -26,7 +26,7 @@ export class ClassTypeResolver {
 
   constructor(
     private readonly classTypeService: ClassTypeService,
-    private readonly festivalClassService: FestivalClassService,
+    private readonly classTypeDataLoader: ClassTypeDataLoader,
   ) {}
 
   /** Queries */
@@ -90,13 +90,7 @@ export class ClassTypeResolver {
       return null
     }
     this.logger.debug(`Fetching festival classes for class type ID: ${classType.id}`)
-    const classTypeID = classType.id
-    return await this.festivalClassService.findAll(
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      classTypeID,
-    )
+    // Use DataLoader to batch festival class queries
+    return await this.classTypeDataLoader.festivalClassesLoader.load(classType.id)
   }
 }

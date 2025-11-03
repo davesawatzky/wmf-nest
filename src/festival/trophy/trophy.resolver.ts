@@ -15,6 +15,7 @@ import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
 import { TrophyInput } from './dto/trophy.input'
 import { Trophy, TrophyPayload } from './entities/trophy.entity'
+import { TrophyDataLoader } from './trophy.dataloader'
 import { TrophyService } from './trophy.service'
 
 @Resolver(() => Trophy)
@@ -22,7 +23,10 @@ import { TrophyService } from './trophy.service'
 export class TrophyResolver {
   private readonly logger = new Logger(TrophyResolver.name)
 
-  constructor(private readonly trophyService: TrophyService) {}
+  constructor(
+    private readonly trophyService: TrophyService,
+    private readonly trophyDataLoader: TrophyDataLoader,
+  ) {}
 
   /** Queries */
 
@@ -84,7 +88,7 @@ export class TrophyResolver {
       return null
     }
     this.logger.debug(`Fetching festival classes for trophy ID: ${trophy.id}`)
-    const { id }: { id: Trophy['id'] } = trophy
-    return await this.trophyService.findTrophyClasses(id)
+    // Use DataLoader to batch festival class queries
+    return await this.trophyDataLoader.festivalClassesLoader.load(trophy.id)
   }
 }
