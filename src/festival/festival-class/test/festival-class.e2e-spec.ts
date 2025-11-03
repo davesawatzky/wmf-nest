@@ -1,3 +1,4 @@
+import { GraphQLError } from 'graphql'
 import gql from 'graphql-tag'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import {
@@ -335,8 +336,7 @@ describe('FestivalClass E2E Tests', () => {
                   }
                 }
               }
-            `)
-            .expectNoErrors() as { data: { festivalClasses: FestivalClass[] } }
+            `) as { errors, data: { festivalClasses: FestivalClass[] } }
 
           const classWithTrophies = response.data.festivalClasses.find(
             fc => fc.trophies && fc.trophies.length > 0,

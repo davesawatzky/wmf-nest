@@ -110,11 +110,10 @@ export class SelectionService {
 
       if (!selection) {
         this.logger.error(`Selection not found with ID: ${selectionID}`)
-        return null
+        throw new NotFoundException('Selection not found')
       }
-      else {
-        this.logger.log(`Successfully retrieved selection ID: ${selectionID}`)
-      }
+
+      this.logger.log(`Successfully retrieved selection ID: ${selectionID}`)
       return selection
     }
     catch (error: any) {

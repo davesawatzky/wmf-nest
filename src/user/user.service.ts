@@ -65,6 +65,7 @@ export class UserService {
         this.logger.warn(
           `User not found with ${userID ? `ID: ${userID}` : `email: ${email}`}`,
         )
+        throw new NotFoundException('User not found')
       }
 
       // Remove password from response

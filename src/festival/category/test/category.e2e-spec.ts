@@ -42,7 +42,7 @@ describe('Category E2E Tests', () => {
   })
 
   describe('Category Queries (Both Roles)', () => {
-    it('Should list no categories without level or subdiscipline', async () => {
+    it('Should list all categories without level or subdiscipline', async () => {
       const results = await testWithBothRoles(
         'list categories',
         async (role) => {
@@ -59,7 +59,7 @@ describe('Category E2E Tests', () => {
             `)
 
           return {
-            hasData: !!response.errors,
+            hasData: !response.errors,
           }
         },
       )

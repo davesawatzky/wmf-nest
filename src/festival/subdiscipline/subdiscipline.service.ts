@@ -93,14 +93,15 @@ export class SubdisciplineService {
     disciplineID?: tbl_discipline['id'] | null,
     performerType?: PerformerType | null,
   ) {
-    this.logger.debug(
-      `Retrieving subdisciplines with filters - disciplineID: ${disciplineID}, performerType: ${performerType}`,
-    )
-
     try {
-      if (!performerType || !disciplineID) {
+      if (!performerType && !disciplineID) {
         this.logger.debug(
           'No performerType or disciplineID filter provided, retrieving all subdisciplines',
+        )
+      }
+      else {
+        this.logger.log(
+          `Fetching subdisciplines with filters - disciplineID: ${disciplineID}, performerType: ${performerType}`,
         )
       }
       const subdisciplines = await this.prisma.tbl_subdiscipline.findMany({
@@ -147,10 +148,10 @@ export class SubdisciplineService {
 
       if (!subdiscipline) {
         this.logger.error(`Subdiscipline not found with ID: ${id}`)
+        throw new NotFoundException('Subdiscipline not found')
       }
-      else {
-        this.logger.log(`Successfully retrieved subdiscipline with ID: ${id}`)
-      }
+
+      this.logger.log(`Successfully retrieved subdiscipline with ID: ${id}`)
       return {
         ...subdiscipline,
         performerType: subdiscipline.performerType as PerformerType,

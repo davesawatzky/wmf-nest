@@ -130,10 +130,10 @@ export class InstrumentService {
         })
         if (!instrument) {
           this.logger.warn(`Instrument not found with ID: ${id}`)
+          throw new NotFoundException('Instrument not found')
         }
- else {
-          this.logger.log(`Successfully retrieved instrument with ID: ${id}`)
-        }
+
+        this.logger.log(`Successfully retrieved instrument with ID: ${id}`)
       }
       else if (name) {
         instrument = await this.prisma.tbl_instrument.findFirst({
@@ -141,8 +141,9 @@ export class InstrumentService {
         })
         if (!instrument) {
           this.logger.warn(`Instrument not found with name: ${name}`)
-          return null
+          throw new NotFoundException('Instrument not found')
         }
+
         this.logger.log(`Successfully retrieved instrument with name: ${name}`)
       }
       return instrument

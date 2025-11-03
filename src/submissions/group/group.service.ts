@@ -141,6 +141,7 @@ export class GroupService {
         this.logger.warn(
           `Group not found with registrationID: ${registrationID}, groupID: ${groupID}`,
         )
+        throw new NotFoundException('Group not found')
       }
 
       return group

@@ -117,10 +117,10 @@ export class ClassTypeService {
 
       if (!classType) {
         this.logger.error(`Class type not found with ID: ${id}`)
+        throw new NotFoundException('Class type not found')
       }
-      else {
-        this.logger.log(`Successfully retrieved class type with ID: ${id}`)
-      }
+
+      this.logger.log(`Successfully retrieved class type with ID: ${id}`)
       return classType
     }
     catch (error: any) {

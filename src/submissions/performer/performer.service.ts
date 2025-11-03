@@ -174,6 +174,7 @@ export class PerformerService {
 
       if (!performer) {
         this.logger.warn(`Performer not found with ID: ${performerID}`)
+        throw new NotFoundException('Performer not found')
       }
       return performer
     }

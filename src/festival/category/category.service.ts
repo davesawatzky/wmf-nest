@@ -80,12 +80,13 @@ export class CategoryService {
   ) {
     try {
       if (!levelID && !subdisciplineID) {
-        this.logger.log('Must have  at least one filter to fetch categories')
-        return null
+        this.logger.log('No filters provided, retrieving all categories')
       }
-      this.logger.log(
-        `Fetching categories with filters - levelID: ${levelID}, subdisciplineID: ${subdisciplineID}`,
-      )
+      else {
+        this.logger.log(
+          `Fetching categories with filters - levelID: ${levelID}, subdisciplineID: ${subdisciplineID}`,
+        )
+      }
 
       return await this.prisma.tbl_category.findMany({
         where: {
@@ -123,8 +124,10 @@ export class CategoryService {
 
       if (!category) {
         this.logger.warn(`Category not found with ID: ${id}`)
+        throw new NotFoundException('Category not found')
       }
 
+      this.logger.log(`Successfully retrieved category with ID: ${id}`)
       return category
     }
     catch (error: any) {

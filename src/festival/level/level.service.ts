@@ -91,7 +91,6 @@ export class LevelService {
     try {
       if (!categoryID && !subdisciplineID) {
         this.logger.log('No filters provided, retrieving all levels')
-        throw new BadRequestException('At least one filter (categoryID or subdisciplineID) must be provided')
       }
       const levels = await this.prisma.tbl_level.findMany({
         where: {

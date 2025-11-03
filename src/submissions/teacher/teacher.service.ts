@@ -187,10 +187,10 @@ export class TeacherService {
           where: { id: teacherID },
         })
         if (!teacher) {
-          this.logger.log(
+          this.logger.warn(
             `Teacher not found with ID: ${teacherID}`,
           )
-          // throw new NotFoundException('Teacher not found')
+          throw new NotFoundException('Teacher not found')
         }
       }
       else if (email) {
@@ -198,10 +198,10 @@ export class TeacherService {
           where: { email },
         })
         if (!teacher) {
-          this.logger.log(
+          this.logger.warn(
             `Teacher not found with email: ${email}`,
           )
-          return null
+          throw new NotFoundException('Teacher not found')
         }
       }
 

@@ -129,6 +129,7 @@ export class SchoolGroupService {
 
       if (!schoolGroup) {
         this.logger.warn(`School group not found with ID: ${schoolGroupID}`)
+        throw new NotFoundException('School group not found')
       }
       return schoolGroup
     }

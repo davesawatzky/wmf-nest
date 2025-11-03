@@ -135,6 +135,7 @@ export class CommunityGroupService {
         this.logger.warn(
           `Community group not found with ID: ${communityGroupID}`,
         )
+        throw new NotFoundException('Community group not found')
       }
       return communityGroup
     }

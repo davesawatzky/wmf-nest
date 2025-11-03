@@ -192,6 +192,13 @@ export class FestivalClassService {
         },
       })
 
+      if (trophies.length === 0) {
+        this.logger.warn(
+          `No trophies found for festival class number: ${festivalClassNumber}`,
+        )
+        return null
+      }
+
       this.logger.log(
         `Successfully retrieved ${trophies.length} trophies for class number: ${festivalClassNumber}`,
       )
@@ -254,10 +261,10 @@ export class FestivalClassService {
 
       if (!festivalClass) {
         this.logger.error(`Festival class not found with ID: ${id}`)
+        throw new NotFoundException('Festival class not found')
       }
-      else {
-        this.logger.log(`Successfully retrieved festival class with ID: ${id}`)
-      }
+
+      this.logger.log(`Successfully retrieved festival class with ID: ${id}`)
       return festivalClass
     }
     catch (error: any) {
@@ -299,12 +306,12 @@ export class FestivalClassService {
         this.logger.error(
           `Festival class not found with class number: ${classNumber}`,
         )
+        throw new NotFoundException('Festival class not found')
       }
-      else {
-        this.logger.log(
-          `Successfully retrieved festival class with class number: ${classNumber}`,
-        )
-      }
+
+      this.logger.log(
+        `Successfully retrieved festival class with class number: ${classNumber}`,
+      )
       return festivalClass
     }
     catch (error: any) {

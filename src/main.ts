@@ -49,49 +49,74 @@ async function bootstrap() {
   app.use(
     helmet({
       crossOriginEmbedderPolicy: false,
+      crossOriginResourcePolicy: {
+        policy: 'cross-origin',
+      },
       contentSecurityPolicy: {
         directives: {
+          defaultSrc: [`'self'`],
           imgSrc: [
             `'self'`,
             'data:',
-            'https://*.stripe.com',
-            'apollo-server-landing-page.cdn.apollographql.com',
+            'https:',
           ],
           scriptSrc: [
             `'self'`,
-            'https://js.stripe.com',
             `'unsafe-inline'`,
+            'https://js.stripe.com',
             'https://m.stripe.network',
-            'https:',
+            'https://*.apollographql.com',
           ],
           manifestSrc: [
             `'self'`,
-            'apollo-server-landing-page.cdn.apollographql.com',
+            'https://*.apollographql.com',
           ],
           frameSrc: [
             `'self'`,
             'https://js.stripe.com',
             'https://hooks.stripe.com',
             'https://m.stripe.network',
-            'sandbox.embed.apollographql.com',
+            'https://*.apollographql.com',
           ],
           connectSrc: [
             `'self'`,
             'https://api.stripe.com',
-            'm.stripe.network',
+            'https://m.stripe.network',
             'https://uploads.stripe.com',
-            'https://sentry.io',
-            'wss://sandbox.embed.apollographql.com',
-            'https://sandbox.embed.apollographql.com',
-            'https://apollo-server-landing-page.cdn.apollographql.com',
+            'https://*.sentry.io',
+            'wss://*.apollographql.com',
+            'https://*.apollographql.com',
           ],
           styleSrc: [
             `'self'`,
             `'unsafe-inline'`,
             'https://fonts.googleapis.com',
           ],
+          fontSrc: [
+            `'self'`,
+            'https://fonts.gstatic.com',
+          ],
+          objectSrc: [`'none'`],
+          frameAncestors: [`'none'`],
+          workerSrc: [`'self'`, 'blob:'],
+          baseUri: [`'self'`],
+          formAction: [`'self'`],
+          ...(process.env.NODE_ENV === 'production' && {
+            upgradeInsecureRequests: [],
+          }),
         },
       },
+      hsts: process.env.NODE_ENV === 'production'
+        ? {
+            maxAge: 31536000, // 1 year
+            includeSubDomains: true,
+            preload: true,
+          }
+        : false,
+      xssFilter: true,
+      noSniff: true,
+      hidePoweredBy: true,
+      referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
     }),
   )
 

@@ -170,6 +170,7 @@ export class DisciplineService {
       })
       if (!discipline) {
         this.logger.warn(`Discipline not found with ID: ${id}`)
+        throw new NotFoundException('Discipline not found')
       }
       this.logger.log(`Successfully retrieved discipline with ID: ${id}`)
       return discipline

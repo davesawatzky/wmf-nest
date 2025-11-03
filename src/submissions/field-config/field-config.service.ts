@@ -57,13 +57,12 @@ export class FieldConfigService {
         this.logger.error(
           `Field configuration not found for table: ${tableName}, field: ${fieldName}`,
         )
-      }
-      else {
-        this.logger.log(
-          `Successfully retrieved field configuration for ${tableName}.${fieldName}`,
-        )
+        throw new NotFoundException('Field configuration not found')
       }
 
+      this.logger.log(
+        `Successfully retrieved field configuration for ${tableName}.${fieldName}`,
+      )
       return fieldConfig
     }
     catch (error: any) {

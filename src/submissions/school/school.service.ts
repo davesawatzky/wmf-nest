@@ -118,6 +118,7 @@ export class SchoolService {
         this.logger.warn(
           `School not found with registrationID: ${registrationID}, schoolID: ${schoolID}`,
         )
+        throw new NotFoundException('School not found')
       }
       return school
     }
