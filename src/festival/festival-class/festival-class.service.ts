@@ -205,7 +205,7 @@ export class FestivalClassService {
       return trophies
     }
     catch (error: any) {
-      this.logger.error(
+      this.logger.warn(
         `Failed to retrieve trophies for class number ${festivalClassNumber}: ${error.message}`,
         error.stack,
       )

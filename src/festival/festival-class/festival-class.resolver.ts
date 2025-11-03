@@ -31,6 +31,7 @@ import {
   FestivalClass,
   FestivalClassPayload,
 } from './entities/festival-class.entity'
+import { FestivalClassDataLoader } from './festival-class.dataloader'
 import { FestivalClassService } from './festival-class.service'
 
 @Resolver(() => FestivalClass)
@@ -40,6 +41,7 @@ export class FestivalClassResolver {
 
   constructor(
     private festivalClassService: FestivalClassService,
+    private festivalClassDataLoader: FestivalClassDataLoader,
     private subdisciplineService: SubdisciplineService,
     private levelService: LevelService,
     private categoryService: CategoryService,
@@ -148,73 +150,78 @@ export class FestivalClassResolver {
 
   /** Field Resolvers */
 
-  @ResolveField(() => [Trophy])
+  @ResolveField(() => [Trophy], { nullable: true })
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: FestivalClass })
   async trophies(@Parent() festivalClass: FestivalClass) {
     if (!festivalClass?.classNumber) {
-      this.logger.error('trophies field resolver failed - Invalid festival class parent')
+      this.logger.warn('trophies field resolver - missing classNumber')
       return null
     }
+
     this.logger.debug(`Fetching trophies for festival class: ${festivalClass.classNumber}`)
-    const { classNumber }: { classNumber: FestivalClass['classNumber'] }
-      = festivalClass
-    return await this.festivalClassService.findClassTrophies(classNumber)
+
+    // Use DataLoader to batch trophy queries
+    return await this.festivalClassDataLoader.trophiesLoader.load(festivalClass.classNumber)
   }
 
-  @ResolveField(() => Level)
+  @ResolveField(() => Level, { nullable: true })
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Level })
   async level(@Parent() festivalClass: tbl_classlist) {
     if (!festivalClass?.levelID) {
-      this.logger.error('level field resolver failed - Invalid festival class or missing levelID')
+      this.logger.warn('level field resolver - missing levelID')
       return null
     }
+
     this.logger.debug(`Fetching level for festival class ID: ${festivalClass.id}`)
-    const { levelID }: { levelID: tbl_classlist['levelID'] } = festivalClass
-    return await this.levelService.findOne(levelID)
+
+    // Use DataLoader to batch level queries
+    return await this.festivalClassDataLoader.levelLoader.load(festivalClass.levelID)
   }
 
-  @ResolveField(() => Subdiscipline)
+  @ResolveField(() => Subdiscipline, { nullable: true })
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Subdiscipline })
   async subdiscipline(@Parent() festivalClass: tbl_classlist) {
     if (!festivalClass?.subdisciplineID) {
-      this.logger.error('subdiscipline field resolver failed - Invalid festival class or missing subdisciplineID')
+      this.logger.warn('subdiscipline field resolver - missing subdisciplineID')
       return null
     }
+
     this.logger.debug(`Fetching subdiscipline for festival class ID: ${festivalClass.id}`)
-    const {
-      subdisciplineID,
-    }: { subdisciplineID: tbl_classlist['subdisciplineID'] } = festivalClass
-    return await this.subdisciplineService.findOne(subdisciplineID)
+
+    // Use DataLoader to batch subdiscipline queries
+    return await this.festivalClassDataLoader.subdisciplineLoader.load(festivalClass.subdisciplineID)
   }
 
-  @ResolveField(() => Category)
+  @ResolveField(() => Category, { nullable: true })
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Category })
   async category(@Parent() festivalClass: tbl_classlist) {
     if (!festivalClass?.categoryID) {
-      this.logger.error('category field resolver failed - Invalid festival class or missing categoryID')
+      this.logger.warn('category field resolver - missing categoryID')
       return null
     }
+
     this.logger.debug(`Fetching category for festival class ID: ${festivalClass.id}`)
-    const { categoryID }: { categoryID: tbl_classlist['categoryID'] }
-      = festivalClass
-    return await this.categoryService.findOne(categoryID)
+
+    // Use DataLoader to batch category queries
+    return await this.festivalClassDataLoader.categoryLoader.load(festivalClass.categoryID)
   }
 
-  @ResolveField(() => ClassType)
+  @ResolveField(() => ClassType, { nullable: true })
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: ClassType })
   async classType(@Parent() festivalClass: tbl_classlist) {
     if (!festivalClass?.classTypeID) {
-      this.logger.error('classType field resolver failed - Invalid festival class or missing classTypeID')
+      this.logger.warn('classType field resolver - missing classTypeID')
       return null
     }
+
     this.logger.debug(`Fetching class type for festival class ID: ${festivalClass.id}`)
-    const { classTypeID }: { classTypeID: tbl_class_type['id'] }
-      = festivalClass
-    return await this.classTypeService.findOne(classTypeID)
+
+    // Use DataLoader to batch class type queries
+    return await this.festivalClassDataLoader.classTypeLoader.load(festivalClass.classTypeID)
   }
 }
