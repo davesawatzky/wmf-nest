@@ -18,6 +18,14 @@ const SentryWinstonTransport = Sentry.createSentryWinstonTransport(Transport, {
 })
 
 async function bootstrap() {
+  // Environment check
+  console.warn('========================================')
+  console.warn('NODE_ENV:', process.env.NODE_ENV)
+  console.warn('DATABASE_URL exists:', !!process.env.DATABASE_URL)
+  console.warn('EMAIL_SERVER:', process.env.EMAIL_SERVER)
+  console.warn('ORIGIN_SERVER:', process.env.ORIGIN_SERVER)
+  console.warn('========================================')
+
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     rawBody: true,
     logger: WinstonModule.createLogger({
@@ -80,9 +88,12 @@ async function bootstrap() {
           ],
           connectSrc: [
             `'self'`,
-            'https://api.stripe.com',
-            'https://m.stripe.network',
-            'https://uploads.stripe.com',
+            process.env.ORIGIN_SERVER || 'http://localhost:3001',
+            process.env.THIS_SERVER || 'http://localhost:3000',
+            'ws://localhost:3000',
+            'wss://localhost:3000',
+            'https://*.stripe.com',
+            'http://*.stripe.com',
             'https://*.sentry.io',
             'wss://*.apollographql.com',
             'https://*.apollographql.com',
