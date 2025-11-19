@@ -235,6 +235,7 @@ model tbl_registration {
   payedAmt          Decimal?            @map("payed_amt") @db.Decimal(10, 2)
   transactionInfo   String?             @map("transaction_info") @db.Text
   confirmation      String?             @unique @db.Text
+  payment_intent    String?             @unique @db.Text
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt         DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   User              tbl_user?           @relation("UserRelation", fields: [userID], references: [id], onUpdate: Restrict)

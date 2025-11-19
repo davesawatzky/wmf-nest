@@ -43,6 +43,14 @@ export class PaymentController {
     }
   }
 
+  @Post('cancel-confirmation-token')
+  async cancelConfirmationToken(@Body() body) {
+    const { regId } = body
+    return await this.paymentService.cancelConfirmationToken(
+      regId,
+    )
+  }
+
   @Post('webhook')
   async webhook(
     @Req() req: RawBodyRequest<Request>,

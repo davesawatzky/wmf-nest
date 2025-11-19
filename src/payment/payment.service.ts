@@ -6,6 +6,7 @@ import {
   Logger,
   RawBodyRequest,
 } from '@nestjs/common'
+import { PrismaService } from '@/prisma/prisma.service'
 import { StripeService } from '@/stripe/stripe.service'
 import { RegistrationService } from '@/submissions/registration/registration.service'
 
@@ -16,6 +17,7 @@ export class PaymentService {
   constructor(
     private readonly stripeService: StripeService,
     private readonly registrationService: RegistrationService,
+    private readonly prisma: PrismaService,
   ) {}
 
   async createPaymentIntent(
@@ -36,7 +38,6 @@ export class PaymentService {
         'Registration ID, confirmation ID, and token ID are required',
       )
     }
-
     try {
       const { totalAmt } = await this.registrationService.findOne(regID)
 
@@ -45,6 +46,16 @@ export class PaymentService {
           `Invalid total amount for registration ID ${regID}: ${totalAmt}`,
         )
         throw new BadRequestException('Invalid total amount for payment')
+      }
+      const { payment_intent: checkForExistingToken } = await this.prisma.tbl_registration.findUnique({
+        where: { id: regID },
+      })
+
+      if (checkForExistingToken) {
+        this.logger.warn(
+          `Confirmation Token already exists for registration ID ${regID}: ${checkForExistingToken}`,
+        )
+        return null
       }
 
       const confirmationToken
@@ -62,9 +73,8 @@ export class PaymentService {
             WMF_Confirmation_ID: WMFconfirmationId,
           },
         })
-
       this.logger.log(
-        `Successfully created payment intent for registration ID: ${regID}, amount: $${totalAmount}`,
+        `Successfully created payment intent for registration ID: ${regID}, amount: $${totalAmount}, ${paymentIntent.id}`,
       )
       return paymentIntent
     }
@@ -78,6 +88,54 @@ export class PaymentService {
         error.stack,
       )
       throw new InternalServerErrorException('Failed to create payment intent')
+    }
+  }
+
+  async cancelConfirmationToken(regID: number) {
+    this.logger.debug(`Cancelling confirmation token for registration ID: ${regID}`)
+
+    if (!regID) {
+      this.logger.error('Missing required parameters for confirmation token removal', {
+        regID,
+      })
+      throw new BadRequestException(
+        'Registration ID and token ID are required',
+      )
+    }
+
+    try {
+      const { payment_intent } = await this.prisma.tbl_registration.findUnique({
+        where: { id: regID },
+      })
+
+      if (!payment_intent) {
+        this.logger.log(
+          `No confirmation token found for registration ID: ${regID}`,
+        )
+        return { success: true, message: 'No confirmation token to remove' }
+      }
+
+      await this.prisma.tbl_registration.update({
+        where: { id: regID },
+        data: {
+          payment_intent: null,
+        },
+      })
+      this.logger.log(
+        `Cleared the confirmation token from registration ID: ${regID}`,
+      )
+      return { success: true, message: 'Confirmation token removed' }
+    }
+    catch (error: any) {
+      this.logger.error(
+        `Failed to remove confirmation token for registration ID ${regID}: ${error.message}`,
+        error.stack,
+      )
+      return {
+        success: false,
+        message: 'Failed to remove confirmation token',
+        error: error.message,
+      }
     }
   }
 

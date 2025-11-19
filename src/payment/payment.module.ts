@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import {PrismaModule} from '@/prisma/prisma.module'
+import {PrismaService} from '@/prisma/prisma.service'
 import { StripeModule } from '@/stripe/stripe.module'
 import { RegistrationModule } from '@/submissions/registration/registration.module'
 import { PaymentController } from './payment.controller'
@@ -10,6 +12,7 @@ import { PaymentService } from './payment.service'
   providers: [PaymentModule, PaymentService],
   imports: [
     RegistrationModule,
+    PrismaModule,
     StripeModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
