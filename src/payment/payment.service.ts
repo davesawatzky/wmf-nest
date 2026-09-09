@@ -73,6 +73,10 @@ export class PaymentService {
             WMF_Confirmation_ID: WMFconfirmationId,
           },
         })
+      await this.prisma.tbl_registration.update({
+        where: { id: regID },
+        data: { payment_intent: paymentIntent.id },
+      })
       this.logger.log(
         `Successfully created payment intent for registration ID: ${regID}, amount: $${totalAmount}, ${paymentIntent.id}`,
       )
