@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import { tbl_reg_class, tbl_registration } from '@prisma/client'
+import type { tbl_reg_class, tbl_registration } from '@prisma/client'
 import { PrismaService } from '@/prisma/prisma.service'
 import { Registration } from '@/submissions/registration/entities/registration.entity'
 import { RegisteredClassInput } from './dto/registered-class.input'

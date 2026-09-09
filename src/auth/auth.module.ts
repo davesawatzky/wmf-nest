@@ -1,7 +1,7 @@
 import process from 'node:process'
-import { Module } from '@nestjs/common'
-import { JwtModule } from '@nestjs/jwt/dist'
-import { PassportModule } from '@nestjs/passport/dist'
+import { Global, Module } from '@nestjs/common'
+import { JwtModule } from '@nestjs/jwt'
+import { PassportModule } from '@nestjs/passport'
 import { EmailConfirmationModule } from '../email-confirmation/email-confirmation.module'
 import { UserModule } from '../user/user.module'
 import { AuthResolver } from './auth.resolver'
@@ -9,11 +9,12 @@ import { AuthService } from './auth.service'
 import { JwtStrategy } from './jwt.strategy'
 import { LocalStrategy } from './local.strategy'
 
+@Global()
 @Module({
   providers: [AuthResolver, AuthService, LocalStrategy, JwtStrategy],
-  exports: [AuthService],
+  exports: [AuthService, PassportModule],
   imports: [
-    PassportModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     EmailConfirmationModule,
     UserModule,
     JwtModule.registerAsync({

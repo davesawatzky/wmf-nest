@@ -3,9 +3,9 @@ import {
   Controller,
   Headers,
   Post,
-  RawBodyRequest,
   Req,
 } from '@nestjs/common'
+import type { RawBodyRequest } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PaymentService } from './payment.service'
 

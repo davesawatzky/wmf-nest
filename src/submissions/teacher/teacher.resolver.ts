@@ -1,5 +1,5 @@
-import { BadRequestException, Logger } from '@nestjs/common'
-import { UseGuards } from '@nestjs/common/decorators'
+import { BadRequestException, Logger, UseGuards } from '@nestjs/common'
+
 import {
   Args,
   Context,

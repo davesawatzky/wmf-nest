@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { tbl_item } from '@prisma/client'
+import type { tbl_item } from '@prisma/client'
 import { PrismaService } from '@/prisma/prisma.service'
 import { ItemInput } from './dto/item.input'
 

@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import { tbl_discipline, tbl_subdiscipline } from '@prisma/client'
+import type { tbl_discipline, tbl_subdiscipline } from '@prisma/client'
 
 import { PerformerType, UserError } from '@/common.entity'
 import { PrismaService } from '@/prisma/prisma.service'

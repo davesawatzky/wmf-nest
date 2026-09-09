@@ -1,5 +1,5 @@
 import { Injectable, Logger, Scope } from '@nestjs/common'
-import { tbl_instrument, tbl_subdiscipline } from '@prisma/client'
+import type { tbl_instrument, tbl_subdiscipline } from '@prisma/client'
 import DataLoader from 'dataloader'
 import { PerformerType } from '@/common.entity'
 import { PrismaService } from '@/prisma/prisma.service'

@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import { tbl_order, tbl_user } from '@prisma/client'
+import type { tbl_order, tbl_user } from '@prisma/client'
 import { PrismaService } from '@/prisma/prisma.service'
 import { OrderInput } from './dto/order.input'
 

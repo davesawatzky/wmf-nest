@@ -4,8 +4,8 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
-  RawBodyRequest,
 } from '@nestjs/common'
+import type { RawBodyRequest } from '@nestjs/common'
 import { PrismaService } from '@/prisma/prisma.service'
 import { StripeService } from '@/stripe/stripe.service'
 import { RegistrationService } from '@/submissions/registration/registration.service'

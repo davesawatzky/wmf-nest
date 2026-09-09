@@ -10,7 +10,7 @@ const __dirname = dirname(__filename)
 
 export default defineConfig({
   test: {
-    include: ['**/*.e2e-spec.?(c|m)[jt]s?(x)'],
+    include: ['./src/**/*.e2e-spec.?(c|m)[jt]s?(x)'],
     root: './',
     isolate: false,
     globals: true,
@@ -20,11 +20,7 @@ export default defineConfig({
     ],
     // Use threads pool for UI compatibility (forks don't work well with UI)
     pool: 'threads',
-    poolOptions: {
-      threads: {
-        singleThread: true,
-      },
-    },
+    fileParallelism: false,
     server: {
       deps: {
         fallbackCJS: true,

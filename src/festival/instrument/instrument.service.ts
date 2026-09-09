@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import { tbl_instrument } from '@prisma/client'
+import type { tbl_instrument } from '@prisma/client'
 import { UserError } from '@/common.entity'
 import { PrismaService } from '@/prisma/prisma.service'
 import { InstrumentInput } from './dto/instrument.input'

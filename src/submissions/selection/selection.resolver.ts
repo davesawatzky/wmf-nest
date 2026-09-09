@@ -1,7 +1,7 @@
-import { BadRequestException, Logger } from '@nestjs/common'
-import { UseGuards } from '@nestjs/common/decorators'
+import { BadRequestException, Logger, UseGuards } from '@nestjs/common'
+
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { tbl_reg_class } from '@prisma/client'
+import type { tbl_reg_class } from '@prisma/client'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
 import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity'
 import { SelectionInput } from './dto/selection.input'

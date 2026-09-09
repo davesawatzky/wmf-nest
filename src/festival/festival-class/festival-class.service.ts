@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import {
+import type {
   tbl_category,
   tbl_class_trophy,
   tbl_class_type,

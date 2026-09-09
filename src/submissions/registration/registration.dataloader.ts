@@ -1,5 +1,5 @@
 import { Injectable, Logger, Scope } from '@nestjs/common'
-import {
+import type {
   tbl_reg_class,
   tbl_reg_community,
   tbl_reg_group,

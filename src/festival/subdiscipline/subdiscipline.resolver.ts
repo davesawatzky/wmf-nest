@@ -8,7 +8,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import {
+import type {
   tbl_category,
   tbl_discipline,
   tbl_level,

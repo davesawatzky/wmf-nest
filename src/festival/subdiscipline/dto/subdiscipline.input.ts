@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { Decimal } from '@prisma/client/runtime/library'
+import { Decimal } from '@prisma/client-runtime-utils'
 import { Transform, Type } from 'class-transformer'
 import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator'
 import {

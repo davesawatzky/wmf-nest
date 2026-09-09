@@ -64,11 +64,11 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
       resolvers: {
         Decimal: GraphQLDecimal,
       },
-      playground: false,
-      plugins: [
-        ApolloServerPluginLandingPageLocalDefault(),
-        ApolloServerPluginUsageReportingDisabled(),
-      ],
+      graphiql: false,
+      // plugins: [
+      //   ApolloServerPluginLandingPageLocalDefault(),
+      //   ApolloServerPluginUsageReportingDisabled(),
+      // ],
     }),
     PrismaModule,
     AuthModule,

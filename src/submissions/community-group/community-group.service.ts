@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import { tbl_reg_community, tbl_reg_communitygroup } from '@prisma/client'
+import type { tbl_reg_community, tbl_reg_communitygroup } from '@prisma/client'
 import { PrismaService } from '@/prisma/prisma.service'
 import { CommunityGroupInput } from './dto/community-group.input'
 

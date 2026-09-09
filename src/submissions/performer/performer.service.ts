@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import {
+import type {
   tbl_reg_class,
   tbl_reg_performer,
   tbl_registration,

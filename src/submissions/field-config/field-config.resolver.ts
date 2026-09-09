@@ -1,6 +1,6 @@
 import { BadRequestException, Logger, UseGuards } from '@nestjs/common'
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { tbl_field_config } from '@prisma/client'
+import type { tbl_field_config } from '@prisma/client'
 import { CheckAbilities } from '@/ability/abilities.decorator'
 import { AbilitiesGuard } from '@/ability/abilities.guard'
 import { Action } from '@/ability/ability.factory'
