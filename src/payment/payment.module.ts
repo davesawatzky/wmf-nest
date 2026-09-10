@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import {PrismaModule} from '@/prisma/prisma.module'
-import {PrismaService} from '@/prisma/prisma.service'
+import { PrismaModule } from '@/prisma/prisma.module'
 import { StripeModule } from '@/stripe/stripe.module'
 import { RegistrationModule } from '@/submissions/registration/registration.module'
 import { PaymentController } from './payment.controller'

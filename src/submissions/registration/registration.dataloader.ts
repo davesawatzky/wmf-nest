@@ -1,4 +1,3 @@
-import { Injectable, Logger, Scope } from '@nestjs/common'
 import type {
   tbl_reg_class,
   tbl_reg_community,
@@ -7,6 +6,7 @@ import type {
   tbl_reg_school,
   tbl_user,
 } from '@prisma/client'
+import { Injectable, Logger, Scope } from '@nestjs/common'
 import DataLoader from 'dataloader'
 import { PrismaService } from '@/prisma/prisma.service'
 

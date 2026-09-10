@@ -1,3 +1,4 @@
+import type { tbl_order_item } from '@prisma/client'
 import {
   BadRequestException,
   Injectable,
@@ -5,7 +6,6 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import type { tbl_order_item } from '@prisma/client'
 import { PrismaService } from '@/prisma/prisma.service'
 import { OrderItemInput } from './dto/order-item.input'
 

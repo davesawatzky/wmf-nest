@@ -1,3 +1,4 @@
+import type { RawBodyRequest } from '@nestjs/common'
 import {
   BadRequestException,
   HttpException,
@@ -5,7 +6,6 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common'
-import type { RawBodyRequest } from '@nestjs/common'
 import { PrismaService } from '@/prisma/prisma.service'
 import { StripeService } from '@/stripe/stripe.service'
 import { RegistrationService } from '@/submissions/registration/registration.service'

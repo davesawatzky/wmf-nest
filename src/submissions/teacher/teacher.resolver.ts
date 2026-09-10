@@ -1,4 +1,4 @@
-import { BadRequestException, Logger, UseGuards } from '@nestjs/common'
+import { Logger, UseGuards } from '@nestjs/common'
 
 import {
   Args,

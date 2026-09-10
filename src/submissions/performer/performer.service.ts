@@ -1,3 +1,8 @@
+import type {
+  tbl_reg_class,
+  tbl_reg_performer,
+  tbl_registration,
+} from '@prisma/client'
 import {
   BadRequestException,
   Injectable,
@@ -5,11 +10,6 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import type {
-  tbl_reg_class,
-  tbl_reg_performer,
-  tbl_registration,
-} from '@prisma/client'
 import { PrismaService } from '@/prisma/prisma.service'
 import { PerformerInput } from './dto/performer.input'
 

@@ -1,9 +1,9 @@
-import { Injectable, Logger, Scope } from '@nestjs/common'
 import type {
   tbl_category,
   tbl_discipline,
   tbl_level,
 } from '@prisma/client'
+import { Injectable, Logger, Scope } from '@nestjs/common'
 import DataLoader from 'dataloader'
 import { PrismaService } from '@/prisma/prisma.service'
 
@@ -70,7 +70,7 @@ export class SubdisciplineDataLoader {
         if (category) {
           const existing = subdisciplineCategoryMap.get(fc.subdisciplineID) || []
           // Avoid duplicates
-          if (!existing.find(c => c.id === category.id)) {
+          if (!existing.some(c => c.id === category.id)) {
             subdisciplineCategoryMap.set(fc.subdisciplineID, [...existing, category])
           }
         }
@@ -119,7 +119,7 @@ export class SubdisciplineDataLoader {
         if (level) {
           const existing = subdisciplineLevelMap.get(fc.subdisciplineID) || []
           // Avoid duplicates
-          if (!existing.find(l => l.id === level.id)) {
+          if (!existing.some(l => l.id === level.id)) {
             subdisciplineLevelMap.set(fc.subdisciplineID, [...existing, level])
           }
         }

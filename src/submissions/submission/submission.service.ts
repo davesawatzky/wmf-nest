@@ -1,3 +1,4 @@
+import type { tbl_registration } from '@prisma/client'
 import { randomInt } from 'node:crypto'
 import {
   BadRequestException,
@@ -6,7 +7,6 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import type { tbl_registration } from '@prisma/client'
 import { PerformerType } from '@/common.entity'
 import { PrismaService } from '@/prisma/prisma.service'
 import { RegistrationService } from '@/submissions/registration/registration.service'

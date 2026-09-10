@@ -1,5 +1,6 @@
-import { BadRequestException, Logger, UseGuards } from '@nestjs/common'
+import type { tbl_reg_performer, tbl_registration } from '@prisma/client'
 
+import { BadRequestException, Logger, UseGuards } from '@nestjs/common'
 import {
   Args,
   Context,
@@ -10,7 +11,6 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import type { tbl_reg_performer, tbl_registration } from '@prisma/client'
 import { CheckAbilities } from '@/ability/abilities.decorator'
 import { AbilitiesGuard } from '@/ability/abilities.guard'
 import { Action } from '@/ability/ability.factory'

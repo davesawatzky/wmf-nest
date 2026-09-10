@@ -1,5 +1,5 @@
-import { Injectable, Logger, Scope } from '@nestjs/common'
 import type { tbl_instrument, tbl_subdiscipline } from '@prisma/client'
+import { Injectable, Logger, Scope } from '@nestjs/common'
 import DataLoader from 'dataloader'
 import { PerformerType } from '@/common.entity'
 import { PrismaService } from '@/prisma/prisma.service'
@@ -125,7 +125,7 @@ export class DisciplineDataLoader {
           if (subdiscipline.disciplineID === key.disciplineId) {
             const cacheKey = `${key.disciplineId}-${key.performerType}`
             const existing = subdisciplinesByKey.get(cacheKey) || []
-            if (!existing.find(s => s.id === subdiscipline.id)) {
+            if (!existing.some(s => s.id === subdiscipline.id)) {
               existing.push(subdiscipline)
             }
             subdisciplinesByKey.set(cacheKey, existing)

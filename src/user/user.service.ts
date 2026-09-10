@@ -1,3 +1,4 @@
+import type { tbl_user } from '@prisma/client'
 import {
   BadRequestException,
   Injectable,
@@ -5,7 +6,6 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import type { tbl_user } from '@prisma/client'
 import { PrismaService } from '@/prisma/prisma.service'
 import { UserInput } from './dto/user.input'
 
@@ -20,7 +20,7 @@ export class UserService {
       const users = await this.prisma.tbl_user.findMany()
       // Remove passwords from all users
       const usersWithoutPasswords = users.map((user) => {
-        if (Object.prototype.hasOwnProperty.call(user, 'password')) {
+        if (Object.hasOwn(user, 'password')) {
           const { password, ...userWithoutPassword } = user
           return userWithoutPassword
         }
@@ -69,7 +69,7 @@ export class UserService {
       }
 
       // Remove password from response
-      if (Object.prototype.hasOwnProperty.call(user, 'password')) {
+      if (Object.hasOwn(user, 'password')) {
         const { password, ...userDetails } = user
         return userDetails
       }

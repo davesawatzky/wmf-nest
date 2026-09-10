@@ -1,3 +1,4 @@
+import type { tbl_discipline, tbl_subdiscipline } from '@prisma/client'
 import {
   BadRequestException,
   Injectable,
@@ -5,7 +6,6 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import type { tbl_discipline, tbl_subdiscipline } from '@prisma/client'
 
 import { PerformerType, UserError } from '@/common.entity'
 import { PrismaService } from '@/prisma/prisma.service'

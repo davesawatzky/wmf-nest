@@ -1,4 +1,3 @@
-import { GraphQLError } from 'graphql'
 import gql from 'graphql-tag'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import {

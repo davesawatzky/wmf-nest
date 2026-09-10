@@ -1,5 +1,5 @@
-import { Injectable, Logger, Scope } from '@nestjs/common'
 import type { tbl_reg_performer, tbl_reg_selection } from '@prisma/client'
+import { Injectable, Logger, Scope } from '@nestjs/common'
 import DataLoader from 'dataloader'
 import { PrismaService } from '@/prisma/prisma.service'
 
@@ -79,7 +79,7 @@ export class RegisteredClassDataLoader {
         const existing = performersByClassNumber.get(rc.classNumber) || []
         // Deduplicate performers (same performer may be in multiple registered classes)
         for (const performer of performersForReg) {
-          if (!existing.find(p => p.id === performer.id)) {
+          if (!existing.some(p => p.id === performer.id)) {
             existing.push(performer)
           }
         }

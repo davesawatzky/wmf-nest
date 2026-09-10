@@ -1,3 +1,4 @@
+import type { tbl_order_item } from '@prisma/client'
 import { UseGuards } from '@nestjs/common'
 import {
   Args,
@@ -8,7 +9,6 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import type { tbl_order_item } from '@prisma/client'
 import { CheckAbilities } from '@/ability/abilities.decorator'
 import { AbilitiesGuard } from '@/ability/abilities.guard'
 import { Action } from '@/ability/ability.factory'

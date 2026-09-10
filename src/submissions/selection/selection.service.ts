@@ -1,3 +1,4 @@
+import type { tbl_reg_selection } from '@prisma/client'
 import {
   BadRequestException,
   Injectable,
@@ -5,7 +6,6 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import type { tbl_reg_selection } from '@prisma/client'
 import { UserError } from '@/common.entity'
 import { PrismaService } from '@/prisma/prisma.service'
 import { SelectionInput } from './dto/selection.input'

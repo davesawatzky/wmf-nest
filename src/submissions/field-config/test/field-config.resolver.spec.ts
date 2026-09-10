@@ -1,6 +1,6 @@
-import { PrismaService } from '@/prisma/prisma.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import { beforeEach, describe, expect, it } from 'vitest'
+import { PrismaService } from '@/prisma/prisma.service'
 import { FieldConfigResolver } from '../field-config.resolver'
 import { FieldConfigService } from '../field-config.service'
 

@@ -1,5 +1,5 @@
-import { Injectable, Logger, Scope } from '@nestjs/common'
 import type { tbl_reg_schoolgroup, tbl_registration } from '@prisma/client'
+import { Injectable, Logger, Scope } from '@nestjs/common'
 import DataLoader from 'dataloader'
 import { PrismaService } from '@/prisma/prisma.service'
 
