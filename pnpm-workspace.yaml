@@ -1,0 +1,12 @@
+allowBuilds:
+  '@apollo/protobufjs': true
+  '@parcel/watcher': true
+  '@prisma/engines': true
+  '@sentry/cli': true
+  '@swc/core': true
+  bcrypt: true
+  esbuild: true
+  prisma: true
+minimumReleaseAgeExclude:
+  - nodemailer@10.0.2
+  - stripe@22.6.2

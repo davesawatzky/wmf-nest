@@ -3,17 +3,16 @@ import process from 'node:process'
 import { ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { NestExpressApplication } from '@nestjs/platform-express'
-import Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nestjs'
 import cookieParser from 'cookie-parser'
 import helmet from 'helmet'
 import { utilities as nestWinstonModuleUtilities, WinstonModule } from 'nest-winston'
 import * as winston from 'winston'
-import Transport from 'winston-transport'
 import { AppModule } from './app.module'
 import 'reflect-metadata'
 import './sentry'
 
-const SentryWinstonTransport = Sentry.createSentryWinstonTransport(Transport, {
+const SentryWinstonTransport = Sentry.createSentryWinstonTransport((winston as any).Transport, {
   levels: process.env.NODE_ENV === 'production' ? ['error', 'warn'] : ['error', 'warn', 'info', 'debug'],
 })
 
@@ -30,7 +29,7 @@ async function bootstrap() {
     rawBody: true,
     logger: WinstonModule.createLogger({
       transports: [
-        new SentryWinstonTransport(),
+        new SentryWinstonTransport() as any,
         new winston.transports.Console({
           format: winston.format.combine(
             winston.format.timestamp(),

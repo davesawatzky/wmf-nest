@@ -18,7 +18,7 @@ import { PaymentService } from './payment.service'
       useFactory: (configService: ConfigService) => ({
         apiKey: configService.get<string>('STRIPE_SERVER_KEY'),
         options: {
-          apiVersion: '2025-10-29.clover',
+          apiVersion: '2025-10-29.clover' as any,
         },
       }),
     }),

@@ -30,7 +30,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   // payload = decoded JWT
-  async validate(payload: any): Promise<User> {
+  async validate(payload: any): Promise<Partial<User>> {
     const user = await this.authService.findAuthenticatedUser(payload.sub)
     return user
   }

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import {
+  FieldFilter,
   MatchMode,
   OperatorType,
   PrismaWhereClause,
@@ -30,7 +31,7 @@ export class SearchFilterService {
       if (!filterOptions)
         continue
 
-      const { operator, constraints } = filterOptions
+      const { operator, constraints } = filterOptions as FieldFilter
 
       // Skip if constraints is null, undefined, or empty array
       if (

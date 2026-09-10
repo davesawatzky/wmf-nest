@@ -9,11 +9,12 @@ import { EmailService } from './email.service'
 @Module({
   imports: [
     MailerModule.forRootAsync({
+      imports: [],
       useFactory: async (config: ConfigService) => ({
         transport: {
           host: config.get('EMAIL_SERVER'),
-          port: config.get('SENDING_SMTP_PORT'),
-          secure: config.get('EMAIL_SECURE') === 'true', // true for 465, false for other ports
+          port: Number.parseInt(config.get('SENDING_SMTP_PORT'), 10) || 1025,
+          secure: config.get('EMAIL_SECURE') === 'true', // true for port 465, false for other ports (587, 1025)
           auth: config.get('EMAIL_USER')
             ? {
                 user: config.get('EMAIL_USER'),

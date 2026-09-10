@@ -31,7 +31,7 @@ type CategoryPayload {
 
 type ClassType {
   description: String
-  festivalClasses: [FestivalClass!]!
+  festivalClasses: [FestivalClass!]
   id: Int!
   name: String!
 }

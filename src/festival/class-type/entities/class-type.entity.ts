@@ -1,5 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { UserError } from '@/common.entity'
+import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
 
 @ObjectType()
 export class ClassType {
@@ -8,6 +9,9 @@ export class ClassType {
 
   name: string
   description?: string
+
+  @Field(() => [FestivalClass], { nullable: true })
+  festivalClasses?: FestivalClass[]
 }
 
 @ObjectType()
