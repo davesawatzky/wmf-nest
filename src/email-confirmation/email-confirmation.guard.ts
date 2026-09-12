@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { Observable } from 'rxjs'
-import RequestWithUser from '@/auth/requestWithUser.interface'
+import RequestWithUser from '@/auth/requestWithUser.interface.js'
 
 @Injectable()
 export class EmailConfirmationGuard implements CanActivate {

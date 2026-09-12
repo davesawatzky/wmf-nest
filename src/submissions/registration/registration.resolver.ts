@@ -11,26 +11,26 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { PerformerType } from '@/common.entity'
-import { Community } from '@/submissions/community/entities/community.entity'
-import { Group } from '@/submissions/group/entities/group.entity'
-import { Performer } from '@/submissions/performer/entities/performer.entity'
-import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity'
-import { School } from '@/submissions/school/entities/school.entity'
-import { Teacher } from '@/submissions/teacher/entities/teacher.entity'
-import { User } from '@/user/entities/user.entity'
-// import { RegistrationSearchFilters } from './dto/registration-search-filters.input'
-import { RegistrationInput } from './dto/registration.input'
+import { CheckAbilities } from '@/ability/abilities.decorator.js'
+import { AbilitiesGuard } from '@/ability/abilities.guard.js'
+import { Action } from '@/ability/ability.factory.js'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
+import { PerformerType } from '@/common.entity.js'
+import { Community } from '@/submissions/community/entities/community.entity.js'
+import { Group } from '@/submissions/group/entities/group.entity.js'
+import { Performer } from '@/submissions/performer/entities/performer.entity.js'
+import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity.js'
+import { School } from '@/submissions/school/entities/school.entity.js'
+import { Teacher } from '@/submissions/teacher/entities/teacher.entity.js'
+import { User } from '@/user/entities/user.entity.js'
+// import { RegistrationSearchFilters } from './dto/registration-search-filters.input.js'
+import { RegistrationInput } from './dto/registration.input.js'
 import {
   Registration,
   RegistrationPayload,
-} from './entities/registration.entity'
-import { RegistrationDataLoader } from './registration.dataloader'
-import { RegistrationService } from './registration.service'
+} from './entities/registration.entity.js'
+import { RegistrationDataLoader } from './registration.dataloader.js'
+import { RegistrationService } from './registration.service.js'
 
 @Resolver(() => Registration)
 @UseGuards(JwtAuthGuard)

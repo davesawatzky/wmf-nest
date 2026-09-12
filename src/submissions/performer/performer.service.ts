@@ -10,8 +10,8 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import { PrismaService } from '@/prisma/prisma.service'
-import { PerformerInput } from './dto/performer.input'
+import { PrismaService } from '@/prisma/prisma.service.js'
+import { PerformerInput } from './dto/performer.input.js'
 
 @Injectable()
 export class PerformerService {

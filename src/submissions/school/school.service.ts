@@ -6,8 +6,8 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import { PrismaService } from '@/prisma/prisma.service'
-import { SchoolInput } from './dto/school.input'
+import { PrismaService } from '@/prisma/prisma.service.js'
+import { SchoolInput } from './dto/school.input.js'
 
 @Injectable()
 export class SchoolService {

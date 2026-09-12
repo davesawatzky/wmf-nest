@@ -17,5 +17,8 @@
       "@": ["./src"]
     }
   },
+  "module": {
+    "type": "nodenext"
+  },
   "minify": false
 }

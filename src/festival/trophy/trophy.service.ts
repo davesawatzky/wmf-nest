@@ -6,9 +6,9 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import { UserError } from '@/common.entity'
-import { PrismaService } from '@/prisma/prisma.service'
-import { TrophyInput } from './dto/trophy.input'
+import { UserError } from '@/common.entity.js'
+import { PrismaService } from '@/prisma/prisma.service.js'
+import { TrophyInput } from './dto/trophy.input.js'
 
 @Injectable()
 export class TrophyService {

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
-import { SearchFilterGuard } from './search-filter.decorator'
-import { SearchFilterService } from './search-filter.service'
+import { SearchFilterGuard } from './search-filter.decorator.js'
+import { SearchFilterService } from './search-filter.service.js'
 
 @Module({
   providers: [SearchFilterService, SearchFilterGuard],

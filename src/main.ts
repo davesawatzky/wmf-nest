@@ -8,9 +8,9 @@ import cookieParser from 'cookie-parser'
 import helmet from 'helmet'
 import { utilities as nestWinstonModuleUtilities, WinstonModule } from 'nest-winston'
 import * as winston from 'winston'
-import { AppModule } from './app.module'
+import { AppModule } from './app.module.js'
 import 'reflect-metadata'
-import './sentry'
+import './sentry.js'
 
 const SentryWinstonTransport = Sentry.createSentryWinstonTransport((winston as any).Transport, {
   levels: process.env.NODE_ENV === 'production' ? ['error', 'warn'] : ['error', 'warn', 'info', 'debug'],
@@ -136,8 +136,8 @@ async function bootstrap() {
     }),
   )
 
-  app.useStaticAssets(join(__dirname, '..', 'public'))
-  app.setBaseViewsDir(join(__dirname, '..', 'emails'))
+  app.useStaticAssets(join(import.meta.dirname, '..', 'public'))
+  app.setBaseViewsDir(join(import.meta.dirname, '..', 'emails'))
   app.setViewEngine('hbs')
 
   const PORT = process.env.PORT || 3000

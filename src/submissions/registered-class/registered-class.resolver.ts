@@ -11,19 +11,19 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { Performer } from '@/submissions/performer/entities/performer.entity'
-import { Selection } from '@/submissions/selection/entities/selection.entity'
-import { RegisteredClassInput } from './dto/registered-class.input'
+import { CheckAbilities } from '@/ability/abilities.decorator.js'
+import { AbilitiesGuard } from '@/ability/abilities.guard.js'
+import { Action } from '@/ability/ability.factory.js'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
+import { Performer } from '@/submissions/performer/entities/performer.entity.js'
+import { Selection } from '@/submissions/selection/entities/selection.entity.js'
+import { RegisteredClassInput } from './dto/registered-class.input.js'
 import {
   RegisteredClass,
   RegisteredClassPayload,
-} from './entities/registered-class.entity'
-import { RegisteredClassDataLoader } from './registered-class.dataloader'
-import { RegisteredClassService } from './registered-class.service'
+} from './entities/registered-class.entity.js'
+import { RegisteredClassDataLoader } from './registered-class.dataloader.js'
+import { RegisteredClassService } from './registered-class.service.js'
 
 @Resolver(() => RegisteredClass)
 @UseGuards(JwtAuthGuard)

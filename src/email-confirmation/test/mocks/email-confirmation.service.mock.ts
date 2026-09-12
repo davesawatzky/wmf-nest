@@ -1,4 +1,4 @@
-import type { EmailConfirmationService } from '@/email-confirmation/email-confirmation.service'
+import type { EmailConfirmationService } from '@/email-confirmation/email-confirmation.service.js'
 import { vi } from 'vitest'
 
 /**

@@ -7,7 +7,7 @@ import {
   IsString,
   Min,
 } from 'class-validator'
-import { PerformerType } from '@/common.entity'
+import { PerformerType } from '@/common.entity.js'
 
 @InputType()
 export class FestivalClassInput {

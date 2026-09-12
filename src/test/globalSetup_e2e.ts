@@ -1,9 +1,9 @@
 import { Logger } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
-import { AuthService } from 'src/auth/auth.service'
-import { PrismaService } from 'src/prisma/prisma.service'
-import { AppModule } from '../app.module'
-import { TestAdmin, TestUser } from './testUser'
+import { AuthService } from 'src/auth/auth.service.js'
+import { PrismaService } from 'src/prisma/prisma.service.js'
+import { AppModule } from '../app.module.js'
+import { TestAdmin, TestUser } from './testUser.js'
 
 export async function setup(): Promise<void> {
   const logger = new Logger('Global E2E Setup')

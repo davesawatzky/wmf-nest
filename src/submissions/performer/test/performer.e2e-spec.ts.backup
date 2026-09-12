@@ -1,5 +1,5 @@
 import type { Performer } from '../entities/performer.entity'
-import gql from 'graphql-tag'
+import { gql } from 'graphql-tag'
 import request from 'supertest-graphql'
 
 describe('Performer', () => {

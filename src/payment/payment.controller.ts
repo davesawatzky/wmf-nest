@@ -7,7 +7,7 @@ import {
   Req,
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { PaymentService } from './payment.service'
+import { PaymentService } from './payment.service.js'
 
 @Controller('payment')
 // @UseGuards(RestJwtAuthGuard)

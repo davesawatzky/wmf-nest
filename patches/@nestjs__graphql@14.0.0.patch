@@ -1,0 +1,18 @@
+diff --git a/dist/plugin/utils/plugin-utils.js b/dist/plugin/utils/plugin-utils.js
+index 0d610038257c9847339970aadcc97f2619650a99..f0c4aee09f8f04c628f9d6a8bd96d2526edf96d2 100644
+--- a/dist/plugin/utils/plugin-utils.js
++++ b/dist/plugin/utils/plugin-utils.js
+@@ -79,12 +79,11 @@ export function replaceImportPath(typeReference, fileName, options) {
+     if (!typeReference.includes('import')) {
+         return { typeReference, importPath: null };
+     }
+-    let importPath = /\("([^)]).+(")/.exec(typeReference)[0];
++        let importPath = /import\(\s*["']([^"']+)["']/.exec(typeReference)?.[1];
+     if (!importPath) {
+         return { typeReference: undefined, importPath: null };
+     }
+     importPath = convertPath(importPath);
+-    importPath = importPath.slice(2, importPath.length - 1);
+     const from = options?.readonly
+         ? convertPath(options.pathToSource)
+         : posix.dirname(convertPath(fileName));

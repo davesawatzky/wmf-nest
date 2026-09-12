@@ -10,3 +10,5 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - nodemailer@10.0.2
   - stripe@22.6.2
+patchedDependencies:
+  '@nestjs/graphql@14.0.0': patches/@nestjs__graphql@14.0.0.patch

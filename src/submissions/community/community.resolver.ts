@@ -9,16 +9,16 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { CommunityGroup } from '@/submissions/community-group/entities/community-group.entity'
-import { Registration } from '@/submissions/registration/entities/registration.entity'
-import { CommunityDataLoader } from './community.dataloader'
-import { CommunityService } from './community.service'
-import { CommunityInput } from './dto/community.input'
-import { Community, CommunityPayload } from './entities/community.entity'
+import { CheckAbilities } from '@/ability/abilities.decorator.js'
+import { AbilitiesGuard } from '@/ability/abilities.guard.js'
+import { Action } from '@/ability/ability.factory.js'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
+import { CommunityGroup } from '@/submissions/community-group/entities/community-group.entity.js'
+import { Registration } from '@/submissions/registration/entities/registration.entity.js'
+import { CommunityDataLoader } from './community.dataloader.js'
+import { CommunityService } from './community.service.js'
+import { CommunityInput } from './dto/community.input.js'
+import { Community, CommunityPayload } from './entities/community.entity.js'
 
 @Resolver(() => Community)
 @UseGuards(JwtAuthGuard)

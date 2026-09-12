@@ -10,17 +10,17 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { User } from '@/user/entities/user.entity'
-import { UserService } from '@/user/user.service'
-import { OrderItem } from '../order-item/entities/order-item.entity'
-import { OrderItemService } from '../order-item/order-item.service'
-import { OrderInput } from './dto/order.input'
-import { Order, OrderPayload } from './entities/order.entity'
-import { OrderService } from './order.service'
+import { CheckAbilities } from '@/ability/abilities.decorator.js'
+import { AbilitiesGuard } from '@/ability/abilities.guard.js'
+import { Action } from '@/ability/ability.factory.js'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
+import { User } from '@/user/entities/user.entity.js'
+import { UserService } from '@/user/user.service.js'
+import { OrderItem } from '../order-item/entities/order-item.entity.js'
+import { OrderItemService } from '../order-item/order-item.service.js'
+import { OrderInput } from './dto/order.input.js'
+import { Order, OrderPayload } from './entities/order.entity.js'
+import { OrderService } from './order.service.js'
 
 @Resolver(() => Order)
 @UseGuards(JwtAuthGuard)

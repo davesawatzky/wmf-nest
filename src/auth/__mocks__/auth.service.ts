@@ -1,4 +1,4 @@
-import { userSignup } from '../stubs/signup'
+import { userSignup } from '../stubs/signup.js'
 
 const { password, ...userDetails } = userSignup()[0]
 

@@ -6,9 +6,9 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import { UserError } from '@/common.entity'
-import { PrismaService } from '@/prisma/prisma.service'
-import { SelectionInput } from './dto/selection.input'
+import { UserError } from '@/common.entity.js'
+import { PrismaService } from '@/prisma/prisma.service.js'
+import { SelectionInput } from './dto/selection.input.js'
 
 @Injectable()
 export class SelectionService {

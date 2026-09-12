@@ -1,10 +1,10 @@
-import gql from 'graphql-tag'
+import { gql } from 'graphql-tag'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import {
   createAuthenticatedRequest,
   testWithBothRoles,
-} from '@/test/testHelpers'
-import { Trophy, TrophyPayload } from '../entities/trophy.entity'
+} from '@/test/testHelpers.js'
+import { Trophy, TrophyPayload } from '../entities/trophy.entity.js'
 
 describe('Trophy E2E Tests', () => {
   let queryTestTrophyId: number

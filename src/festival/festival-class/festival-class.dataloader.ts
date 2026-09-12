@@ -1,7 +1,7 @@
 import type { tbl_category, tbl_class_type, tbl_level, tbl_subdiscipline, tbl_trophy } from '@prisma/client'
 import { Injectable, Logger, Scope } from '@nestjs/common'
 import DataLoader from 'dataloader'
-import { PrismaService } from '@/prisma/prisma.service'
+import { PrismaService } from '@/prisma/prisma.service.js'
 
 @Injectable({ scope: Scope.REQUEST }) // Request-scoped for per-request batching
 export class FestivalClassDataLoader {

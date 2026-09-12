@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { PrismaService } from '../../../prisma/prisma.service'
-import { CategoryService } from '../category.service'
-import { CategoryInput } from '../dto/category.input'
+import { PrismaService } from '../../../prisma/prisma.service.js'
+import { CategoryService } from '../category.service.js'
+import { CategoryInput } from '../dto/category.input.js'
 
 describe('categoryService', () => {
   let categoryService: CategoryService

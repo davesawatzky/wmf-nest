@@ -1,13 +1,13 @@
-import gql from 'graphql-tag'
+import { gql } from 'graphql-tag'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import {
   createAuthenticatedRequest,
   testWithBothRoles,
-} from '@/test/testHelpers'
+} from '@/test/testHelpers.js'
 import {
   FestivalClass,
   FestivalClassPayload,
-} from '../entities/festival-class.entity'
+} from '../entities/festival-class.entity.js'
 
 describe('FestivalClass E2E Tests', () => {
   let queryTestFestivalClassId: number

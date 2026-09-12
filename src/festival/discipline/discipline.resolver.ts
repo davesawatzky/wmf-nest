@@ -9,17 +9,17 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { PerformerType } from '@/common.entity'
-import { Instrument } from '@/festival/instrument/entities/instrument.entity'
-import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity'
-import { DisciplineDataLoader } from './discipline.dataloader'
-import { DisciplineService } from './discipline.service'
-import { DisciplineInput } from './dto/discipline.input'
-import { Discipline, DisciplinePayload } from './entities/discipline.entity'
+import { CheckAbilities } from '@/ability/abilities.decorator.js'
+import { AbilitiesGuard } from '@/ability/abilities.guard.js'
+import { Action } from '@/ability/ability.factory.js'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
+import { PerformerType } from '@/common.entity.js'
+import { Instrument } from '@/festival/instrument/entities/instrument.entity.js'
+import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity.js'
+import { DisciplineDataLoader } from './discipline.dataloader.js'
+import { DisciplineService } from './discipline.service.js'
+import { DisciplineInput } from './dto/discipline.input.js'
+import { Discipline, DisciplinePayload } from './entities/discipline.entity.js'
 
 @Resolver(() => Discipline)
 @UseGuards(JwtAuthGuard)

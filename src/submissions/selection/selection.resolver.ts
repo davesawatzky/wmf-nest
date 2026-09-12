@@ -2,11 +2,11 @@ import type { tbl_reg_class } from '@prisma/client'
 
 import { Logger, UseGuards } from '@nestjs/common'
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity'
-import { SelectionInput } from './dto/selection.input'
-import { Selection, SelectionPayload } from './entities/selection.entity'
-import { SelectionService } from './selection.service'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
+import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity.js'
+import { SelectionInput } from './dto/selection.input.js'
+import { Selection, SelectionPayload } from './entities/selection.entity.js'
+import { SelectionService } from './selection.service.js'
 
 @Resolver(() => Selection)
 @UseGuards(JwtAuthGuard)

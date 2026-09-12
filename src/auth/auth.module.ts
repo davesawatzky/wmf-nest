@@ -2,12 +2,12 @@ import process from 'node:process'
 import { Global, Module } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
-import { EmailConfirmationModule } from '../email-confirmation/email-confirmation.module'
-import { UserModule } from '../user/user.module'
-import { AuthResolver } from './auth.resolver'
-import { AuthService } from './auth.service'
-import { JwtStrategy } from './jwt.strategy'
-import { LocalStrategy } from './local.strategy'
+import { EmailConfirmationModule } from '../email-confirmation/email-confirmation.module.js'
+import { UserModule } from '../user/user.module.js'
+import { AuthResolver } from './auth.resolver.js'
+import { AuthService } from './auth.service.js'
+import { JwtStrategy } from './jwt.strategy.js'
+import { LocalStrategy } from './local.strategy.js'
 
 @Global()
 @Module({

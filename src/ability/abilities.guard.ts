@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { GqlExecutionContext } from '@nestjs/graphql'
-import { CHECK_ABILITY, RequiredRule } from './abilities.decorator'
-import { AbilityFactory } from './ability.factory'
+import { CHECK_ABILITY, RequiredRule } from './abilities.decorator.js'
+import { AbilityFactory } from './ability.factory.js'
 
 @Injectable()
 export class AbilitiesGuard implements CanActivate {

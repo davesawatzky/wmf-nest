@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { UserError } from '@/common.entity'
-import { Registration } from '@/submissions/registration/entities/registration.entity'
-import { User } from '@/user/entities/user.entity'
+import { UserError } from '@/common.entity.js'
+import { Registration } from '@/submissions/registration/entities/registration.entity.js'
+import { User } from '@/user/entities/user.entity.js'
 
 @ObjectType()
 export class Teacher {

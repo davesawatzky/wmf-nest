@@ -1,9 +1,9 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql'
 import { IsNumber } from 'class-validator'
-import { UserError } from '@/common.entity'
-import { Item } from '@/festival/item/entities/item.entity'
-import { OrderItem } from '@/submissions/order-item/entities/order-item.entity'
-import { User } from '@/user/entities/user.entity'
+import { UserError } from '@/common.entity.js'
+import { Item } from '@/festival/item/entities/item.entity.js'
+import { OrderItem } from '@/submissions/order-item/entities/order-item.entity.js'
+import { User } from '@/user/entities/user.entity.js'
 
 @ObjectType()
 export class Order {

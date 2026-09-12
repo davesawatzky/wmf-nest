@@ -1,21 +1,21 @@
 import { BadRequestException, Logger, UseGuards } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { EmailConfirmationService } from '../email-confirmation/email-confirmation.service'
-import { User } from '../user/entities/user.entity'
-import { AuthService } from './auth.service'
-import { CredentialsSignin } from './dto/credentials-signin.input'
-import { CredentialsSignup } from './dto/credentials-signup.input'
-import { PasswordChangeInput } from './dto/password-change.input'
+import { EmailConfirmationService } from '../email-confirmation/email-confirmation.service.js'
+import { User } from '../user/entities/user.entity.js'
+import { AuthService } from './auth.service.js'
+import { CredentialsSignin } from './dto/credentials-signin.input.js'
+import { CredentialsSignup } from './dto/credentials-signup.input.js'
+import { PasswordChangeInput } from './dto/password-change.input.js'
 import {
   AuthPayload,
   EmailExists,
   PasswordChangePayload,
   PasswordExists,
   TokenCheck,
-} from './entities/auth.entity'
-import { GqlAuthGuard } from './gql-auth.guard'
-import { JwtAuthGuard } from './jwt-auth.guard'
+} from './entities/auth.entity.js'
+import { GqlAuthGuard } from './gql-auth.guard.js'
+import { JwtAuthGuard } from './jwt-auth.guard.js'
 
 @Resolver(() => User)
 export class AuthResolver {

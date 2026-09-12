@@ -6,7 +6,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { GqlExecutionContext } from '@nestjs/graphql'
-import { SearchFilterService } from './search-filter.service'
+import { SearchFilterService } from './search-filter.service.js'
 
 /**
  * Parameter decorator for processing search filters

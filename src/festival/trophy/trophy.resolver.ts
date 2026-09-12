@@ -8,15 +8,15 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
-import { TrophyInput } from './dto/trophy.input'
-import { Trophy, TrophyPayload } from './entities/trophy.entity'
-import { TrophyDataLoader } from './trophy.dataloader'
-import { TrophyService } from './trophy.service'
+import { CheckAbilities } from '@/ability/abilities.decorator.js'
+import { AbilitiesGuard } from '@/ability/abilities.guard.js'
+import { Action } from '@/ability/ability.factory.js'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
+import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity.js'
+import { TrophyInput } from './dto/trophy.input.js'
+import { Trophy, TrophyPayload } from './entities/trophy.entity.js'
+import { TrophyDataLoader } from './trophy.dataloader.js'
+import { TrophyService } from './trophy.service.js'
 
 @Resolver(() => Trophy)
 @UseGuards(JwtAuthGuard)

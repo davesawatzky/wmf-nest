@@ -1,14 +1,14 @@
-import gql from 'graphql-tag'
+import { gql } from 'graphql-tag'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import {
   createAuthenticatedRequest,
   getUserId,
   testWithBothRoles,
-} from '@/test/testHelpers'
+} from '@/test/testHelpers.js'
 import {
   Registration,
   RegistrationPayload,
-} from '../entities/registration.entity'
+} from '../entities/registration.entity.js'
 
 describe('Registration E2E Tests', () => {
   let testAdminRegId: number

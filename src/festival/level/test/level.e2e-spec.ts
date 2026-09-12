@@ -1,10 +1,10 @@
-import gql from 'graphql-tag'
+import { gql } from 'graphql-tag'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import {
   createAuthenticatedRequest,
   testWithBothRoles,
-} from '@/test/testHelpers'
-import { Level, LevelPayload } from '../entities/level.entity'
+} from '@/test/testHelpers.js'
+import { Level, LevelPayload } from '../entities/level.entity.js'
 
 describe('Level E2E Tests', () => {
   let queryTestLevelId: number

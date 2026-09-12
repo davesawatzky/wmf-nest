@@ -1,7 +1,7 @@
 import type { tbl_reg_schoolgroup, tbl_registration } from '@prisma/client'
 import { Injectable, Logger, Scope } from '@nestjs/common'
 import DataLoader from 'dataloader'
-import { PrismaService } from '@/prisma/prisma.service'
+import { PrismaService } from '@/prisma/prisma.service.js'
 
 @Injectable({ scope: Scope.REQUEST })
 export class SchoolDataLoader {

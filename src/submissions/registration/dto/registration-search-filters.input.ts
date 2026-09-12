@@ -1,6 +1,6 @@
 import { InputType } from '@nestjs/graphql'
-import { SearchFilterInputFactory } from '@/common/search-filters'
-import { Registration } from '../entities/registration.entity'
+import { SearchFilterInputFactory } from '@/common/search-filters/index.js'
+import { Registration } from '../entities/registration.entity.js'
 
 // Create a Registration-specific search filter input type
 // This gives us proper typing for all registration fields

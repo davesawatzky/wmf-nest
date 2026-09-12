@@ -5,7 +5,7 @@ import {
   OperatorType,
   PrismaWhereClause,
   SearchFilters,
-} from './types'
+} from './types.js'
 
 @Injectable()
 export class SearchFilterService {

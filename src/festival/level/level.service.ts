@@ -6,11 +6,11 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import { UserError } from '@/common.entity'
-import { PrismaService } from '@/prisma/prisma.service'
-import { LevelInput } from './dto/level.input'
-// import { CreateLevelInput } from './dto/create-level.input'
-// import { UpdateLevelInput } from './dto/update-level.input'
+import { UserError } from '@/common.entity.js'
+import { PrismaService } from '@/prisma/prisma.service.js'
+import { LevelInput } from './dto/level.input.js'
+// import { CreateLevelInput } from './dto/create-level.input.js'
+// import { UpdateLevelInput } from './dto/update-level.input.js'
 
 @Injectable()
 export class LevelService {

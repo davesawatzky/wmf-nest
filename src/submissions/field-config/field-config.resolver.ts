@@ -1,16 +1,16 @@
 import type { tbl_field_config } from '@prisma/client'
 import { Logger, UseGuards } from '@nestjs/common'
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { FieldConfigInput } from './dto/field-config.input'
+import { CheckAbilities } from '@/ability/abilities.decorator.js'
+import { AbilitiesGuard } from '@/ability/abilities.guard.js'
+import { Action } from '@/ability/ability.factory.js'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
+import { FieldConfigInput } from './dto/field-config.input.js'
 import {
   FieldConfig,
   FieldConfigPayload,
-} from './entities/field-config.entity'
-import { FieldConfigService } from './field-config.service'
+} from './entities/field-config.entity.js'
+import { FieldConfigService } from './field-config.service.js'
 
 @Resolver(() => FieldConfig)
 @UseGuards(JwtAuthGuard)

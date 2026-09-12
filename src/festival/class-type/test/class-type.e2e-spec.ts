@@ -1,10 +1,10 @@
-import gql from 'graphql-tag'
+import { gql } from 'graphql-tag'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import {
   createAuthenticatedRequest,
   testWithBothRoles,
-} from '@/test/testHelpers'
-import { ClassType, ClassTypePayload } from '../entities/class-type.entity'
+} from '@/test/testHelpers.js'
+import { ClassType, ClassTypePayload } from '../entities/class-type.entity.js'
 
 describe('ClassType E2E Tests', () => {
   let testClassTypeId: number

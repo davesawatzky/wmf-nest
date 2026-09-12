@@ -9,18 +9,18 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { CommunityService } from '@/submissions/community/community.service'
-import { Community } from '@/submissions/community/entities/community.entity'
-import { CommunityGroupService } from './community-group.service'
-import { CommunityGroupInput } from './dto/community-group.input'
+import { CheckAbilities } from '@/ability/abilities.decorator.js'
+import { AbilitiesGuard } from '@/ability/abilities.guard.js'
+import { Action } from '@/ability/ability.factory.js'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
+import { CommunityService } from '@/submissions/community/community.service.js'
+import { Community } from '@/submissions/community/entities/community.entity.js'
+import { CommunityGroupService } from './community-group.service.js'
+import { CommunityGroupInput } from './dto/community-group.input.js'
 import {
   CommunityGroup,
   CommunityGroupPayload,
-} from './entities/community-group.entity'
+} from './entities/community-group.entity.js'
 
 @Resolver(() => CommunityGroup)
 @UseGuards(JwtAuthGuard)

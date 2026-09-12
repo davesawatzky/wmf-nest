@@ -5,11 +5,11 @@ import {
   GraphQLDecimal,
   transformToDecimal,
 } from 'prisma-graphql-type-decimal'
-import { PerformerType, UserError } from '@/common.entity'
-import { Category } from '@/festival/category/entities/category.entity'
-import { Discipline } from '@/festival/discipline/entities/discipline.entity'
-import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
-import { Level } from '@/festival/level/entities/level.entity'
+import { PerformerType, UserError } from '@/common.entity.js'
+import { Category } from '@/festival/category/entities/category.entity.js'
+import { Discipline } from '@/festival/discipline/entities/discipline.entity.js'
+import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity.js'
+import { Level } from '@/festival/level/entities/level.entity.js'
 
 @ObjectType()
 export class Subdiscipline {

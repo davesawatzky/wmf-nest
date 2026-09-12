@@ -1,4 +1,4 @@
-import { Performer } from '../entities/performer.entity'
+import { Performer } from '../entities/performer.entity.js'
 
 export function performerStub(): Performer {
   return {

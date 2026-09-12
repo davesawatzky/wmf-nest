@@ -3,11 +3,11 @@ import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { Test, TestingModule } from '@nestjs/testing'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { EmailService } from '@/email/email.service'
-import { PrismaService } from '@/prisma/prisma.service'
-import { UserService } from '@/user/user.service'
-import { EmailConfirmationController } from '../email-confirmation.controller'
-import { EmailConfirmationService } from '../email-confirmation.service'
+import { EmailService } from '@/email/email.service.js'
+import { PrismaService } from '@/prisma/prisma.service.js'
+import { UserService } from '@/user/user.service.js'
+import { EmailConfirmationController } from '../email-confirmation.controller.js'
+import { EmailConfirmationService } from '../email-confirmation.service.js'
 
 describe('emailConfirmationController', () => {
   let controller: EmailConfirmationController

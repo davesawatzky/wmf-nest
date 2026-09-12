@@ -2,11 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { FestivalClassService } from 'src/festival/festival-class/festival-class.service'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { CategoryResolver } from '../category.resolver'
-import { CategoryService } from '../category.service'
-import { CategoryInput } from '../dto/category.input'
-import { Category, CategoryPayload } from '../entities/category.entity'
-import { categoryStub, newCategory } from './category.stub'
+import { CategoryResolver } from '../category.resolver.js'
+import { CategoryService } from '../category.service.js'
+import { CategoryInput } from '../dto/category.input.js'
+import { Category, CategoryPayload } from '../entities/category.entity.js'
+import { categoryStub, newCategory } from './category.stub.js'
 
 vi.mock('../category.service.ts')
 

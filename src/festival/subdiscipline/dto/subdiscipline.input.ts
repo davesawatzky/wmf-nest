@@ -6,7 +6,7 @@ import {
   GraphQLDecimal,
   transformToDecimal,
 } from 'prisma-graphql-type-decimal'
-import { PerformerType } from '@/common.entity'
+import { PerformerType } from '@/common.entity.js'
 
 @InputType()
 export class SubdisciplineInput {

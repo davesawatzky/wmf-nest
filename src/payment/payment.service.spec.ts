@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { StripeService } from '@/stripe/stripe.service'
-import { PaymentService } from './payment.service'
+import { StripeService } from '@/stripe/stripe.service.js'
+import { PaymentService } from './payment.service.js'
 
 describe('paymentService', () => {
   let paymentService: PaymentService

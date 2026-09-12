@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { InstrumentService } from '@/festival/instrument/instrument.service'
-import { SubdisciplineService } from '@/festival/subdiscipline/subdiscipline.service'
-import { PrismaService } from '@/prisma/prisma.service'
-import { DisciplineResolver } from '../discipline.resolver'
-import { DisciplineService } from '../discipline.service'
+import { InstrumentService } from '@/festival/instrument/instrument.service.js'
+import { SubdisciplineService } from '@/festival/subdiscipline/subdiscipline.service.js'
+import { PrismaService } from '@/prisma/prisma.service.js'
+import { DisciplineResolver } from '../discipline.resolver.js'
+import { DisciplineService } from '../discipline.service.js'
 
 describe('disciplineResolver', () => {
   let resolver: DisciplineResolver

@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { CommunityGroupService } from '../community-group.service'
+import { beforeEach, describe, expect, it } from 'vitest'
+import { CommunityGroupService } from '../community-group.service.js'
 
 describe('communityGroupService', () => {
   let service: CommunityGroupService

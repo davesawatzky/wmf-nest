@@ -7,10 +7,10 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import { PerformerType } from '@/common.entity'
-import { PrismaService } from '@/prisma/prisma.service'
-import { RegistrationService } from '@/submissions/registration/registration.service'
-import { Submission } from '@/submissions/submission/entities/submission.entity'
+import { PerformerType } from '@/common.entity.js'
+import { PrismaService } from '@/prisma/prisma.service.js'
+import { RegistrationService } from '@/submissions/registration/registration.service.js'
+import { Submission } from '@/submissions/submission/entities/submission.entity.js'
 
 @Injectable()
 export class SubmissionService {

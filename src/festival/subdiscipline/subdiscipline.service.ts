@@ -7,9 +7,9 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { PerformerType, UserError } from '@/common.entity'
-import { PrismaService } from '@/prisma/prisma.service'
-import { SubdisciplineInput } from './dto/subdiscipline.input'
+import { PerformerType, UserError } from '@/common.entity.js'
+import { PrismaService } from '@/prisma/prisma.service.js'
+import { SubdisciplineInput } from './dto/subdiscipline.input.js'
 
 @Injectable()
 export class SubdisciplineService {

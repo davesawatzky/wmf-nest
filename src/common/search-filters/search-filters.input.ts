@@ -1,6 +1,6 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 import { GraphQLScalarType, Kind } from 'graphql'
-import { MatchMode, OperatorType } from './types'
+import { MatchMode, OperatorType } from './types.js'
 
 // Custom scalar for handling MatchMode values
 export const MatchModeScalar = new GraphQLScalarType({

@@ -1,4 +1,4 @@
-import type VerificationTokenPayload from './verificationTokenPayload.interface'
+import type VerificationTokenPayload from './verificationTokenPayload.interface.js'
 import {
   BadRequestException,
   Injectable,
@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
-import { EmailService } from '@/email/email.service'
-import { UserService } from '@/user/user.service'
+import { EmailService } from '@/email/email.service.js'
+import { UserService } from '@/user/user.service.js'
 
 @Injectable()
 export class EmailConfirmationService {

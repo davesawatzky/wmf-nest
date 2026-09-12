@@ -9,17 +9,17 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { Item } from '@/festival/item/entities/item.entity'
-import { ItemService } from '@/festival/item/item.service'
-import { Order } from '../order/entities/order.entity'
-import { OrderService } from '../order/order.service'
-import { OrderItemInput } from './dto/order-item.input'
-import { OrderItem, OrderItemPayload } from './entities/order-item.entity'
-import { OrderItemService } from './order-item.service'
+import { CheckAbilities } from '@/ability/abilities.decorator.js'
+import { AbilitiesGuard } from '@/ability/abilities.guard.js'
+import { Action } from '@/ability/ability.factory.js'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
+import { Item } from '@/festival/item/entities/item.entity.js'
+import { ItemService } from '@/festival/item/item.service.js'
+import { Order } from '../order/entities/order.entity.js'
+import { OrderService } from '../order/order.service.js'
+import { OrderItemInput } from './dto/order-item.input.js'
+import { OrderItem, OrderItemPayload } from './entities/order-item.entity.js'
+import { OrderItemService } from './order-item.service.js'
 
 @Resolver(() => OrderItem)
 @UseGuards(JwtAuthGuard)

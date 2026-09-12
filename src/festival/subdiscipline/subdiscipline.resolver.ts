@@ -14,23 +14,23 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { PerformerType } from '@/common.entity'
-import { Category } from '@/festival/category/entities/category.entity'
-import { Discipline } from '@/festival/discipline/entities/discipline.entity'
-import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
-import { FestivalClassService } from '@/festival/festival-class/festival-class.service'
-import { Level } from '@/festival/level/entities/level.entity'
-import { SubdisciplineInput } from './dto/subdiscipline.input'
+import { CheckAbilities } from '@/ability/abilities.decorator.js'
+import { AbilitiesGuard } from '@/ability/abilities.guard.js'
+import { Action } from '@/ability/ability.factory.js'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
+import { PerformerType } from '@/common.entity.js'
+import { Category } from '@/festival/category/entities/category.entity.js'
+import { Discipline } from '@/festival/discipline/entities/discipline.entity.js'
+import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity.js'
+import { FestivalClassService } from '@/festival/festival-class/festival-class.service.js'
+import { Level } from '@/festival/level/entities/level.entity.js'
+import { SubdisciplineInput } from './dto/subdiscipline.input.js'
 import {
   Subdiscipline,
   SubdisciplinePayload,
-} from './entities/subdiscipline.entity'
-import { SubdisciplineDataLoader } from './subdiscipline.dataloader'
-import { SubdisciplineService } from './subdiscipline.service'
+} from './entities/subdiscipline.entity.js'
+import { SubdisciplineDataLoader } from './subdiscipline.dataloader.js'
+import { SubdisciplineService } from './subdiscipline.service.js'
 
 @Resolver(() => Subdiscipline)
 @UseGuards(JwtAuthGuard)

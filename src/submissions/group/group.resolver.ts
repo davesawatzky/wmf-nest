@@ -9,15 +9,15 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { Registration } from '@/submissions/registration/entities/registration.entity'
-import { RegistrationService } from '@/submissions/registration/registration.service'
-import { GroupInput } from './dto/group.input'
-import { Group, GroupPayload } from './entities/group.entity'
-import { GroupService } from './group.service'
+import { CheckAbilities } from '@/ability/abilities.decorator.js'
+import { AbilitiesGuard } from '@/ability/abilities.guard.js'
+import { Action } from '@/ability/ability.factory.js'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
+import { Registration } from '@/submissions/registration/entities/registration.entity.js'
+import { RegistrationService } from '@/submissions/registration/registration.service.js'
+import { GroupInput } from './dto/group.input.js'
+import { Group, GroupPayload } from './entities/group.entity.js'
+import { GroupService } from './group.service.js'
 
 @Resolver(() => Group)
 @UseGuards(JwtAuthGuard)

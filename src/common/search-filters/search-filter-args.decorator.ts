@@ -1,5 +1,5 @@
 import { Args } from '@nestjs/graphql'
-import { SearchFilterInputFactory } from './search-filter-input.factory'
+import { SearchFilterInputFactory } from './search-filter-input.factory.js'
 
 /**
  * Parameter decorator that automatically creates and applies a search filter input

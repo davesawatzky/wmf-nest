@@ -6,8 +6,8 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import { PrismaService } from '@/prisma/prisma.service'
-import { CategoryInput } from './dto/category.input'
+import { PrismaService } from '@/prisma/prisma.service.js'
+import { CategoryInput } from './dto/category.input.js'
 
 @Injectable()
 export class CategoryService {

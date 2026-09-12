@@ -1,13 +1,13 @@
-import gql from 'graphql-tag'
+import { gql } from 'graphql-tag'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import {
   createAuthenticatedRequest,
   testWithBothRoles,
-} from '@/test/testHelpers'
+} from '@/test/testHelpers.js'
 import {
   FieldConfig,
   FieldConfigPayload,
-} from '../entities/field-config.entity'
+} from '../entities/field-config.entity.js'
 
 describe('Field Config E2E Tests', () => {
   let testFieldConfigId: number

@@ -1,12 +1,12 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql'
 import { IsNumber } from 'class-validator'
-import { PerformerType, UserError } from '@/common.entity'
-import { Community } from '@/submissions/community/entities/community.entity'
-import { Group } from '@/submissions/group/entities/group.entity'
-import { Performer } from '@/submissions/performer/entities/performer.entity'
-import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity'
-import { School } from '@/submissions/school/entities/school.entity'
-import { User } from '@/user/entities/user.entity'
+import { PerformerType, UserError } from '@/common.entity.js'
+import { Community } from '@/submissions/community/entities/community.entity.js'
+import { Group } from '@/submissions/group/entities/group.entity.js'
+import { Performer } from '@/submissions/performer/entities/performer.entity.js'
+import { RegisteredClass } from '@/submissions/registered-class/entities/registered-class.entity.js'
+import { School } from '@/submissions/school/entities/school.entity.js'
+import { User } from '@/user/entities/user.entity.js'
 
 @ObjectType()
 export class Registration {

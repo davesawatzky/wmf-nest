@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { OrderService } from '../order.service'
+import { beforeEach, describe, expect, it } from 'vitest'
+import { OrderService } from '../order.service.js'
 
 describe('orderService', () => {
   let service: OrderService

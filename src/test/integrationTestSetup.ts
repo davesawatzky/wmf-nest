@@ -4,11 +4,12 @@ import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
 import cookieParser from 'cookie-parser'
 import helmet from 'helmet'
-import { AppModule } from '@/app.module'
-import { EmailConfirmationService } from '@/email-confirmation/email-confirmation.service'
-import { createMockEmailConfirmationService } from '@/email-confirmation/test/mocks'
-import { PrismaService } from '@/prisma/prisma.service'
-import { getTestUser, TestUserType } from './testUser'
+import { afterAll, beforeAll } from 'vitest'
+import { AppModule } from '@/app.module.js'
+import { EmailConfirmationService } from '@/email-confirmation/email-confirmation.service.js'
+import { createMockEmailConfirmationService } from '@/email-confirmation/test/mocks/index.js'
+import { PrismaService } from '@/prisma/prisma.service.js'
+import { getTestUser, TestUserType } from './testUser.js'
 
 // Extend globalThis to include test context
 declare global {

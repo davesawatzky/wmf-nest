@@ -1,11 +1,11 @@
-import gql from 'graphql-tag'
+import { gql } from 'graphql-tag'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import {
   createAuthenticatedRequest,
   getUserId,
   testWithBothRoles,
-} from '@/test/testHelpers'
-import { CommunityGroup, CommunityGroupPayload } from '../entities/community-group.entity'
+} from '@/test/testHelpers.js'
+import { CommunityGroup, CommunityGroupPayload } from '../entities/community-group.entity.js'
 
 describe('CommunityGroup E2E Tests', () => {
   let adminRegId: number

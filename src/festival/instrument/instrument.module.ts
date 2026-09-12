@@ -1,9 +1,9 @@
 import { forwardRef, Module } from '@nestjs/common'
-import { AbilityModule } from '@/ability/ability.module'
-import { DisciplineModule } from '@/festival/discipline/discipline.module'
-import { InstrumentDataLoader } from './instrument.dataloader'
-import { InstrumentResolver } from './instrument.resolver'
-import { InstrumentService } from './instrument.service'
+import { AbilityModule } from '@/ability/ability.module.js'
+import { DisciplineModule } from '@/festival/discipline/discipline.module.js'
+import { InstrumentDataLoader } from './instrument.dataloader.js'
+import { InstrumentResolver } from './instrument.resolver.js'
+import { InstrumentService } from './instrument.service.js'
 
 @Module({
   providers: [InstrumentResolver, InstrumentService, InstrumentDataLoader],

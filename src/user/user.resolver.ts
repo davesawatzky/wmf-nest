@@ -9,16 +9,16 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { Order } from '@/submissions/order/entities/order.entity'
-import { Registration } from '@/submissions/registration/entities/registration.entity'
-import { UserInput } from './dto/user.input'
-import { User, UserPayload } from './entities/user.entity'
-import { UserDataLoader } from './user.dataloader'
-import { UserService } from './user.service'
+import { CheckAbilities } from '@/ability/abilities.decorator.js'
+import { AbilitiesGuard } from '@/ability/abilities.guard.js'
+import { Action } from '@/ability/ability.factory.js'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
+import { Order } from '@/submissions/order/entities/order.entity.js'
+import { Registration } from '@/submissions/registration/entities/registration.entity.js'
+import { UserInput } from './dto/user.input.js'
+import { User, UserPayload } from './entities/user.entity.js'
+import { UserDataLoader } from './user.dataloader.js'
+import { UserService } from './user.service.js'
 
 @Resolver(() => User)
 @UseGuards(JwtAuthGuard)

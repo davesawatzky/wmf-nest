@@ -6,9 +6,9 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common'
-import { PrismaService } from '@/prisma/prisma.service'
-import { StripeService } from '@/stripe/stripe.service'
-import { RegistrationService } from '@/submissions/registration/registration.service'
+import { PrismaService } from '@/prisma/prisma.service.js'
+import { StripeService } from '@/stripe/stripe.service.js'
+import { RegistrationService } from '@/submissions/registration/registration.service.js'
 
 @Injectable()
 export class PaymentService {

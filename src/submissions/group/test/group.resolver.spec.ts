@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { PrismaService } from '@/prisma/prisma.service'
-import { GroupResolver } from '../group.resolver'
-import { GroupService } from '../group.service'
+import { PrismaService } from '@/prisma/prisma.service.js'
+import { GroupResolver } from '../group.resolver.js'
+import { GroupService } from '../group.service.js'
 
 describe('groupResolver', () => {
   let resolver: GroupResolver

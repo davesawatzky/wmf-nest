@@ -1,8 +1,8 @@
 import type { tbl_instrument, tbl_subdiscipline } from '@prisma/client'
 import { Injectable, Logger, Scope } from '@nestjs/common'
 import DataLoader from 'dataloader'
-import { PerformerType } from '@/common.entity'
-import { PrismaService } from '@/prisma/prisma.service'
+import { PerformerType } from '@/common.entity.js'
+import { PrismaService } from '@/prisma/prisma.service.js'
 
 @Injectable({ scope: Scope.REQUEST })
 export class DisciplineDataLoader {

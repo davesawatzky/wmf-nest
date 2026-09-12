@@ -9,30 +9,30 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { PerformerType } from '@/common.entity'
-import { CategoryService } from '@/festival/category/category.service'
-import { Category } from '@/festival/category/entities/category.entity'
-import { ClassTypeService } from '@/festival/class-type/class-type.service'
-import { ClassType } from '@/festival/class-type/entities/class-type.entity'
-import { Level } from '@/festival/level/entities/level.entity'
-import { LevelService } from '@/festival/level/level.service'
-import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity'
-import { SubdisciplineService } from '@/festival/subdiscipline/subdiscipline.service'
-import { Trophy } from '@/festival/trophy/entities/trophy.entity'
+import { CheckAbilities } from '@/ability/abilities.decorator.js'
+import { AbilitiesGuard } from '@/ability/abilities.guard.js'
+import { Action } from '@/ability/ability.factory.js'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
+import { PerformerType } from '@/common.entity.js'
+import { CategoryService } from '@/festival/category/category.service.js'
+import { Category } from '@/festival/category/entities/category.entity.js'
+import { ClassTypeService } from '@/festival/class-type/class-type.service.js'
+import { ClassType } from '@/festival/class-type/entities/class-type.entity.js'
+import { Level } from '@/festival/level/entities/level.entity.js'
+import { LevelService } from '@/festival/level/level.service.js'
+import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity.js'
+import { SubdisciplineService } from '@/festival/subdiscipline/subdiscipline.service.js'
+import { Trophy } from '@/festival/trophy/entities/trophy.entity.js'
 import {
   FestivalClassInput,
   FestivalClassSearchArgs,
-} from './dto/festival-class.input'
+} from './dto/festival-class.input.js'
 import {
   FestivalClass,
   FestivalClassPayload,
-} from './entities/festival-class.entity'
-import { FestivalClassDataLoader } from './festival-class.dataloader'
-import { FestivalClassService } from './festival-class.service'
+} from './entities/festival-class.entity.js'
+import { FestivalClassDataLoader } from './festival-class.dataloader.js'
+import { FestivalClassService } from './festival-class.service.js'
 
 @Resolver(() => FestivalClass)
 @UseGuards(JwtAuthGuard)

@@ -1,4 +1,4 @@
-import { CredentialsSignup } from '../dto/credentials-signup.input'
+import { CredentialsSignup } from '../dto/credentials-signup.input.js'
 
 export function userSignup(): CredentialsSignup[] {
   return [

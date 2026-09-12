@@ -13,13 +13,13 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import { PerformerType, UserError } from '@/common.entity'
-import { PrismaService } from '@/prisma/prisma.service'
+import { PerformerType, UserError } from '@/common.entity.js'
+import { PrismaService } from '@/prisma/prisma.service.js'
 
 import {
   FestivalClassInput,
   FestivalClassSearchArgs,
-} from './dto/festival-class.input'
+} from './dto/festival-class.input.js'
 
 @Injectable()
 export class FestivalClassService {

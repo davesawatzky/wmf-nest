@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { PrismaService } from '@/prisma/prisma.service'
-import { CommunityResolver } from '../community.resolver'
-import { CommunityService } from '../community.service'
+import { PrismaService } from '@/prisma/prisma.service.js'
+import { CommunityResolver } from '../community.resolver.js'
+import { CommunityService } from '../community.service.js'
 
 describe('communityResolver', () => {
   let resolver: CommunityResolver

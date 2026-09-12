@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { ConfigurableModuleClass } from './stripe.module-definition'
-import { StripeService } from './stripe.service'
+import { ConfigurableModuleClass } from './stripe.module-definition.js'
+import { StripeService } from './stripe.service.js'
 
 @Module({
   imports: [ConfigModule],

@@ -6,10 +6,10 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import { PrismaService } from '@/prisma/prisma.service'
-import { TeacherInput } from './dto/teacher.input'
-import { TeacherTypeInput } from './dto/teacherType.input'
-import { Teacher } from './entities/teacher.entity'
+import { PrismaService } from '@/prisma/prisma.service.js'
+import { TeacherInput } from './dto/teacher.input.js'
+import { TeacherTypeInput } from './dto/teacherType.input.js'
+import { Teacher } from './entities/teacher.entity.js'
 
 @Injectable()
 export class TeacherService {

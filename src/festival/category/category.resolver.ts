@@ -9,16 +9,16 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { PerformerType } from '@/common.entity'
-import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity'
-import { FestivalClassService } from '@/festival/festival-class/festival-class.service'
-import { CategoryService } from './category.service'
-import { CategoryInput } from './dto/category.input'
-import { Category, CategoryPayload } from './entities/category.entity'
+import { CheckAbilities } from '@/ability/abilities.decorator.js'
+import { AbilitiesGuard } from '@/ability/abilities.guard.js'
+import { Action } from '@/ability/ability.factory.js'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
+import { PerformerType } from '@/common.entity.js'
+import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity.js'
+import { FestivalClassService } from '@/festival/festival-class/festival-class.service.js'
+import { CategoryService } from './category.service.js'
+import { CategoryInput } from './dto/category.input.js'
+import { Category, CategoryPayload } from './entities/category.entity.js'
 
 @Resolver(() => Category)
 @UseGuards(JwtAuthGuard)

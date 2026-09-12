@@ -6,8 +6,8 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import { PrismaService } from '@/prisma/prisma.service'
-import { OrderInput } from './dto/order.input'
+import { PrismaService } from '@/prisma/prisma.service.js'
+import { OrderInput } from './dto/order.input.js'
 
 @Injectable()
 export class OrderService {

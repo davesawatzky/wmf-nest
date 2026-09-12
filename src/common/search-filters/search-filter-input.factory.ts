@@ -1,6 +1,6 @@
 import { Type } from '@nestjs/common'
 import { Field, InputType } from '@nestjs/graphql'
-import { FieldFilterInput } from './search-filters.input'
+import { FieldFilterInput } from './search-filters.input.js'
 
 /**
  * Factory for creating entity-specific search filter input types

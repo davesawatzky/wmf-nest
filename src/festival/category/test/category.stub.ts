@@ -1,5 +1,5 @@
-import { CategoryInput } from '../dto/category.input'
-import { Category } from '../entities/category.entity'
+import { CategoryInput } from '../dto/category.input.js'
+import { Category } from '../entities/category.entity.js'
 
 export function categoryStub(): Category[] {
   return [

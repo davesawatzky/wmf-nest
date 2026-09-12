@@ -1,7 +1,7 @@
-import gql from 'graphql-tag'
+import { gql } from 'graphql-tag'
 import request from 'supertest-graphql'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import { AuthPayload } from '../entities/auth.entity'
+import { AuthPayload } from '../entities/auth.entity.js'
 
 describe('SignIn E2E Tests', () => {
   // Mock test user for signin tests (separate from global test users)

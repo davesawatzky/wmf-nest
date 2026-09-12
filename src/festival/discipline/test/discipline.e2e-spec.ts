@@ -1,10 +1,10 @@
-import gql from 'graphql-tag'
+import { gql } from 'graphql-tag'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import {
   createAuthenticatedRequest,
   testWithBothRoles,
-} from '@/test/testHelpers'
-import { Discipline, DisciplinePayload } from '../entities/discipline.entity'
+} from '@/test/testHelpers.js'
+import { Discipline, DisciplinePayload } from '../entities/discipline.entity.js'
 
 describe('Discipline E2E Tests', () => {
   let testDisciplineId: number

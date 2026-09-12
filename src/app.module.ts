@@ -3,42 +3,41 @@ import { join } from 'node:path'
 import process from 'node:process'
 import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup'
 import { APP_FILTER } from '@nestjs/core'
-import { AuthModule } from '@/auth/auth.module'
-import { AbilityModule } from '@/ability/ability.module'
-import { FieldConfigModule } from '@/submissions/field-config/field-config.module'
-import { EmailModule } from '@/email/email.module'
-import { EmailConfirmationModule } from '@/email-confirmation/email-confirmation.module'
-import { FestivalClassModule } from '@/festival/festival-class/festival-class.module'
-import { ClassTypeModule } from '@/festival/class-type/class-type.module'
-import { DisciplineModule } from '@/festival/discipline/discipline.module'
-import { SubdisciplineModule } from '@/festival/subdiscipline/subdiscipline.module'
-import { CategoryModule } from '@/festival/category/category.module'
-import { LevelModule } from '@/festival/level/level.module'
-import { RegisteredClassModule } from '@/submissions/registered-class/registered-class.module'
-import { RegistrationModule } from '@/submissions/registration/registration.module'
-import { SelectionModule } from '@/submissions/selection/selection.module'
-import { InstrumentModule } from '@/festival/instrument/instrument.module'
-import { TrophyModule } from '@/festival/trophy/trophy.module'
-import { PaymentModule } from '@/payment/payment.module'
-import { PrismaModule } from '@/prisma/prisma.module'
-import { CommunityModule } from '@/submissions/community/community.module'
-import { CommunityGroupModule } from '@/submissions/community-group/community-group.module'
-import { GroupModule } from '@/submissions/group/group.module'
-import { PerformerModule } from '@/submissions/performer/performer.module'
-import { SchoolModule } from '@/submissions/school/school.module'
-import { SchoolGroupModule } from '@/submissions/school-group/school-group.module'
-import { TeacherModule } from '@/submissions/teacher/teacher.module'
-import { UserModule } from '@/user/user.module'
-import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default'
+import { AuthModule } from '@/auth/auth.module.js'
+import { AbilityModule } from '@/ability/ability.module.js'
+import { FieldConfigModule } from '@/submissions/field-config/field-config.module.js'
+import { EmailModule } from '@/email/email.module.js'
+import { EmailConfirmationModule } from '@/email-confirmation/email-confirmation.module.js'
+import { FestivalClassModule } from '@/festival/festival-class/festival-class.module.js'
+import { ClassTypeModule } from '@/festival/class-type/class-type.module.js'
+import { DisciplineModule } from '@/festival/discipline/discipline.module.js'
+import { SubdisciplineModule } from '@/festival/subdiscipline/subdiscipline.module.js'
+import { CategoryModule } from '@/festival/category/category.module.js'
+import { LevelModule } from '@/festival/level/level.module.js'
+import { RegisteredClassModule } from '@/submissions/registered-class/registered-class.module.js'
+import { RegistrationModule } from '@/submissions/registration/registration.module.js'
+import { SelectionModule } from '@/submissions/selection/selection.module.js'
+import { InstrumentModule } from '@/festival/instrument/instrument.module.js'
+import { TrophyModule } from '@/festival/trophy/trophy.module.js'
+import { PaymentModule } from '@/payment/payment.module.js'
+import { PrismaModule } from '@/prisma/prisma.module.js'
+import { CommunityModule } from '@/submissions/community/community.module.js'
+import { CommunityGroupModule } from '@/submissions/community-group/community-group.module.js'
+import { GroupModule } from '@/submissions/group/group.module.js'
+import { PerformerModule } from '@/submissions/performer/performer.module.js'
+import { SchoolModule } from '@/submissions/school/school.module.js'
+import { SchoolGroupModule } from '@/submissions/school-group/school-group.module.js'
+import { TeacherModule } from '@/submissions/teacher/teacher.module.js'
+import { UserModule } from '@/user/user.module.js'
 import { ApolloServerPluginUsageReportingDisabled } from '@apollo/server/plugin/disabled'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
-import metadata from './metadata'
-import { OrderModule } from './submissions/order/order.module'
-import { ItemModule } from './festival/item/item.module'
-import { OrderItemModule } from './submissions/order-item/order-item.module'
+import metadata from './metadata.js'
+import { OrderModule } from './submissions/order/order.module.js'
+import { ItemModule } from './festival/item/item.module.js'
+import { OrderItemModule } from './submissions/order-item/order-item.module.js'
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
 
 @Module({
@@ -64,9 +63,15 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
       resolvers: {
         Decimal: GraphQLDecimal,
       },
-      graphiql: false,
+      graphiql: {
+        url: '/graphql',
+        headers: {
+          authorization: 'Bearer <token>',
+        },
+        shouldPersistHeaders: true,
+        isHeadersEditorEnabled: true,
+      },
       plugins: [
-        ApolloServerPluginLandingPageLocalDefault() as any,
         ApolloServerPluginUsageReportingDisabled(),
       ],
     }),

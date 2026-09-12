@@ -1,9 +1,9 @@
 import { forwardRef, Module } from '@nestjs/common'
-import { AbilityModule } from '@/ability/ability.module'
-import { FestivalClassModule } from '../festival-class/festival-class.module'
-import { TrophyDataLoader } from './trophy.dataloader'
-import { TrophyResolver } from './trophy.resolver'
-import { TrophyService } from './trophy.service'
+import { AbilityModule } from '@/ability/ability.module.js'
+import { FestivalClassModule } from '../festival-class/festival-class.module.js'
+import { TrophyDataLoader } from './trophy.dataloader.js'
+import { TrophyResolver } from './trophy.resolver.js'
+import { TrophyService } from './trophy.service.js'
 
 @Module({
   providers: [TrophyResolver, TrophyService, TrophyDataLoader],

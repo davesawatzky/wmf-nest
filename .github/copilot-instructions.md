@@ -1,4 +1,4 @@
-# Winnipeg Music Festival NestJS Backend - AI Agent Instructions
+# Winnipeg Music Festival NestJS Backend — GitHub Copilot Instructions
 
 ## Project Overview
 This is a NestJS GraphQL backend for the Winnipeg Music Festival registration system, integrated with a PostgreSQL database via Prisma ORM. The system manages festival classes, performer registrations, communities, schools, and payments through Stripe.
@@ -693,7 +693,7 @@ export async function expectUnauthorized(role: UserRole, operation: () => Promis
 
 **Standard E2E Test Structure with testWithBothRoles**:
 ```typescript
-import gql from 'graphql-tag'
+import { gql } from 'graphql-tag'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import {
   createAuthenticatedRequest,

@@ -1,8 +1,8 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql'
 import { IsBoolean, IsDate, IsNumber, IsOptional } from 'class-validator'
-import { UserError } from '@/common.entity'
-import { OrderItem } from '@/submissions/order-item/entities/order-item.entity'
-import { Order } from '@/submissions/order/entities/order.entity'
+import { UserError } from '@/common.entity.js'
+import { OrderItem } from '@/submissions/order-item/entities/order-item.entity.js'
+import { Order } from '@/submissions/order/entities/order.entity.js'
 
 @ObjectType()
 export class Item {

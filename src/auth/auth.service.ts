@@ -8,12 +8,12 @@ import {
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
-import { PrismaService } from '@/prisma/prisma.service'
-import { User } from '../user/entities/user.entity'
-import { UserService } from '../user/user.service'
-import { CredentialsSignin } from './dto/credentials-signin.input'
-import { CredentialsSignup } from './dto/credentials-signup.input'
-import { AuthPayload, PasswordChangePayload } from './entities/auth.entity'
+import { PrismaService } from '@/prisma/prisma.service.js'
+import { User } from '../user/entities/user.entity.js'
+import { UserService } from '../user/user.service.js'
+import { CredentialsSignin } from './dto/credentials-signin.input.js'
+import { CredentialsSignup } from './dto/credentials-signup.input.js'
+import { AuthPayload, PasswordChangePayload } from './entities/auth.entity.js'
 
 @Injectable()
 export class AuthService {

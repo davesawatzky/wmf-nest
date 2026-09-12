@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { PrismaService } from '@/prisma/prisma.service'
-import { SchoolGroupService } from '@/submissions/school-group/school-group.service'
+import { PrismaService } from '@/prisma/prisma.service.js'
+import { SchoolGroupService } from '@/submissions/school-group/school-group.service.js'
 
 describe('schoolGroupService', () => {
   let service: SchoolGroupService

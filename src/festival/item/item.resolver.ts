@@ -8,15 +8,15 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { OrderItem } from '@/submissions/order-item/entities/order-item.entity'
-import { OrderItemService } from '@/submissions/order-item/order-item.service'
-import { ItemInput } from './dto/item.input'
-import { Item, ItemPayload } from './entities/item.entity'
-import { ItemService } from './item.service'
+import { CheckAbilities } from '@/ability/abilities.decorator.js'
+import { AbilitiesGuard } from '@/ability/abilities.guard.js'
+import { Action } from '@/ability/ability.factory.js'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
+import { OrderItem } from '@/submissions/order-item/entities/order-item.entity.js'
+import { OrderItemService } from '@/submissions/order-item/order-item.service.js'
+import { ItemInput } from './dto/item.input.js'
+import { Item, ItemPayload } from './entities/item.entity.js'
+import { ItemService } from './item.service.js'
 
 @Resolver(() => Item)
 @UseGuards(JwtAuthGuard)

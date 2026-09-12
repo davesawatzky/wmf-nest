@@ -10,18 +10,18 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { School } from '@/submissions/school/entities/school.entity'
-import { SchoolService } from '@/submissions/school/school.service'
-import { SchoolGroupInput } from './dto/school-group.input'
+import { CheckAbilities } from '@/ability/abilities.decorator.js'
+import { AbilitiesGuard } from '@/ability/abilities.guard.js'
+import { Action } from '@/ability/ability.factory.js'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
+import { School } from '@/submissions/school/entities/school.entity.js'
+import { SchoolService } from '@/submissions/school/school.service.js'
+import { SchoolGroupInput } from './dto/school-group.input.js'
 import {
   SchoolGroup,
   SchoolGroupPayload,
-} from './entities/school-group.entity'
-import { SchoolGroupService } from './school-group.service'
+} from './entities/school-group.entity.js'
+import { SchoolGroupService } from './school-group.service.js'
 
 @Resolver(() => SchoolGroup)
 @UseGuards(JwtAuthGuard)

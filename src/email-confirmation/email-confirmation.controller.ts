@@ -1,5 +1,5 @@
 /* eslint-disable perfectionist/sort-imports */
-import RequestWithUser from '@/auth/requestWithUser.interface'
+import type RequestWithUser from '@/auth/requestWithUser.interface.js'
 import {
   Body,
   ClassSerializerInterceptor,
@@ -7,10 +7,10 @@ import {
   Post,
   UseInterceptors,
 } from '@nestjs/common'
-import { EmailConfirmationService } from './email-confirmation.service'
-import { AuthService } from '@/auth/auth.service'
-import { PasswordChangeResend } from './dto/password-change-resend.input'
-import ConfirmationEmailDto from './dto/confirm-email.dto'
+import { EmailConfirmationService } from './email-confirmation.service.js'
+import { AuthService } from '@/auth/auth.service.js'
+import { PasswordChangeResend } from './dto/password-change-resend.input.js'
+import ConfirmationEmailDto from './dto/confirm-email.dto.js'
 
 @Controller('email-confirmation')
 @UseInterceptors(ClassSerializerInterceptor)

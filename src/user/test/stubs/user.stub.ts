@@ -1,5 +1,5 @@
-import { CredentialsSignup } from '../../../auth/dto/credentials-signup.input'
-import { User } from '../../entities/user.entity'
+import { CredentialsSignup } from '../../../auth/dto/credentials-signup.input.js'
+import { User } from '../../entities/user.entity.js'
 
 export function userStub(): User & CredentialsSignup {
   return {

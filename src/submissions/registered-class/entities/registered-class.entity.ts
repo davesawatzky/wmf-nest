@@ -5,9 +5,9 @@ import {
   GraphQLDecimal,
   transformToDecimal,
 } from 'prisma-graphql-type-decimal'
-import { UserError } from '@/common.entity'
-import { Performer } from '@/submissions/performer/entities/performer.entity'
-import { Selection } from '@/submissions/selection/entities/selection.entity'
+import { UserError } from '@/common.entity.js'
+import { Performer } from '@/submissions/performer/entities/performer.entity.js'
+import { Selection } from '@/submissions/selection/entities/selection.entity.js'
 
 @ObjectType()
 export class RegisteredClass {

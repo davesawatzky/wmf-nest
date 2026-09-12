@@ -6,10 +6,10 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
-import { PerformerType, UserError } from '@/common.entity'
-import { Instrument } from '@/festival/instrument/entities/instrument.entity'
-import { PrismaService } from '@/prisma/prisma.service'
-import { DisciplineInput } from './dto/discipline.input'
+import { PerformerType, UserError } from '@/common.entity.js'
+import { Instrument } from '@/festival/instrument/entities/instrument.entity.js'
+import { PrismaService } from '@/prisma/prisma.service.js'
+import { DisciplineInput } from './dto/discipline.input.js'
 
 @Injectable()
 export class DisciplineService {

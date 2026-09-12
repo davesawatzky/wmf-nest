@@ -9,15 +9,15 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { CheckAbilities } from '@/ability/abilities.decorator'
-import { AbilitiesGuard } from '@/ability/abilities.guard'
-import { Action } from '@/ability/ability.factory'
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard'
-import { Discipline } from '@/festival/discipline/entities/discipline.entity'
-import { InstrumentInput } from './dto/instrument.input'
-import { Instrument, InstrumentPayload } from './entities/instrument.entity'
-import { InstrumentDataLoader } from './instrument.dataloader'
-import { InstrumentService } from './instrument.service'
+import { CheckAbilities } from '@/ability/abilities.decorator.js'
+import { AbilitiesGuard } from '@/ability/abilities.guard.js'
+import { Action } from '@/ability/ability.factory.js'
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
+import { Discipline } from '@/festival/discipline/entities/discipline.entity.js'
+import { InstrumentInput } from './dto/instrument.input.js'
+import { Instrument, InstrumentPayload } from './entities/instrument.entity.js'
+import { InstrumentDataLoader } from './instrument.dataloader.js'
+import { InstrumentService } from './instrument.service.js'
 
 @Resolver(() => Instrument)
 export class InstrumentResolver {
