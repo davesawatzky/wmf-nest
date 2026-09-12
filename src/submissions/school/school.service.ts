@@ -1,4 +1,3 @@
-import type { tbl_reg_school, tbl_registration } from '@prisma/client'
 import {
   BadRequestException,
   Injectable,
@@ -6,7 +5,10 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
+import type { tbl_reg_school, tbl_registration } from '@prisma/client'
+
 import { PrismaService } from '@/prisma/prisma.service.js'
+
 import { SchoolInput } from './dto/school.input.js'
 
 @Injectable()
@@ -15,10 +17,7 @@ export class SchoolService {
 
   constructor(private prisma: PrismaService) {}
 
-  async create(
-    registrationID: tbl_registration['id'],
-    schoolInput?: Partial<SchoolInput>,
-  ) {
+  async create(registrationID: tbl_registration['id'], schoolInput?: Partial<SchoolInput>) {
     try {
       if (!registrationID) {
         return {
@@ -46,12 +45,9 @@ export class SchoolService {
         userErrors: [],
         school,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2003') {
-        this.logger.warn(
-          `School creation failed - Invalid registration ID: ${registrationID}`,
-        )
+        this.logger.warn(`School creation failed - Invalid registration ID: ${registrationID}`)
         return {
           userErrors: [
             {
@@ -61,12 +57,8 @@ export class SchoolService {
           ],
           school: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during school creation for registration ${registrationID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during school creation for registration ${registrationID}`, error)
         return {
           userErrors: [
             {
@@ -84,28 +76,20 @@ export class SchoolService {
     try {
       this.logger.log('Fetching all schools')
       return await this.prisma.tbl_reg_school.findMany()
-    }
-    catch (error: any) {
+    } catch (error: any) {
       this.logger.error('Error fetching all schools', error)
       throw new InternalServerErrorException('Unable to fetch schools')
     }
   }
 
-  async findOne(
-    registrationID?: tbl_registration['id'],
-    schoolID?: tbl_reg_school['id'],
-  ) {
+  async findOne(registrationID?: tbl_registration['id'], schoolID?: tbl_reg_school['id']) {
     try {
       if (!registrationID && !schoolID) {
         this.logger.warn('findOne called without registrationID or schoolID')
-        throw new BadRequestException(
-          'Either registrationID or schoolID must be provided',
-        )
+        throw new BadRequestException('Either registrationID or schoolID must be provided')
       }
 
-      this.logger.log(
-        `Finding school with registrationID: ${registrationID}, schoolID: ${schoolID}`,
-      )
+      this.logger.log(`Finding school with registrationID: ${registrationID}, schoolID: ${schoolID}`)
 
       const school = await this.prisma.tbl_reg_school.findUnique({
         where: {
@@ -115,32 +99,20 @@ export class SchoolService {
       })
 
       if (!school) {
-        this.logger.warn(
-          `School not found with registrationID: ${registrationID}, schoolID: ${schoolID}`,
-        )
+        this.logger.warn(`School not found with registrationID: ${registrationID}, schoolID: ${schoolID}`)
         throw new NotFoundException('School not found')
       }
       return school
-    }
-    catch (error: any) {
-      if (
-        error instanceof BadRequestException
-        || error instanceof NotFoundException
-      ) {
+    } catch (error: any) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error
       }
-      this.logger.error(
-        `Error finding school with registrationID: ${registrationID}, schoolID: ${schoolID}`,
-        error,
-      )
+      this.logger.error(`Error finding school with registrationID: ${registrationID}, schoolID: ${schoolID}`, error)
       throw new InternalServerErrorException('Unable to find school')
     }
   }
 
-  async update(
-    schoolID: tbl_reg_school['id'],
-    schoolInput: Partial<SchoolInput>,
-  ) {
+  async update(schoolID: tbl_reg_school['id'], schoolInput: Partial<SchoolInput>) {
     try {
       if (!schoolID || !schoolInput) {
         return {
@@ -166,12 +138,9 @@ export class SchoolService {
         userErrors: [],
         school,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(
-          `School update failed - School with ID ${schoolID} not found`,
-        )
+        this.logger.warn(`School update failed - School with ID ${schoolID} not found`)
         return {
           userErrors: [
             {
@@ -181,11 +150,8 @@ export class SchoolService {
           ],
           school: null,
         }
-      }
-      else if (error.code === 'P2002') {
-        this.logger.warn(
-          `School update failed - Unique constraint violation for school ${schoolID}`,
-        )
+      } else if (error.code === 'P2002') {
+        this.logger.warn(`School update failed - Unique constraint violation for school ${schoolID}`)
         return {
           userErrors: [
             {
@@ -195,11 +161,8 @@ export class SchoolService {
           ],
           school: null,
         }
-      }
-      else if (error.code === 'P2003') {
-        this.logger.warn(
-          `School update failed - Foreign key constraint violation for school ${schoolID}`,
-        )
+      } else if (error.code === 'P2003') {
+        this.logger.warn(`School update failed - Foreign key constraint violation for school ${schoolID}`)
         return {
           userErrors: [
             {
@@ -209,12 +172,8 @@ export class SchoolService {
           ],
           school: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during school update for ID ${schoolID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during school update for ID ${schoolID}`, error)
         return {
           userErrors: [
             {
@@ -253,12 +212,9 @@ export class SchoolService {
         userErrors: [],
         school,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(
-          `School deletion failed - School with ID ${schoolID} not found`,
-        )
+        this.logger.warn(`School deletion failed - School with ID ${schoolID} not found`)
         return {
           userErrors: [
             {
@@ -268,11 +224,8 @@ export class SchoolService {
           ],
           school: null,
         }
-      }
-      else if (error.code === 'P2003') {
-        this.logger.warn(
-          `School deletion failed - Foreign key constraint violation for school ${schoolID}`,
-        )
+      } else if (error.code === 'P2003') {
+        this.logger.warn(`School deletion failed - Foreign key constraint violation for school ${schoolID}`)
         return {
           userErrors: [
             {
@@ -282,12 +235,8 @@ export class SchoolService {
           ],
           school: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during school deletion for ID ${schoolID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during school deletion for ID ${schoolID}`, error)
         return {
           userErrors: [
             {

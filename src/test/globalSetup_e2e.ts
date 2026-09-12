@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { AuthService } from 'src/auth/auth.service.js'
 import { PrismaService } from 'src/prisma/prisma.service.js'
+
 import { AppModule } from '../app.module.js'
 import { TestAdmin, TestUser } from './testUser.js'
 
@@ -37,8 +38,7 @@ export async function setup(): Promise<void> {
         data: { emailConfirmed: true, roles: ['admin'] },
       })
       logger.log('✅ Test admin created')
-    }
-    else {
+    } else {
       logger.log('✅ Test admin already exists')
     }
 
@@ -51,8 +51,7 @@ export async function setup(): Promise<void> {
         data: { emailConfirmed: true, roles: ['user'] },
       })
       logger.log('✅ Test user created')
-    }
-    else {
+    } else {
       logger.log('✅ Test user already exists')
     }
 
@@ -66,8 +65,7 @@ export async function setup(): Promise<void> {
     // })
     await app.close()
     logger.log('✅ Global E2E setup completed successfully')
-  }
-  catch (error) {
+  } catch (error) {
     logger.error('❌ Global E2E setup failed:', error)
     throw error
   }
@@ -95,8 +93,7 @@ export async function teardown(): Promise<void> {
 
     await app.close()
     logger.log('✅ Global E2E teardown completed successfully')
-  }
-  catch (error) {
+  } catch (error) {
     logger.error('❌ Global E2E teardown failed:', error)
     // Don't throw - allow tests to complete even if cleanup fails
   }

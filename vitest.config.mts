@@ -1,5 +1,6 @@
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+
 import swc from 'unplugin-swc'
 import { defineConfig } from 'vitest/config'
 

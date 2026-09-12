@@ -1,4 +1,5 @@
 import process from 'node:process'
+
 import { sentryVitePlugin } from '@sentry/vite-plugin'
 import { defineConfig } from 'vite'
 

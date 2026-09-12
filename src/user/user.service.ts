@@ -1,4 +1,3 @@
-import type { tbl_user } from '@prisma/client'
 import {
   BadRequestException,
   Injectable,
@@ -6,7 +5,10 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
+import type { tbl_user } from '@prisma/client'
+
 import { PrismaService } from '@/prisma/prisma.service.js'
+
 import { UserInput } from './dto/user.input.js'
 
 @Injectable()
@@ -28,8 +30,7 @@ export class UserService {
       })
 
       return usersWithoutPasswords
-    }
-    catch (error: any) {
+    } catch (error: any) {
       this.logger.error('Failed to fetch all users', error)
       throw new InternalServerErrorException('Failed to fetch users')
     }
@@ -39,14 +40,10 @@ export class UserService {
     try {
       if (!userID && !email) {
         this.logger.warn('FindOne called without userID or email parameters')
-        throw new BadRequestException(
-          'Either userID or email must be provided',
-        )
+        throw new BadRequestException('Either userID or email must be provided')
       }
 
-      this.logger.log(
-        `Finding user by ${userID ? `ID: ${userID}` : `email: ${email}`}`,
-      )
+      this.logger.log(`Finding user by ${userID ? `ID: ${userID}` : `email: ${email}`}`)
 
       let user: tbl_user
 
@@ -54,17 +51,14 @@ export class UserService {
         user = await this.prisma.tbl_user.findUnique({
           where: { id: userID },
         })
-      }
-      else if (email) {
+      } else if (email) {
         user = await this.prisma.tbl_user.findUnique({
           where: { email },
         })
       }
 
       if (!user) {
-        this.logger.warn(
-          `User not found with ${userID ? `ID: ${userID}` : `email: ${email}`}`,
-        )
+        this.logger.warn(`User not found with ${userID ? `ID: ${userID}` : `email: ${email}`}`)
         throw new NotFoundException('User not found')
       }
 
@@ -72,24 +66,16 @@ export class UserService {
       if (Object.hasOwn(user, 'password')) {
         const { password, ...userDetails } = user
         return userDetails
-      }
-      else {
+      } else {
         return user
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       // Re-throw known exceptions
-      if (
-        error instanceof BadRequestException
-        || error instanceof NotFoundException
-      ) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error
       }
 
-      this.logger.error(
-        `Failed to find user by ${userID ? `ID: ${userID}` : `email: ${email}`}`,
-        error,
-      )
+      this.logger.error(`Failed to find user by ${userID ? `ID: ${userID}` : `email: ${email}`}`, error)
       throw new InternalServerErrorException('Failed to retrieve user')
     }
   }
@@ -123,12 +109,9 @@ export class UserService {
         userErrors: [],
         user: userWithoutPassword,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(
-          `User update failed - User with ID ${userID} not found`,
-        )
+        this.logger.warn(`User update failed - User with ID ${userID} not found`)
         return {
           userErrors: [
             {
@@ -138,11 +121,8 @@ export class UserService {
           ],
           user: null,
         }
-      }
-      else if (error.code === 'P2002') {
-        this.logger.warn(
-          `User update failed - Unique constraint violation: ${error.meta?.target} already exists`,
-        )
+      } else if (error.code === 'P2002') {
+        this.logger.warn(`User update failed - Unique constraint violation: ${error.meta?.target} already exists`)
         return {
           userErrors: [
             {
@@ -152,12 +132,8 @@ export class UserService {
           ],
           user: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during user update for ID ${userID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during user update for ID ${userID}`, error)
         return {
           userErrors: [
             {
@@ -199,12 +175,9 @@ export class UserService {
         userErrors: [],
         user: userWithoutPassword,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(
-          `User deletion failed - User with ID ${userID} not found`,
-        )
+        this.logger.warn(`User deletion failed - User with ID ${userID} not found`)
         return {
           userErrors: [
             {
@@ -214,27 +187,19 @@ export class UserService {
           ],
           user: null,
         }
-      }
-      else if (error.code === 'P2003') {
-        this.logger.warn(
-          `User deletion failed - Foreign key constraint violation for user ${userID}`,
-        )
+      } else if (error.code === 'P2003') {
+        this.logger.warn(`User deletion failed - Foreign key constraint violation for user ${userID}`)
         return {
           userErrors: [
             {
-              message:
-                'Cannot delete user with existing registrations or orders',
+              message: 'Cannot delete user with existing registrations or orders',
               field: ['id'],
             },
           ],
           user: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during user deletion for ID ${userID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during user deletion for ID ${userID}`, error)
         return {
           userErrors: [
             {

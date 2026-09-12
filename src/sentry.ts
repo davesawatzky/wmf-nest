@@ -1,4 +1,5 @@
 import process from 'node:process'
+
 import * as Sentry from '@sentry/nestjs'
 
 Sentry.init({

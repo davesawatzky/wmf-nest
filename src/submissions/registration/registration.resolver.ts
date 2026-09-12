@@ -1,16 +1,7 @@
+import { Logger, UseGuards } from '@nestjs/common'
+import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import type { tbl_registration } from '@prisma/client'
 
-import { Logger, UseGuards } from '@nestjs/common'
-import {
-  Args,
-  Context,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
 import { CheckAbilities } from '@/ability/abilities.decorator.js'
 import { AbilitiesGuard } from '@/ability/abilities.guard.js'
 import { Action } from '@/ability/ability.factory.js'
@@ -23,12 +14,10 @@ import { RegisteredClass } from '@/submissions/registered-class/entities/registe
 import { School } from '@/submissions/school/entities/school.entity.js'
 import { Teacher } from '@/submissions/teacher/entities/teacher.entity.js'
 import { User } from '@/user/entities/user.entity.js'
+
 // import { RegistrationSearchFilters } from './dto/registration-search-filters.input.js'
 import { RegistrationInput } from './dto/registration.input.js'
-import {
-  Registration,
-  RegistrationPayload,
-} from './entities/registration.entity.js'
+import { Registration, RegistrationPayload } from './entities/registration.entity.js'
 import { RegistrationDataLoader } from './registration.dataloader.js'
 import { RegistrationService } from './registration.service.js'
 
@@ -70,7 +59,9 @@ export class RegistrationResolver {
     const isAdmin = context.req.user?.roles?.includes('admin')
     const userID = context.req.user?.id
 
-    this.logger.log(`Fetching registrations${isAdmin ? ' (admin query)' : userID ? ` for user ID: ${userID}` : ''}${performerType ? `, performerType: ${performerType}` : ''}`)
+    this.logger.log(
+      `Fetching registrations${isAdmin ? ' (admin query)' : userID ? ` for user ID: ${userID}` : ''}${performerType ? `, performerType: ${performerType}` : ''}`,
+    )
 
     // const skip = (page - 1) * take
     return await this.registrationService.findAll(
@@ -111,11 +102,7 @@ export class RegistrationResolver {
     }
     const userID = context.req.user?.id
     this.logger.log(`Creating registration for user ID: ${userID}, performerType: ${performerType}, label: ${newLabel}`)
-    return await this.registrationService.create(
-      userID,
-      performerType,
-      newLabel,
-    )
+    return await this.registrationService.create(userID, performerType, newLabel)
   }
 
   @Mutation(() => RegistrationPayload)
@@ -128,10 +115,7 @@ export class RegistrationResolver {
     registrationInput: Partial<RegistrationInput>,
   ) {
     this.logger.log(`Updating registration ID: ${registrationID}`)
-    return await this.registrationService.update(
-      registrationID,
-      registrationInput,
-    )
+    return await this.registrationService.update(registrationID, registrationInput)
   }
 
   @Mutation(() => RegistrationPayload)

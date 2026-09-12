@@ -1,6 +1,7 @@
-import type { tbl_order, tbl_registration } from '@prisma/client'
 import { Injectable, Logger, Scope } from '@nestjs/common'
+import type { tbl_order, tbl_registration } from '@prisma/client'
 import DataLoader from 'dataloader'
+
 import { PrismaService } from '@/prisma/prisma.service.js'
 
 @Injectable({ scope: Scope.REQUEST })
@@ -9,10 +10,7 @@ export class UserDataLoader {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * DataLoader for registrations (one-to-many)
-   * Batches queries to fetch registrations for multiple users
-   */
+  /** DataLoader for registrations (one-to-many) Batches queries to fetch registrations for multiple users */
   public readonly registrationsLoader = new DataLoader<number, tbl_registration[]>(
     async (userIds: readonly number[]) => {
       const startTime = performance.now()
@@ -30,7 +28,7 @@ export class UserDataLoader {
         registrationsByUser.set(registration.userID, existing)
       }
 
-      const orderedResults = userIds.map(id => registrationsByUser.get(id) ?? [])
+      const orderedResults = userIds.map((id) => registrationsByUser.get(id) ?? [])
 
       this.logger.log(
         `Fetched registrations for ${userIds.length} users in ${(performance.now() - startTime).toFixed(2)}ms`,
@@ -39,33 +37,26 @@ export class UserDataLoader {
     },
   )
 
-  /**
-   * DataLoader for orders (one-to-many)
-   * Batches queries to fetch orders for multiple users
-   */
-  public readonly ordersLoader = new DataLoader<number, tbl_order[]>(
-    async (userIds: readonly number[]) => {
-      const startTime = performance.now()
-      this.logger.debug(`Batching ${userIds.length} order queries for users`)
+  /** DataLoader for orders (one-to-many) Batches queries to fetch orders for multiple users */
+  public readonly ordersLoader = new DataLoader<number, tbl_order[]>(async (userIds: readonly number[]) => {
+    const startTime = performance.now()
+    this.logger.debug(`Batching ${userIds.length} order queries for users`)
 
-      const orders = await this.prisma.tbl_order.findMany({
-        where: { userID: { in: [...userIds] } },
-      })
+    const orders = await this.prisma.tbl_order.findMany({
+      where: { userID: { in: [...userIds] } },
+    })
 
-      // Group by user ID
-      const ordersByUser = new Map<number, tbl_order[]>()
-      for (const order of orders) {
-        const existing = ordersByUser.get(order.userID) || []
-        existing.push(order)
-        ordersByUser.set(order.userID, existing)
-      }
+    // Group by user ID
+    const ordersByUser = new Map<number, tbl_order[]>()
+    for (const order of orders) {
+      const existing = ordersByUser.get(order.userID) || []
+      existing.push(order)
+      ordersByUser.set(order.userID, existing)
+    }
 
-      const orderedResults = userIds.map(id => ordersByUser.get(id) ?? [])
+    const orderedResults = userIds.map((id) => ordersByUser.get(id) ?? [])
 
-      this.logger.log(
-        `Fetched orders for ${userIds.length} users in ${(performance.now() - startTime).toFixed(2)}ms`,
-      )
-      return orderedResults
-    },
-  )
+    this.logger.log(`Fetched orders for ${userIds.length} users in ${(performance.now() - startTime).toFixed(2)}ms`)
+    return orderedResults
+  })
 }

@@ -2,10 +2,7 @@ import { Field, InputType, Int } from '@nestjs/graphql'
 import { Decimal } from '@prisma/client-runtime-utils'
 import { Transform, Type } from 'class-transformer'
 import { IsDecimal, IsInt, IsOptional, IsString } from 'class-validator'
-import {
-  GraphQLDecimal,
-  transformToDecimal,
-} from 'prisma-graphql-type-decimal'
+import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
 
 @InputType()
 export class RegisteredClassInput {

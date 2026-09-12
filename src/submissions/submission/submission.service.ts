@@ -1,5 +1,5 @@
-import type { tbl_registration } from '@prisma/client'
 import { randomInt } from 'node:crypto'
+
 import {
   BadRequestException,
   Injectable,
@@ -7,6 +7,8 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
+import type { tbl_registration } from '@prisma/client'
+
 import { PerformerType } from '@/common.entity.js'
 import { PrismaService } from '@/prisma/prisma.service.js'
 import { RegistrationService } from '@/submissions/registration/registration.service.js'
@@ -32,8 +34,7 @@ export class SubmissionService {
           performerType,
         },
       })
-    }
-    catch (error: any) {
+    } catch (error: any) {
       this.logger.error(`Failed to fetch submissions: ${error.message}`, error.stack)
       throw new InternalServerErrorException('Failed to fetch submissions')
     }
@@ -163,8 +164,7 @@ export class SubmissionService {
         return {
           userErrors: [
             {
-              message:
-                'Submission cancelled. Please complete all required fields before submitting.',
+              message: 'Submission cancelled. Please complete all required fields before submitting.',
               field: [],
             },
           ],
@@ -199,8 +199,7 @@ export class SubmissionService {
         userErrors: [],
         submission: submissionData,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error
       }
@@ -219,16 +218,10 @@ export class SubmissionService {
 
     result = Object.keys(registration).every((key): boolean => {
       if (Array.isArray(registration[key])) {
-        return registration[key].every(val => this.emptyValueCheck(val, key))
-      }
-      else if (this.isObj(registration[key])) {
+        return registration[key].every((val) => this.emptyValueCheck(val, key))
+      } else if (this.isObj(registration[key])) {
         return this.emptyValueCheck(registration[key], key)
-      }
-      else if (
-        registration[key] === null
-        || registration[key] === undefined
-        || registration[key] === ''
-      ) {
+      } else if (registration[key] === null || registration[key] === undefined || registration[key] === '') {
         const isRequired = this.requiredField.find((el) => {
           return el.tableName === tableName && el.fieldName === key
         })

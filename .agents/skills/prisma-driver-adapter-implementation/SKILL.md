@@ -4,7 +4,7 @@ description: Required reference for Prisma ORM 7 SQL driver adapter work. Use wh
 license: MIT
 metadata:
   author: prisma
-  version: "7.9.1"
+  version: '7.9.1'
 ---
 
 # Prisma SQL Driver Adapter Implementation
@@ -54,15 +54,15 @@ interface Transaction extends AdapterInfo {
 
 ## Priority rules
 
-| Priority | Rule | Impact |
-|----------|------|--------|
-| CRITICAL | One dedicated connection per transaction | Prevents interleaving and leaks |
-| CRITICAL | `commit`/`rollback` are lifecycle cleanup hooks | Prevents duplicate COMMIT/ROLLBACK |
-| CRITICAL | Savepoints live on `Transaction`, not adapter-global depth | Makes nested scopes connection-local |
-| CRITICAL | Preserve original database error code/message | Enables useful `P2039` fallback |
-| HIGH | Map arguments and result metadata exactly | Prevents silent value corruption |
-| HIGH | Shadow databases are isolated and always cleaned up | Makes Migrate safe |
-| HIGH | Dispose only resources the adapter owns | Prevents shutting down caller-owned pools |
+| Priority | Rule                                                       | Impact                                    |
+| -------- | ---------------------------------------------------------- | ----------------------------------------- |
+| CRITICAL | One dedicated connection per transaction                   | Prevents interleaving and leaks           |
+| CRITICAL | `commit`/`rollback` are lifecycle cleanup hooks            | Prevents duplicate COMMIT/ROLLBACK        |
+| CRITICAL | Savepoints live on `Transaction`, not adapter-global depth | Makes nested scopes connection-local      |
+| CRITICAL | Preserve original database error code/message              | Enables useful `P2039` fallback           |
+| HIGH     | Map arguments and result metadata exactly                  | Prevents silent value corruption          |
+| HIGH     | Shadow databases are isolated and always cleaned up        | Makes Migrate safe                        |
+| HIGH     | Dispose only resources the adapter owns                    | Prevents shutting down caller-owned pools |
 
 ## Query implementation
 
@@ -79,9 +79,7 @@ class ExampleQueryable {
     try {
       const result = await this.connection.query({
         text: query.sql,
-        values: query.args.map((value, index) =>
-          mapArg(value, query.argTypes[index]),
-        ),
+        values: query.args.map((value, index) => mapArg(value, query.argTypes[index])),
         rowMode: 'array',
       })
 
@@ -160,12 +158,19 @@ class ExampleTransaction extends ExampleQueryable implements Transaction {
   readonly options = { usePhantomQuery: false }
   #closed = false
 
-  constructor(connection: DriverConnection, private readonly release: () => void) {
+  constructor(
+    connection: DriverConnection,
+    private readonly release: () => void,
+  ) {
     super(connection)
   }
 
-  async commit() { this.finish() }
-  async rollback() { this.finish() }
+  async commit() {
+    this.finish()
+  }
+  async rollback() {
+    this.finish()
+  }
 
   private finish() {
     if (this.#closed) return

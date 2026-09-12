@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common'
+
 import { AbilityModule } from '@/ability/ability.module.js'
+
 import { FieldConfigResolver } from './field-config.resolver.js'
 import { FieldConfigService } from './field-config.service.js'
 

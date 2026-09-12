@@ -28,7 +28,7 @@
     "strictBindCallApply": false,
     "strictNullChecks": false,
     "target": "es2023",
-    "types": ["vitest/globals"],
+    "types": ["vitest/globals"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "prisma.config.ts", "*.config.*"]

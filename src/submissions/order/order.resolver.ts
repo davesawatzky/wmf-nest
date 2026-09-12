@@ -1,21 +1,14 @@
-import type { tbl_order } from '@prisma/client'
 import { UseGuards } from '@nestjs/common'
-import {
-  Args,
-  Context,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import type { tbl_order } from '@prisma/client'
+
 import { CheckAbilities } from '@/ability/abilities.decorator.js'
 import { AbilitiesGuard } from '@/ability/abilities.guard.js'
 import { Action } from '@/ability/ability.factory.js'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
 import { User } from '@/user/entities/user.entity.js'
 import { UserService } from '@/user/user.service.js'
+
 import { OrderItem } from '../order-item/entities/order-item.entity.js'
 import { OrderItemService } from '../order-item/order-item.service.js'
 import { OrderInput } from './dto/order.input.js'
@@ -36,25 +29,16 @@ export class OrderResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Order })
   async orders(@Context() context) {
-    return await this.orderService.findAll(
-      context.req.user.roles.includes('admin')
-        ? undefined
-        : context.req.user.id,
-    )
+    return await this.orderService.findAll(context.req.user.roles.includes('admin') ? undefined : context.req.user.id)
   }
 
   @Query(() => Order)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Order })
-  async order(
-    @Context() context,
-    @Args('orderID', { type: () => Int }) orderID: Order['id'],
-  ) {
+  async order(@Context() context, @Args('orderID', { type: () => Int }) orderID: Order['id']) {
     return await this.orderService.findOne(
       orderID,
-      context.req.user.roles.includes('admin')
-        ? undefined
-        : context.req.user.id,
+      context.req.user.roles.includes('admin') ? undefined : context.req.user.id,
     )
   }
 
@@ -84,9 +68,7 @@ export class OrderResolver {
   @Mutation(() => OrderPayload)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Delete, subject: Order })
-  async orderDelete(
-    @Args('orderID', { type: () => Int }) orderID: Order['id'],
-  ) {
+  async orderDelete(@Args('orderID', { type: () => Int }) orderID: Order['id']) {
     return await this.orderService.remove(orderID)
   }
 

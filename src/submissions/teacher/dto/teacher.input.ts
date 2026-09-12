@@ -1,12 +1,5 @@
 import { InputType } from '@nestjs/graphql'
-import {
-  IsBoolean,
-  IsEmail,
-  IsOptional,
-  IsPhoneNumber,
-  IsPostalCode,
-  IsString,
-} from 'class-validator'
+import { IsBoolean, IsEmail, IsOptional, IsPhoneNumber, IsPostalCode, IsString } from 'class-validator'
 
 @InputType()
 export class TeacherInput {

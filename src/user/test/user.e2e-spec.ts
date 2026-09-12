@@ -1,10 +1,8 @@
 import { gql } from 'graphql-tag'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
-import {
-  createAuthenticatedRequest,
-  getUserId,
-  testWithBothRoles,
-} from '@/test/testHelpers.js'
+
+import { createAuthenticatedRequest, getUserId, testWithBothRoles } from '@/test/testHelpers.js'
+
 import { User, UserPayload } from '../entities/user.entity.js'
 
 describe('User E2E Tests', () => {
@@ -51,57 +49,50 @@ describe('User E2E Tests', () => {
     // Clean up test user and any test data
     await globalThis.prisma.tbl_user.deleteMany({
       where: {
-        OR: [
-          { email: { startsWith: 'test_delete_' } },
-          { email: 'test_user_for_tests@test.com' },
-        ],
+        OR: [{ email: { startsWith: 'test_delete_' } }, { email: 'test_user_for_tests@test.com' }],
       },
     })
   })
 
   describe('User Queries', () => {
     it('Should enforce list authorization: admin succeeds, user fails', async () => {
-      const results = await testWithBothRoles(
-        'list users',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetUsers {
-                users {
-                  id
-                  email
-                  firstName
-                  lastName
-                  privateTeacher
-                  schoolTeacher
-                  instrument
-                  address
-                  city
-                  province
-                  postalCode
-                  phone
-                  emailConfirmed
-                  isActive
-                  roles
-                  permissions
-                }
-              }
-            `) as { data?: { users: User[] }, errors?: readonly any[] }
-
-          const users = response.data?.users
-          const firstUser = users?.[0]
-
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            hasData: !!users,
-            isArray: Array.isArray(users),
-            count: users?.length || 0,
-            hasRoles: firstUser?.roles && Array.isArray(firstUser.roles),
-            hasPermissions: firstUser?.permissions && Array.isArray(firstUser.permissions),
+      const results = await testWithBothRoles('list users', async (role) => {
+        const response = (await createAuthenticatedRequest(role).query(gql`
+          query GetUsers {
+            users {
+              id
+              email
+              firstName
+              lastName
+              privateTeacher
+              schoolTeacher
+              instrument
+              address
+              city
+              province
+              postalCode
+              phone
+              emailConfirmed
+              isActive
+              roles
+              permissions
+            }
           }
-        },
-      )
+        `)) as { data?: { users: User[] }; errors?: readonly any[] }
+
+        const users = response.data?.users
+        const firstUser = users?.[0]
+
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          hasData: !!users,
+          isArray: Array.isArray(users),
+          count: users?.length || 0,
+          hasRoles: firstUser?.roles && Array.isArray(firstUser.roles),
+          hasPermissions: firstUser?.permissions && Array.isArray(firstUser.permissions),
+        }
+      })
 
       // Admin should successfully retrieve users
       expect(results.admin.isAuthorized).toBe(true)
@@ -118,33 +109,29 @@ describe('User E2E Tests', () => {
     })
 
     it('Should enforce list with registrations authorization: admin succeeds, user fails', async () => {
-      const results = await testWithBothRoles(
-        'list users with registrations',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetUsers {
-                users {
-                  id
-                  email
-                  firstName
-                  lastName
-                  registrations {
-                    id
-                    label
-                  }
-                }
+      const results = await testWithBothRoles('list users with registrations', async (role) => {
+        const response = (await createAuthenticatedRequest(role).query(gql`
+          query GetUsers {
+            users {
+              id
+              email
+              firstName
+              lastName
+              registrations {
+                id
+                label
               }
-            `) as { data?: { users: User[] }, errors?: readonly any[] }
-
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            hasData: !!response.data?.users,
-            hasRegistrations: response.data?.users?.some(u => u.registrations && u.registrations.length > 0) || false,
+            }
           }
-        },
-      )
+        `)) as { data?: { users: User[] }; errors?: readonly any[] }
+
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          hasData: !!response.data?.users,
+          hasRegistrations: response.data?.users?.some((u) => u.registrations && u.registrations.length > 0) || false,
+        }
+      })
 
       // Admin should successfully retrieve users with registrations
       expect(results.admin.isAuthorized).toBe(true)
@@ -157,28 +144,25 @@ describe('User E2E Tests', () => {
     })
 
     it('Should return current user details (myUser) for both roles', async () => {
-      const results = await testWithBothRoles(
-        'get my user details',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetMyUser {
-                myUser {
-                  id
-                  firstName
-                  lastName
-                  email
-                }
+      const results = await testWithBothRoles('get my user details', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetMyUser {
+              myUser {
+                id
+                firstName
+                lastName
+                email
               }
-            `)
-            .expectNoErrors() as { data: { myUser: User } }
+            }
+          `)
+          .expectNoErrors()) as { data: { myUser: User } }
 
-          return {
-            found: !!response.data.myUser,
-            data: response.data.myUser as User | undefined,
-          }
-        },
-      )
+        return {
+          found: !!response.data.myUser,
+          data: response.data.myUser as User | undefined,
+        }
+      })
 
       // Both roles should retrieve their own user details
       expect(results.admin.found).toBe(true)
@@ -193,30 +177,29 @@ describe('User E2E Tests', () => {
     })
 
     it('Should enforce find by ID authorization: admin succeeds, user fails', async () => {
-      const results = await testWithBothRoles(
-        'find user by ID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetUser($userId: Int!) {
-                user(userID: $userId) {
-                  id
-                  firstName
-                  lastName
-                }
+      const results = await testWithBothRoles('find user by ID', async (role) => {
+        const response = (await createAuthenticatedRequest(role).query(
+          gql`
+            query GetUser($userId: Int!) {
+              user(userID: $userId) {
+                id
+                firstName
+                lastName
               }
-            `, {
-              userId: testUserId,
-            }) as { data?: { user: User }, errors?: readonly any[] }
+            }
+          `,
+          {
+            userId: testUserId,
+          },
+        )) as { data?: { user: User }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            found: !!response.data?.user,
-            data: response.data?.user,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          found: !!response.data?.user,
+          data: response.data?.user,
+        }
+      })
 
       // Admin should find the user
       expect(results.admin.isAuthorized).toBe(true)
@@ -230,34 +213,33 @@ describe('User E2E Tests', () => {
     })
 
     it('Should enforce find with registrations by ID authorization: admin succeeds, user fails', async () => {
-      const results = await testWithBothRoles(
-        'find user with registrations',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetUser($userId: Int!) {
-                user(userID: $userId) {
+      const results = await testWithBothRoles('find user with registrations', async (role) => {
+        const response = (await createAuthenticatedRequest(role).query(
+          gql`
+            query GetUser($userId: Int!) {
+              user(userID: $userId) {
+                id
+                firstName
+                lastName
+                registrations {
                   id
-                  firstName
-                  lastName
-                  registrations {
-                    id
-                    label
-                  }
+                  label
                 }
               }
-            `, {
-              userId: testUserId,
-            }) as { data?: { user: User }, errors?: readonly any[] }
+            }
+          `,
+          {
+            userId: testUserId,
+          },
+        )) as { data?: { user: User }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            found: !!response.data?.user,
-            hasRegistrations: !!response.data?.user?.registrations,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          found: !!response.data?.user,
+          hasRegistrations: !!response.data?.user?.registrations,
+        }
+      })
 
       // Admin should find the user
       expect(results.admin.isAuthorized).toBe(true)
@@ -270,31 +252,30 @@ describe('User E2E Tests', () => {
     })
 
     it('Should enforce find by email authorization: admin succeeds, user fails', async () => {
-      const results = await testWithBothRoles(
-        'find user by email',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetUser($email: String!) {
-                user(email: $email) {
-                  id
-                  firstName
-                  lastName
-                  email
-                }
+      const results = await testWithBothRoles('find user by email', async (role) => {
+        const response = (await createAuthenticatedRequest(role).query(
+          gql`
+            query GetUser($email: String!) {
+              user(email: $email) {
+                id
+                firstName
+                lastName
+                email
               }
-            `, {
-              email: testUserEmail,
-            }) as { data?: { user: User }, errors?: readonly any[] }
+            }
+          `,
+          {
+            email: testUserEmail,
+          },
+        )) as { data?: { user: User }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            found: !!response.data?.user,
-            data: response.data?.user,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          found: !!response.data?.user,
+          data: response.data?.user,
+        }
+      })
 
       // Admin should find the user by email
       expect(results.admin.isAuthorized).toBe(true)
@@ -310,40 +291,39 @@ describe('User E2E Tests', () => {
 
   describe('User Mutations', () => {
     it('Should enforce update authorization: both admin and user can update', async () => {
-      const results = await testWithBothRoles(
-        'update user',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation UserUpdate($userId: Int!, $userInput: UserInput!) {
-                userUpdate(userID: $userId, userInput: $userInput) {
-                  user {
-                    id
-                    firstName
-                    lastName
-                  }
-                  userErrors {
-                    message
-                    field
-                  }
+      const results = await testWithBothRoles('update user', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation UserUpdate($userId: Int!, $userInput: UserInput!) {
+              userUpdate(userID: $userId, userInput: $userInput) {
+                user {
+                  id
+                  firstName
+                  lastName
+                }
+                userErrors {
+                  message
+                  field
                 }
               }
-            `, {
-              userId: testUserId,
-              userInput: {
-                firstName: `Updated${role}FirstName`,
-                lastName: `Updated${role}LastName`,
-              },
-            }) as { data?: { userUpdate: UserPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            userId: testUserId,
+            userInput: {
+              firstName: `Updated${role}FirstName`,
+              lastName: `Updated${role}LastName`,
+            },
+          },
+        )) as { data?: { userUpdate: UserPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            user: response.data?.userUpdate?.user as User | undefined,
-            userErrors: response.data?.userUpdate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          user: response.data?.userUpdate?.user as User | undefined,
+          userErrors: response.data?.userUpdate?.userErrors,
+        }
+      })
 
       // Both admin and user should succeed (both have Update permission on User)
       expect(results.admin.isAuthorized).toBe(true)
@@ -360,40 +340,39 @@ describe('User E2E Tests', () => {
     })
 
     it('Should handle update of non-existent user: both roles get userError', async () => {
-      const results = await testWithBothRoles(
-        'update non-existent user',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation UserUpdate($userId: Int!, $userInput: UserInput!) {
-                userUpdate(userID: $userId, userInput: $userInput) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  user {
-                    id
-                    firstName
-                    lastName
-                  }
+      const results = await testWithBothRoles('update non-existent user', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation UserUpdate($userId: Int!, $userInput: UserInput!) {
+              userUpdate(userID: $userId, userInput: $userInput) {
+                userErrors {
+                  message
+                  field
+                }
+                user {
+                  id
+                  firstName
+                  lastName
                 }
               }
-            `, {
-              userId: 99999,
-              userInput: {
-                firstName: 'UpdatedFirstName',
-                lastName: 'UpdatedLastName',
-              },
-            }) as { data?: { userUpdate: UserPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            userId: 99999,
+            userInput: {
+              firstName: 'UpdatedFirstName',
+              lastName: 'UpdatedLastName',
+            },
+          },
+        )) as { data?: { userUpdate: UserPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            user: response.data?.userUpdate?.user as User | undefined,
-            userErrors: response.data?.userUpdate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          user: response.data?.userUpdate?.user as User | undefined,
+          userErrors: response.data?.userUpdate?.userErrors,
+        }
+      })
 
       // Both roles are authorized but should get userError
       expect(results.admin.isAuthorized).toBe(true)
@@ -410,44 +389,43 @@ describe('User E2E Tests', () => {
     })
 
     it('Should successfully update user fields: both roles can update their own account', async () => {
-      const results = await testWithBothRoles(
-        'update user successfully',
-        async (role) => {
-          // Each role updates their own account
-          const currentUserId = getUserId(role)
+      const results = await testWithBothRoles('update user successfully', async (role) => {
+        // Each role updates their own account
+        const currentUserId = getUserId(role)
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation UserUpdate($userId: Int!, $userInput: UserInput!) {
-                userUpdate(userID: $userId, userInput: $userInput) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  user {
-                    id
-                    firstName
-                    lastName
-                  }
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation UserUpdate($userId: Int!, $userInput: UserInput!) {
+              userUpdate(userID: $userId, userInput: $userInput) {
+                userErrors {
+                  message
+                  field
+                }
+                user {
+                  id
+                  firstName
+                  lastName
                 }
               }
-            `, {
-              userId: currentUserId,
-              userInput: {
-                // Note: email cannot be updated via UserInput
-                firstName: 'UpdatedFirstName',
-                lastName: 'UpdatedLastName',
-              },
-            }) as { data?: { userUpdate: UserPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            userId: currentUserId,
+            userInput: {
+              // Note: email cannot be updated via UserInput
+              firstName: 'UpdatedFirstName',
+              lastName: 'UpdatedLastName',
+            },
+          },
+        )) as { data?: { userUpdate: UserPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            user: response.data?.userUpdate?.user,
-            userErrors: response.data?.userUpdate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          user: response.data?.userUpdate?.user,
+          userErrors: response.data?.userUpdate?.userErrors,
+        }
+      })
 
       // Both roles should successfully update their own account
       expect(results.admin.isAuthorized).toBe(true)
@@ -493,36 +471,35 @@ describe('User E2E Tests', () => {
     })
 
     it('Should enforce delete authorization: admin succeeds, user fails', async () => {
-      const results = await testWithBothRoles(
-        'delete user',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation UserDelete($userId: Int!) {
-                userDelete(userID: $userId) {
-                  user {
-                    id
-                    firstName
-                    lastName
-                  }
-                  userErrors {
-                    message
-                    field
-                  }
+      const results = await testWithBothRoles('delete user', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation UserDelete($userId: Int!) {
+              userDelete(userID: $userId) {
+                user {
+                  id
+                  firstName
+                  lastName
+                }
+                userErrors {
+                  message
+                  field
                 }
               }
-            `, {
-              userId: deleteTestUserId,
-            }) as { data?: { userDelete: UserPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            userId: deleteTestUserId,
+          },
+        )) as { data?: { userDelete: UserPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            user: response.data?.userDelete?.user as User | undefined,
-            userErrors: response.data?.userDelete?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          user: response.data?.userDelete?.user as User | undefined,
+          userErrors: response.data?.userDelete?.userErrors,
+        }
+      })
 
       // User should be forbidden (no Delete permission)
       expect(results.user.isAuthorized).toBe(false)
@@ -546,36 +523,35 @@ describe('User E2E Tests', () => {
     })
 
     it('Should handle delete of non-existent user: admin gets userError, user forbidden', async () => {
-      const results = await testWithBothRoles(
-        'delete non-existent user',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation UserDelete($userId: Int!) {
-                userDelete(userID: $userId) {
-                  user {
-                    id
-                    firstName
-                    lastName
-                  }
-                  userErrors {
-                    message
-                    field
-                  }
+      const results = await testWithBothRoles('delete non-existent user', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation UserDelete($userId: Int!) {
+              userDelete(userID: $userId) {
+                user {
+                  id
+                  firstName
+                  lastName
+                }
+                userErrors {
+                  message
+                  field
                 }
               }
-            `, {
-              userId: 99999,
-            }) as { data?: { userDelete: UserPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            userId: 99999,
+          },
+        )) as { data?: { userDelete: UserPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            user: response.data?.userDelete?.user as User | undefined,
-            userErrors: response.data?.userDelete?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          user: response.data?.userDelete?.user as User | undefined,
+          userErrors: response.data?.userDelete?.userErrors,
+        }
+      })
 
       // User should be forbidden
       expect(results.user.isAuthorized).toBe(false)
@@ -592,17 +568,16 @@ describe('User E2E Tests', () => {
 
   describe('Authentication and Authorization', () => {
     it('Should require authentication for all operations', async () => {
-      const response = await createAuthenticatedRequest('user')
-        .set('Cookie', '') // Remove authentication
+      const response = (await createAuthenticatedRequest('user').set('Cookie', '') // Remove authentication
         .query(gql`
-          query GetUsers {
-            users {
-              id
-              firstName
-              lastName
-            }
+        query GetUsers {
+          users {
+            id
+            firstName
+            lastName
           }
-        `) as { errors?: readonly any[] }
+        }
+      `)) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0].message).toContain('Unauthorized')

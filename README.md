@@ -1,5 +1,6 @@
 ## Description
-Backend application for the Winnipeg Music Festival Registration platform.  Built using Nest.js, Graphql, and Postgres.  Made to work together with 'wmf-nuxt'
+
+Backend application for the Winnipeg Music Festival Registration platform. Built using Nest.js, Graphql, and Postgres. Made to work together with 'wmf-nuxt'
 
 ## Installation
 

@@ -2,6 +2,7 @@ import { JwtService } from '@nestjs/jwt'
 import { Test, TestingModule } from '@nestjs/testing'
 import { User } from 'src/user/entities/user.entity'
 import { beforeEach, describe, expect, it } from 'vitest'
+
 import { PrismaService } from '../../prisma/prisma.service.js'
 import { userStub } from '../../user/test/stubs/user.stub.js'
 import { AuthService } from '../auth.service.js'
@@ -93,7 +94,7 @@ describe('authService', () => {
 
       beforeEach(() => {
         signinFromAuthGuard = userStub()
-        jwtService.sign = vi.fn().mockImplementation(payload => payload)
+        jwtService.sign = vi.fn().mockImplementation((payload) => payload)
       })
       afterEach(() => {
         vi.fn().mockClear()
@@ -101,18 +102,14 @@ describe('authService', () => {
 
       it('should allow a user to signin with email and password if confirmed', async () => {
         signinFromAuthGuard.emailConfirmed = true
-        prisma.tbl_user.findUnique = vi
-          .fn()
-          .mockResolvedValue(signinFromAuthGuard)
+        prisma.tbl_user.findUnique = vi.fn().mockResolvedValue(signinFromAuthGuard)
         result = await authService.signin(signinFromAuthGuard)
         expect(result.diatonicToken).toBeTruthy()
       })
 
       it('should produce an error if email not confirmed', async () => {
         signinFromAuthGuard.emailConfirmed = false
-        prisma.tbl_user.findUnique = vi
-          .fn()
-          .mockResolvedValue(signinFromAuthGuard)
+        prisma.tbl_user.findUnique = vi.fn().mockResolvedValue(signinFromAuthGuard)
         result = await authService.signin(signinFromAuthGuard)
         expect(result.diatonicToken).toBeNull()
         expect(result.userErrors[0].message).toBeTruthy()
@@ -177,7 +174,7 @@ describe('authService', () => {
   })
 
   describe('checkIfPasswordExists', () => {
-    let result: { id: number, pass: boolean }
+    let result: { id: number; pass: boolean }
     let userDetails: User & CredentialsSignin
     beforeEach(() => {
       userDetails = userStub()
@@ -202,9 +199,7 @@ describe('authService', () => {
 
     it('should throw an error if nothing found', async () => {
       prisma.tbl_user.findUnique = vi.fn().mockResolvedValue(null)
-      await expect(() =>
-        authService.checkIfPasswordExists(null),
-      ).rejects.toThrowError()
+      await expect(() => authService.checkIfPasswordExists(null)).rejects.toThrowError()
     })
   })
 })

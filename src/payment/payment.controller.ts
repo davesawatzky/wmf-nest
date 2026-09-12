@@ -1,12 +1,7 @@
 import type { RawBodyRequest } from '@nestjs/common'
-import {
-  Body,
-  Controller,
-  Headers,
-  Post,
-  Req,
-} from '@nestjs/common'
+import { Body, Controller, Headers, Post, Req } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+
 import { PaymentService } from './payment.service.js'
 
 @Controller('payment')
@@ -21,10 +16,7 @@ export class PaymentController {
   // @UseGuards(RestJwtAuthGuard)
   async summarizePayment(@Body() body) {
     const { regId, tokenId } = body
-    const paymentDetails = await this.paymentService.summarizePayment(
-      regId,
-      tokenId,
-    )
+    const paymentDetails = await this.paymentService.summarizePayment(regId, tokenId)
     return paymentDetails
   }
 
@@ -32,11 +24,7 @@ export class PaymentController {
   // @UseGuards(RestJwtAuthGuard)
   async createPaymentIntent(@Body() body) {
     const { regId, WMFconfirmationId, tokenId } = body
-    const paymentIntent = await this.paymentService.createPaymentIntent(
-      regId,
-      WMFconfirmationId,
-      tokenId,
-    )
+    const paymentIntent = await this.paymentService.createPaymentIntent(regId, WMFconfirmationId, tokenId)
     return {
       totalPayment: paymentIntent.amount,
       client_secret: paymentIntent.client_secret,
@@ -46,16 +34,11 @@ export class PaymentController {
   @Post('cancel-confirmation-token')
   async cancelConfirmationToken(@Body() body) {
     const { regId } = body
-    return await this.paymentService.cancelConfirmationToken(
-      regId,
-    )
+    return await this.paymentService.cancelConfirmationToken(regId)
   }
 
   @Post('webhook')
-  async webhook(
-    @Req() req: RawBodyRequest<Request>,
-    @Headers('stripe-signature') signature: string,
-  ) {
+  async webhook(@Req() req: RawBodyRequest<Request>, @Headers('stripe-signature') signature: string) {
     // This is your Stripe CLI webhook secret for testing your endpoint locally.
     const endpointSecret = await this.configService.get('STRIPE_WEBHOOK_KEY')
     return await this.paymentService.webhook(req, signature, endpointSecret)

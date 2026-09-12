@@ -1,9 +1,5 @@
 import { ISendMailOptions, MailerService } from '@nestjs-modules/mailer'
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common'
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 
 @Injectable()
@@ -26,16 +22,10 @@ export class EmailService {
 
       const result = await this.mailerService.sendMail(options)
 
-      this.logger.log(
-        `Successfully sent email to: ${options.to} with subject: ${options.subject}`,
-      )
+      this.logger.log(`Successfully sent email to: ${options.to} with subject: ${options.subject}`)
       return result
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to send email to ${options.to}: ${error.message}`,
-        error.stack,
-      )
+    } catch (error: any) {
+      this.logger.error(`Failed to send email to ${options.to}: ${error.message}`, error.stack)
 
       throw new InternalServerErrorException('Failed to send email')
     }

@@ -1,14 +1,9 @@
 import { gql } from 'graphql-tag'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import {
-  createAuthenticatedRequest,
-  getUserId,
-  testWithBothRoles,
-} from '@/test/testHelpers.js'
-import {
-  SchoolGroup,
-  SchoolGroupPayload,
-} from '../entities/school-group.entity.js'
+
+import { createAuthenticatedRequest, getUserId, testWithBothRoles } from '@/test/testHelpers.js'
+
+import { SchoolGroup, SchoolGroupPayload } from '../entities/school-group.entity.js'
 
 describe('SchoolGroup E2E Tests', () => {
   let adminRegistrationId: number
@@ -89,27 +84,24 @@ describe('SchoolGroup E2E Tests', () => {
 
   describe('SchoolGroup Queries', () => {
     it('Should list all school groups for both roles', async () => {
-      const results = await testWithBothRoles(
-        'list school groups',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetSchoolGroups {
-                schoolGroups {
-                  id
-                  name
-                  groupSize
-                }
+      const results = await testWithBothRoles('list school groups', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetSchoolGroups {
+              schoolGroups {
+                id
+                name
+                groupSize
               }
-            `)
-            .expectNoErrors() as { data: { schoolGroups: SchoolGroup[] } }
+            }
+          `)
+          .expectNoErrors()) as { data: { schoolGroups: SchoolGroup[] } }
 
-          return {
-            hasData: !!response.data.schoolGroups,
-            count: response.data.schoolGroups?.length || 0,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.schoolGroups,
+          count: response.data.schoolGroups?.length || 0,
+        }
+      })
 
       // Both roles should successfully retrieve school groups
       expect(results.admin.hasData).toBe(true)
@@ -120,36 +112,33 @@ describe('SchoolGroup E2E Tests', () => {
     })
 
     it('Should list school groups with associated school and registration for both roles', async () => {
-      const results = await testWithBothRoles(
-        'list school groups with relations',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetSchoolGroups {
-                schoolGroups {
+      const results = await testWithBothRoles('list school groups with relations', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetSchoolGroups {
+              schoolGroups {
+                id
+                name
+                groupSize
+                school {
                   id
                   name
-                  groupSize
-                  school {
+                  registration {
                     id
-                    name
-                    registration {
-                      id
-                      label
-                    }
+                    label
                   }
                 }
               }
-            `)
-            .expectNoErrors() as { data: { schoolGroups: SchoolGroup[] } }
+            }
+          `)
+          .expectNoErrors()) as { data: { schoolGroups: SchoolGroup[] } }
 
-          return {
-            hasData: !!response.data.schoolGroups,
-            hasSchool: !!response.data.schoolGroups[0]?.school,
-            hasRegistration: !!response.data.schoolGroups[0]?.school?.registration,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.schoolGroups,
+          hasSchool: !!response.data.schoolGroups[0]?.school,
+          hasRegistration: !!response.data.schoolGroups[0]?.school?.registration,
+        }
+      })
 
       // Both roles should successfully retrieve nested data
       expect(results.admin.hasData).toBe(true)
@@ -162,13 +151,12 @@ describe('SchoolGroup E2E Tests', () => {
     })
 
     it('Should filter school groups by schoolID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'filter school groups by schoolID',
-        async (role) => {
-          const schoolId = role === 'admin' ? adminSchoolId : userSchoolId
+      const results = await testWithBothRoles('filter school groups by schoolID', async (role) => {
+        const schoolId = role === 'admin' ? adminSchoolId : userSchoolId
 
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
+        const response = (await createAuthenticatedRequest(role)
+          .query(
+            gql`
               query GetSchoolGroups($schoolID: Int) {
                 schoolGroups(schoolID: $schoolID) {
                   id
@@ -179,17 +167,18 @@ describe('SchoolGroup E2E Tests', () => {
                   }
                 }
               }
-            `, {
+            `,
+            {
               schoolID: schoolId,
-            })
-            .expectNoErrors() as { data: { schoolGroups: SchoolGroup[] } }
+            },
+          )
+          .expectNoErrors()) as { data: { schoolGroups: SchoolGroup[] } }
 
-          return {
-            hasData: !!response.data.schoolGroups,
-            count: response.data.schoolGroups?.length || 0,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.schoolGroups,
+          count: response.data.schoolGroups?.length || 0,
+        }
+      })
 
       // Both roles should successfully filter by their school
       expect(results.admin.hasData).toBe(true)
@@ -197,11 +186,10 @@ describe('SchoolGroup E2E Tests', () => {
     })
 
     it('Should find specific school group by ID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'find school group by ID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
+      const results = await testWithBothRoles('find school group by ID', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(
+            gql`
               query GetSchoolGroup($schoolGroupID: Int!) {
                 schoolGroup(schoolGroupID: $schoolGroupID) {
                   id
@@ -213,18 +201,19 @@ describe('SchoolGroup E2E Tests', () => {
                   }
                 }
               }
-            `, {
+            `,
+            {
               schoolGroupID: testSchoolGroupId,
-            })
-            .expectNoErrors() as { data: { schoolGroup: SchoolGroup } }
+            },
+          )
+          .expectNoErrors()) as { data: { schoolGroup: SchoolGroup } }
 
-          return {
-            hasData: !!response.data.schoolGroup,
-            schoolGroupName: response.data.schoolGroup?.name,
-            hasSchool: !!response.data.schoolGroup?.school,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.schoolGroup,
+          schoolGroupName: response.data.schoolGroup?.name,
+          hasSchool: !!response.data.schoolGroup?.school,
+        }
+      })
 
       // Both roles should successfully retrieve the school group
       expect(results.admin.hasData).toBe(true)
@@ -237,27 +226,26 @@ describe('SchoolGroup E2E Tests', () => {
     })
 
     it('Should return error when school group not found for both roles', async () => {
-      const results = await testWithBothRoles(
-        'handle school group not found',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetSchoolGroup($schoolGroupID: Int!) {
-                schoolGroup(schoolGroupID: $schoolGroupID) {
-                  id
-                  name
-                }
+      const results = await testWithBothRoles('handle school group not found', async (role) => {
+        const response = (await createAuthenticatedRequest(role).query(
+          gql`
+            query GetSchoolGroup($schoolGroupID: Int!) {
+              schoolGroup(schoolGroupID: $schoolGroupID) {
+                id
+                name
               }
-            `, {
-              schoolGroupID: 99999,
-            }) as { data?: { schoolGroup: SchoolGroup | null }, errors?: readonly any[] }
+            }
+          `,
+          {
+            schoolGroupID: 99999,
+          },
+        )) as { data?: { schoolGroup: SchoolGroup | null }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            errorMessage: response.errors?.[0]?.message,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          errorMessage: response.errors?.[0]?.message,
+        }
+      })
 
       // Both roles should get not found error
       expect(results.admin.hasErrors).toBe(true)
@@ -270,48 +258,47 @@ describe('SchoolGroup E2E Tests', () => {
 
   describe('SchoolGroup Create Tests', () => {
     it('Should create school group with schoolID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'create school group',
-        async (role) => {
-          const schoolId = role === 'admin' ? adminSchoolId : userSchoolId
+      const results = await testWithBothRoles('create school group', async (role) => {
+        const schoolId = role === 'admin' ? adminSchoolId : userSchoolId
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CreateSchoolGroup($schoolID: Int!) {
-                schoolGroupCreate(schoolID: $schoolID) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  schoolGroup {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CreateSchoolGroup($schoolID: Int!) {
+              schoolGroupCreate(schoolID: $schoolID) {
+                userErrors {
+                  message
+                  field
+                }
+                schoolGroup {
+                  id
+                  name
+                  school {
                     id
-                    name
-                    school {
-                      id
-                    }
                   }
                 }
               }
-            `, {
-              schoolID: schoolId,
-            }) as { data?: { schoolGroupCreate: SchoolGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            schoolID: schoolId,
+          },
+        )) as { data?: { schoolGroupCreate: SchoolGroupPayload }; errors?: readonly any[] }
 
-          // Cleanup
-          if (response.data?.schoolGroupCreate?.schoolGroup?.id) {
-            await globalThis.prisma.tbl_reg_schoolgroup.delete({
-              where: { id: response.data.schoolGroupCreate.schoolGroup.id },
-            })
-          }
+        // Cleanup
+        if (response.data?.schoolGroupCreate?.schoolGroup?.id) {
+          await globalThis.prisma.tbl_reg_schoolgroup.delete({
+            where: { id: response.data.schoolGroupCreate.schoolGroup.id },
+          })
+        }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            schoolGroup: response.data?.schoolGroupCreate?.schoolGroup as SchoolGroup | undefined,
-            userErrors: response.data?.schoolGroupCreate?.userErrors,
-            hasUserErrors: (response.data?.schoolGroupCreate?.userErrors?.length || 0) > 0,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          schoolGroup: response.data?.schoolGroupCreate?.schoolGroup as SchoolGroup | undefined,
+          userErrors: response.data?.schoolGroupCreate?.userErrors,
+          hasUserErrors: (response.data?.schoolGroupCreate?.userErrors?.length || 0) > 0,
+        }
+      })
 
       // Both roles should succeed
       expect(results.admin.isAuthorized).toBe(true)
@@ -326,56 +313,55 @@ describe('SchoolGroup E2E Tests', () => {
     })
 
     it('Should create school group with schoolGroupInput for both roles', async () => {
-      const results = await testWithBothRoles(
-        'create school group with input',
-        async (role) => {
-          const schoolId = role === 'admin' ? adminSchoolId : userSchoolId
+      const results = await testWithBothRoles('create school group with input', async (role) => {
+        const schoolId = role === 'admin' ? adminSchoolId : userSchoolId
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CreateSchoolGroup($schoolID: Int!, $schoolGroupInput: SchoolGroupInput) {
-                schoolGroupCreate(schoolID: $schoolID, schoolGroupInput: $schoolGroupInput) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  schoolGroup {
-                    id
-                    name
-                    groupSize
-                    chaperones
-                    wheelchairs
-                  }
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CreateSchoolGroup($schoolID: Int!, $schoolGroupInput: SchoolGroupInput) {
+              schoolGroupCreate(schoolID: $schoolID, schoolGroupInput: $schoolGroupInput) {
+                userErrors {
+                  message
+                  field
+                }
+                schoolGroup {
+                  id
+                  name
+                  groupSize
+                  chaperones
+                  wheelchairs
                 }
               }
-            `, {
-              schoolID: schoolId,
-              schoolGroupInput: {
-                name: `test_${role}_schoolgroup_with_input`,
-                groupSize: 30,
-                chaperones: 3,
-                wheelchairs: 1,
-              },
-            }) as { data?: { schoolGroupCreate: SchoolGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            schoolID: schoolId,
+            schoolGroupInput: {
+              name: `test_${role}_schoolgroup_with_input`,
+              groupSize: 30,
+              chaperones: 3,
+              wheelchairs: 1,
+            },
+          },
+        )) as { data?: { schoolGroupCreate: SchoolGroupPayload }; errors?: readonly any[] }
 
-          // Cleanup
-          if (response.data?.schoolGroupCreate?.schoolGroup?.id) {
-            await globalThis.prisma.tbl_reg_schoolgroup.delete({
-              where: { id: response.data.schoolGroupCreate.schoolGroup.id },
-            })
-          }
+        // Cleanup
+        if (response.data?.schoolGroupCreate?.schoolGroup?.id) {
+          await globalThis.prisma.tbl_reg_schoolgroup.delete({
+            where: { id: response.data.schoolGroupCreate.schoolGroup.id },
+          })
+        }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            schoolGroup: response.data?.schoolGroupCreate?.schoolGroup as SchoolGroup | undefined,
-            schoolGroupName: response.data?.schoolGroupCreate?.schoolGroup?.name,
-            groupSize: response.data?.schoolGroupCreate?.schoolGroup?.groupSize,
-            userErrors: response.data?.schoolGroupCreate?.userErrors,
-            hasUserErrors: (response.data?.schoolGroupCreate?.userErrors?.length || 0) > 0,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          schoolGroup: response.data?.schoolGroupCreate?.schoolGroup as SchoolGroup | undefined,
+          schoolGroupName: response.data?.schoolGroupCreate?.schoolGroup?.name,
+          groupSize: response.data?.schoolGroupCreate?.schoolGroup?.groupSize,
+          userErrors: response.data?.schoolGroupCreate?.userErrors,
+          hasUserErrors: (response.data?.schoolGroupCreate?.userErrors?.length || 0) > 0,
+        }
+      })
 
       // Both roles should succeed with correct data
       expect(results.admin.isAuthorized).toBe(true)
@@ -394,36 +380,35 @@ describe('SchoolGroup E2E Tests', () => {
     })
 
     it('Should return userErrors when creating school group with invalid schoolID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'create school group with invalid schoolID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CreateSchoolGroup($schoolID: Int!) {
-                schoolGroupCreate(schoolID: $schoolID) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  schoolGroup {
-                    id
-                    name
-                  }
+      const results = await testWithBothRoles('create school group with invalid schoolID', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CreateSchoolGroup($schoolID: Int!) {
+              schoolGroupCreate(schoolID: $schoolID) {
+                userErrors {
+                  message
+                  field
+                }
+                schoolGroup {
+                  id
+                  name
                 }
               }
-            `, {
-              schoolID: 99999,
-            }) as { data?: { schoolGroupCreate: SchoolGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            schoolID: 99999,
+          },
+        )) as { data?: { schoolGroupCreate: SchoolGroupPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            schoolGroup: response.data?.schoolGroupCreate?.schoolGroup as SchoolGroup | undefined,
-            userErrors: response.data?.schoolGroupCreate?.userErrors,
-            hasUserErrors: (response.data?.schoolGroupCreate?.userErrors?.length || 0) > 0,
-            userErrorMessage: response.data?.schoolGroupCreate?.userErrors?.[0]?.message,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          schoolGroup: response.data?.schoolGroupCreate?.schoolGroup as SchoolGroup | undefined,
+          userErrors: response.data?.schoolGroupCreate?.userErrors,
+          hasUserErrors: (response.data?.schoolGroupCreate?.userErrors?.length || 0) > 0,
+          userErrorMessage: response.data?.schoolGroupCreate?.userErrors?.[0]?.message,
+        }
+      })
 
       // Both roles should get userErrors
       expect(results.admin.hasErrors).toBe(false)
@@ -461,45 +446,44 @@ describe('SchoolGroup E2E Tests', () => {
     })
 
     it('Should successfully update school group for both roles', async () => {
-      const results = await testWithBothRoles(
-        'update school group',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation UpdateSchoolGroup($schoolGroupID: Int!, $schoolGroupInput: SchoolGroupInput!) {
-                schoolGroupUpdate(schoolGroupID: $schoolGroupID, schoolGroupInput: $schoolGroupInput) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  schoolGroup {
-                    id
-                    name
-                    groupSize
-                    chaperones
-                  }
+      const results = await testWithBothRoles('update school group', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation UpdateSchoolGroup($schoolGroupID: Int!, $schoolGroupInput: SchoolGroupInput!) {
+              schoolGroupUpdate(schoolGroupID: $schoolGroupID, schoolGroupInput: $schoolGroupInput) {
+                userErrors {
+                  message
+                  field
+                }
+                schoolGroup {
+                  id
+                  name
+                  groupSize
+                  chaperones
                 }
               }
-            `, {
-              schoolGroupID: updateTestSchoolGroupId,
-              schoolGroupInput: {
-                name: `test_updated_schoolgroup_${role}`,
-                groupSize: 35,
-                chaperones: 4,
-              },
-            }) as { data?: { schoolGroupUpdate: SchoolGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            schoolGroupID: updateTestSchoolGroupId,
+            schoolGroupInput: {
+              name: `test_updated_schoolgroup_${role}`,
+              groupSize: 35,
+              chaperones: 4,
+            },
+          },
+        )) as { data?: { schoolGroupUpdate: SchoolGroupPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            schoolGroup: response.data?.schoolGroupUpdate?.schoolGroup as SchoolGroup | undefined,
-            schoolGroupName: response.data?.schoolGroupUpdate?.schoolGroup?.name,
-            groupSize: response.data?.schoolGroupUpdate?.schoolGroup?.groupSize,
-            userErrors: response.data?.schoolGroupUpdate?.userErrors,
-            hasUserErrors: (response.data?.schoolGroupUpdate?.userErrors?.length || 0) > 0,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          schoolGroup: response.data?.schoolGroupUpdate?.schoolGroup as SchoolGroup | undefined,
+          schoolGroupName: response.data?.schoolGroupUpdate?.schoolGroup?.name,
+          groupSize: response.data?.schoolGroupUpdate?.schoolGroup?.groupSize,
+          userErrors: response.data?.schoolGroupUpdate?.userErrors,
+          hasUserErrors: (response.data?.schoolGroupUpdate?.userErrors?.length || 0) > 0,
+        }
+      })
 
       // Both roles should succeed
       expect(results.admin.isAuthorized).toBe(true)
@@ -518,39 +502,38 @@ describe('SchoolGroup E2E Tests', () => {
     })
 
     it('Should return error when updating school group with invalid ID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'update school group with invalid ID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation UpdateSchoolGroup($schoolGroupID: Int!, $schoolGroupInput: SchoolGroupInput!) {
-                schoolGroupUpdate(schoolGroupID: $schoolGroupID, schoolGroupInput: $schoolGroupInput) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  schoolGroup {
-                    id
-                    name
-                  }
+      const results = await testWithBothRoles('update school group with invalid ID', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation UpdateSchoolGroup($schoolGroupID: Int!, $schoolGroupInput: SchoolGroupInput!) {
+              schoolGroupUpdate(schoolGroupID: $schoolGroupID, schoolGroupInput: $schoolGroupInput) {
+                userErrors {
+                  message
+                  field
+                }
+                schoolGroup {
+                  id
+                  name
                 }
               }
-            `, {
-              schoolGroupID: 99999,
-              schoolGroupInput: {
-                name: 'test_invalid_update',
-              },
-            }) as { data?: { schoolGroupUpdate: SchoolGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            schoolGroupID: 99999,
+            schoolGroupInput: {
+              name: 'test_invalid_update',
+            },
+          },
+        )) as { data?: { schoolGroupUpdate: SchoolGroupPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            schoolGroup: response.data?.schoolGroupUpdate?.schoolGroup as SchoolGroup | undefined,
-            userErrors: response.data?.schoolGroupUpdate?.userErrors,
-            hasUserErrors: (response.data?.schoolGroupUpdate?.userErrors?.length || 0) > 0,
-            userErrorMessage: response.data?.schoolGroupUpdate?.userErrors?.[0]?.message,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          schoolGroup: response.data?.schoolGroupUpdate?.schoolGroup as SchoolGroup | undefined,
+          userErrors: response.data?.schoolGroupUpdate?.userErrors,
+          hasUserErrors: (response.data?.schoolGroupUpdate?.userErrors?.length || 0) > 0,
+          userErrorMessage: response.data?.schoolGroupUpdate?.userErrors?.[0]?.message,
+        }
+      })
 
       // Both roles should get userErrors
       expect(results.admin.hasErrors).toBe(false)
@@ -565,36 +548,35 @@ describe('SchoolGroup E2E Tests', () => {
     })
 
     it('Should return error when updating school group with null ID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'update school group with null ID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation UpdateSchoolGroup($schoolGroupID: Int!, $schoolGroupInput: SchoolGroupInput!) {
-                schoolGroupUpdate(schoolGroupID: $schoolGroupID, schoolGroupInput: $schoolGroupInput) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  schoolGroup {
-                    id
-                    name
-                  }
+      const results = await testWithBothRoles('update school group with null ID', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation UpdateSchoolGroup($schoolGroupID: Int!, $schoolGroupInput: SchoolGroupInput!) {
+              schoolGroupUpdate(schoolGroupID: $schoolGroupID, schoolGroupInput: $schoolGroupInput) {
+                userErrors {
+                  message
+                  field
+                }
+                schoolGroup {
+                  id
+                  name
                 }
               }
-            `, {
-              schoolGroupID: null,
-              schoolGroupInput: {
-                name: 'test_null_update',
-              },
-            }) as { data?: { schoolGroupUpdate: SchoolGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            schoolGroupID: null,
+            schoolGroupInput: {
+              name: 'test_null_update',
+            },
+          },
+        )) as { data?: { schoolGroupUpdate: SchoolGroupPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            errorMessage: response.errors?.[0]?.message,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          errorMessage: response.errors?.[0]?.message,
+        }
+      })
 
       // Both roles should get GraphQL validation errors
       expect(results.admin.hasErrors).toBe(true)
@@ -605,34 +587,33 @@ describe('SchoolGroup E2E Tests', () => {
     })
 
     it('Should return error when updating school group with bad input arguments for both roles', async () => {
-      const results = await testWithBothRoles(
-        'update school group with bad arguments',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation UpdateSchoolGroup($schoolGroupID: Int!, $schoolGroupInput: SchoolGroupInput!) {
-                schoolGroupUpdate(schoolGroupID: $schoolGroupID, schoolGroupInput: $schoolGroupInput) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  schoolGroup {
-                    id
-                    name
-                  }
+      const results = await testWithBothRoles('update school group with bad arguments', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation UpdateSchoolGroup($schoolGroupID: Int!, $schoolGroupInput: SchoolGroupInput!) {
+              schoolGroupUpdate(schoolGroupID: $schoolGroupID, schoolGroupInput: $schoolGroupInput) {
+                userErrors {
+                  message
+                  field
+                }
+                schoolGroup {
+                  id
+                  name
                 }
               }
-            `, {
-              schoolGroupID: 99999,
-              schoolGroupInput: null,
-            }) as { data?: { schoolGroupUpdate: SchoolGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            schoolGroupID: 99999,
+            schoolGroupInput: null,
+          },
+        )) as { data?: { schoolGroupUpdate: SchoolGroupPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            errorMessage: response.errors?.[0]?.message,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          errorMessage: response.errors?.[0]?.message,
+        }
+      })
 
       // Both roles should get GraphQL validation errors
       expect(results.admin.hasErrors).toBe(true)
@@ -645,48 +626,47 @@ describe('SchoolGroup E2E Tests', () => {
 
   describe('SchoolGroup Delete Tests', () => {
     it('Should successfully delete school group for both roles', async () => {
-      const results = await testWithBothRoles(
-        'delete school group',
-        async (role) => {
-          const schoolId = role === 'admin' ? adminSchoolId : userSchoolId
+      const results = await testWithBothRoles('delete school group', async (role) => {
+        const schoolId = role === 'admin' ? adminSchoolId : userSchoolId
 
-          // Create school group to delete
-          const schoolGroupToDelete = await globalThis.prisma.tbl_reg_schoolgroup.create({
-            data: {
-              schoolID: schoolId,
-              name: `test_${role}_schoolgroup_to_delete`,
-              groupSize: 25,
-            },
-          })
+        // Create school group to delete
+        const schoolGroupToDelete = await globalThis.prisma.tbl_reg_schoolgroup.create({
+          data: {
+            schoolID: schoolId,
+            name: `test_${role}_schoolgroup_to_delete`,
+            groupSize: 25,
+          },
+        })
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation DeleteSchoolGroup($schoolGroupID: Int!) {
-                schoolGroupDelete(schoolGroupID: $schoolGroupID) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  schoolGroup {
-                    id
-                    name
-                  }
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation DeleteSchoolGroup($schoolGroupID: Int!) {
+              schoolGroupDelete(schoolGroupID: $schoolGroupID) {
+                userErrors {
+                  message
+                  field
+                }
+                schoolGroup {
+                  id
+                  name
                 }
               }
-            `, {
-              schoolGroupID: schoolGroupToDelete.id,
-            }) as { data?: { schoolGroupDelete: SchoolGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            schoolGroupID: schoolGroupToDelete.id,
+          },
+        )) as { data?: { schoolGroupDelete: SchoolGroupPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            schoolGroup: response.data?.schoolGroupDelete?.schoolGroup as SchoolGroup | undefined,
-            schoolGroupName: response.data?.schoolGroupDelete?.schoolGroup?.name,
-            userErrors: response.data?.schoolGroupDelete?.userErrors,
-            hasUserErrors: (response.data?.schoolGroupDelete?.userErrors?.length || 0) > 0,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          schoolGroup: response.data?.schoolGroupDelete?.schoolGroup as SchoolGroup | undefined,
+          schoolGroupName: response.data?.schoolGroupDelete?.schoolGroup?.name,
+          userErrors: response.data?.schoolGroupDelete?.userErrors,
+          hasUserErrors: (response.data?.schoolGroupDelete?.userErrors?.length || 0) > 0,
+        }
+      })
 
       // Both roles should succeed
       expect(results.admin.isAuthorized).toBe(true)
@@ -703,36 +683,35 @@ describe('SchoolGroup E2E Tests', () => {
     })
 
     it('Should return error when deleting non-existent school group for both roles', async () => {
-      const results = await testWithBothRoles(
-        'delete non-existent school group',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation DeleteSchoolGroup($schoolGroupID: Int!) {
-                schoolGroupDelete(schoolGroupID: $schoolGroupID) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  schoolGroup {
-                    id
-                    name
-                  }
+      const results = await testWithBothRoles('delete non-existent school group', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation DeleteSchoolGroup($schoolGroupID: Int!) {
+              schoolGroupDelete(schoolGroupID: $schoolGroupID) {
+                userErrors {
+                  message
+                  field
+                }
+                schoolGroup {
+                  id
+                  name
                 }
               }
-            `, {
-              schoolGroupID: 99999,
-            }) as { data?: { schoolGroupDelete: SchoolGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            schoolGroupID: 99999,
+          },
+        )) as { data?: { schoolGroupDelete: SchoolGroupPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            schoolGroup: response.data?.schoolGroupDelete?.schoolGroup as SchoolGroup | undefined,
-            userErrors: response.data?.schoolGroupDelete?.userErrors,
-            hasUserErrors: (response.data?.schoolGroupDelete?.userErrors?.length || 0) > 0,
-            userErrorMessage: response.data?.schoolGroupDelete?.userErrors?.[0]?.message,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          schoolGroup: response.data?.schoolGroupDelete?.schoolGroup as SchoolGroup | undefined,
+          userErrors: response.data?.schoolGroupDelete?.userErrors,
+          hasUserErrors: (response.data?.schoolGroupDelete?.userErrors?.length || 0) > 0,
+          userErrorMessage: response.data?.schoolGroupDelete?.userErrors?.[0]?.message,
+        }
+      })
 
       // Both roles should get userErrors
       expect(results.admin.hasErrors).toBe(false)
@@ -747,33 +726,32 @@ describe('SchoolGroup E2E Tests', () => {
     })
 
     it('Should return error when deleting school group with null ID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'delete school group with null ID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation DeleteSchoolGroup($schoolGroupID: Int!) {
-                schoolGroupDelete(schoolGroupID: $schoolGroupID) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  schoolGroup {
-                    id
-                    name
-                  }
+      const results = await testWithBothRoles('delete school group with null ID', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation DeleteSchoolGroup($schoolGroupID: Int!) {
+              schoolGroupDelete(schoolGroupID: $schoolGroupID) {
+                userErrors {
+                  message
+                  field
+                }
+                schoolGroup {
+                  id
+                  name
                 }
               }
-            `, {
-              schoolGroupID: null,
-            }) as { data?: { schoolGroupDelete: SchoolGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            schoolGroupID: null,
+          },
+        )) as { data?: { schoolGroupDelete: SchoolGroupPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            errorMessage: response.errors?.[0]?.message,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          errorMessage: response.errors?.[0]?.message,
+        }
+      })
 
       // Both roles should get GraphQL validation errors
       expect(results.admin.hasErrors).toBe(true)
@@ -786,16 +764,15 @@ describe('SchoolGroup E2E Tests', () => {
 
   describe('Authentication and Authorization', () => {
     it('Should require authentication for all school group operations', async () => {
-      const response = await createAuthenticatedRequest('user')
-        .set('Cookie', '') // Remove authentication
+      const response = (await createAuthenticatedRequest('user').set('Cookie', '') // Remove authentication
         .query(gql`
-          query GetSchoolGroups {
-            schoolGroups {
-              id
-              name
-            }
+        query GetSchoolGroups {
+          schoolGroups {
+            id
+            name
           }
-        `) as { errors?: readonly any[] }
+        }
+      `)) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0].message).toContain('Unauthorized')

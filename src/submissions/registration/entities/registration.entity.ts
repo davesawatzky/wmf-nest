@@ -1,5 +1,6 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql'
 import { IsNumber } from 'class-validator'
+
 import { PerformerType, UserError } from '@/common.entity.js'
 import { Community } from '@/submissions/community/entities/community.entity.js'
 import { Group } from '@/submissions/group/entities/group.entity.js'

@@ -1,5 +1,6 @@
 import { join } from 'node:path'
 import process from 'node:process'
+
 import { ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { NestExpressApplication } from '@nestjs/platform-express'
@@ -8,8 +9,10 @@ import cookieParser from 'cookie-parser'
 import helmet from 'helmet'
 import { utilities as nestWinstonModuleUtilities, WinstonModule } from 'nest-winston'
 import * as winston from 'winston'
+
 import { AppModule } from './app.module.js'
 import 'reflect-metadata'
+
 import './sentry.js'
 
 const SentryWinstonTransport = Sentry.createSentryWinstonTransport((winston as any).Transport, {
@@ -62,11 +65,7 @@ async function bootstrap() {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: [`'self'`],
-          imgSrc: [
-            `'self'`,
-            'data:',
-            'https:',
-          ],
+          imgSrc: [`'self'`, 'data:', 'https:'],
           scriptSrc: [
             `'self'`,
             `'unsafe-inline'`,
@@ -74,10 +73,7 @@ async function bootstrap() {
             'https://m.stripe.network',
             'https://*.apollographql.com',
           ],
-          manifestSrc: [
-            `'self'`,
-            'https://*.apollographql.com',
-          ],
+          manifestSrc: [`'self'`, 'https://*.apollographql.com'],
           frameSrc: [
             `'self'`,
             'https://js.stripe.com',
@@ -97,15 +93,8 @@ async function bootstrap() {
             'wss://*.apollographql.com',
             'https://*.apollographql.com',
           ],
-          styleSrc: [
-            `'self'`,
-            `'unsafe-inline'`,
-            'https://fonts.googleapis.com',
-          ],
-          fontSrc: [
-            `'self'`,
-            'https://fonts.gstatic.com',
-          ],
+          styleSrc: [`'self'`, `'unsafe-inline'`, 'https://fonts.googleapis.com'],
+          fontSrc: [`'self'`, 'https://fonts.gstatic.com'],
           objectSrc: [`'none'`],
           frameAncestors: [`'none'`],
           workerSrc: [`'self'`, 'blob:'],
@@ -116,13 +105,14 @@ async function bootstrap() {
           }),
         },
       },
-      hsts: process.env.NODE_ENV === 'production'
-        ? {
-            maxAge: 31536000, // 1 year
-            includeSubDomains: true,
-            preload: true,
-          }
-        : false,
+      hsts:
+        process.env.NODE_ENV === 'production'
+          ? {
+              maxAge: 31536000, // 1 year
+              includeSubDomains: true,
+              preload: true,
+            }
+          : false,
       xssFilter: true,
       noSniff: true,
       hidePoweredBy: true,

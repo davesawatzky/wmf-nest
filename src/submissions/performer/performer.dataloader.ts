@@ -1,6 +1,7 @@
-import type { tbl_registration } from '@prisma/client'
 import { Injectable, Logger, Scope } from '@nestjs/common'
+import type { tbl_registration } from '@prisma/client'
 import DataLoader from 'dataloader'
+
 import { PrismaService } from '@/prisma/prisma.service.js'
 
 @Injectable({ scope: Scope.REQUEST })
@@ -9,10 +10,7 @@ export class PerformerDataLoader {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * Batches registration queries by registration ID
-   * Many-to-one relationship: Performer → Registration
-   */
+  /** Batches registration queries by registration ID Many-to-one relationship: Performer → Registration */
   public readonly registrationLoader = new DataLoader<number, tbl_registration | null>(
     async (regIds: readonly number[]) => {
       const startTime = performance.now()
@@ -23,8 +21,8 @@ export class PerformerDataLoader {
       })
 
       // Map-based ordering: CRITICAL for correct result alignment
-      const registrationMap = new Map(registrations.map(reg => [reg.id, reg]))
-      const orderedResults = regIds.map(id => registrationMap.get(id) ?? null)
+      const registrationMap = new Map(registrations.map((reg) => [reg.id, reg]))
+      const orderedResults = regIds.map((id) => registrationMap.get(id) ?? null)
 
       this.logger.log(
         `Fetched ${orderedResults.length} registrations in ${(performance.now() - startTime).toFixed(2)}ms`,

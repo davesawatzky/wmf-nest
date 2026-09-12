@@ -1,4 +1,3 @@
-import type { tbl_order_item } from '@prisma/client'
 import {
   BadRequestException,
   Injectable,
@@ -6,7 +5,10 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
+import type { tbl_order_item } from '@prisma/client'
+
 import { PrismaService } from '@/prisma/prisma.service.js'
+
 import { OrderItemInput } from './dto/order-item.input.js'
 
 @Injectable()
@@ -29,36 +31,23 @@ export class OrderItemService {
           orderID,
         },
       })
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error instanceof BadRequestException) {
         throw error
       }
-      this.logger.error(
-        `Error fetching order items for order ID: ${orderID}`,
-        error,
-      )
+      this.logger.error(`Error fetching order items for order ID: ${orderID}`, error)
       throw new InternalServerErrorException('Unable to fetch order items')
     }
   }
 
-  async findOne(
-    orderID: tbl_order_item['orderID'],
-    itemID: tbl_order_item['itemID'],
-  ) {
+  async findOne(orderID: tbl_order_item['orderID'], itemID: tbl_order_item['itemID']) {
     try {
       if (!orderID || !itemID) {
-        this.logger.warn(
-          `findOne called with incomplete parameters - orderID: ${orderID}, itemID: ${itemID}`,
-        )
-        throw new BadRequestException(
-          'Both order ID and item ID must be provided',
-        )
+        this.logger.warn(`findOne called with incomplete parameters - orderID: ${orderID}, itemID: ${itemID}`)
+        throw new BadRequestException('Both order ID and item ID must be provided')
       }
 
-      this.logger.log(
-        `Finding order item with order ID: ${orderID}, item ID: ${itemID}`,
-      )
+      this.logger.log(`Finding order item with order ID: ${orderID}, item ID: ${itemID}`)
 
       const orderItem = await this.prisma.tbl_order_item.findUnique({
         where: {
@@ -70,37 +59,23 @@ export class OrderItemService {
       })
 
       if (!orderItem) {
-        this.logger.warn(
-          `Order item not found with order ID: ${orderID}, item ID: ${itemID}`,
-        )
+        this.logger.warn(`Order item not found with order ID: ${orderID}, item ID: ${itemID}`)
         throw new NotFoundException('Order item not found')
       }
 
       return orderItem
-    }
-    catch (error: any) {
-      if (
-        error instanceof BadRequestException
-        || error instanceof NotFoundException
-      ) {
+    } catch (error: any) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error
       }
-      this.logger.error(
-        `Error finding order item with order ID: ${orderID}, item ID: ${itemID}`,
-        error,
-      )
+      this.logger.error(`Error finding order item with order ID: ${orderID}, item ID: ${itemID}`, error)
       throw new InternalServerErrorException('Unable to find order item')
     }
   }
 
-  async create(
-    orderID: tbl_order_item['orderID'],
-    orderItemInput: OrderItemInput,
-  ) {
+  async create(orderID: tbl_order_item['orderID'], orderItemInput: OrderItemInput) {
     try {
-      this.logger.log(
-        `Creating order item for order ID: ${orderID}, item ID: ${orderItemInput.itemID}`,
-      )
+      this.logger.log(`Creating order item for order ID: ${orderID}, item ID: ${orderItemInput.itemID}`)
 
       const orderItem = await this.prisma.tbl_order_item.create({
         data: {
@@ -109,15 +84,12 @@ export class OrderItemService {
         },
       })
 
-      this.logger.log(
-        `Order item created successfully for order ID: ${orderID}, item ID: ${orderItemInput.itemID}`,
-      )
+      this.logger.log(`Order item created successfully for order ID: ${orderID}, item ID: ${orderItemInput.itemID}`)
       return {
         userErrors: [],
         orderItem,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2002') {
         this.logger.warn(
           `Order item creation failed - Duplicate order item for order ${orderID}, item ${orderItemInput.itemID}`,
@@ -125,15 +97,13 @@ export class OrderItemService {
         return {
           userErrors: [
             {
-              message:
-                'Order item already exists for this order and item combination',
+              message: 'Order item already exists for this order and item combination',
               field: ['orderID', 'itemID'],
             },
           ],
           orderItem: null,
         }
-      }
-      else if (error.code === 'P2003') {
+      } else if (error.code === 'P2003') {
         this.logger.warn(
           `Order item creation failed - Foreign key constraint violation for order ${orderID}, item ${orderItemInput.itemID}`,
         )
@@ -146,8 +116,7 @@ export class OrderItemService {
           ],
           orderItem: null,
         }
-      }
-      else {
+      } else {
         this.logger.error(
           `Unexpected error during order item creation for order ${orderID}, item ${orderItemInput.itemID}`,
           error,
@@ -155,8 +124,7 @@ export class OrderItemService {
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while creating the order item',
+              message: 'An unexpected error occurred while creating the order item',
               field: [],
             },
           ],
@@ -166,15 +134,9 @@ export class OrderItemService {
     }
   }
 
-  async update(
-    orderID: tbl_order_item['orderID'],
-    itemID: tbl_order_item['itemID'],
-    orderItemInput: OrderItemInput,
-  ) {
+  async update(orderID: tbl_order_item['orderID'], itemID: tbl_order_item['itemID'], orderItemInput: OrderItemInput) {
     try {
-      this.logger.log(
-        `Updating order item with order ID: ${orderID}, item ID: ${itemID}`,
-      )
+      this.logger.log(`Updating order item with order ID: ${orderID}, item ID: ${itemID}`)
 
       const orderItem = await this.prisma.tbl_order_item.update({
         where: {
@@ -188,19 +150,14 @@ export class OrderItemService {
         },
       })
 
-      this.logger.log(
-        `Order item updated successfully with order ID: ${orderID}, item ID: ${itemID}`,
-      )
+      this.logger.log(`Order item updated successfully with order ID: ${orderID}, item ID: ${itemID}`)
       return {
         userErrors: [],
         orderItem,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(
-          `Order item update failed - Order item not found with order ID ${orderID}, item ID ${itemID}`,
-        )
+        this.logger.warn(`Order item update failed - Order item not found with order ID ${orderID}, item ID ${itemID}`)
         return {
           userErrors: [
             {
@@ -210,11 +167,8 @@ export class OrderItemService {
           ],
           orderItem: null,
         }
-      }
-      else if (error.code === 'P2002') {
-        this.logger.warn(
-          `Order item update failed - Unique constraint violation for order ${orderID}, item ${itemID}`,
-        )
+      } else if (error.code === 'P2002') {
+        this.logger.warn(`Order item update failed - Unique constraint violation for order ${orderID}, item ${itemID}`)
         return {
           userErrors: [
             {
@@ -224,8 +178,7 @@ export class OrderItemService {
           ],
           orderItem: null,
         }
-      }
-      else if (error.code === 'P2003') {
+      } else if (error.code === 'P2003') {
         this.logger.warn(
           `Order item update failed - Foreign key constraint violation for order ${orderID}, item ${itemID}`,
         )
@@ -238,17 +191,12 @@ export class OrderItemService {
           ],
           orderItem: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during order item update for order ID ${orderID}, item ID ${itemID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during order item update for order ID ${orderID}, item ID ${itemID}`, error)
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while updating the order item',
+              message: 'An unexpected error occurred while updating the order item',
               field: [],
             },
           ],
@@ -258,14 +206,9 @@ export class OrderItemService {
     }
   }
 
-  async remove(
-    orderID: tbl_order_item['orderID'],
-    itemID: tbl_order_item['itemID'],
-  ) {
+  async remove(orderID: tbl_order_item['orderID'], itemID: tbl_order_item['itemID']) {
     try {
-      this.logger.log(
-        `Deleting order item with order ID: ${orderID}, item ID: ${itemID}`,
-      )
+      this.logger.log(`Deleting order item with order ID: ${orderID}, item ID: ${itemID}`)
 
       const orderItem = await this.prisma.tbl_order_item.delete({
         where: {
@@ -276,15 +219,12 @@ export class OrderItemService {
         },
       })
 
-      this.logger.log(
-        `Order item deleted successfully with order ID: ${orderID}, item ID: ${itemID}`,
-      )
+      this.logger.log(`Order item deleted successfully with order ID: ${orderID}, item ID: ${itemID}`)
       return {
         userErrors: [],
         orderItem,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
         this.logger.warn(
           `Order item deletion failed - Order item not found with order ID ${orderID}, item ID ${itemID}`,
@@ -298,8 +238,7 @@ export class OrderItemService {
           ],
           orderItem: null,
         }
-      }
-      else if (error.code === 'P2003') {
+      } else if (error.code === 'P2003') {
         this.logger.warn(
           `Order item deletion failed - Foreign key constraint violation for order ${orderID}, item ${itemID}`,
         )
@@ -312,8 +251,7 @@ export class OrderItemService {
           ],
           orderItem: null,
         }
-      }
-      else {
+      } else {
         this.logger.error(
           `Unexpected error during order item deletion for order ID ${orderID}, item ID ${itemID}`,
           error,
@@ -321,8 +259,7 @@ export class OrderItemService {
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while deleting the order item',
+              message: 'An unexpected error occurred while deleting the order item',
               field: [],
             },
           ],

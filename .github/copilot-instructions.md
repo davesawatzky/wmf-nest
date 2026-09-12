@@ -1,27 +1,29 @@
 # Winnipeg Music Festival NestJS Backend — GitHub Copilot Instructions
 
 ## Project Overview
+
 This is a NestJS GraphQL backend for the Winnipeg Music Festival registration system, integrated with a PostgreSQL database via Prisma ORM. The system manages festival classes, performer registrations, communities, schools, and payments through Stripe.
 
 ## Architecture Patterns
 
 ### Error Handling & Logging
+
 **CRITICAL**: Follow the established error handling pattern consistently across all services:
 
 ```typescript
 // Read operations: Throw NestJS exceptions
 async findOne(id: number) {
   if (!id) throw new BadRequestException('ID is required')
-  
+
   try {
     const result = await this.prisma.model.findUnique({ where: { id } })
     if (!result) throw new NotFoundException('Record not found')
-    
+
     this.logger.log(`Successfully retrieved record ID: ${id}`)
     return result
   } catch (error: any) {
     if (error instanceof BadRequestException || error instanceof NotFoundException) throw error
-    
+
     this.logger.error(`Failed to retrieve record ID ${id}: ${error.message}`, error.stack)
     throw new InternalServerErrorException('Failed to retrieve record')
   }
@@ -31,14 +33,14 @@ async findOne(id: number) {
 async create(input: CreateInput) {
   let record: Model
   let userErrors: UserError[]
-  
+
   try {
     userErrors = []
     record = await this.prisma.model.create({ data: input })
     this.logger.log(`Successfully created record ID: ${record.id}`)
   } catch (error: any) {
     this.logger.error(`Failed to create record: ${error.message}`, error.stack)
-    
+
     if (error.code === 'P2002') {
       userErrors = [{ message: 'Record already exists', field: ['name'] }]
       record = null
@@ -47,7 +49,7 @@ async create(input: CreateInput) {
       record = null
     }
   }
-  
+
   return { userErrors, record }
 }
 ```
@@ -59,7 +61,9 @@ async create(input: CreateInput) {
 - **Logging**: Use structured logging with appropriate levels (debug, log, warn, error)
 
 ### GraphQL Entity Pattern
+
 All entities follow this pattern:
+
 ```typescript
 @ObjectType()
 export class EntityPayload {
@@ -69,26 +73,33 @@ export class EntityPayload {
 ```
 
 ### Authorization with CASL
+
 Uses role-based permissions with CASL abilities:
+
 ```typescript
 @UseGuards(JwtAuthGuard, AbilitiesGuard)
 @CheckAbilities({ action: Action.Read, subject: Entity })
 ```
+
 - **Roles**: `admin` (full access), `user` (limited access)
 - **Actions**: `Manage`, `Create`, `Read`, `Update`, `Delete`
 - **All resolvers**: Must use `@UseGuards(JwtAuthGuard)` at class level
 
 ### DataLoader Pattern for N+1 Query Optimization
+
 **CRITICAL**: Use DataLoader to prevent N+1 query problems in GraphQL field resolvers. The application implements request-scoped batch loading for all complex entity relationships.
 
 #### DataLoader Architecture
+
 **Core Principles**:
+
 - **Request-scoped**: Each GraphQL request gets fresh DataLoader instances (`Scope.REQUEST`)
 - **Batching**: Collects multiple `load()` calls within a single tick and executes one batch query
 - **Caching**: Within a request, identical keys return cached results
 - **Ordering**: Results must be returned in the same order as input IDs (use Map-based ordering)
 
 #### Standard DataLoader Service Pattern
+
 ```typescript
 import { Injectable, Logger, Scope } from '@nestjs/common'
 import DataLoader from 'dataloader'
@@ -101,52 +112,48 @@ export class EntityDataLoader {
   constructor(private readonly prisma: PrismaService) {}
 
   // Simple one-to-one relationship loader
-  public readonly relatedEntityLoader = new DataLoader<number, RelatedEntity | null>(
-    async (ids: readonly number[]) => {
-      const startTime = performance.now()
-      this.logger.debug(`Batching ${ids.length} relatedEntity queries`)
+  public readonly relatedEntityLoader = new DataLoader<number, RelatedEntity | null>(async (ids: readonly number[]) => {
+    const startTime = performance.now()
+    this.logger.debug(`Batching ${ids.length} relatedEntity queries`)
 
-      const entities = await this.prisma.tbl_related_entity.findMany({
-        where: { id: { in: [...ids] } },
-      })
+    const entities = await this.prisma.tbl_related_entity.findMany({
+      where: { id: { in: [...ids] } },
+    })
 
-      // Map-based ordering: CRITICAL for correct result alignment
-      const entityMap = new Map(entities.map(entity => [entity.id, entity]))
-      const orderedResults = ids.map(id => entityMap.get(id) ?? null)
+    // Map-based ordering: CRITICAL for correct result alignment
+    const entityMap = new Map(entities.map((entity) => [entity.id, entity]))
+    const orderedResults = ids.map((id) => entityMap.get(id) ?? null)
 
-      this.logger.log(
-        `Fetched ${orderedResults.length} related entities in ${(performance.now() - startTime).toFixed(2)}ms`
-      )
-      return orderedResults
-    }
-  )
+    this.logger.log(
+      `Fetched ${orderedResults.length} related entities in ${(performance.now() - startTime).toFixed(2)}ms`,
+    )
+    return orderedResults
+  })
 
   // Many-to-many relationship via direct foreign key array
-  public readonly childrenLoader = new DataLoader<number, ChildEntity[]>(
-    async (parentIds: readonly number[]) => {
-      const startTime = performance.now()
-      this.logger.debug(`Batching ${parentIds.length} children queries`)
+  public readonly childrenLoader = new DataLoader<number, ChildEntity[]>(async (parentIds: readonly number[]) => {
+    const startTime = performance.now()
+    this.logger.debug(`Batching ${parentIds.length} children queries`)
 
-      const children = await this.prisma.tbl_child.findMany({
-        where: { parentId: { in: [...parentIds] } },
-      })
+    const children = await this.prisma.tbl_child.findMany({
+      where: { parentId: { in: [...parentIds] } },
+    })
 
-      // Group by parent ID
-      const childrenByParent = new Map<number, ChildEntity[]>()
-      for (const child of children) {
-        const existing = childrenByParent.get(child.parentId) || []
-        existing.push(child)
-        childrenByParent.set(child.parentId, existing)
-      }
-
-      const orderedResults = parentIds.map(id => childrenByParent.get(id) ?? [])
-
-      this.logger.log(
-        `Fetched children for ${parentIds.length} parents in ${(performance.now() - startTime).toFixed(2)}ms`
-      )
-      return orderedResults
+    // Group by parent ID
+    const childrenByParent = new Map<number, ChildEntity[]>()
+    for (const child of children) {
+      const existing = childrenByParent.get(child.parentId) || []
+      existing.push(child)
+      childrenByParent.set(child.parentId, existing)
     }
-  )
+
+    const orderedResults = parentIds.map((id) => childrenByParent.get(id) ?? [])
+
+    this.logger.log(
+      `Fetched children for ${parentIds.length} parents in ${(performance.now() - startTime).toFixed(2)}ms`,
+    )
+    return orderedResults
+  })
 
   // Indirect many-to-many via junction table (two-step query pattern)
   public readonly associatedEntitiesLoader = new DataLoader<number, AssociatedEntity[]>(
@@ -161,15 +168,15 @@ export class EntityDataLoader {
       })
 
       // Step 2: Get unique associated IDs
-      const associatedIds = [...new Set(junctionRecords.map(j => j.associatedId))]
-      
+      const associatedIds = [...new Set(junctionRecords.map((j) => j.associatedId))]
+
       // Step 3: Fetch associated entities
       const associatedEntities = await this.prisma.tbl_associated.findMany({
         where: { id: { in: associatedIds } },
       })
 
       // Step 4: Map entities by ID for fast lookup
-      const entityMap = new Map(associatedEntities.map(e => [e.id, e]))
+      const entityMap = new Map(associatedEntities.map((e) => [e.id, e]))
 
       // Step 5: Group by original entity ID and deduplicate
       const entitiesByParent = new Map<number, AssociatedEntity[]>()
@@ -178,20 +185,20 @@ export class EntityDataLoader {
         if (entity) {
           const existing = entitiesByParent.get(junction.entityId) || []
           // Deduplicate: check if entity already exists
-          if (!existing.find(e => e.id === entity.id)) {
+          if (!existing.find((e) => e.id === entity.id)) {
             existing.push(entity)
           }
           entitiesByParent.set(junction.entityId, existing)
         }
       }
 
-      const orderedResults = entityIds.map(id => entitiesByParent.get(id) ?? [])
+      const orderedResults = entityIds.map((id) => entitiesByParent.get(id) ?? [])
 
       this.logger.log(
-        `Fetched associated entities for ${entityIds.length} entities in ${(performance.now() - startTime).toFixed(2)}ms`
+        `Fetched associated entities for ${entityIds.length} entities in ${(performance.now() - startTime).toFixed(2)}ms`,
       )
       return orderedResults
-    }
+    },
   )
 }
 ```
@@ -199,6 +206,7 @@ export class EntityDataLoader {
 #### DataLoader Integration Patterns
 
 **1. Module Configuration**:
+
 ```typescript
 @Module({
   providers: [
@@ -212,6 +220,7 @@ export class EntityModule {}
 ```
 
 **2. Resolver Integration**:
+
 ```typescript
 @Resolver(() => Entity)
 @UseGuards(JwtAuthGuard)
@@ -251,6 +260,7 @@ export class EntityResolver {
 
 **3. Remove Service Dependencies**:
 When implementing DataLoader, remove service dependencies that were only used for field resolution:
+
 ```typescript
 // BEFORE (N+1 problem)
 constructor(
@@ -278,6 +288,7 @@ async relatedEntity(@Parent() entity: Entity) {
 #### Relationship Type Patterns
 
 **Simple One-to-One** (e.g., Instrument → Discipline):
+
 ```typescript
 // Direct foreign key relationship
 public readonly disciplineLoader = new DataLoader<number, Discipline | null>(
@@ -292,6 +303,7 @@ public readonly disciplineLoader = new DataLoader<number, Discipline | null>(
 ```
 
 **One-to-Many** (e.g., FestivalClass → Selections):
+
 ```typescript
 // Parent has multiple children via foreign key
 public readonly selectionsLoader = new DataLoader<number, Selection[]>(
@@ -311,6 +323,7 @@ public readonly selectionsLoader = new DataLoader<number, Selection[]>(
 ```
 
 **Direct Many-to-Many via Junction Table** (e.g., FestivalClass → Trophies):
+
 ```typescript
 // Junction table with both IDs directly
 public readonly trophiesLoader = new DataLoader<number, Trophy[]>(
@@ -320,19 +333,19 @@ public readonly trophiesLoader = new DataLoader<number, Trophy[]>(
       where: { classId: { in: [...classIds] } },
       select: { classId: true, trophyId: true },
     })
-    
+
     // Get unique trophy IDs
     const trophyIds = [...new Set(junctions.map(j => j.trophyId))]
-    
+
     // Fetch trophies
     const trophies = await this.prisma.tbl_trophy.findMany({
       where: { id: { in: trophyIds } },
     })
-    
+
     // Map and group
     const trophyMap = new Map(trophies.map(t => [t.id, t]))
     const trophiesByClass = new Map<number, Trophy[]>()
-    
+
     for (const junction of junctions) {
       const trophy = trophyMap.get(junction.trophyId)
       if (trophy) {
@@ -341,13 +354,14 @@ public readonly trophiesLoader = new DataLoader<number, Trophy[]>(
         trophiesByClass.set(junction.classId, existing)
       }
     }
-    
+
     return classIds.map(id => trophiesByClass.get(id) ?? [])
   }
 )
 ```
 
 **Indirect Many-to-Many via Junction Entity** (e.g., Subdiscipline → Categories):
+
 ```typescript
 // Entities related through intermediate entity (not direct junction table)
 // Example: Subdiscipline → FestivalClass → Category
@@ -358,19 +372,19 @@ public readonly categoriesLoader = new DataLoader<number, Category[]>(
       where: { subdisciplineID: { in: [...subdisciplineIds] } },
       select: { subdisciplineID: true, categoryID: true },
     })
-    
+
     // Step 2: Get unique category IDs
     const categoryIds = [...new Set(festivalClasses.map(fc => fc.categoryID))]
-    
+
     // Step 3: Fetch categories
     const categories = await this.prisma.tbl_category.findMany({
       where: { id: { in: categoryIds } },
     })
-    
+
     // Step 4: Map and group with deduplication
     const categoryMap = new Map(categories.map(c => [c.id, c]))
     const categoriesBySubdiscipline = new Map<number, Category[]>()
-    
+
     for (const fc of festivalClasses) {
       const category = categoryMap.get(fc.categoryID)
       if (category) {
@@ -382,7 +396,7 @@ public readonly categoriesLoader = new DataLoader<number, Category[]>(
         categoriesBySubdiscipline.set(fc.subdisciplineID, existing)
       }
     }
-    
+
     return subdisciplineIds.map(id => categoriesBySubdiscipline.get(id) ?? [])
   }
 )
@@ -412,6 +426,7 @@ public readonly categoriesLoader = new DataLoader<number, Category[]>(
 #### DataLoader Best Practices
 
 **DO**:
+
 - ✅ Use `Scope.REQUEST` for all DataLoader services
 - ✅ Include comprehensive logging (batch size on entry, result count and duration on completion)
 - ✅ Use Map-based ordering to ensure results match input ID order
@@ -422,6 +437,7 @@ public readonly categoriesLoader = new DataLoader<number, Category[]>(
 - ✅ Remove service dependencies that are only used for field resolution
 
 **DON'T**:
+
 - ❌ Don't use DataLoader for top-level queries (only field resolvers)
 - ❌ Don't call service methods from field resolvers (causes N+1 problems)
 - ❌ Don't forget to deduplicate when multiple junction records point to same entity
@@ -432,6 +448,7 @@ public readonly categoriesLoader = new DataLoader<number, Category[]>(
 #### When to Implement DataLoader
 
 **Implement DataLoader when**:
+
 - Entity has GraphQL field resolvers that fetch related data
 - Relationship involves foreign keys to other tables
 - Field resolver calls another service's `findOne()` or `findMany()` method
@@ -439,6 +456,7 @@ public readonly categoriesLoader = new DataLoader<number, Category[]>(
 - N+1 query problems are evident in logs or performance monitoring
 
 **Skip DataLoader when**:
+
 - Entity has no field resolvers
 - All data is fetched in the main query (no separate field resolution)
 - Entity is rarely queried in lists
@@ -447,24 +465,25 @@ public readonly categoriesLoader = new DataLoader<number, Category[]>(
 #### Logging and Monitoring
 
 **Standard logging pattern**:
+
 ```typescript
 const startTime = performance.now()
 this.logger.debug(`Batching ${ids.length} entity queries`)
 
 // ... fetch logic ...
 
-this.logger.log(
-  `Fetched ${results.length} entities in ${(performance.now() - startTime).toFixed(2)}ms`
-)
+this.logger.log(`Fetched ${results.length} entities in ${(performance.now() - startTime).toFixed(2)}ms`)
 ```
 
 **What to monitor**:
+
 - Batch sizes: Should be > 1 for effective batching
 - Query duration: Should scale sublinearly with batch size
 - Result counts: Verify correct entity fetching
 - Memory usage: Watch for heap pressure with large batches
 
 **Troubleshooting**:
+
 - **Batch size always 1**: Check if DataLoader is request-scoped (Scope.REQUEST)
 - **Wrong results returned**: Verify Map-based ordering matches input ID order
 - **Missing results**: Check null handling and deduplication logic
@@ -472,9 +491,11 @@ this.logger.log(
 - **Memory issues**: Configure Node.js heap size (`NODE_OPTIONS='--max-old-space-size=4096'`)
 
 ### Festival Domain Logic
+
 **CRITICAL**: The system manages a complex music festival with hierarchical class organization and multi-type performer registrations.
 
 #### Core Festival Hierarchy
+
 **Festival classes are organized in a strict 4-level hierarchy**:
 
 1. **Discipline** → `tbl_discipline`
@@ -482,7 +503,7 @@ this.logger.log(
    - Contains multiple subdisciplines and instruments
    - Filters available classes by performer type and instrument
 
-2. **Subdiscipline** → `tbl_subdiscipline` 
+2. **Subdiscipline** → `tbl_subdiscipline`
    - Specific areas within disciplines (e.g., Classical Piano, Folk Guitar)
    - Links to categories, levels, and disciplines
    - Contains pricing and performer limits (`minPerformers`, `maxPerformers`)
@@ -498,7 +519,9 @@ this.logger.log(
    - Links to multiple levels and subdisciplines
 
 #### Festival Class Entity (`tbl_classlist`)
+
 **Central competition unit** containing:
+
 - `classNumber`: Unique identifier (e.g., "A101", "P342")
 - `description`: Human-readable class description
 - `performerType`: SOLO | GROUP | SCHOOL | COMMUNITY (enum constraint)
@@ -508,6 +531,7 @@ this.logger.log(
 - **Relationships**: Links to subdiscipline, level, category, classType, and trophies
 
 #### Performer Type System
+
 **Four distinct registration workflows**:
 
 1. **SOLO** (`PerformerType.SOLO`)
@@ -532,6 +556,7 @@ this.logger.log(
    - Similar structure to school but for non-educational groups
 
 #### Registration Workflow
+
 **Multi-step registration process**:
 
 1. **Registration Creation** (`tbl_registration`)
@@ -560,28 +585,36 @@ this.logger.log(
    - Generate confirmation number
 
 #### Trophy and Award System
+
 **Trophy entities** (`tbl_trophy`):
+
 - Link to multiple festival classes through `tbl_class_trophy` junction table
 - Classes can have multiple associated trophies
 - Awards given based on performance and class placement
 
 #### Class Type Classifications (`tbl_class_type`)
+
 **Competition formats**:
+
 - Solo performance, ensemble, own choice, set piece
 - Determines performance requirements and judging criteria
 
 #### Instruments and Specializations (`tbl_instrument`)
+
 - Links to disciplines for instrument-specific classes
 - Enables filtering of relevant classes by instrument
 - Supports multi-instrument performers
 
 #### Field Configuration System (`tbl_field_config`)
+
 **Dynamic form requirements** based on performer type:
+
 - Different required fields for SOLO vs GROUP vs SCHOOL vs COMMUNITY
 - Configurable validation rules per registration type
 - Enables flexible registration requirements
 
 #### Business Rules and Constraints
+
 **Critical validation patterns**:
 
 1. **Class Eligibility**: Performers must meet age/skill requirements for selected classes
@@ -592,13 +625,15 @@ this.logger.log(
 6. **School/Community Groups**: May register multiple groups under one registration
 
 #### Domain Service Patterns
+
 **Festival services implement complex filtering**:
+
 ```typescript
 // Example: Finding classes by multiple criteria
 async findAll(
   performerType?: PerformerType,
   subdisciplineID?: number,
-  levelID?: number, 
+  levelID?: number,
   categoryID?: number
 ) {
   // Complex where clause building for hierarchical filtering
@@ -606,18 +641,22 @@ async findAll(
 ```
 
 **GraphQL field resolvers enable deep navigation**:
+
 - FestivalClass → subdiscipline → discipline → instruments
 - Registration → performers → selections → registeredClasses
 - School → schoolGroups → performers
 - Level → categories → subdisciplines → festivalClasses
 
 #### Data Integrity Patterns
+
 **Referential integrity**:
+
 - Cascade deletes for dependent records
 - Foreign key constraints across all relationships
 - Unique constraints on critical identifiers (classNumber, etc.)
 
 **Audit trails**:
+
 - CreatedAt/UpdatedAt timestamps on core entities
 - Confirmation tracking for submitted registrations
 - Payment status and transaction information
@@ -625,6 +664,7 @@ async findAll(
 ## Development Workflows
 
 ### Database Management
+
 ```bash
 # Development migrations
 pnpm migrate:dev
@@ -637,17 +677,22 @@ pnpm prisma:generate
 ```
 
 ### Testing Architecture
+
 **CRITICAL**: The project uses Vitest for both unit and E2E testing with sophisticated test setup infrastructure.
 
 #### Testing Framework Configuration
+
 **Vitest Configuration**:
+
 - **Unit Tests**: `vitest.config.mts` - Standard Vitest setup with SWC transformation
 - **E2E Tests**: `vitest.config.e2e.mts` - Integration testing with global setup and shared state
 - **TypeScript Paths**: Both configs use `tsconfigPaths()` plugin for `@/` imports
 - **SWC Compilation**: `unplugin-swc` for fast TypeScript compilation
 
 #### E2E Testing Infrastructure
+
 **Global Test Setup** (`src/test/globalSetup_e2e.ts`):
+
 ```typescript
 // Creates test admin user before all tests
 export async function setup(): Promise<void> {
@@ -655,12 +700,13 @@ export async function setup(): Promise<void> {
   await authService.signup(TestAdmin())
   await prismaService.tbl_user.update({
     where: { email: TestAdmin().email },
-    data: { emailConfirmed: true, roles: ['admin'] }
+    data: { emailConfirmed: true, roles: ['admin'] },
   })
 }
 ```
 
 **Integration Test Setup** (`src/test/integrationTestAdminSetup.ts`):
+
 - Creates NestJS application with full middleware stack
 - Mocks `EmailConfirmationService` to prevent actual email sending
 - Configures Helmet, CORS, ValidationPipe, and cookie parser
@@ -673,9 +719,11 @@ export async function setup(): Promise<void> {
   - `globalThis.admin`: Admin role flag
 
 #### E2E Test Patterns
+
 **CRITICAL**: All E2E tests MUST use the `testWithBothRoles` pattern to ensure proper authorization testing.
 
 **Test Helper Functions** (`src/test/testHelpers.ts`):
+
 ```typescript
 // Available test helpers
 export type UserRole = 'admin' | 'user' | 'privateTeacher' | 'schoolTeacher'
@@ -685,24 +733,19 @@ export function getUserId(role: UserRole): number
 export function createAuthenticatedRequest<T>(role: UserRole): SuperTestGraphQL<T>
 export async function testWithBothRoles<T>(
   testName: string,
-  testFn: (role: UserRole, token: string, userId: number) => Promise<T>
-): Promise<{ admin: T, user: T }>
+  testFn: (role: UserRole, token: string, userId: number) => Promise<T>,
+): Promise<{ admin: T; user: T }>
 export async function expectAuthorized<T>(role: UserRole, operation: () => Promise<T>): Promise<T>
 export async function expectUnauthorized(role: UserRole, operation: () => Promise<any>): Promise<void>
 ```
 
 **Standard E2E Test Structure with testWithBothRoles**:
+
 ```typescript
 import { gql } from 'graphql-tag'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import {
-  createAuthenticatedRequest,
-  testWithBothRoles,
-} from '@/test/testHelpers'
-import {
-  Entity,
-  EntityPayload,
-} from '../entities/entity.entity'
+import { createAuthenticatedRequest, testWithBothRoles } from '@/test/testHelpers'
+import { Entity, EntityPayload } from '../entities/entity.entity'
 
 describe('Entity E2E Tests', () => {
   let testEntityId: number
@@ -728,26 +771,23 @@ describe('Entity E2E Tests', () => {
 
   describe('Entity Queries (Both Roles)', () => {
     it('Should list all entities for both roles', async () => {
-      const results = await testWithBothRoles(
-        'list entities',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetEntities {
-                entities {
-                  id
-                  name
-                }
+      const results = await testWithBothRoles('list entities', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetEntities {
+              entities {
+                id
+                name
               }
-            `)
-            .expectNoErrors() as { data: { entities: Entity[] } }
+            }
+          `)
+          .expectNoErrors()) as { data: { entities: Entity[] } }
 
-          return {
-            hasData: !!response.data.entities,
-            count: response.data.entities?.length || 0,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.entities,
+          count: response.data.entities?.length || 0,
+        }
+      })
 
       // Both roles should successfully retrieve entities
       expect(results.admin.hasData).toBe(true)
@@ -759,35 +799,34 @@ describe('Entity E2E Tests', () => {
 
   describe('Entity Mutations', () => {
     it('Should enforce create authorization: admin succeeds, user fails', async () => {
-      const results = await testWithBothRoles(
-        'create entity',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CreateEntity($entityInput: EntityInput!) {
-                entityCreate(entityInput: $entityInput) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  entity {
-                    id
-                    name
-                  }
+      const results = await testWithBothRoles('create entity', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CreateEntity($entityInput: EntityInput!) {
+              entityCreate(entityInput: $entityInput) {
+                userErrors {
+                  message
+                  field
+                }
+                entity {
+                  id
+                  name
                 }
               }
-            `, {
-              entityInput: { name: `test_${role}_entity` },
-            }) as { data?: { entityCreate: EntityPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            entityInput: { name: `test_${role}_entity` },
+          },
+        )) as { data?: { entityCreate: EntityPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            entity: response.data?.entityCreate?.entity as Entity | undefined,
-            userErrors: response.data?.entityCreate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          entity: response.data?.entityCreate?.entity as Entity | undefined,
+          userErrors: response.data?.entityCreate?.userErrors,
+        }
+      })
 
       // Admin should succeed
       expect(results.admin.isAuthorized).toBe(true)
@@ -805,6 +844,7 @@ describe('Entity E2E Tests', () => {
 ```
 
 **Test Data Management**:
+
 - **Setup**: Use `beforeAll` for persistent test data, `beforeEach` for per-test data
 - **Cleanup**: Use `afterAll` for final cleanup, `afterEach` for per-test cleanup
 - **Database Access**: Direct Prisma access via `globalThis.prisma`
@@ -812,7 +852,9 @@ describe('Entity E2E Tests', () => {
 - **Test Context**: Access via `globalThis.testContext` with admin/user tokens and IDs
 
 #### Unit Testing Patterns
+
 **Service Unit Tests**:
+
 ```typescript
 import { Test, TestingModule } from '@nestjs/testing'
 import { beforeEach, describe, expect, it } from 'vitest'
@@ -836,6 +878,7 @@ describe('ServiceName', () => {
 ```
 
 **Resolver Unit Tests with Mocking**:
+
 ```typescript
 vi.mock('../service.ts') // Mock the service
 
@@ -855,7 +898,9 @@ describe('ResolverName', () => {
 ```
 
 #### Test Utilities and Helpers
+
 **Test User Management** (`src/test/testUser.ts`):
+
 ```typescript
 export function TestAdmin(): CredentialsSignup {
   return {
@@ -869,17 +914,21 @@ export function TestAdmin(): CredentialsSignup {
 ```
 
 **GraphQL Mock Factory** (`src/test/gqlMockFactory.ts`):
+
 - Creates mock execution contexts for GraphQL resolvers
 - Provides test-friendly request/response objects
 - Supports cookie and body mocking
 
 **Service Mocks** (`src/**/__mocks__/`):
+
 - Manual mocks for complex services
 - Consistent return value patterns
 - Automatic Vitest mock integration
 
 #### Test Environment Configuration
+
 **Vitest E2E Config**:
+
 ```typescript
 export default defineConfig({
   test: {
@@ -890,18 +939,20 @@ export default defineConfig({
     setupFiles: ['./src/test/integrationTestAdminSetup.ts'],
     pool: 'forks',
     poolOptions: {
-      forks: { singleFork: true } // Single process for shared state
-    }
-  }
+      forks: { singleFork: true }, // Single process for shared state
+    },
+  },
 })
 ```
 
 **Environment Variables**:
+
 - `NODE_ENV=test` for all test commands
 - `LOG_LEVEL=silent` for E2E tests to reduce output noise
 - Database connection configured for test environment
 
 #### Package.json Test Scripts
+
 ```json
 {
   "testvi": "cross-env NODE_ENV=test vitest --ui run",
@@ -912,13 +963,15 @@ export default defineConfig({
 ```
 
 #### Testing Best Practices
+
 **E2E Testing Guidelines**:
+
 1. **CRITICAL - Use testWithBothRoles**: ALL E2E tests MUST use `testWithBothRoles` to test admin vs user authorization
 2. **Type Safety**: Always type GraphQL responses with proper entity types (e.g., `as { data: { entities: Entity[] } }`)
 3. **Readonly Errors**: Use `errors?: readonly any[]` for GraphQL error types to match supertest-graphql
 4. **Data Cleanup**: Clean up test data in `afterAll` (for persistent data) or `afterEach` (for per-test data) hooks
 5. **Error Scenarios**: Test both success and error scenarios for all operations
-6. **Authorization Patterns**: 
+6. **Authorization Patterns**:
    - Queries: Both admin and user should succeed (read access)
    - Mutations: Admin succeeds, user gets forbidden errors (write access)
 7. **GraphQL Response Structure**: Use `.expectNoErrors()` only when expecting success, handle errors explicitly for authorization tests
@@ -927,6 +980,7 @@ export default defineConfig({
 10. **Consistent Return Objects**: Return structured objects with `hasErrors`, `isAuthorized`, entity data, and `userErrors`
 
 **TypeScript Typing in Tests**:
+
 ```typescript
 // Query response typing
 const response = await createAuthenticatedRequest(role)
@@ -948,6 +1002,7 @@ return {
 ```
 
 **E2E Test File Structure**:
+
 ```typescript
 describe('Entity E2E Tests', () => {
   let testEntityId: number
@@ -1020,9 +1075,9 @@ describe('Entity E2E Tests', () => {
 
   describe('Authentication and Authorization', () => {
     it('Should require authentication for all operations', async () => {
-      const response = await createAuthenticatedRequest('user')
+      const response = (await createAuthenticatedRequest('user')
         .set('Cookie', '') // Remove authentication
-        .query(gql`...`) as { errors?: readonly any[] }
+        .query(gql`...`)) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0].message).toContain('Unauthorized')
@@ -1032,6 +1087,7 @@ describe('Entity E2E Tests', () => {
 ```
 
 **Authorization Testing Patterns**:
+
 ```typescript
 // For read operations (queries) - both roles should succeed
 expect(results.admin.hasData).toBe(true)
@@ -1054,23 +1110,26 @@ expect(results.user.hasErrors).toBe(true)
 ```
 
 **Unit Testing Guidelines**:
+
 1. **Mocking**: Mock external dependencies, especially database services
 2. **Isolation**: Each test should be independent and not rely on external state
 3. **Coverage**: Focus on business logic and error handling paths
 4. **Async Operations**: Properly handle async/await in test assertions
 
 **Mock Patterns**:
+
 - **Service Mocks**: Return consistent payload objects with `userErrors` arrays
 - **Database Mocks**: Mock Prisma methods with realistic return values
 - **Authentication Mocks**: Mock email confirmation to prevent actual emails
 
 #### Test File Organization
+
 ```
 src/
   moduleName/
     test/
       module.e2e-spec.ts    # Integration tests
-      module.service.spec.ts # Unit tests  
+      module.service.spec.ts # Unit tests
       module.resolver.spec.ts # Resolver tests
       module.stub.ts         # Test data stubs
     __mocks__/
@@ -1078,6 +1137,7 @@ src/
 ```
 
 **Test Infrastructure Location** (`src/test/`):
+
 - `globalSetup_e2e.ts`: Global test setup and teardown
 - `integrationTestAdminSetup.ts`: Admin authentication setup
 - `integrationTestUserSetup.ts`: User authentication setup (alternative)
@@ -1086,6 +1146,7 @@ src/
 - `gqlMockFactory.ts`: GraphQL context mocking utilities
 
 ### Build & Development
+
 ```bash
 # Development with watch
 pnpm start:dev
@@ -1100,30 +1161,36 @@ pnpm types
 ## Key Architectural Decisions
 
 ### Module Structure
+
 - **Festival modules**: Core entities (disciplines, levels, categories, classes, instruments, trophies)
 - **Submission modules**: User data (registrations, performers, schools, communities, groups)
 - **System modules**: Auth, abilities (CASL), email, payments (Stripe)
 
 ### Database Design
+
 - **Prefix convention**: All tables use `tbl_` prefix
 - **Performer types**: SOLO, GROUP, SCHOOL, COMMUNITY (enum)
 - **Relationships**: Complex many-to-many between classes, performers, and registrations
 
 ### Authentication Flow
+
 1. JWT tokens stored in HTTP-only cookies (`diatonicToken`)
 2. Email confirmation required before full access
 3. Role-based permissions enforced at resolver level
 4. Password reset flow with pending state
 
 ### Payment Integration
+
 - **Stripe**: Handles payment intents and webhooks
 - **Fee calculation**: Domestic (2.9%) vs International (3.7%) processing fees
 - **Metadata**: Links payments to WMF confirmation IDs
 
 ### Email System Architecture
+
 **CRITICAL**: The email system is built on `@nestjs-modules/mailer` with Handlebars templating for professional HTML emails.
 
 #### Email Module Configuration
+
 ```typescript
 // Global module with MailerModule.forRootAsync() configuration
 transport: {
@@ -1138,11 +1205,13 @@ transport: {
 ```
 
 #### Email Service Pattern
+
 - **EmailService**: Wrapper around MailerService with `sendMail(options: ISendMailOptions)` method
 - **Global module**: Available throughout the application without explicit imports
 - **Template directory**: `src/email/templates/` with Handlebars (.hbs) files
 
 #### Email Confirmation Workflow
+
 **EmailConfirmationService** handles the complete user verification lifecycle:
 
 1. **Account Creation Flow**:
@@ -1161,6 +1230,7 @@ transport: {
    - Throws `BadRequestException` for already confirmed emails
 
 #### Email Templates
+
 **Professional HTML templates** built with MJML and compiled to Handlebars:
 
 1. **confirmation-email.hbs**:
@@ -1174,12 +1244,14 @@ transport: {
    - Branded footer with organization contact information
 
 #### Template Development Workflow
+
 - **Source files**: `.mjml` files for email design
 - **Compiled output**: `.hbs` files for production use
 - **Styling**: Inline CSS for maximum email client compatibility
 - **Branding**: WMF logo, colors (#005984, #017cb8), and official contact information
 
 #### Security & Token Management
+
 ```typescript
 // JWT token creation pattern
 const payload: VerificationTokenPayload = { email }
@@ -1194,7 +1266,9 @@ const token = this.jwtService.sign(payload, {
 - **Email validation**: Ensures one-time use and prevents replay attacks
 
 #### Environment Configuration
+
 Required email-related environment variables:
+
 - `EMAIL_SERVER`: SMTP host
 - `SENDING_SMTP_PORT`: Usually 465 for SSL
 - `EMAIL_USER`: SMTP authentication username
@@ -1205,16 +1279,20 @@ Required email-related environment variables:
 - `PASSWORD_RESET_URL`: Frontend URL for password reset
 
 ## Import Conventions
+
 Always use absolute imports with `@/` prefix:
+
 ```typescript
 import { UserError } from '@/common.entity'
 import { PrismaService } from '@/prisma/prisma.service'
 ```
 
 ## Testing Patterns
+
 **CRITICAL**: All E2E tests MUST use the `testWithBothRoles` pattern from `src/test/testHelpers.ts`.
 
 ### E2E Test Requirements
+
 1. **Use testWithBothRoles**: Every E2E test must test both admin and user roles simultaneously
 2. **Type GraphQL Responses**: Always cast responses with proper entity types
 3. **Test Authorization**: Verify that admin has write access and user has read-only access
@@ -1222,6 +1300,7 @@ import { PrismaService } from '@/prisma/prisma.service'
 5. **Clean Test Data**: Use `beforeAll`/`afterAll` for persistent data, `beforeEach`/`afterEach` for per-test data
 
 ### Test Helper Usage
+
 ```typescript
 import { createAuthenticatedRequest, testWithBothRoles } from '@/test/testHelpers'
 
@@ -1238,9 +1317,11 @@ const results = await testWithBothRoles('operation name', async (role) => {
 ```
 
 ### Example Test Structure
+
 See the field-config E2E tests (`src/submissions/field-config/test/field-config.e2e-spec.ts`) for a complete reference implementation with 18 comprehensive tests covering queries, mutations, updates, deletes, and authorization.
 
 ## Configuration Notes
+
 - **Environment files**: `.env.development`, `.env.test`, `.env.production`
 - **Database URL**: Uses dotenvx for environment management
 - **CORS**: Configured for specific frontend origin

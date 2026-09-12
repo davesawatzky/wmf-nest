@@ -1,14 +1,7 @@
-import type { tbl_discipline } from '@prisma/client'
 import { Logger, UseGuards } from '@nestjs/common'
-import {
-  Args,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import type { tbl_discipline } from '@prisma/client'
+
 import { CheckAbilities } from '@/ability/abilities.decorator.js'
 import { AbilitiesGuard } from '@/ability/abilities.guard.js'
 import { Action } from '@/ability/ability.factory.js'
@@ -16,6 +9,7 @@ import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
 import { PerformerType } from '@/common.entity.js'
 import { Instrument } from '@/festival/instrument/entities/instrument.entity.js'
 import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity.js'
+
 import { DisciplineDataLoader } from './discipline.dataloader.js'
 import { DisciplineService } from './discipline.service.js'
 import { DisciplineInput } from './dto/discipline.input.js'
@@ -42,9 +36,7 @@ export class DisciplineResolver {
     @Args('instrument', { type: () => String, nullable: true })
     instrument: Instrument['name'] | null,
   ) {
-    this.logger.log(
-      `Fetching disciplines with filters - performerType: ${performerType}, instrument: ${instrument}`,
-    )
+    this.logger.log(`Fetching disciplines with filters - performerType: ${performerType}, instrument: ${instrument}`)
     return await this.disciplineService.findAll(performerType, instrument)
   }
 
@@ -61,9 +53,7 @@ export class DisciplineResolver {
   @Mutation(() => DisciplinePayload)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Create, subject: Discipline })
-  async disciplineCreate(
-    @Args('disciplineInput') disciplineInput: DisciplineInput,
-  ) {
+  async disciplineCreate(@Args('disciplineInput') disciplineInput: DisciplineInput) {
     this.logger.log(`Creating discipline: ${disciplineInput.name}`)
     return await this.disciplineService.create(disciplineInput)
   }
@@ -82,16 +72,12 @@ export class DisciplineResolver {
   @Mutation(() => DisciplinePayload)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Delete, subject: Discipline })
-  async disciplineDelete(
-    @Args('disciplineID', { type: () => Int }) disciplineID: Discipline['id'],
-  ) {
+  async disciplineDelete(@Args('disciplineID', { type: () => Int }) disciplineID: Discipline['id']) {
     this.logger.log(`Deleting discipline ID: ${disciplineID}`)
     return await this.disciplineService.remove(disciplineID)
   }
 
-  /**
-   * Field Resolvers
-   */
+  /** Field Resolvers */
   @ResolveField(() => [Subdiscipline])
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Subdiscipline })
@@ -112,8 +98,7 @@ export class DisciplineResolver {
     if (performerType) {
       const cacheKey = `${discipline.id}-${performerType}`
       return await this.disciplineDataLoader.subdisciplinesByPerformerTypeLoader.load(cacheKey)
-    }
-    else {
+    } else {
       return await this.disciplineDataLoader.subdisciplinesLoader.load(discipline.id)
     }
   }

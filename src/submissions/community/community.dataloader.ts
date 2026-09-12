@@ -1,6 +1,7 @@
-import type { tbl_reg_communitygroup, tbl_registration } from '@prisma/client'
 import { Injectable, Logger, Scope } from '@nestjs/common'
+import type { tbl_reg_communitygroup, tbl_registration } from '@prisma/client'
 import DataLoader from 'dataloader'
+
 import { PrismaService } from '@/prisma/prisma.service.js'
 
 @Injectable({ scope: Scope.REQUEST })
@@ -9,10 +10,7 @@ export class CommunityDataLoader {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * DataLoader for community groups (one-to-many)
-   * Batches queries to fetch community groups for multiple communities
-   */
+  /** DataLoader for community groups (one-to-many) Batches queries to fetch community groups for multiple communities */
   public readonly communityGroupsLoader = new DataLoader<number, tbl_reg_communitygroup[]>(
     async (communityIds: readonly number[]) => {
       const startTime = performance.now()
@@ -30,7 +28,7 @@ export class CommunityDataLoader {
         groupsByCommunity.set(group.communityID, existing)
       }
 
-      const orderedResults = communityIds.map(id => groupsByCommunity.get(id) ?? [])
+      const orderedResults = communityIds.map((id) => groupsByCommunity.get(id) ?? [])
 
       this.logger.log(
         `Fetched community groups for ${communityIds.length} communities in ${(performance.now() - startTime).toFixed(2)}ms`,
@@ -39,10 +37,7 @@ export class CommunityDataLoader {
     },
   )
 
-  /**
-   * DataLoader for registration (many-to-one)
-   * Batches queries to fetch registrations for multiple communities
-   */
+  /** DataLoader for registration (many-to-one) Batches queries to fetch registrations for multiple communities */
   public readonly registrationLoader = new DataLoader<number, tbl_registration | null>(
     async (regIds: readonly number[]) => {
       const startTime = performance.now()
@@ -53,8 +48,8 @@ export class CommunityDataLoader {
       })
 
       // Map by registration ID
-      const registrationMap = new Map(registrations.map(reg => [reg.id, reg]))
-      const orderedResults = regIds.map(id => registrationMap.get(id) ?? null)
+      const registrationMap = new Map(registrations.map((reg) => [reg.id, reg]))
+      const orderedResults = regIds.map((id) => registrationMap.get(id) ?? null)
 
       this.logger.log(
         `Fetched ${orderedResults.length} registrations in ${(performance.now() - startTime).toFixed(2)}ms`,

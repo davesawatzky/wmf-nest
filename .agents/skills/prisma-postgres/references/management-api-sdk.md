@@ -45,7 +45,9 @@ Creation accepts a display `name`. The response's `data.value` is the complete t
 import { createManagementApiSdk, type TokenStorage } from '@prisma/management-api-sdk'
 
 const tokenStorage: TokenStorage = {
-  async getTokens() { return null },
+  async getTokens() {
+    return null
+  },
   async setTokens(tokens) {},
   async clearTokens() {},
 }

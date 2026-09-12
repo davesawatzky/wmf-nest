@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
+
 import { UserError } from '@/common.entity.js'
 import { School } from '@/submissions/school/entities/school.entity.js'
 

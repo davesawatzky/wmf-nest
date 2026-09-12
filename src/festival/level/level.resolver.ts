@@ -1,14 +1,7 @@
-import type { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
 import { Logger, UseGuards } from '@nestjs/common'
-import {
-  Args,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import type { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
+
 import { CheckAbilities } from '@/ability/abilities.decorator.js'
 import { AbilitiesGuard } from '@/ability/abilities.guard.js'
 import { Action } from '@/ability/ability.factory.js'
@@ -16,6 +9,7 @@ import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
 import { PerformerType } from '@/common.entity.js'
 import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity.js'
 import { FestivalClassService } from '@/festival/festival-class/festival-class.service.js'
+
 import { LevelInput } from './dto/level.input.js'
 import { Level, LevelPayload } from './entities/level.entity.js'
 import { LevelService } from './level.service.js'
@@ -41,9 +35,7 @@ export class LevelResolver {
     @Args('subdisciplineID', { type: () => Int, nullable: true })
     subdisciplineID: tbl_subdiscipline['id'] | null,
   ) {
-    this.logger.log(
-      `Fetching levels with filters - categoryID: ${categoryID}, subdisciplineID: ${subdisciplineID}`,
-    )
+    this.logger.log(`Fetching levels with filters - categoryID: ${categoryID}, subdisciplineID: ${subdisciplineID}`)
     return await this.levelService.findAll(categoryID, subdisciplineID)
   }
 
@@ -79,9 +71,7 @@ export class LevelResolver {
   @Mutation(() => LevelPayload)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Delete, subject: Level })
-  async levelDelete(
-    @Args('levelID', { type: () => Int }) levelID: Level['id'],
-  ) {
+  async levelDelete(@Args('levelID', { type: () => Int }) levelID: Level['id']) {
     this.logger.log(`Deleting level ID: ${levelID}`)
     return await this.levelService.remove(levelID)
   }
@@ -103,11 +93,6 @@ export class LevelResolver {
       `Fetching festival classes for level ID: ${level.id} with filters - performerType: ${performerType}, subdisciplineID: ${subdisciplineID}, categoryID: ${categoryID}`,
     )
     const levelID = level.id
-    return await this.festivalClassService.findAll(
-      performerType,
-      subdisciplineID,
-      levelID,
-      categoryID,
-    )
+    return await this.festivalClassService.findAll(performerType, subdisciplineID, levelID, categoryID)
   }
 }

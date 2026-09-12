@@ -1,19 +1,7 @@
-import type {
-  tbl_category,
-  tbl_discipline,
-  tbl_level,
-  tbl_subdiscipline,
-} from '@prisma/client'
 import { Logger, UseGuards } from '@nestjs/common'
-import {
-  Args,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import type { tbl_category, tbl_discipline, tbl_level, tbl_subdiscipline } from '@prisma/client'
+
 import { CheckAbilities } from '@/ability/abilities.decorator.js'
 import { AbilitiesGuard } from '@/ability/abilities.guard.js'
 import { Action } from '@/ability/ability.factory.js'
@@ -24,11 +12,9 @@ import { Discipline } from '@/festival/discipline/entities/discipline.entity.js'
 import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity.js'
 import { FestivalClassService } from '@/festival/festival-class/festival-class.service.js'
 import { Level } from '@/festival/level/entities/level.entity.js'
+
 import { SubdisciplineInput } from './dto/subdiscipline.input.js'
-import {
-  Subdiscipline,
-  SubdisciplinePayload,
-} from './entities/subdiscipline.entity.js'
+import { Subdiscipline, SubdisciplinePayload } from './entities/subdiscipline.entity.js'
 import { SubdisciplineDataLoader } from './subdiscipline.dataloader.js'
 import { SubdisciplineService } from './subdiscipline.service.js'
 
@@ -94,10 +80,7 @@ export class SubdisciplineResolver {
     subdisciplineInput: SubdisciplineInput,
   ) {
     this.logger.log(`Updating subdiscipline ID: ${subdisciplineID}`)
-    return await this.subdisciplineService.update(
-      subdisciplineID,
-      subdisciplineInput,
-    )
+    return await this.subdisciplineService.update(subdisciplineID, subdisciplineInput)
   }
 
   @Mutation(() => SubdisciplinePayload)
@@ -133,12 +116,7 @@ export class SubdisciplineResolver {
       `Fetching festival classes for subdiscipline ID: ${subdiscipline.id} with filters - performerType: ${performerType}, levelID: ${levelID}, categoryID: ${categoryID}`,
     )
     const subdisciplineID = subdiscipline.id
-    return await this.festivalClassService.findAll(
-      performerType,
-      subdisciplineID,
-      levelID,
-      categoryID,
-    )
+    return await this.festivalClassService.findAll(performerType, subdisciplineID, levelID, categoryID)
   }
 
   @ResolveField(() => [Category])

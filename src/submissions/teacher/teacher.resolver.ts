@@ -1,21 +1,10 @@
 import { Logger, UseGuards } from '@nestjs/common'
+import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 
-import {
-  Args,
-  Context,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
 import { Registration } from '@/submissions/registration/entities/registration.entity.js'
-import {
-  Teacher,
-  TeacherPayload,
-} from '@/submissions/teacher/entities/teacher.entity.js'
+import { Teacher, TeacherPayload } from '@/submissions/teacher/entities/teacher.entity.js'
+
 import { TeacherInput } from './dto/teacher.input.js'
 import { TeacherTypeInput } from './dto/teacherType.input.js'
 import { TeacherDataLoader } from './teacher.dataloader.js'
@@ -59,10 +48,7 @@ export class TeacherResolver {
       this.logger.error('myStudents query failed - User context missing')
       return null
     }
-    const userID
-      = context.req.user.privateTeacher || context.req.user.schoolTeacher
-        ? context.req.user.id
-        : null
+    const userID = context.req.user.privateTeacher || context.req.user.schoolTeacher ? context.req.user.id : null
     if (!userID) {
       this.logger.warn('myStudents query - User is not a teacher')
       return null
@@ -83,11 +69,7 @@ export class TeacherResolver {
     teacherInput: Partial<TeacherInput>,
   ) {
     this.logger.log(`Creating teacher (private: ${privateTeacher}, school: ${schoolTeacher})`)
-    return await this.teacherService.create(
-      privateTeacher,
-      schoolTeacher,
-      teacherInput,
-    )
+    return await this.teacherService.create(privateTeacher, schoolTeacher, teacherInput)
   }
 
   @Mutation(() => TeacherPayload)
@@ -101,9 +83,7 @@ export class TeacherResolver {
   }
 
   @Mutation(() => TeacherPayload)
-  async teacherDelete(
-    @Args('teacherID', { type: () => Int }) teacherID: Teacher['id'],
-  ) {
+  async teacherDelete(@Args('teacherID', { type: () => Int }) teacherID: Teacher['id']) {
     this.logger.log(`Deleting teacher ID: ${teacherID}`)
     return await this.teacherService.remove(teacherID)
   }

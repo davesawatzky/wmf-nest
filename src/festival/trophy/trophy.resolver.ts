@@ -1,18 +1,12 @@
 import { Logger, UseGuards } from '@nestjs/common'
-import {
-  Args,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+
 import { CheckAbilities } from '@/ability/abilities.decorator.js'
 import { AbilitiesGuard } from '@/ability/abilities.guard.js'
 import { Action } from '@/ability/ability.factory.js'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
 import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity.js'
+
 import { TrophyInput } from './dto/trophy.input.js'
 import { Trophy, TrophyPayload } from './entities/trophy.entity.js'
 import { TrophyDataLoader } from './trophy.dataloader.js'
@@ -70,9 +64,7 @@ export class TrophyResolver {
   @Mutation(() => TrophyPayload)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Delete, subject: Trophy })
-  async trophyDelete(
-    @Args('trophyID', { type: () => Int }) trophyID: Trophy['id'],
-  ) {
+  async trophyDelete(@Args('trophyID', { type: () => Int }) trophyID: Trophy['id']) {
     this.logger.log(`Deleting trophy ID: ${trophyID}`)
     return await this.trophyService.remove(trophyID)
   }

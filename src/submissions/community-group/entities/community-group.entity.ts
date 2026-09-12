@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
+
 import { UserError } from '@/common.entity.js'
 import { Community } from '@/submissions/community/entities/community.entity.js'
 

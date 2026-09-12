@@ -1,4 +1,3 @@
-import type { tbl_reg_group, tbl_registration } from '@prisma/client'
 import {
   BadRequestException,
   Injectable,
@@ -6,7 +5,10 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
+import type { tbl_reg_group, tbl_registration } from '@prisma/client'
+
 import { PrismaService } from '@/prisma/prisma.service.js'
+
 import { GroupInput } from './dto/group.input.js'
 
 @Injectable()
@@ -41,12 +43,9 @@ export class GroupService {
         userErrors: [],
         group,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2003') {
-        this.logger.warn(
-          `Group creation failed - Invalid registration ID: ${registrationID}`,
-        )
+        this.logger.warn(`Group creation failed - Invalid registration ID: ${registrationID}`)
         return {
           userErrors: [
             {
@@ -56,11 +55,8 @@ export class GroupService {
           ],
           group: null,
         }
-      }
-      else if (error.code === 'P2002') {
-        this.logger.warn(
-          `Group creation failed - Unique constraint violation for registration ${registrationID}`,
-        )
+      } else if (error.code === 'P2002') {
+        this.logger.warn(`Group creation failed - Unique constraint violation for registration ${registrationID}`)
         return {
           userErrors: [
             {
@@ -70,12 +66,8 @@ export class GroupService {
           ],
           group: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during group creation for registration ${registrationID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during group creation for registration ${registrationID}`, error)
         return {
           userErrors: [
             {
@@ -91,38 +83,25 @@ export class GroupService {
 
   async findAll(registrationID?: tbl_registration['id']) {
     try {
-      this.logger.log(
-        `Fetching groups with filter - registrationID: ${registrationID}`,
-      )
+      this.logger.log(`Fetching groups with filter - registrationID: ${registrationID}`)
 
       return await this.prisma.tbl_reg_group.findMany({
         where: { regID: registrationID },
       })
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Error fetching groups with filter - registrationID: ${registrationID}`,
-        error,
-      )
+    } catch (error: any) {
+      this.logger.error(`Error fetching groups with filter - registrationID: ${registrationID}`, error)
       throw new InternalServerErrorException('Unable to fetch groups')
     }
   }
 
-  async findOne(
-    registrationID?: tbl_registration['id'],
-    groupID?: tbl_reg_group['id'],
-  ) {
+  async findOne(registrationID?: tbl_registration['id'], groupID?: tbl_reg_group['id']) {
     try {
       if (!registrationID && !groupID) {
         this.logger.warn('findOne called without registrationID or groupID')
-        throw new BadRequestException(
-          'Either registrationID or groupID must be provided',
-        )
+        throw new BadRequestException('Either registrationID or groupID must be provided')
       }
 
-      this.logger.log(
-        `Finding group with registrationID: ${registrationID}, groupID: ${groupID}`,
-      )
+      this.logger.log(`Finding group with registrationID: ${registrationID}, groupID: ${groupID}`)
 
       // Build where clause conditionally
       const whereClause: any = {}
@@ -138,25 +117,16 @@ export class GroupService {
       })
 
       if (!group) {
-        this.logger.warn(
-          `Group not found with registrationID: ${registrationID}, groupID: ${groupID}`,
-        )
+        this.logger.warn(`Group not found with registrationID: ${registrationID}, groupID: ${groupID}`)
         throw new NotFoundException('Group not found')
       }
 
       return group
-    }
-    catch (error: any) {
-      if (
-        error instanceof BadRequestException
-        || error instanceof NotFoundException
-      ) {
+    } catch (error: any) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error
       }
-      this.logger.error(
-        `Error finding group with registrationID: ${registrationID}, groupID: ${groupID}`,
-        error,
-      )
+      this.logger.error(`Error finding group with registrationID: ${registrationID}, groupID: ${groupID}`, error)
       throw new InternalServerErrorException('Unable to find group')
     }
   }
@@ -186,12 +156,9 @@ export class GroupService {
         userErrors: [],
         group,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(
-          `Group update failed - Group with ID ${groupID} not found`,
-        )
+        this.logger.warn(`Group update failed - Group with ID ${groupID} not found`)
         return {
           userErrors: [
             {
@@ -201,11 +168,8 @@ export class GroupService {
           ],
           group: null,
         }
-      }
-      else if (error.code === 'P2002') {
-        this.logger.warn(
-          `Group update failed - Unique constraint violation for group ${groupID}`,
-        )
+      } else if (error.code === 'P2002') {
+        this.logger.warn(`Group update failed - Unique constraint violation for group ${groupID}`)
         return {
           userErrors: [
             {
@@ -215,11 +179,8 @@ export class GroupService {
           ],
           group: null,
         }
-      }
-      else if (error.code === 'P2003') {
-        this.logger.warn(
-          `Group update failed - Foreign key constraint violation for group ${groupID}`,
-        )
+      } else if (error.code === 'P2003') {
+        this.logger.warn(`Group update failed - Foreign key constraint violation for group ${groupID}`)
         return {
           userErrors: [
             {
@@ -229,12 +190,8 @@ export class GroupService {
           ],
           group: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during group update for ID ${groupID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during group update for ID ${groupID}`, error)
         return {
           userErrors: [
             {
@@ -272,12 +229,9 @@ export class GroupService {
         userErrors: [],
         group,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(
-          `Group deletion failed - Group with ID ${groupID} not found`,
-        )
+        this.logger.warn(`Group deletion failed - Group with ID ${groupID} not found`)
         return {
           userErrors: [
             {
@@ -287,11 +241,8 @@ export class GroupService {
           ],
           group: null,
         }
-      }
-      else if (error.code === 'P2003') {
-        this.logger.warn(
-          `Group deletion failed - Foreign key constraint violation for group ${groupID}`,
-        )
+      } else if (error.code === 'P2003') {
+        this.logger.warn(`Group deletion failed - Foreign key constraint violation for group ${groupID}`)
         return {
           userErrors: [
             {
@@ -301,12 +252,8 @@ export class GroupService {
           ],
           group: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during group deletion for ID ${groupID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during group deletion for ID ${groupID}`, error)
         return {
           userErrors: [
             {

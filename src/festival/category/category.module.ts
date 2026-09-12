@@ -1,6 +1,8 @@
 import { forwardRef, Module } from '@nestjs/common'
+
 import { AbilityModule } from '@/ability/ability.module.js'
 import { FestivalClassModule } from '@/festival/festival-class/festival-class.module.js'
+
 import { CategoryResolver } from './category.resolver.js'
 import { CategoryService } from './category.service.js'
 

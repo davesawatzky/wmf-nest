@@ -1,4 +1,3 @@
-import type { tbl_user } from '@prisma/client'
 import {
   BadRequestException,
   Injectable,
@@ -6,7 +5,10 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
+import type { tbl_user } from '@prisma/client'
+
 import { PrismaService } from '@/prisma/prisma.service.js'
+
 import { TeacherInput } from './dto/teacher.input.js'
 import { TeacherTypeInput } from './dto/teacherType.input.js'
 import { Teacher } from './entities/teacher.entity.js'
@@ -16,11 +18,7 @@ export class TeacherService {
   private readonly logger = new Logger(TeacherService.name)
   constructor(private prisma: PrismaService) {}
 
-  async create(
-    privateTeacher: boolean,
-    schoolTeacher: boolean,
-    teacherInput: Partial<TeacherInput>,
-  ) {
+  async create(privateTeacher: boolean, schoolTeacher: boolean, teacherInput: Partial<TeacherInput>) {
     try {
       this.logger.log('Creating new teacher')
 
@@ -52,12 +50,9 @@ export class TeacherService {
         userErrors: [],
         teacher: teacherResponse,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2002') {
-        this.logger.warn(
-          `Teacher creation failed - Unique constraint violation: ${error.meta?.target}`,
-        )
+        this.logger.warn(`Teacher creation failed - Unique constraint violation: ${error.meta?.target}`)
         return {
           userErrors: [
             {
@@ -67,14 +62,12 @@ export class TeacherService {
           ],
           teacher: null,
         }
-      }
-      else {
+      } else {
         this.logger.error('Unexpected error during teacher creation', error)
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while creating the teacher',
+              message: 'An unexpected error occurred while creating the teacher',
               field: [],
             },
           ],
@@ -100,14 +93,12 @@ export class TeacherService {
           where: { privateTeacher: true },
           orderBy: { lastName: 'asc' },
         })
-      }
-      else if (teacherType === 'schoolTeacher') {
+      } else if (teacherType === 'schoolTeacher') {
         teachersData = await this.prisma.tbl_user.findMany({
           where: { schoolTeacher: true },
           orderBy: { lastName: 'asc' },
         })
-      }
-      else {
+      } else {
         this.logger.warn('Invalid teacher type specified for findAll')
         // throw new BadRequestException('Invalid teacher type specified')
       }
@@ -119,21 +110,12 @@ export class TeacherService {
 
       // Remove sensitive fields and reorder
       const teachersFiltered = teachersData.map((obj) => {
-        const {
-          password,
-          staff,
-          roles,
-          privateTeacher,
-          schoolTeacher,
-          ...teacherProps
-        } = obj
+        const { password, staff, roles, privateTeacher, schoolTeacher, ...teacherProps } = obj
         return teacherProps
       })
 
       // Handle special "No Teacher" entry
-      const noTeacherIndex = teachersFiltered.findIndex(
-        el => el.firstName === 'Teacher' && el.lastName === 'No',
-      )
+      const noTeacherIndex = teachersFiltered.findIndex((el) => el.firstName === 'Teacher' && el.lastName === 'No')
 
       if (noTeacherIndex !== -1) {
         const noTeacher = teachersFiltered.splice(noTeacherIndex, 1)
@@ -151,29 +133,20 @@ export class TeacherService {
       })
 
       return teachersFiltered
-    }
-    catch (error: any) {
+    } catch (error: any) {
       // Re-throw known exceptions
       if (error instanceof BadRequestException) {
         throw error
       }
 
-      this.logger.error(
-        `Failed to find teachers of type: ${teacherType}`,
-        error,
-      )
+      this.logger.error(`Failed to find teachers of type: ${teacherType}`, error)
       throw new InternalServerErrorException('Failed to retrieve teachers')
     }
   }
 
-  async findOne(
-    teacherID?: tbl_user['id'],
-    email?: tbl_user['email'],
-  ): Promise<Teacher | null> {
+  async findOne(teacherID?: tbl_user['id'], email?: tbl_user['email']): Promise<Teacher | null> {
     try {
-      this.logger.log(
-        `Finding teacher by ${teacherID ? `ID: ${teacherID}` : `email: ${email}`}`,
-      )
+      this.logger.log(`Finding teacher by ${teacherID ? `ID: ${teacherID}` : `email: ${email}`}`)
 
       if (!teacherID && !email) {
         this.logger.log('FindOne called without teacherID or email parameters')
@@ -187,49 +160,35 @@ export class TeacherService {
           where: { id: teacherID },
         })
         if (!teacher) {
-          this.logger.warn(
-            `Teacher not found with ID: ${teacherID}`,
-          )
+          this.logger.warn(`Teacher not found with ID: ${teacherID}`)
           throw new NotFoundException('Teacher not found')
         }
-      }
-      else if (email) {
+      } else if (email) {
         teacher = await this.prisma.tbl_user.findUnique({
           where: { email },
         })
         if (!teacher) {
-          this.logger.warn(
-            `Teacher not found with email: ${email}`,
-          )
+          this.logger.warn(`Teacher not found with email: ${email}`)
           throw new NotFoundException('Teacher not found')
         }
       }
 
       // Check if the user is actually a teacher
       if (!teacher.privateTeacher && !teacher.schoolTeacher) {
-        this.logger.warn(
-          `User found but is not a teacher: ${teacherID || email}`,
-        )
+        this.logger.warn(`User found but is not a teacher: ${teacherID || email}`)
         return null
       }
 
       // Remove sensitive fields from response
       const { password, roles, ...teacherProps } = teacher
       return teacherProps
-    }
-    catch (error: any) {
+    } catch (error: any) {
       // Re-throw known exceptions
-      if (
-        error instanceof BadRequestException
-        || error instanceof NotFoundException
-      ) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error
       }
 
-      this.logger.error(
-        `Failed to find teacher by ${teacherID ? `ID: ${teacherID}` : `email: ${email}`}`,
-        error,
-      )
+      this.logger.error(`Failed to find teacher by ${teacherID ? `ID: ${teacherID}` : `email: ${email}`}`, error)
       throw new InternalServerErrorException('Failed to retrieve teacher')
     }
   }
@@ -262,12 +221,9 @@ export class TeacherService {
         userErrors: [],
         teacher: teacherResponse,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(
-          `Teacher update failed - Teacher with ID ${teacherID} not found`,
-        )
+        this.logger.warn(`Teacher update failed - Teacher with ID ${teacherID} not found`)
         return {
           userErrors: [
             {
@@ -277,11 +233,8 @@ export class TeacherService {
           ],
           teacher: null,
         }
-      }
-      else if (error.code === 'P2002') {
-        this.logger.warn(
-          `Teacher update failed - Unique constraint violation: ${error.meta?.target}`,
-        )
+      } else if (error.code === 'P2002') {
+        this.logger.warn(`Teacher update failed - Unique constraint violation: ${error.meta?.target}`)
         return {
           userErrors: [
             {
@@ -291,17 +244,12 @@ export class TeacherService {
           ],
           teacher: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during teacher update for ID ${teacherID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during teacher update for ID ${teacherID}`, error)
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while updating the teacher',
+              message: 'An unexpected error occurred while updating the teacher',
               field: [],
             },
           ],
@@ -338,12 +286,9 @@ export class TeacherService {
         userErrors: [],
         teacher: teacherResponse,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(
-          `Teacher deletion failed - Teacher with ID ${teacherID} not found`,
-        )
+        this.logger.warn(`Teacher deletion failed - Teacher with ID ${teacherID} not found`)
         return {
           userErrors: [
             {
@@ -353,32 +298,23 @@ export class TeacherService {
           ],
           teacher: null,
         }
-      }
-      else if (error.code === 'P2003') {
-        this.logger.warn(
-          `Teacher deletion failed - Foreign key constraint violation for teacher ${teacherID}`,
-        )
+      } else if (error.code === 'P2003') {
+        this.logger.warn(`Teacher deletion failed - Foreign key constraint violation for teacher ${teacherID}`)
         return {
           userErrors: [
             {
-              message:
-                'Cannot delete teacher with existing registrations or relationships',
+              message: 'Cannot delete teacher with existing registrations or relationships',
               field: ['id'],
             },
           ],
           teacher: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during teacher deletion for ID ${teacherID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during teacher deletion for ID ${teacherID}`, error)
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while deleting the teacher',
+              message: 'An unexpected error occurred while deleting the teacher',
               field: [],
             },
           ],

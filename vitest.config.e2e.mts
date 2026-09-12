@@ -1,5 +1,6 @@
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+
 import swc from 'unplugin-swc'
 import { defineConfig } from 'vitest/config'
 
@@ -14,9 +15,7 @@ export default defineConfig({
     isolate: false,
     globals: false,
     globalSetup: './src/test/globalSetup_e2e.ts',
-    setupFiles: [
-      './src/test/integrationTestSetup.ts',
-    ],
+    setupFiles: ['./src/test/integrationTestSetup.ts'],
     pool: 'threads',
     fileParallelism: false,
     server: {

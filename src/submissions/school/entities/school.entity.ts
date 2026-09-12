@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
+
 import { UserError } from '@/common.entity.js'
 import { Registration } from '@/submissions/registration/entities/registration.entity.js'
 import { SchoolGroup } from '@/submissions/school-group/entities/school-group.entity.js'

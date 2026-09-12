@@ -9,6 +9,7 @@ The `RegistrationDataLoader` service implements request-scoped batching for Grap
 ### Before DataLoader (N+1 Query Problem)
 
 When fetching multiple registrations with nested field resolvers, the system would execute:
+
 - 1 query to fetch all registrations
 - N queries for users (one per registration)
 - N queries for performers (one per registration)
@@ -21,11 +22,13 @@ When fetching multiple registrations with nested field resolvers, the system wou
 **Total**: Up to **1 + 7N queries** for N registrations
 
 Example with 50 registrations:
+
 - Without DataLoader: **1 + 7×50 = 351 queries**
 
 ### After DataLoader (Batch Loading)
 
 With DataLoader batching:
+
 - 1 query to fetch all registrations
 - 1 batched query for all users
 - 1 batched query for all performers
@@ -38,6 +41,7 @@ With DataLoader batching:
 **Total**: **8 queries** (or 7 if no teachers assigned)
 
 Example with 50 registrations:
+
 - With DataLoader: **8 queries**
 - **Query reduction: 351 → 8 queries (98% reduction)**
 
@@ -70,6 +74,7 @@ export class RegistrationDataLoader {
 ### Batch Query Patterns
 
 #### One-to-Many Relationships (Array Results)
+
 - `performersLoader`: Returns array of performers per registration
 - `registeredClassesLoader`: Returns array of registered classes per registration
 
@@ -79,10 +84,11 @@ performers.forEach((performer) => {
   const existing = performerMap.get(performer.regID) || []
   performerMap.set(performer.regID, [...existing, performer])
 })
-return registrationIDs.map(id => performerMap.get(id) || [])
+return registrationIDs.map((id) => performerMap.get(id) || [])
 ```
 
 #### One-to-One Relationships (Single Result)
+
 - `userLoader`: Returns single user by userID
 - `groupLoader`: Returns single group per registration (one-to-one)
 - `communityLoader`: Returns single community per registration (one-to-one)
@@ -90,13 +96,14 @@ return registrationIDs.map(id => performerMap.get(id) || [])
 - `schoolLoader`: Returns single school per registration (one-to-one)
 
 ```typescript
-const userMap = new Map(users.map(user => [user.id, user]))
-return userIDs.map(id => userMap.get(id) || null)
+const userMap = new Map(users.map((user) => [user.id, user]))
+return userIDs.map((id) => userMap.get(id) || null)
 ```
 
 ## Database Schema Mapping
 
 ### Registration Relationships
+
 ```prisma
 model tbl_registration {
   id                Int                 @id
@@ -116,6 +123,7 @@ model tbl_registration {
 ```
 
 ### Important Field Names
+
 - **Registration relations use `regID`** (not `registrationID`)
 - **User/Teacher relations use `userID` and `teacherID`**
 - One-to-one relations have `@unique` constraint on `regID`
@@ -123,6 +131,7 @@ model tbl_registration {
 ## Usage in Resolver
 
 ### Before (Direct Service Calls)
+
 ```typescript
 @ResolveField(() => [Performer])
 async performers(@Parent() registration: tbl_registration) {
@@ -132,6 +141,7 @@ async performers(@Parent() registration: tbl_registration) {
 ```
 
 ### After (DataLoader Batching)
+
 ```typescript
 @ResolveField(() => [Performer])
 async performers(@Parent() registration: tbl_registration) {
@@ -153,6 +163,7 @@ this.logger.log(`[DataLoader] Fetched ${performers.length} performers in ${elaps
 ```
 
 ### Sample Log Output
+
 ```
 [RegistrationDataLoader] Batching 50 user queries
 [RegistrationDataLoader] Fetched 50 users in 12ms
@@ -239,6 +250,7 @@ Check logs to verify batching is working correctly.
 ## Relationship to Festival Class DataLoader
 
 This follows the same architectural pattern as `FestivalClassDataLoader`:
+
 - Request-scoped service
 - Batch loading for field resolvers
 - Comprehensive logging

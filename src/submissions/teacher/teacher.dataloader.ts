@@ -1,6 +1,7 @@
-import type { tbl_registration } from '@prisma/client'
 import { Injectable, Logger, Scope } from '@nestjs/common'
+import type { tbl_registration } from '@prisma/client'
 import DataLoader from 'dataloader'
+
 import { PrismaService } from '@/prisma/prisma.service.js'
 
 @Injectable({ scope: Scope.REQUEST })
@@ -9,10 +10,7 @@ export class TeacherDataLoader {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * DataLoader for registrations (one-to-many)
-   * Batches queries to fetch registrations for multiple teachers
-   */
+  /** DataLoader for registrations (one-to-many) Batches queries to fetch registrations for multiple teachers */
   public readonly registrationsLoader = new DataLoader<number, tbl_registration[]>(
     async (teacherIds: readonly number[]) => {
       const startTime = performance.now()
@@ -30,7 +28,7 @@ export class TeacherDataLoader {
         registrationsByTeacher.set(registration.teacherID, existing)
       }
 
-      const orderedResults = teacherIds.map(id => registrationsByTeacher.get(id) ?? [])
+      const orderedResults = teacherIds.map((id) => registrationsByTeacher.get(id) ?? [])
 
       this.logger.log(
         `Fetched registrations for ${teacherIds.length} teachers in ${(performance.now() - startTime).toFixed(2)}ms`,

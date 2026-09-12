@@ -1,14 +1,17 @@
 import process from 'node:process'
+
 import { INestApplication, Logger, ValidationPipe } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
 import cookieParser from 'cookie-parser'
 import helmet from 'helmet'
 import { afterAll, beforeAll } from 'vitest'
+
 import { AppModule } from '@/app.module.js'
 import { EmailConfirmationService } from '@/email-confirmation/email-confirmation.service.js'
 import { createMockEmailConfirmationService } from '@/email-confirmation/test/mocks/index.js'
 import { PrismaService } from '@/prisma/prisma.service.js'
+
 import { getTestUser, TestUserType } from './testUser.js'
 
 // Extend globalThis to include test context
@@ -40,7 +43,7 @@ declare global {
 
 let app: INestApplication
 
-beforeAll (async () => {
+beforeAll(async () => {
   const logger = new Logger('E2E Test Setup')
 
   try {
@@ -66,16 +69,9 @@ beforeAll (async () => {
         crossOriginEmbedderPolicy: false,
         contentSecurityPolicy: {
           directives: {
-            imgSrc: [
-              `'self'`,
-              'data:',
-              'apollo-server-landing-page.cdn.apollographql.com',
-            ],
+            imgSrc: [`'self'`, 'data:', 'apollo-server-landing-page.cdn.apollographql.com'],
             scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
-            manifestSrc: [
-              `'self'`,
-              'apollo-server-landing-page.cdn.apollographql.com',
-            ],
+            manifestSrc: [`'self'`, 'apollo-server-landing-page.cdn.apollographql.com'],
             frameSrc: [`'self'`, 'sandbox.embed.apollographql.com'],
           },
         },
@@ -119,8 +115,7 @@ beforeAll (async () => {
     logger.log('✅ Test context setup completed successfully')
     logger.log(`Admin token: ${testContext.admin.token?.substring(0, 20)}...`)
     logger.log(`User token: ${testContext.user.token?.substring(0, 20)}...`)
-  }
-  catch (error) {
+  } catch (error) {
     logger.error('❌ Integration test context setup failed:', error)
     throw error
   }
@@ -140,16 +135,12 @@ afterAll(async () => {
     delete globalThis.defined
 
     logger.log('✅ Integration test context torn down successfully')
-  }
-  catch (error) {
+  } catch (error) {
     logger.error('❌ Integration test teardown failed:', error)
   }
 })
 
-async function generateTokenForUser(
-  userType: TestUserType,
-  jwtService: JwtService,
-) {
+async function generateTokenForUser(userType: TestUserType, jwtService: JwtService) {
   const testUser = getTestUser(userType)
 
   // Get existing user (created in globalSetup)
@@ -158,9 +149,7 @@ async function generateTokenForUser(
   })
 
   if (!user) {
-    throw new Error(
-      `Test ${userType} user not found. Ensure globalSetup has run successfully.`,
-    )
+    throw new Error(`Test ${userType} user not found. Ensure globalSetup has run successfully.`)
   }
 
   // Generate JWT token

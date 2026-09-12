@@ -1,9 +1,8 @@
 import { gql } from 'graphql-tag'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import {
-  createAuthenticatedRequest,
-  testWithBothRoles,
-} from '@/test/testHelpers.js'
+
+import { createAuthenticatedRequest, testWithBothRoles } from '@/test/testHelpers.js'
+
 import { Level, LevelPayload } from '../entities/level.entity.js'
 
 describe('Level E2E Tests', () => {
@@ -42,33 +41,29 @@ describe('Level E2E Tests', () => {
 
   describe('Level Queries (Both Roles)', () => {
     it('Should list all levels for both roles', async () => {
-      const results = await testWithBothRoles(
-        'list levels',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetLevels {
-                levels {
-                  id
-                  name
-                  description
-                }
+      const results = await testWithBothRoles('list levels', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetLevels {
+              levels {
+                id
+                name
+                description
               }
-            `)
-            .expectNoErrors() as { data: { levels: Level[] } }
+            }
+          `)
+          .expectNoErrors()) as { data: { levels: Level[] } }
 
-          const levels = response.data.levels
-          const firstLevel = levels[0]
+        const levels = response.data.levels
+        const firstLevel = levels[0]
 
-          return {
-            hasData: !!levels,
-            isArray: Array.isArray(levels),
-            count: levels?.length || 0,
-            hasValidTypes: typeof firstLevel?.id === 'number'
-              && typeof firstLevel?.name === 'string',
-          }
-        },
-      )
+        return {
+          hasData: !!levels,
+          isArray: Array.isArray(levels),
+          count: levels?.length || 0,
+          hasValidTypes: typeof firstLevel?.id === 'number' && typeof firstLevel?.name === 'string',
+        }
+      })
 
       // Both roles should successfully retrieve levels
       expect(results.admin.hasData).toBe(true)
@@ -82,30 +77,27 @@ describe('Level E2E Tests', () => {
     })
 
     it('Should filter levels by subdisciplineID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'filter by subdisciplineID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetLevels($categoryId: Int, $subdisciplineId: Int) {
-                levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {
-                  id
-                  name
-                  description
-                }
+      const results = await testWithBothRoles('filter by subdisciplineID', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetLevels($categoryId: Int, $subdisciplineId: Int) {
+              levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {
+                id
+                name
+                description
               }
-            `)
-            .variables({
-              subdisciplineId: 194,
-            })
-            .expectNoErrors() as { data: { levels: Level[] } }
+            }
+          `)
+          .variables({
+            subdisciplineId: 194,
+          })
+          .expectNoErrors()) as { data: { levels: Level[] } }
 
-          return {
-            hasData: !!response.data.levels,
-            count: response.data.levels?.length || 0,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.levels,
+          count: response.data.levels?.length || 0,
+        }
+      })
 
       // Both roles should get same filtered results
       expect(results.admin.hasData).toBe(true)
@@ -115,30 +107,27 @@ describe('Level E2E Tests', () => {
     })
 
     it('Should filter levels by categoryID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'filter by categoryID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetLevels($categoryId: Int, $subdisciplineId: Int) {
-                levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {
-                  id
-                  name
-                  description
-                }
+      const results = await testWithBothRoles('filter by categoryID', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetLevels($categoryId: Int, $subdisciplineId: Int) {
+              levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {
+                id
+                name
+                description
               }
-            `)
-            .variables({
-              categoryId: 43,
-            })
-            .expectNoErrors() as { data: { levels: Level[] } }
+            }
+          `)
+          .variables({
+            categoryId: 43,
+          })
+          .expectNoErrors()) as { data: { levels: Level[] } }
 
-          return {
-            hasData: !!response.data.levels,
-            count: response.data.levels?.length || 0,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.levels,
+          count: response.data.levels?.length || 0,
+        }
+      })
 
       // Both roles should get same filtered results
       expect(results.admin.hasData).toBe(true)
@@ -148,31 +137,28 @@ describe('Level E2E Tests', () => {
     })
 
     it('Should filter levels by both categoryID and subdisciplineID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'filter by both IDs',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetLevels($categoryId: Int, $subdisciplineId: Int) {
-                levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {
-                  id
-                  name
-                  description
-                }
+      const results = await testWithBothRoles('filter by both IDs', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetLevels($categoryId: Int, $subdisciplineId: Int) {
+              levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {
+                id
+                name
+                description
               }
-            `)
-            .variables({
-              categoryId: 40,
-              subdisciplineId: 219,
-            })
-            .expectNoErrors() as { data: { levels: Level[] } }
+            }
+          `)
+          .variables({
+            categoryId: 40,
+            subdisciplineId: 219,
+          })
+          .expectNoErrors()) as { data: { levels: Level[] } }
 
-          return {
-            hasData: !!response.data.levels,
-            count: response.data.levels?.length || 0,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.levels,
+          count: response.data.levels?.length || 0,
+        }
+      })
 
       // Both roles should get same filtered results
       expect(results.admin.hasData).toBe(true)
@@ -182,31 +168,28 @@ describe('Level E2E Tests', () => {
     })
 
     it('Should return empty array when no levels match filter for both roles', async () => {
-      const results = await testWithBothRoles(
-        'empty result set',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetLevels($categoryId: Int, $subdisciplineId: Int) {
-                levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {
-                  id
-                  name
-                  description
-                }
+      const results = await testWithBothRoles('empty result set', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetLevels($categoryId: Int, $subdisciplineId: Int) {
+              levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {
+                id
+                name
+                description
               }
-            `)
-            .variables({
-              categoryId: 999999,
-              subdisciplineId: 999999,
-            })
-            .expectNoErrors() as { data: { levels: Level[] } }
+            }
+          `)
+          .variables({
+            categoryId: 999999,
+            subdisciplineId: 999999,
+          })
+          .expectNoErrors()) as { data: { levels: Level[] } }
 
-          return {
-            hasData: !!response.data.levels,
-            count: response.data.levels?.length || 0,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.levels,
+          count: response.data.levels?.length || 0,
+        }
+      })
 
       // Both roles should get empty results
       expect(results.admin.hasData).toBe(true)
@@ -216,28 +199,25 @@ describe('Level E2E Tests', () => {
     })
 
     it('Should find specific level by ID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'find level by ID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetLevel($levelId: Int!) {
-                level(id: $levelId) {
-                  id
-                  name
-                  description
-                }
+      const results = await testWithBothRoles('find level by ID', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetLevel($levelId: Int!) {
+              level(id: $levelId) {
+                id
+                name
+                description
               }
-            `)
-            .variables({ levelId: queryTestLevelId })
-            .expectNoErrors() as { data: { level: Level } }
+            }
+          `)
+          .variables({ levelId: queryTestLevelId })
+          .expectNoErrors()) as { data: { level: Level } }
 
-          return {
-            hasData: !!response.data.level,
-            level: response.data.level,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.level,
+          level: response.data.level,
+        }
+      })
 
       // Both roles should find the level
       expect(results.admin.hasData).toBe(true)
@@ -249,26 +229,23 @@ describe('Level E2E Tests', () => {
     })
 
     it('Should return error when level not found for both roles', async () => {
-      const results = await testWithBothRoles(
-        'level not found',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetLevel($levelId: Int!) {
-                level(id: $levelId) {
-                  id
-                  name
-                  description
-                }
+      const results = await testWithBothRoles('level not found', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetLevel($levelId: Int!) {
+              level(id: $levelId) {
+                id
+                name
+                description
               }
-            `)
-            .variables({ levelId: 999999 }) as { errors?: readonly any[] }
+            }
+          `)
+          .variables({ levelId: 999999 })) as { errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+        }
+      })
 
       // Both roles should get errors
       expect(results.admin.hasErrors).toBe(true)
@@ -278,39 +255,38 @@ describe('Level E2E Tests', () => {
 
   describe('Level Mutations', () => {
     it('Should enforce create authorization: admin succeeds, user fails', async () => {
-      const results = await testWithBothRoles(
-        'create level',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CreateLevel($levelInput: LevelInput!) {
-                levelCreate(levelInput: $levelInput) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  level {
-                    id
-                    name
-                    description
-                  }
+      const results = await testWithBothRoles('create level', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CreateLevel($levelInput: LevelInput!) {
+              levelCreate(levelInput: $levelInput) {
+                userErrors {
+                  message
+                  field
+                }
+                level {
+                  id
+                  name
+                  description
                 }
               }
-            `, {
-              levelInput: {
-                name: `E2E Test ${role} Level Create`,
-                description: `E2E Test ${role} Description`,
-              },
-            }) as { data?: { levelCreate: LevelPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            levelInput: {
+              name: `E2E Test ${role} Level Create`,
+              description: `E2E Test ${role} Description`,
+            },
+          },
+        )) as { data?: { levelCreate: LevelPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            level: response.data?.levelCreate?.level as Level | undefined,
-            userErrors: response.data?.levelCreate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          level: response.data?.levelCreate?.level as Level | undefined,
+          userErrors: response.data?.levelCreate?.userErrors,
+        }
+      })
 
       // Admin should succeed
       expect(results.admin.isAuthorized).toBe(true)
@@ -333,8 +309,8 @@ describe('Level E2E Tests', () => {
     })
 
     it('Should return validation error for duplicate level name', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation CreateLevel($levelInput: LevelInput!) {
             levelCreate(levelInput: $levelInput) {
               userErrors {
@@ -347,12 +323,14 @@ describe('Level E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           levelInput: {
             name: mockLevel.name, // Duplicate
             description: 'Duplicate Test',
           },
-        }) as { data: { levelCreate: LevelPayload } }
+        },
+      )) as { data: { levelCreate: LevelPayload } }
 
       expect(response.data.levelCreate.userErrors).toHaveLength(1)
       expect(response.data.levelCreate.userErrors[0].message).toBeTruthy()
@@ -360,8 +338,8 @@ describe('Level E2E Tests', () => {
     })
 
     it('Should return error for null name in create', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation CreateLevel($levelInput: LevelInput!) {
             levelCreate(levelInput: $levelInput) {
               userErrors {
@@ -374,12 +352,14 @@ describe('Level E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           levelInput: {
             name: null,
             description: 'Test Description',
           },
-        }) as { errors?: readonly any[] }
+        },
+      )) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0]).toBeTruthy()
@@ -394,46 +374,39 @@ describe('Level E2E Tests', () => {
         },
       })
 
-      const results = await testWithBothRoles(
-        'update level',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation UpdateLevel(
-                $levelId: Int!
-                $levelInput: LevelInput!
-              ) {
-                levelUpdate(
-                  levelID: $levelId
-                  levelInput: $levelInput
-                ) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  level {
-                    id
-                    name
-                    description
-                  }
+      const results = await testWithBothRoles('update level', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation UpdateLevel($levelId: Int!, $levelInput: LevelInput!) {
+              levelUpdate(levelID: $levelId, levelInput: $levelInput) {
+                userErrors {
+                  message
+                  field
+                }
+                level {
+                  id
+                  name
+                  description
                 }
               }
-            `, {
-              levelId: testLevel.id,
-              levelInput: {
-                name: 'E2E Test Updated Level',
-                description: 'Updated Description',
-              },
-            }) as { data?: { levelUpdate: LevelPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            levelId: testLevel.id,
+            levelInput: {
+              name: 'E2E Test Updated Level',
+              description: 'Updated Description',
+            },
+          },
+        )) as { data?: { levelUpdate: LevelPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            level: response.data?.levelUpdate?.level as Level | undefined,
-            userErrors: response.data?.levelUpdate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          level: response.data?.levelUpdate?.level as Level | undefined,
+          userErrors: response.data?.levelUpdate?.userErrors,
+        }
+      })
 
       // Admin should succeed
       expect(results.admin.isAuthorized).toBe(true)
@@ -455,16 +428,10 @@ describe('Level E2E Tests', () => {
     })
 
     it('Should return error when updating non-existent level', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
-          mutation UpdateLevel(
-            $levelId: Int!
-            $levelInput: LevelInput!
-          ) {
-            levelUpdate(
-              levelID: $levelId
-              levelInput: $levelInput
-            ) {
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
+          mutation UpdateLevel($levelId: Int!, $levelInput: LevelInput!) {
+            levelUpdate(levelID: $levelId, levelInput: $levelInput) {
               userErrors {
                 message
                 field
@@ -475,13 +442,15 @@ describe('Level E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           levelId: 999999,
           levelInput: {
             name: 'Non-existent Level',
             description: 'Test',
           },
-        }) as { data: { levelUpdate: LevelPayload } }
+        },
+      )) as { data: { levelUpdate: LevelPayload } }
 
       expect(response.data.levelUpdate.level).toBeNull()
       expect(response.data.levelUpdate.userErrors).toHaveLength(1)
@@ -497,16 +466,10 @@ describe('Level E2E Tests', () => {
         },
       })
 
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
-          mutation UpdateLevel(
-            $levelId: Int!
-            $levelInput: LevelInput!
-          ) {
-            levelUpdate(
-              levelID: $levelId
-              levelInput: $levelInput
-            ) {
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
+          mutation UpdateLevel($levelId: Int!, $levelInput: LevelInput!) {
+            levelUpdate(levelID: $levelId, levelInput: $levelInput) {
               userErrors {
                 message
                 field
@@ -517,13 +480,15 @@ describe('Level E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           levelId: testLevel.id,
           levelInput: {
             name: null,
             description: 'Updated',
           },
-        }) as { errors?: readonly any[] }
+        },
+      )) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0]).toBeTruthy()
@@ -550,38 +515,37 @@ describe('Level E2E Tests', () => {
         },
       })
 
-      const results = await testWithBothRoles(
-        'delete level',
-        async (role) => {
-          const levelId = role === 'admin' ? adminLevel.id : userLevel.id
+      const results = await testWithBothRoles('delete level', async (role) => {
+        const levelId = role === 'admin' ? adminLevel.id : userLevel.id
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation DeleteLevel($levelDeleteId: Int!) {
-                levelDelete(levelID: $levelDeleteId) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  level {
-                    id
-                    name
-                    description
-                  }
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation DeleteLevel($levelDeleteId: Int!) {
+              levelDelete(levelID: $levelDeleteId) {
+                userErrors {
+                  message
+                  field
+                }
+                level {
+                  id
+                  name
+                  description
                 }
               }
-            `, {
-              levelDeleteId: levelId,
-            }) as { data?: { levelDelete: LevelPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            levelDeleteId: levelId,
+          },
+        )) as { data?: { levelDelete: LevelPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            level: response.data?.levelDelete?.level as Level | undefined,
-            userErrors: response.data?.levelDelete?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          level: response.data?.levelDelete?.level as Level | undefined,
+          userErrors: response.data?.levelDelete?.userErrors,
+        }
+      })
 
       // User should be forbidden (test first since admin will delete)
       expect(results.user.isAuthorized).toBe(false)
@@ -608,8 +572,8 @@ describe('Level E2E Tests', () => {
     })
 
     it('Should return error when deleting non-existent level', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation DeleteLevel($levelDeleteId: Int!) {
             levelDelete(levelID: $levelDeleteId) {
               userErrors {
@@ -622,9 +586,11 @@ describe('Level E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           levelDeleteId: 999999,
-        }) as { data: { levelDelete: LevelPayload } }
+        },
+      )) as { data: { levelDelete: LevelPayload } }
 
       expect(response.data.levelDelete.level).toBeNull()
       expect(response.data.levelDelete.userErrors).toHaveLength(1)
@@ -634,27 +600,30 @@ describe('Level E2E Tests', () => {
 
   describe('Authentication and Authorization', () => {
     it('Should require authentication for mutations', async () => {
-      const response = await createAuthenticatedRequest('user')
+      const response = (await createAuthenticatedRequest('user')
         .set('Cookie', '') // Remove authentication
-        .mutate(gql`
-          mutation CreateLevel($levelInput: LevelInput!) {
-            levelCreate(levelInput: $levelInput) {
-              userErrors {
-                message
-                field
-              }
-              level {
-                id
-                name
+        .mutate(
+          gql`
+            mutation CreateLevel($levelInput: LevelInput!) {
+              levelCreate(levelInput: $levelInput) {
+                userErrors {
+                  message
+                  field
+                }
+                level {
+                  id
+                  name
+                }
               }
             }
-          }
-        `, {
-          levelInput: {
-            name: 'Test',
-            description: 'Test',
+          `,
+          {
+            levelInput: {
+              name: 'Test',
+              description: 'Test',
+            },
           },
-        }) as { errors?: readonly any[] }
+        )) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0].message).toContain('Unauthorized')

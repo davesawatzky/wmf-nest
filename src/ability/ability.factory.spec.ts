@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import { AbilityFactory } from './ability.factory.js'
 
 describe('abilityFactory', () => {

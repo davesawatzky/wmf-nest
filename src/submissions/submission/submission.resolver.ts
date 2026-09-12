@@ -1,10 +1,12 @@
 import { BadRequestException, Logger, UseGuards } from '@nestjs/common'
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql'
+
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
 import { PerformerType } from '@/common.entity.js'
 import { EmailConfirmationGuard } from '@/email-confirmation/email-confirmation.guard.js'
 import { Registration } from '@/submissions/registration/entities/registration.entity.js'
 import { SubmissionService } from '@/submissions/submission/submission.service.js'
+
 import { SubmissionPayload } from './entities/submission.entity.js'
 
 @Resolver(() => Registration)

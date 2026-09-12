@@ -1,21 +1,13 @@
+import { BadRequestException, Logger, UseGuards } from '@nestjs/common'
+import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import type { tbl_reg_performer, tbl_registration } from '@prisma/client'
 
-import { BadRequestException, Logger, UseGuards } from '@nestjs/common'
-import {
-  Args,
-  Context,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
 import { CheckAbilities } from '@/ability/abilities.decorator.js'
 import { AbilitiesGuard } from '@/ability/abilities.guard.js'
 import { Action } from '@/ability/ability.factory.js'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
 import { Registration } from '@/submissions/registration/entities/registration.entity.js'
+
 import { SelectionService } from '../selection/selection.service.js'
 import { PerformerInput } from './dto/performer.input.js'
 import { Performer, PerformerPayload } from './entities/performer.entity.js'
@@ -44,14 +36,14 @@ export class PerformerResolver {
     registrationID: tbl_registration['id'],
   ) {
     const isAdmin = context.req.user?.roles?.includes('admin')
-    this.logger.log(`Fetching performers${isAdmin ? ' (admin query)' : registrationID ? ` for registration ID: ${registrationID}` : ''}`)
+    this.logger.log(
+      `Fetching performers${isAdmin ? ' (admin query)' : registrationID ? ` for registration ID: ${registrationID}` : ''}`,
+    )
     if (!isAdmin && !registrationID) {
       this.logger.error('performers query failed - registrationID is required for non-admin users')
       throw new BadRequestException('Registration ID is required for non-admin users')
     }
-    return await this.performerService.findAll(
-      isAdmin ? null : registrationID,
-    )
+    return await this.performerService.findAll(isAdmin ? null : registrationID)
   }
 
   @Query(() => Performer)
@@ -104,9 +96,7 @@ export class PerformerResolver {
     return await this.performerService.remove(performerID)
   }
 
-  /**
-   * Field Resolver
-   */
+  /** Field Resolver */
   @ResolveField(() => Registration)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Registration })

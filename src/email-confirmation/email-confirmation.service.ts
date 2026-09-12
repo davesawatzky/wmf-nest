@@ -1,14 +1,11 @@
-import type VerificationTokenPayload from './verificationTokenPayload.interface.js'
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common'
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
+
 import { EmailService } from '@/email/email.service.js'
 import { UserService } from '@/user/user.service.js'
+
+import type VerificationTokenPayload from './verificationTokenPayload.interface.js'
 
 @Injectable()
 export class EmailConfirmationService {
@@ -37,14 +34,10 @@ export class EmailConfirmationService {
       const payload: VerificationTokenPayload = { email }
       const token = this.jwtService.sign(payload, {
         secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
-        expiresIn: `${this.configService.get(
-          'JWT_VERIFICATION_TOKEN_EXPIRATION_TIME',
-        )}s`,
+        expiresIn: `${this.configService.get('JWT_VERIFICATION_TOKEN_EXPIRATION_TIME')}s`,
       })
 
-      const url = `${this.configService.get(
-        'EMAIL_CONFIRMATION_URL',
-      )}?token=${token}`
+      const url = `${this.configService.get('EMAIL_CONFIRMATION_URL')}?token=${token}`
 
       await this.emailService.sendMail({
         from: this.configService.get('EMAIL_USER') || 'noreply@wmf.local',
@@ -58,15 +51,9 @@ export class EmailConfirmationService {
       })
 
       this.logger.log(`Successfully sent verification email to: ${email}`)
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to send verification email to ${email}: ${error.message}`,
-        error.stack,
-      )
-      throw new InternalServerErrorException(
-        'Failed to send verification email',
-      )
+    } catch (error: any) {
+      this.logger.error(`Failed to send verification email to ${email}: ${error.message}`, error.stack)
+      throw new InternalServerErrorException('Failed to send verification email')
     }
   }
 
@@ -82,14 +69,10 @@ export class EmailConfirmationService {
       const payload: VerificationTokenPayload = { email }
       const token = this.jwtService.sign(payload, {
         secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
-        expiresIn: `${this.configService.get(
-          'JWT_VERIFICATION_TOKEN_EXPIRATION_TIME',
-        )}s`,
+        expiresIn: `${this.configService.get('JWT_VERIFICATION_TOKEN_EXPIRATION_TIME')}s`,
       })
 
-      const url = `${this.configService.get(
-        'PASSWORD_RESET_URL',
-      )}?token=${token}`
+      const url = `${this.configService.get('PASSWORD_RESET_URL')}?token=${token}`
 
       await this.emailService.sendMail({
         from: this.configService.get('EMAIL_USER') || 'noreply@wmf.local',
@@ -103,15 +86,9 @@ export class EmailConfirmationService {
       })
 
       this.logger.log(`Successfully sent password reset email to: ${email}`)
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to send password reset email to ${email}: ${error.message}`,
-        error.stack,
-      )
-      throw new InternalServerErrorException(
-        'Failed to send password reset email',
-      )
+    } catch (error: any) {
+      this.logger.error(`Failed to send password reset email to ${email}: ${error.message}`, error.stack)
+      throw new InternalServerErrorException('Failed to send password reset email')
     }
   }
 
@@ -129,15 +106,11 @@ export class EmailConfirmationService {
       const result = await this.userService.update(user.id, { emailConfirmed: true })
       this.logger.log(`Successfully confirmed email: ${email}`)
       return result.user.emailConfirmed
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error instanceof BadRequestException) {
         throw error
       }
-      this.logger.error(
-        `Failed to confirm email ${email}: ${error.message}`,
-        error.stack,
-      )
+      this.logger.error(`Failed to confirm email ${email}: ${error.message}`, error.stack)
       throw new InternalServerErrorException('Failed to confirm email')
     }
   }
@@ -162,22 +135,13 @@ export class EmailConfirmationService {
       await this.sendVerificationLink(userName, userEmail)
 
       this.logger.log(`Successfully resent confirmation link to: ${userEmail}`)
-    }
-    catch (error: any) {
-      if (
-        error instanceof BadRequestException
-        || error instanceof InternalServerErrorException
-      ) {
+    } catch (error: any) {
+      if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
         throw error
       }
 
-      this.logger.error(
-        `Failed to resend confirmation link to ${userEmail}: ${error.message}`,
-        error.stack,
-      )
-      throw new InternalServerErrorException(
-        'Failed to resend confirmation link',
-      )
+      this.logger.error(`Failed to resend confirmation link to ${userEmail}: ${error.message}`, error.stack)
+      throw new InternalServerErrorException('Failed to resend confirmation link')
     }
   }
 
@@ -197,25 +161,14 @@ export class EmailConfirmationService {
 
       await this.sendPasswordResetLink(userEmail)
 
-      this.logger.log(
-        `Successfully resent password reset link to: ${userEmail}`,
-      )
-    }
-    catch (error: any) {
-      if (
-        error instanceof BadRequestException
-        || error instanceof InternalServerErrorException
-      ) {
+      this.logger.log(`Successfully resent password reset link to: ${userEmail}`)
+    } catch (error: any) {
+      if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
         throw error
       }
 
-      this.logger.error(
-        `Failed to resend password reset link to ${userEmail}: ${error.message}`,
-        error.stack,
-      )
-      throw new InternalServerErrorException(
-        'Failed to resend password reset link',
-      )
+      this.logger.error(`Failed to resend password reset link to ${userEmail}: ${error.message}`, error.stack)
+      throw new InternalServerErrorException('Failed to resend password reset link')
     }
   }
 }

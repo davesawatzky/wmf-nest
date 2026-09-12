@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { FestivalClassService } from 'src/festival/festival-class/festival-class.service'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { beforeEach, describe, expect, it } from 'vitest'
+
 import { CategoryResolver } from '../category.resolver.js'
 import { CategoryService } from '../category.service.js'
 import { CategoryInput } from '../dto/category.input.js'
@@ -34,8 +35,7 @@ describe('categoryResolver', () => {
 
     resolver = module.get<CategoryResolver>(CategoryResolver)
     service = module.get<CategoryService>(CategoryService)
-    festivalClassService
-      = module.get<FestivalClassService>(FestivalClassService)
+    festivalClassService = module.get<FestivalClassService>(FestivalClassService)
     prismaService = module.get<PrismaService>(PrismaService)
   })
 
@@ -47,10 +47,7 @@ describe('categoryResolver', () => {
     it('returns all categories in the same level or discipline', async () => {
       const levelID = 10
       const subdisciplineID = 10
-      const result: Category[] = await resolver.categories(
-        levelID,
-        subdisciplineID,
-      )
+      const result: Category[] = await resolver.categories(levelID, subdisciplineID)
       expect(result).toEqual(categoryStub())
       expect(service.findAll).toHaveBeenCalledTimes(1)
     })
@@ -68,8 +65,7 @@ describe('categoryResolver', () => {
   describe('categoryCreate', () => {
     it('creates a new category and returns the result', async () => {
       const categoryInput: CategoryInput = newCategory
-      const result: CategoryPayload
-        = await resolver.categoryCreate(categoryInput)
+      const result: CategoryPayload = await resolver.categoryCreate(categoryInput)
       expect(result.category.name).toBe('Blues')
       expect(service.create).toHaveBeenCalledTimes(1)
     })
@@ -79,10 +75,7 @@ describe('categoryResolver', () => {
     it('updates an existing category', async () => {
       const categoryID = 2
       const categoryInput: CategoryInput = newCategory
-      const result: CategoryPayload = await resolver.categoryUpdate(
-        categoryID,
-        categoryInput,
-      )
+      const result: CategoryPayload = await resolver.categoryUpdate(categoryID, categoryInput)
       expect(result.category.requiredComposer).toBe('Eric Clapton')
       expect(service.update).toHaveBeenCalledTimes(1)
     })

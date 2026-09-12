@@ -1,19 +1,12 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  Logger,
-  UnauthorizedException,
-} from '@nestjs/common'
+import { CanActivate, ExecutionContext, Injectable, Logger, UnauthorizedException } from '@nestjs/common'
 import { Observable } from 'rxjs'
+
 import RequestWithUser from '@/auth/requestWithUser.interface.js'
 
 @Injectable()
 export class EmailConfirmationGuard implements CanActivate {
   private readonly logger = new Logger(EmailConfirmationGuard.name)
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const request: RequestWithUser = context.switchToHttp().getRequest()
 
     if (!request.user?.emailConfirmed) {

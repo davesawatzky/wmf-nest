@@ -1,4 +1,3 @@
-import type { tbl_field_config } from '@prisma/client'
 import {
   BadRequestException,
   Injectable,
@@ -6,8 +5,11 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
+import type { tbl_field_config } from '@prisma/client'
+
 import { UserError } from '@/common.entity.js'
 import { PrismaService } from '@/prisma/prisma.service.js'
+
 import { FieldConfigInput } from './dto/field-config.input.js'
 
 @Injectable()
@@ -22,30 +24,18 @@ export class FieldConfigService {
     try {
       const fieldConfigs = await this.prisma.tbl_field_config.findMany()
 
-      this.logger.log(
-        `Successfully retrieved ${fieldConfigs.length} field configurations`,
-      )
+      this.logger.log(`Successfully retrieved ${fieldConfigs.length} field configurations`)
       return fieldConfigs
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to retrieve field configurations: ${error.message}`,
-        error.stack,
-      )
-      throw new InternalServerErrorException(
-        'Failed to retrieve field configurations',
-      )
+    } catch (error: any) {
+      this.logger.error(`Failed to retrieve field configurations: ${error.message}`, error.stack)
+      throw new InternalServerErrorException('Failed to retrieve field configurations')
     }
   }
 
   async findOne(tableName: string, fieldName: string) {
     if (!tableName || !fieldName) {
-      this.logger.error(
-        'Attempted to find field configuration without required parameters',
-      )
-      throw new BadRequestException(
-        'Both tableName and fieldName are required',
-      )
+      this.logger.error('Attempted to find field configuration without required parameters')
+      throw new BadRequestException('Both tableName and fieldName are required')
     }
 
     try {
@@ -54,22 +44,14 @@ export class FieldConfigService {
       })
 
       if (!fieldConfig) {
-        this.logger.error(
-          `Field configuration not found for table: ${tableName}, field: ${fieldName}`,
-        )
+        this.logger.error(`Field configuration not found for table: ${tableName}, field: ${fieldName}`)
         throw new NotFoundException('Field configuration not found')
       }
 
-      this.logger.log(
-        `Successfully retrieved field configuration for ${tableName}.${fieldName}`,
-      )
+      this.logger.log(`Successfully retrieved field configuration for ${tableName}.${fieldName}`)
       return fieldConfig
-    }
-    catch (error: any) {
-      if (
-        error instanceof BadRequestException
-        || error instanceof NotFoundException
-      ) {
+    } catch (error: any) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error
       }
 
@@ -77,9 +59,7 @@ export class FieldConfigService {
         `Failed to retrieve field configuration for ${tableName}.${fieldName}: ${error.message}`,
         error.stack,
       )
-      throw new InternalServerErrorException(
-        'Failed to retrieve field configuration',
-      )
+      throw new InternalServerErrorException('Failed to retrieve field configuration')
     }
   }
 
@@ -113,8 +93,7 @@ export class FieldConfigService {
       this.logger.log(
         `Successfully created field configuration with ID ${fieldConfig.id} for ${fieldConfigInput.tableName}.${fieldConfigInput.fieldName}`,
       )
-    }
-    catch (error: any) {
+    } catch (error: any) {
       this.logger.error(
         `Failed to create field configuration for ${fieldConfigInput.tableName}.${fieldConfigInput.fieldName}: ${error.message}`,
         error.stack,
@@ -123,8 +102,7 @@ export class FieldConfigService {
       if (error.code === 'P2002') {
         userErrors = [
           {
-            message:
-              'Field configuration already exists for this table and field combination',
+            message: 'Field configuration already exists for this table and field combination',
             field: ['tableName', 'fieldName'],
           },
         ]
@@ -132,8 +110,7 @@ export class FieldConfigService {
         this.logger.warn(
           `Attempted to create duplicate field configuration for ${fieldConfigInput.tableName}.${fieldConfigInput.fieldName}`,
         )
-      }
-      else {
+      } else {
         userErrors = [
           {
             message: 'Cannot create field configuration',
@@ -179,15 +156,9 @@ export class FieldConfigService {
         },
       })
 
-      this.logger.log(
-        `Successfully updated field configuration with ID ${fieldConfigID}`,
-      )
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to update field configuration with ID ${fieldConfigID}: ${error.message}`,
-        error.stack,
-      )
+      this.logger.log(`Successfully updated field configuration with ID ${fieldConfigID}`)
+    } catch (error: any) {
+      this.logger.error(`Failed to update field configuration with ID ${fieldConfigID}: ${error.message}`, error.stack)
 
       if (error.code === 'P2025') {
         userErrors = [
@@ -197,24 +168,17 @@ export class FieldConfigService {
           },
         ]
         fieldConfig = null
-        this.logger.warn(
-          `Attempted to update non-existent field configuration with ID: ${fieldConfigID}`,
-        )
-      }
-      else if (error.code === 'P2002') {
+        this.logger.warn(`Attempted to update non-existent field configuration with ID: ${fieldConfigID}`)
+      } else if (error.code === 'P2002') {
         userErrors = [
           {
-            message:
-              'Field configuration already exists for this table and field combination',
+            message: 'Field configuration already exists for this table and field combination',
             field: ['tableName', 'fieldName'],
           },
         ]
         fieldConfig = null
-        this.logger.warn(
-          `Attempted to update field configuration to duplicate combination for ID ${fieldConfigID}`,
-        )
-      }
-      else {
+        this.logger.warn(`Attempted to update field configuration to duplicate combination for ID ${fieldConfigID}`)
+      } else {
         userErrors = [
           {
             message: 'Cannot update field configuration',
@@ -222,9 +186,7 @@ export class FieldConfigService {
           },
         ]
         fieldConfig = null
-        this.logger.error(
-          `Unexpected error updating field configuration ID ${fieldConfigID}: ${error.message}`,
-        )
+        this.logger.error(`Unexpected error updating field configuration ID ${fieldConfigID}: ${error.message}`)
       }
     }
 
@@ -258,15 +220,9 @@ export class FieldConfigService {
         where: { id: fieldConfigID },
       })
 
-      this.logger.log(
-        `Successfully deleted field configuration with ID ${fieldConfigID}`,
-      )
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to delete field configuration with ID ${fieldConfigID}: ${error.message}`,
-        error.stack,
-      )
+      this.logger.log(`Successfully deleted field configuration with ID ${fieldConfigID}`)
+    } catch (error: any) {
+      this.logger.error(`Failed to delete field configuration with ID ${fieldConfigID}: ${error.message}`, error.stack)
 
       if (error.code === 'P2025') {
         userErrors = [
@@ -276,24 +232,17 @@ export class FieldConfigService {
           },
         ]
         fieldConfig = null
-        this.logger.warn(
-          `Attempted to delete non-existent field configuration with ID: ${fieldConfigID}`,
-        )
-      }
-      else if (error.code === 'P2003') {
+        this.logger.warn(`Attempted to delete non-existent field configuration with ID: ${fieldConfigID}`)
+      } else if (error.code === 'P2003') {
         userErrors = [
           {
-            message:
-              'Cannot delete field configuration as it is referenced by other records',
+            message: 'Cannot delete field configuration as it is referenced by other records',
             field: ['id'],
           },
         ]
         fieldConfig = null
-        this.logger.warn(
-          `Attempted to delete field configuration with foreign key constraints: ID ${fieldConfigID}`,
-        )
-      }
-      else {
+        this.logger.warn(`Attempted to delete field configuration with foreign key constraints: ID ${fieldConfigID}`)
+      } else {
         userErrors = [
           {
             message: 'Cannot delete field configuration',
@@ -301,9 +250,7 @@ export class FieldConfigService {
           },
         ]
         fieldConfig = null
-        this.logger.error(
-          `Unexpected error deleting field configuration ID ${fieldConfigID}: ${error.message}`,
-        )
+        this.logger.error(`Unexpected error deleting field configuration ID ${fieldConfigID}: ${error.message}`)
       }
     }
 

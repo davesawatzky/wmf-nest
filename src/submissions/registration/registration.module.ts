@@ -1,4 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common'
+
 import { AbilityModule } from '@/ability/ability.module.js'
 // import { SearchFiltersModule } from '@/common/search-filters.js'
 import { CommunityModule } from '@/submissions/community/community.module.js'
@@ -8,6 +9,7 @@ import { RegisteredClassModule } from '@/submissions/registered-class/registered
 import { SchoolModule } from '@/submissions/school/school.module.js'
 import { TeacherModule } from '@/submissions/teacher/teacher.module.js'
 import { UserModule } from '@/user/user.module.js'
+
 import { RegistrationDataLoader } from './registration.dataloader.js'
 import { RegistrationResolver } from './registration.resolver.js'
 import { RegistrationService } from './registration.service.js'

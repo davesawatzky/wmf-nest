@@ -1,27 +1,16 @@
+import { BadRequestException, Logger, UseGuards } from '@nestjs/common'
+import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import type { tbl_reg_class, tbl_registration } from '@prisma/client'
 
-import { BadRequestException, Logger, UseGuards } from '@nestjs/common'
-import {
-  Args,
-  Context,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
 import { CheckAbilities } from '@/ability/abilities.decorator.js'
 import { AbilitiesGuard } from '@/ability/abilities.guard.js'
 import { Action } from '@/ability/ability.factory.js'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
 import { Performer } from '@/submissions/performer/entities/performer.entity.js'
 import { Selection } from '@/submissions/selection/entities/selection.entity.js'
+
 import { RegisteredClassInput } from './dto/registered-class.input.js'
-import {
-  RegisteredClass,
-  RegisteredClassPayload,
-} from './entities/registered-class.entity.js'
+import { RegisteredClass, RegisteredClassPayload } from './entities/registered-class.entity.js'
 import { RegisteredClassDataLoader } from './registered-class.dataloader.js'
 import { RegisteredClassService } from './registered-class.service.js'
 
@@ -50,10 +39,10 @@ export class RegisteredClassResolver {
       this.logger.error('registeredClasses query failed - registrationID is required for non-admin users')
       throw new BadRequestException('Registration ID is required')
     }
-    this.logger.log(`Fetching registered classes${isAdmin ? ' (admin query)' : registrationID ? ` for registration ID: ${registrationID}` : ''}`)
-    return await this.registeredClassService.findAll(
-      isAdmin ? null : registrationID,
+    this.logger.log(
+      `Fetching registered classes${isAdmin ? ' (admin query)' : registrationID ? ` for registration ID: ${registrationID}` : ''}`,
     )
+    return await this.registeredClassService.findAll(isAdmin ? null : registrationID)
   }
 
   @Query(() => RegisteredClass)
@@ -78,10 +67,7 @@ export class RegisteredClassResolver {
     registeredClass: Partial<RegisteredClassInput> | null,
   ) {
     this.logger.log(`Creating registered class for registration ID: ${registrationID}`)
-    return await this.registeredClassService.create(
-      registrationID,
-      registeredClass,
-    )
+    return await this.registeredClassService.create(registrationID, registeredClass)
   }
 
   @Mutation(() => RegisteredClassPayload)
@@ -92,10 +78,7 @@ export class RegisteredClassResolver {
     registeredClassInput: Partial<RegisteredClassInput>,
   ) {
     this.logger.log(`Updating registered class ID: ${registeredClassID}`)
-    return await this.registeredClassService.update(
-      registeredClassID,
-      registeredClassInput,
-    )
+    return await this.registeredClassService.update(registeredClassID, registeredClassInput)
   }
 
   @Mutation(() => RegisteredClassPayload)
@@ -125,8 +108,7 @@ export class RegisteredClassResolver {
       this.logger.error('performers field resolver failed - Invalid registeredClass')
       return
     }
-    const { classNumber }: { classNumber: RegisteredClass['classNumber'] }
-      = registeredClass
+    const { classNumber }: { classNumber: RegisteredClass['classNumber'] } = registeredClass
 
     if (!classNumber) {
       this.logger.debug(`No classNumber for registered class ID: ${registeredClass.id}, returning empty array`)

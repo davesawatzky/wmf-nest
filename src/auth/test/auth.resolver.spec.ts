@@ -2,6 +2,7 @@ import { ConfigService } from '@nestjs/config'
 import { GqlExecutionContext } from '@nestjs/graphql'
 import { Test, TestingModule } from '@nestjs/testing'
 import { beforeEach, describe, expect, it } from 'vitest'
+
 import { UserError } from '../../common.entity.js'
 import { EmailConfirmationService } from '../../email-confirmation/email-confirmation.service.js'
 import { mockContext } from '../../test/gqlMockFactory.js'
@@ -68,10 +69,7 @@ describe('authResolver', () => {
       let result: AuthPayload
 
       beforeEach(async () => {
-        result = await authResolver.signup(
-          userSignup()[0],
-          context.switchToHttp().getResponse(),
-        )
+        result = await authResolver.signup(userSignup()[0], context.switchToHttp().getResponse())
         userErrors = result.userErrors
         user = result.user
       })
@@ -82,18 +80,14 @@ describe('authResolver', () => {
 
       it('should return a username with first and last name', () => {
         userName = `${user.firstName} ${user.lastName}`
-        expect(userName).toEqual(
-          `${userSignup()[0].firstName} ${userSignup()[0].lastName}`,
-        )
+        expect(userName).toEqual(`${userSignup()[0].firstName} ${userSignup()[0].lastName}`)
       })
 
       it('should send an email with username and email details', () => {
         const userName = `${user.firstName} ${user.lastName}`
         expect(userName).toBeTruthy()
         expect(user.email).toBeTruthy()
-        expect(
-          emailConfirmationService.sendVerificationLink,
-        ).toHaveBeenCalled()
+        expect(emailConfirmationService.sendVerificationLink).toHaveBeenCalled()
       })
       it('returns user and userError details', () => {
         expect(userErrors).toEqual([])

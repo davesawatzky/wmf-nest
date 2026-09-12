@@ -1,26 +1,17 @@
-import type { tbl_reg_community, tbl_reg_communitygroup } from '@prisma/client'
 import { Logger, UseGuards } from '@nestjs/common'
-import {
-  Args,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import type { tbl_reg_community, tbl_reg_communitygroup } from '@prisma/client'
+
 import { CheckAbilities } from '@/ability/abilities.decorator.js'
 import { AbilitiesGuard } from '@/ability/abilities.guard.js'
 import { Action } from '@/ability/ability.factory.js'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
 import { CommunityService } from '@/submissions/community/community.service.js'
 import { Community } from '@/submissions/community/entities/community.entity.js'
+
 import { CommunityGroupService } from './community-group.service.js'
 import { CommunityGroupInput } from './dto/community-group.input.js'
-import {
-  CommunityGroup,
-  CommunityGroupPayload,
-} from './entities/community-group.entity.js'
+import { CommunityGroup, CommunityGroupPayload } from './entities/community-group.entity.js'
 
 @Resolver(() => CommunityGroup)
 @UseGuards(JwtAuthGuard)
@@ -71,10 +62,7 @@ export class CommunityGroupResolver {
     communityGroupInput: Partial<CommunityGroupInput>,
   ) {
     this.logger.log(`Creating community group for community ID: ${communityID}`)
-    return await this.communityGroupService.create(
-      communityID,
-      communityGroupInput,
-    )
+    return await this.communityGroupService.create(communityID, communityGroupInput)
   }
 
   @Mutation(() => CommunityGroupPayload)
@@ -87,10 +75,7 @@ export class CommunityGroupResolver {
     communityGroupInput: Partial<CommunityGroupInput>,
   ) {
     this.logger.log(`Updating community group ID: ${communityGroupID}`)
-    return await this.communityGroupService.update(
-      communityGroupID,
-      communityGroupInput,
-    )
+    return await this.communityGroupService.update(communityGroupID, communityGroupInput)
   }
 
   @Mutation(() => CommunityGroupPayload)
@@ -104,9 +89,7 @@ export class CommunityGroupResolver {
     return await this.communityGroupService.remove(communityGroupID)
   }
 
-  /**
-   * Field Resolvers
-   */
+  /** Field Resolvers */
   @ResolveField(() => Community)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Community })

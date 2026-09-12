@@ -1,14 +1,7 @@
-import type { tbl_classlist } from '@prisma/client'
 import { Logger, UseGuards } from '@nestjs/common'
-import {
-  Args,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import type { tbl_classlist } from '@prisma/client'
+
 import { CheckAbilities } from '@/ability/abilities.decorator.js'
 import { AbilitiesGuard } from '@/ability/abilities.guard.js'
 import { Action } from '@/ability/ability.factory.js'
@@ -23,14 +16,9 @@ import { LevelService } from '@/festival/level/level.service.js'
 import { Subdiscipline } from '@/festival/subdiscipline/entities/subdiscipline.entity.js'
 import { SubdisciplineService } from '@/festival/subdiscipline/subdiscipline.service.js'
 import { Trophy } from '@/festival/trophy/entities/trophy.entity.js'
-import {
-  FestivalClassInput,
-  FestivalClassSearchArgs,
-} from './dto/festival-class.input.js'
-import {
-  FestivalClass,
-  FestivalClassPayload,
-} from './entities/festival-class.entity.js'
+
+import { FestivalClassInput, FestivalClassSearchArgs } from './dto/festival-class.input.js'
+import { FestivalClass, FestivalClassPayload } from './entities/festival-class.entity.js'
 import { FestivalClassDataLoader } from './festival-class.dataloader.js'
 import { FestivalClassService } from './festival-class.service.js'
 
@@ -81,18 +69,14 @@ export class FestivalClassResolver {
     @Args('festivalClassSearch', { type: () => FestivalClassSearchArgs })
     festivalClassSearch: FestivalClassSearchArgs,
   ) {
-    this.logger.log(
-      `Searching festival classes with criteria: ${JSON.stringify(festivalClassSearch)}`,
-    )
+    this.logger.log(`Searching festival classes with criteria: ${JSON.stringify(festivalClassSearch)}`)
     return await this.festivalClassService.search(festivalClassSearch)
   }
 
   @Query(() => FestivalClass)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: FestivalClass })
-  async festivalClass(
-    @Args('id', { type: () => Int }) id: FestivalClass['id'],
-  ) {
+  async festivalClass(@Args('id', { type: () => Int }) id: FestivalClass['id']) {
     this.logger.log(`Fetching festival class with ID: ${id}`)
     return await this.festivalClassService.findById(id)
   }
@@ -131,10 +115,7 @@ export class FestivalClassResolver {
     festivalClassInput: FestivalClassInput,
   ) {
     this.logger.log(`Updating festival class ID: ${festivalClassID}`)
-    return await this.festivalClassService.update(
-      festivalClassID,
-      festivalClassInput,
-    )
+    return await this.festivalClassService.update(festivalClassID, festivalClassInput)
   }
 
   @Mutation(() => FestivalClassPayload)

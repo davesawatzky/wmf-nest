@@ -1,10 +1,8 @@
 import { gql } from 'graphql-tag'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
-import {
-  createAuthenticatedRequest,
-  getUserId,
-  testWithBothRoles,
-} from '@/test/testHelpers.js'
+
+import { createAuthenticatedRequest, getUserId, testWithBothRoles } from '@/test/testHelpers.js'
+
 import { CommunityGroup, CommunityGroupPayload } from '../entities/community-group.entity.js'
 
 describe('CommunityGroup E2E Tests', () => {
@@ -71,63 +69,49 @@ describe('CommunityGroup E2E Tests', () => {
     // Clean up test data
     await globalThis.prisma.tbl_reg_communitygroup.deleteMany({
       where: {
-        OR: [
-          { communityID: adminCommId },
-          { communityID: userCommId },
-          { name: { startsWith: 'Test' } },
-        ],
+        OR: [{ communityID: adminCommId }, { communityID: userCommId }, { name: { startsWith: 'Test' } }],
       },
     })
 
     await globalThis.prisma.tbl_reg_community.deleteMany({
       where: {
-        OR: [
-          { id: adminCommId },
-          { id: userCommId },
-        ],
+        OR: [{ id: adminCommId }, { id: userCommId }],
       },
     })
 
     await globalThis.prisma.tbl_registration.deleteMany({
       where: {
-        OR: [
-          { id: adminRegId },
-          { id: userRegId },
-        ],
+        OR: [{ id: adminRegId }, { id: userRegId }],
       },
     })
   })
 
   describe('CommunityGroup Queries', () => {
     it('Should list all community groups for both roles', async () => {
-      const results = await testWithBothRoles(
-        'list all community groups',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query CommunityGroups {
-                communityGroups {
-                  id
-                  name
-                  chaperones
-                  conflictPerformers
-                  earliestTime
-                  groupSize
-                  latestTime
-                  unavailable
-                  wheelchairs
-                }
-              }
-            `) as { data?: { communityGroups: CommunityGroup[] }, errors?: readonly any[] }
-
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            hasData: !!response.data?.communityGroups,
-            count: response.data?.communityGroups?.length || 0,
+      const results = await testWithBothRoles('list all community groups', async (role) => {
+        const response = (await createAuthenticatedRequest(role).query(gql`
+          query CommunityGroups {
+            communityGroups {
+              id
+              name
+              chaperones
+              conflictPerformers
+              earliestTime
+              groupSize
+              latestTime
+              unavailable
+              wheelchairs
+            }
           }
-        },
-      )
+        `)) as { data?: { communityGroups: CommunityGroup[] }; errors?: readonly any[] }
+
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          hasData: !!response.data?.communityGroups,
+          count: response.data?.communityGroups?.length || 0,
+        }
+      })
 
       // Both roles should successfully retrieve community groups
       expect(results.admin.isAuthorized).toBe(true)
@@ -142,38 +126,34 @@ describe('CommunityGroup E2E Tests', () => {
     })
 
     it('Should list community groups with community and registration for both roles', async () => {
-      const results = await testWithBothRoles(
-        'list community groups with relations',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query CommunityGroups {
-                communityGroups {
+      const results = await testWithBothRoles('list community groups with relations', async (role) => {
+        const response = (await createAuthenticatedRequest(role).query(gql`
+          query CommunityGroups {
+            communityGroups {
+              id
+              name
+              groupSize
+              community {
+                id
+                name
+                registration {
                   id
-                  name
-                  groupSize
-                  community {
-                    id
-                    name
-                    registration {
-                      id
-                      label
-                      createdAt
-                    }
-                  }
+                  label
+                  createdAt
                 }
               }
-            `) as { data?: { communityGroups: CommunityGroup[] }, errors?: readonly any[] }
-
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            hasData: !!response.data?.communityGroups,
-            hasCommunity: !!response.data?.communityGroups?.[0]?.community,
-            hasRegistration: !!response.data?.communityGroups?.[0]?.community?.registration,
+            }
           }
-        },
-      )
+        `)) as { data?: { communityGroups: CommunityGroup[] }; errors?: readonly any[] }
+
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          hasData: !!response.data?.communityGroups,
+          hasCommunity: !!response.data?.communityGroups?.[0]?.community,
+          hasRegistration: !!response.data?.communityGroups?.[0]?.community?.registration,
+        }
+      })
 
       // Both roles should see community groups with relationships
       expect(results.admin.isAuthorized).toBe(true)
@@ -190,32 +170,31 @@ describe('CommunityGroup E2E Tests', () => {
     })
 
     it('Should filter community groups by communityID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'filter by communityID',
-        async (role) => {
-          const commId = role === 'admin' ? adminCommId : userCommId
+      const results = await testWithBothRoles('filter by communityID', async (role) => {
+        const commId = role === 'admin' ? adminCommId : userCommId
 
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query CommunityGroups($communityId: Int) {
-                communityGroups(communityID: $communityId) {
-                  id
-                  name
-                  groupSize
-                }
+        const response = (await createAuthenticatedRequest(role).query(
+          gql`
+            query CommunityGroups($communityId: Int) {
+              communityGroups(communityID: $communityId) {
+                id
+                name
+                groupSize
               }
-            `, {
-              communityId: commId,
-            }) as { data?: { communityGroups: CommunityGroup[] }, errors?: readonly any[] }
+            }
+          `,
+          {
+            communityId: commId,
+          },
+        )) as { data?: { communityGroups: CommunityGroup[] }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            hasData: !!response.data?.communityGroups,
-            count: response.data?.communityGroups?.length || 0,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          hasData: !!response.data?.communityGroups,
+          count: response.data?.communityGroups?.length || 0,
+        }
+      })
 
       // Both roles should filter successfully
       expect(results.admin.isAuthorized).toBe(true)
@@ -228,33 +207,32 @@ describe('CommunityGroup E2E Tests', () => {
     })
 
     it('Should find community group by ID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'find community group by ID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query CommunityGroup($communityGroupId: Int!) {
-                communityGroup(communityGroupID: $communityGroupId) {
+      const results = await testWithBothRoles('find community group by ID', async (role) => {
+        const response = (await createAuthenticatedRequest(role).query(
+          gql`
+            query CommunityGroup($communityGroupId: Int!) {
+              communityGroup(communityGroupID: $communityGroupId) {
+                id
+                name
+                community {
                   id
                   name
-                  community {
-                    id
-                    name
-                  }
                 }
               }
-            `, {
-              communityGroupId: testCommunityGroupId,
-            }) as { data?: { communityGroup: CommunityGroup }, errors?: readonly any[] }
+            }
+          `,
+          {
+            communityGroupId: testCommunityGroupId,
+          },
+        )) as { data?: { communityGroup: CommunityGroup }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            found: !!response.data?.communityGroup,
-            hasCommunity: !!response.data?.communityGroup?.community,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          found: !!response.data?.communityGroup,
+          hasCommunity: !!response.data?.communityGroup?.community,
+        }
+      })
 
       // Both roles should find the community group
       expect(results.admin.isAuthorized).toBe(true)
@@ -269,27 +247,26 @@ describe('CommunityGroup E2E Tests', () => {
     })
 
     it('Should return error when community group not found for both roles', async () => {
-      const results = await testWithBothRoles(
-        'find non-existent community group',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query CommunityGroup($communityGroupId: Int!) {
-                communityGroup(communityGroupID: $communityGroupId) {
-                  id
-                  name
-                }
+      const results = await testWithBothRoles('find non-existent community group', async (role) => {
+        const response = (await createAuthenticatedRequest(role).query(
+          gql`
+            query CommunityGroup($communityGroupId: Int!) {
+              communityGroup(communityGroupID: $communityGroupId) {
+                id
+                name
               }
-            `, {
-              communityGroupId: 999999,
-            }) as { data?: { communityGroup: CommunityGroup }, errors?: readonly any[] }
+            }
+          `,
+          {
+            communityGroupId: 999999,
+          },
+        )) as { data?: { communityGroup: CommunityGroup }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            found: !!response.data?.communityGroup,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          found: !!response.data?.communityGroup,
+        }
+      })
 
       // Both roles should get errors for non-existent community group
       expect(results.admin.hasErrors).toBe(true)
@@ -301,65 +278,62 @@ describe('CommunityGroup E2E Tests', () => {
   })
 
   describe('CommunityGroup Mutations - Create', () => {
-    let createdCommunityGroupIds: { admin?: number, user?: number } = {}
+    let createdCommunityGroupIds: { admin?: number; user?: number } = {}
 
     afterEach(async () => {
       // Clean up created community groups
       if (createdCommunityGroupIds.admin) {
-        await globalThis.prisma.tbl_reg_communitygroup.deleteMany({
-          where: { id: createdCommunityGroupIds.admin },
-        }).catch(() => {})
+        await globalThis.prisma.tbl_reg_communitygroup
+          .deleteMany({
+            where: { id: createdCommunityGroupIds.admin },
+          })
+          .catch(() => {})
       }
       if (createdCommunityGroupIds.user) {
-        await globalThis.prisma.tbl_reg_communitygroup.deleteMany({
-          where: { id: createdCommunityGroupIds.user },
-        }).catch(() => {})
+        await globalThis.prisma.tbl_reg_communitygroup
+          .deleteMany({
+            where: { id: createdCommunityGroupIds.user },
+          })
+          .catch(() => {})
       }
       createdCommunityGroupIds = {}
     })
 
     it('Should create community group with communityID: both roles succeed', async () => {
-      const results = await testWithBothRoles(
-        'create community group',
-        async (role) => {
-          const commId = role === 'admin' ? adminCommId : userCommId
+      const results = await testWithBothRoles('create community group', async (role) => {
+        const commId = role === 'admin' ? adminCommId : userCommId
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CommunityGroupCreate(
-                $communityId: Int!
-                $communityGroupInput: CommunityGroupInput
-              ) {
-                communityGroupCreate(
-                  communityID: $communityId
-                  communityGroupInput: $communityGroupInput
-                ) {
-                  communityGroup {
-                    id
-                  }
-                  userErrors {
-                    field
-                    message
-                  }
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CommunityGroupCreate($communityId: Int!, $communityGroupInput: CommunityGroupInput) {
+              communityGroupCreate(communityID: $communityId, communityGroupInput: $communityGroupInput) {
+                communityGroup {
+                  id
+                }
+                userErrors {
+                  field
+                  message
                 }
               }
-            `, {
-              communityId: commId,
-            }) as { data?: { communityGroupCreate: CommunityGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            communityId: commId,
+          },
+        )) as { data?: { communityGroupCreate: CommunityGroupPayload }; errors?: readonly any[] }
 
-          const communityGroupId = response.data?.communityGroupCreate?.communityGroup?.id
-          if (communityGroupId) {
-            createdCommunityGroupIds[role] = communityGroupId
-          }
+        const communityGroupId = response.data?.communityGroupCreate?.communityGroup?.id
+        if (communityGroupId) {
+          createdCommunityGroupIds[role] = communityGroupId
+        }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            communityGroup: response.data?.communityGroupCreate?.communityGroup,
-            userErrors: response.data?.communityGroupCreate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          communityGroup: response.data?.communityGroupCreate?.communityGroup,
+          userErrors: response.data?.communityGroupCreate?.userErrors,
+        }
+      })
 
       // Both roles should successfully create community group
       expect(results.admin.isAuthorized).toBe(true)
@@ -376,51 +350,44 @@ describe('CommunityGroup E2E Tests', () => {
     })
 
     it('Should create community group with communityGroupInput: both roles succeed', async () => {
-      const results = await testWithBothRoles(
-        'create community group with input',
-        async (role) => {
-          const commId = role === 'admin' ? adminCommId : userCommId
+      const results = await testWithBothRoles('create community group with input', async (role) => {
+        const commId = role === 'admin' ? adminCommId : userCommId
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CommunityGroupCreate(
-                $communityId: Int!
-                $communityGroupInput: CommunityGroupInput
-              ) {
-                communityGroupCreate(
-                  communityID: $communityId
-                  communityGroupInput: $communityGroupInput
-                ) {
-                  communityGroup {
-                    id
-                    name
-                  }
-                  userErrors {
-                    field
-                    message
-                  }
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CommunityGroupCreate($communityId: Int!, $communityGroupInput: CommunityGroupInput) {
+              communityGroupCreate(communityID: $communityId, communityGroupInput: $communityGroupInput) {
+                communityGroup {
+                  id
+                  name
+                }
+                userErrors {
+                  field
+                  message
                 }
               }
-            `, {
-              communityId: commId,
-              communityGroupInput: {
-                name: `Test ${role} CommunityGroup`,
-              },
-            }) as { data?: { communityGroupCreate: CommunityGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            communityId: commId,
+            communityGroupInput: {
+              name: `Test ${role} CommunityGroup`,
+            },
+          },
+        )) as { data?: { communityGroupCreate: CommunityGroupPayload }; errors?: readonly any[] }
 
-          const communityGroupId = response.data?.communityGroupCreate?.communityGroup?.id
-          if (communityGroupId) {
-            createdCommunityGroupIds[role] = communityGroupId
-          }
+        const communityGroupId = response.data?.communityGroupCreate?.communityGroup?.id
+        if (communityGroupId) {
+          createdCommunityGroupIds[role] = communityGroupId
+        }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            communityGroup: response.data?.communityGroupCreate?.communityGroup,
-            userErrors: response.data?.communityGroupCreate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          communityGroup: response.data?.communityGroupCreate?.communityGroup,
+          userErrors: response.data?.communityGroupCreate?.userErrors,
+        }
+      })
 
       // Both roles should successfully create community group with input
       expect(results.admin.isAuthorized).toBe(true)
@@ -435,46 +402,39 @@ describe('CommunityGroup E2E Tests', () => {
     })
 
     it('Should return userError for invalid communityID: both roles', async () => {
-      const results = await testWithBothRoles(
-        'create with invalid communityID',
-        async (role) => {
-          const invalidCommId = 999999
+      const results = await testWithBothRoles('create with invalid communityID', async (role) => {
+        const invalidCommId = 999999
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CommunityGroupCreate(
-                $communityId: Int!
-                $communityGroupInput: CommunityGroupInput
-              ) {
-                communityGroupCreate(
-                  communityID: $communityId
-                  communityGroupInput: $communityGroupInput
-                ) {
-                  communityGroup {
-                    id
-                    name
-                  }
-                  userErrors {
-                    field
-                    message
-                  }
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CommunityGroupCreate($communityId: Int!, $communityGroupInput: CommunityGroupInput) {
+              communityGroupCreate(communityID: $communityId, communityGroupInput: $communityGroupInput) {
+                communityGroup {
+                  id
+                  name
+                }
+                userErrors {
+                  field
+                  message
                 }
               }
-            `, {
-              communityId: invalidCommId,
-              communityGroupInput: {
-                name: 'Test CommunityGroup',
-              },
-            }) as { data?: { communityGroupCreate: CommunityGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            communityId: invalidCommId,
+            communityGroupInput: {
+              name: 'Test CommunityGroup',
+            },
+          },
+        )) as { data?: { communityGroupCreate: CommunityGroupPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            communityGroup: response.data?.communityGroupCreate?.communityGroup,
-            userErrors: response.data?.communityGroupCreate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          communityGroup: response.data?.communityGroupCreate?.communityGroup,
+          userErrors: response.data?.communityGroupCreate?.userErrors,
+        }
+      })
 
       // Both roles should get userError for invalid community ID
       expect(results.admin.isAuthorized).toBe(true)
@@ -527,58 +487,57 @@ describe('CommunityGroup E2E Tests', () => {
     })
 
     afterAll(async () => {
-      await globalThis.prisma.tbl_reg_communitygroup.deleteMany({
-        where: { id: updateTestCommunityGroupId },
-      }).catch(() => {})
-      await globalThis.prisma.tbl_reg_community.deleteMany({
-        where: { id: updateTestCommId },
-      }).catch(() => {})
-      await globalThis.prisma.tbl_registration.deleteMany({
-        where: { id: updateTestRegId },
-      }).catch(() => {})
+      await globalThis.prisma.tbl_reg_communitygroup
+        .deleteMany({
+          where: { id: updateTestCommunityGroupId },
+        })
+        .catch(() => {})
+      await globalThis.prisma.tbl_reg_community
+        .deleteMany({
+          where: { id: updateTestCommId },
+        })
+        .catch(() => {})
+      await globalThis.prisma.tbl_registration
+        .deleteMany({
+          where: { id: updateTestRegId },
+        })
+        .catch(() => {})
     })
 
     it('Should update community group: both roles succeed', async () => {
-      const results = await testWithBothRoles(
-        'update community group',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CommunityGroupUpdate(
-                $communityGroupId: Int!
-                $communityGroupInput: CommunityGroupInput!
-              ) {
-                communityGroupUpdate(
-                  communityGroupID: $communityGroupId
-                  communityGroupInput: $communityGroupInput
-                ) {
-                  communityGroup {
-                    id
-                    name
-                    groupSize
-                  }
-                  userErrors {
-                    field
-                    message
-                  }
+      const results = await testWithBothRoles('update community group', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CommunityGroupUpdate($communityGroupId: Int!, $communityGroupInput: CommunityGroupInput!) {
+              communityGroupUpdate(communityGroupID: $communityGroupId, communityGroupInput: $communityGroupInput) {
+                communityGroup {
+                  id
+                  name
+                  groupSize
+                }
+                userErrors {
+                  field
+                  message
                 }
               }
-            `, {
-              communityGroupId: updateTestCommunityGroupId,
-              communityGroupInput: {
-                name: `Updated by ${role}`,
-                groupSize: 30,
-              },
-            }) as { data?: { communityGroupUpdate: CommunityGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            communityGroupId: updateTestCommunityGroupId,
+            communityGroupInput: {
+              name: `Updated by ${role}`,
+              groupSize: 30,
+            },
+          },
+        )) as { data?: { communityGroupUpdate: CommunityGroupPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            communityGroup: response.data?.communityGroupUpdate?.communityGroup,
-            userErrors: response.data?.communityGroupUpdate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          communityGroup: response.data?.communityGroupUpdate?.communityGroup,
+          userErrors: response.data?.communityGroupUpdate?.userErrors,
+        }
+      })
 
       // Both roles should successfully update
       expect(results.admin.isAuthorized).toBe(true)
@@ -595,44 +554,37 @@ describe('CommunityGroup E2E Tests', () => {
     })
 
     it('Should return userError for non-existent community group: both roles', async () => {
-      const results = await testWithBothRoles(
-        'update non-existent community group',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CommunityGroupUpdate(
-                $communityGroupId: Int!
-                $communityGroupInput: CommunityGroupInput!
-              ) {
-                communityGroupUpdate(
-                  communityGroupID: $communityGroupId
-                  communityGroupInput: $communityGroupInput
-                ) {
-                  communityGroup {
-                    id
-                    name
-                  }
-                  userErrors {
-                    field
-                    message
-                  }
+      const results = await testWithBothRoles('update non-existent community group', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CommunityGroupUpdate($communityGroupId: Int!, $communityGroupInput: CommunityGroupInput!) {
+              communityGroupUpdate(communityGroupID: $communityGroupId, communityGroupInput: $communityGroupInput) {
+                communityGroup {
+                  id
+                  name
+                }
+                userErrors {
+                  field
+                  message
                 }
               }
-            `, {
-              communityGroupId: 999999,
-              communityGroupInput: {
-                name: 'Updated CommunityGroup',
-              },
-            }) as { data?: { communityGroupUpdate: CommunityGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            communityGroupId: 999999,
+            communityGroupInput: {
+              name: 'Updated CommunityGroup',
+            },
+          },
+        )) as { data?: { communityGroupUpdate: CommunityGroupPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            communityGroup: response.data?.communityGroupUpdate?.communityGroup,
-            userErrors: response.data?.communityGroupUpdate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          communityGroup: response.data?.communityGroupUpdate?.communityGroup,
+          userErrors: response.data?.communityGroupUpdate?.userErrors,
+        }
+      })
 
       // Both roles should get userError
       expect(results.admin.isAuthorized).toBe(true)
@@ -649,42 +601,35 @@ describe('CommunityGroup E2E Tests', () => {
     })
 
     it('Should return GraphQL error for null communityGroupID: both roles', async () => {
-      const results = await testWithBothRoles(
-        'update with null ID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CommunityGroupUpdate(
-                $communityGroupId: Int!
-                $communityGroupInput: CommunityGroupInput!
-              ) {
-                communityGroupUpdate(
-                  communityGroupID: $communityGroupId
-                  communityGroupInput: $communityGroupInput
-                ) {
-                  communityGroup {
-                    id
-                    name
-                  }
-                  userErrors {
-                    field
-                    message
-                  }
+      const results = await testWithBothRoles('update with null ID', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CommunityGroupUpdate($communityGroupId: Int!, $communityGroupInput: CommunityGroupInput!) {
+              communityGroupUpdate(communityGroupID: $communityGroupId, communityGroupInput: $communityGroupInput) {
+                communityGroup {
+                  id
+                  name
+                }
+                userErrors {
+                  field
+                  message
                 }
               }
-            `, {
-              communityGroupId: null,
-              communityGroupInput: {
-                name: 'Updated CommunityGroup',
-              },
-            }) as { data?: { communityGroupUpdate: CommunityGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            communityGroupId: null,
+            communityGroupInput: {
+              name: 'Updated CommunityGroup',
+            },
+          },
+        )) as { data?: { communityGroupUpdate: CommunityGroupPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+        }
+      })
 
       // Both roles should get GraphQL errors
       expect(results.admin.hasErrors).toBe(true)
@@ -695,43 +640,36 @@ describe('CommunityGroup E2E Tests', () => {
     })
 
     it('Should return GraphQL error for invalid input fields: both roles', async () => {
-      const results = await testWithBothRoles(
-        'update with invalid fields',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CommunityGroupUpdate(
-                $communityGroupId: Int!
-                $communityGroupInput: CommunityGroupInput!
-              ) {
-                communityGroupUpdate(
-                  communityGroupID: $communityGroupId
-                  communityGroupInput: $communityGroupInput
-                ) {
-                  communityGroup {
-                    id
-                    name
-                  }
-                  userErrors {
-                    field
-                    message
-                  }
+      const results = await testWithBothRoles('update with invalid fields', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CommunityGroupUpdate($communityGroupId: Int!, $communityGroupInput: CommunityGroupInput!) {
+              communityGroupUpdate(communityGroupID: $communityGroupId, communityGroupInput: $communityGroupInput) {
+                communityGroup {
+                  id
+                  name
+                }
+                userErrors {
+                  field
+                  message
                 }
               }
-            `, {
-              communityGroupId: updateTestCommunityGroupId,
-              communityGroupInput: {
-                name: 'Updated CommunityGroup',
-                okeydokey: true,
-              },
-            }) as { data?: { communityGroupUpdate: CommunityGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            communityGroupId: updateTestCommunityGroupId,
+            communityGroupInput: {
+              name: 'Updated CommunityGroup',
+              okeydokey: true,
+            },
+          },
+        )) as { data?: { communityGroupUpdate: CommunityGroupPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+        }
+      })
 
       // Both roles should get GraphQL errors for invalid input
       expect(results.admin.hasErrors).toBe(true)
@@ -743,8 +681,8 @@ describe('CommunityGroup E2E Tests', () => {
   })
 
   describe('CommunityGroup Mutations - Delete', () => {
-    let deleteTestCommunityGroupIds: { admin?: number, user?: number } = {}
-    let deleteTestCommIds: { admin?: number, user?: number } = {}
+    let deleteTestCommunityGroupIds: { admin?: number; user?: number } = {}
+    let deleteTestCommIds: { admin?: number; user?: number } = {}
 
     beforeEach(async () => {
       // Create community groups for each role to delete
@@ -769,56 +707,54 @@ describe('CommunityGroup E2E Tests', () => {
 
     afterEach(async () => {
       // Clean up any remaining community groups
-      await globalThis.prisma.tbl_reg_communitygroup.deleteMany({
-        where: {
-          OR: [
-            { id: deleteTestCommunityGroupIds.admin },
-            { id: deleteTestCommunityGroupIds.user },
-          ],
-        },
-      }).catch(() => {})
+      await globalThis.prisma.tbl_reg_communitygroup
+        .deleteMany({
+          where: {
+            OR: [{ id: deleteTestCommunityGroupIds.admin }, { id: deleteTestCommunityGroupIds.user }],
+          },
+        })
+        .catch(() => {})
       deleteTestCommunityGroupIds = {}
       deleteTestCommIds = {}
     })
 
     it('Should delete community group: both roles succeed', async () => {
-      const results = await testWithBothRoles(
-        'delete community group',
-        async (role) => {
-          const communityGroupId = deleteTestCommunityGroupIds[role]!
+      const results = await testWithBothRoles('delete community group', async (role) => {
+        const communityGroupId = deleteTestCommunityGroupIds[role]!
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CommunityGroupDelete($communityGroupId: Int!) {
-                communityGroupDelete(communityGroupID: $communityGroupId) {
-                  communityGroup {
-                    id
-                    name
-                  }
-                  userErrors {
-                    field
-                    message
-                  }
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CommunityGroupDelete($communityGroupId: Int!) {
+              communityGroupDelete(communityGroupID: $communityGroupId) {
+                communityGroup {
+                  id
+                  name
+                }
+                userErrors {
+                  field
+                  message
                 }
               }
-            `, {
-              communityGroupId,
-            }) as { data?: { communityGroupDelete: CommunityGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            communityGroupId,
+          },
+        )) as { data?: { communityGroupDelete: CommunityGroupPayload }; errors?: readonly any[] }
 
-          // Verify deletion
-          const deletedCommunityGroup = await globalThis.prisma.tbl_reg_communitygroup.findUnique({
-            where: { id: communityGroupId },
-          })
+        // Verify deletion
+        const deletedCommunityGroup = await globalThis.prisma.tbl_reg_communitygroup.findUnique({
+          where: { id: communityGroupId },
+        })
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            communityGroup: response.data?.communityGroupDelete?.communityGroup,
-            userErrors: response.data?.communityGroupDelete?.userErrors,
-            isDeleted: !deletedCommunityGroup,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          communityGroup: response.data?.communityGroupDelete?.communityGroup,
+          userErrors: response.data?.communityGroupDelete?.userErrors,
+          isDeleted: !deletedCommunityGroup,
+        }
+      })
 
       // Both roles should successfully delete
       expect(results.admin.isAuthorized).toBe(true)
@@ -835,35 +771,34 @@ describe('CommunityGroup E2E Tests', () => {
     })
 
     it('Should return userError for non-existent community group: both roles', async () => {
-      const results = await testWithBothRoles(
-        'delete non-existent community group',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CommunityGroupDelete($communityGroupId: Int!) {
-                communityGroupDelete(communityGroupID: $communityGroupId) {
-                  communityGroup {
-                    id
-                    name
-                  }
-                  userErrors {
-                    field
-                    message
-                  }
+      const results = await testWithBothRoles('delete non-existent community group', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CommunityGroupDelete($communityGroupId: Int!) {
+              communityGroupDelete(communityGroupID: $communityGroupId) {
+                communityGroup {
+                  id
+                  name
+                }
+                userErrors {
+                  field
+                  message
                 }
               }
-            `, {
-              communityGroupId: 999999,
-            }) as { data?: { communityGroupDelete: CommunityGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            communityGroupId: 999999,
+          },
+        )) as { data?: { communityGroupDelete: CommunityGroupPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            communityGroup: response.data?.communityGroupDelete?.communityGroup,
-            userErrors: response.data?.communityGroupDelete?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          communityGroup: response.data?.communityGroupDelete?.communityGroup,
+          userErrors: response.data?.communityGroupDelete?.userErrors,
+        }
+      })
 
       // Both roles should get userError
       expect(results.admin.isAuthorized).toBe(true)
@@ -878,33 +813,32 @@ describe('CommunityGroup E2E Tests', () => {
     })
 
     it('Should return GraphQL error for null communityGroupID: both roles', async () => {
-      const results = await testWithBothRoles(
-        'delete with null ID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CommunityGroupDelete($communityGroupId: Int!) {
-                communityGroupDelete(communityGroupID: $communityGroupId) {
-                  communityGroup {
-                    id
-                    name
-                  }
-                  userErrors {
-                    field
-                    message
-                  }
+      const results = await testWithBothRoles('delete with null ID', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CommunityGroupDelete($communityGroupId: Int!) {
+              communityGroupDelete(communityGroupID: $communityGroupId) {
+                communityGroup {
+                  id
+                  name
+                }
+                userErrors {
+                  field
+                  message
                 }
               }
-            `, {
-              communityGroupId: null,
-            }) as { data?: { communityGroupDelete: CommunityGroupPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            communityGroupId: null,
+          },
+        )) as { data?: { communityGroupDelete: CommunityGroupPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+        }
+      })
 
       // Both roles should get GraphQL errors
       expect(results.admin.hasErrors).toBe(true)
@@ -917,16 +851,15 @@ describe('CommunityGroup E2E Tests', () => {
 
   describe('Authentication and Authorization', () => {
     it('Should require authentication for all operations', async () => {
-      const response = await createAuthenticatedRequest('user')
-        .set('Cookie', '') // Remove authentication
+      const response = (await createAuthenticatedRequest('user').set('Cookie', '') // Remove authentication
         .query(gql`
-          query CommunityGroups {
-            communityGroups {
-              id
-              name
-            }
+        query CommunityGroups {
+          communityGroups {
+            id
+            name
           }
-        `) as { errors?: readonly any[] }
+        }
+      `)) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0].message).toContain('Unauthorized')

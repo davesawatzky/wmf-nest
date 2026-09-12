@@ -1,6 +1,7 @@
 import { gql } from 'graphql-tag'
 import request from 'supertest-graphql'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+
 import { AuthPayload } from '../entities/auth.entity.js'
 
 describe('SignIn E2E Tests', () => {
@@ -51,19 +52,13 @@ describe('SignIn E2E Tests', () => {
     await globalThis.prisma.tbl_user.deleteMany({
       where: {
         email: {
-          in: [
-            testSigninUser.email,
-            testPrivateTeacher.email,
-            testSchoolTeacher.email,
-          ],
+          in: [testSigninUser.email, testPrivateTeacher.email, testSchoolTeacher.email],
         },
       },
     })
 
     // Create test users for signin tests (not confirmed)
-    const signupUser1 = (await request<{ signup: AuthPayload }>(
-      globalThis.httpServer,
-    )
+    const signupUser1 = (await request<{ signup: AuthPayload }>(globalThis.httpServer)
       .mutate(gql`
         mutation SignUp($credentials: CredentialsSignup!) {
           signup(credentials: $credentials) {
@@ -86,9 +81,7 @@ describe('SignIn E2E Tests', () => {
     expect(signupUser1.data.signup.userErrors).toHaveLength(0)
     expect(signupUser1.data.signup.user).toBeTruthy()
 
-    const signupUser2 = (await request<{ signup: AuthPayload }>(
-      globalThis.httpServer,
-    )
+    const signupUser2 = (await request<{ signup: AuthPayload }>(globalThis.httpServer)
       .mutate(gql`
         mutation SignUp($credentials: CredentialsSignup!) {
           signup(credentials: $credentials) {
@@ -111,9 +104,7 @@ describe('SignIn E2E Tests', () => {
     expect(signupUser2.data.signup.userErrors).toHaveLength(0)
     expect(signupUser2.data.signup.user).toBeTruthy()
 
-    const signupUser3 = (await request<{ signup: AuthPayload }>(
-      globalThis.httpServer,
-    )
+    const signupUser3 = (await request<{ signup: AuthPayload }>(globalThis.httpServer)
       .mutate(gql`
         mutation SignUp($credentials: CredentialsSignup!) {
           signup(credentials: $credentials) {
@@ -142,11 +133,7 @@ describe('SignIn E2E Tests', () => {
     await globalThis.prisma.tbl_user.deleteMany({
       where: {
         email: {
-          in: [
-            testSigninUser.email,
-            testPrivateTeacher.email,
-            testSchoolTeacher.email,
-          ],
+          in: [testSigninUser.email, testPrivateTeacher.email, testSchoolTeacher.email],
         },
       },
     })
@@ -154,9 +141,7 @@ describe('SignIn E2E Tests', () => {
 
   describe('SignIn Failures - Invalid Credentials', () => {
     it('Should return error for non-existent user', async () => {
-      const response = await request<{ signin: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      const response = (await request<{ signin: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignIn($credentials: CredentialsSignin!) {
             signin(credentials: $credentials) {
@@ -178,7 +163,7 @@ describe('SignIn E2E Tests', () => {
             email: 'nonexistent@test.com',
             password: 'anypassword',
           },
-        }) as { data?: { signin: AuthPayload }, errors?: readonly any[] }
+        })) as { data?: { signin: AuthPayload }; errors?: readonly any[] }
 
       // Should return GraphQL error for invalid credentials
       expect(response.data).toBeNull()
@@ -187,9 +172,7 @@ describe('SignIn E2E Tests', () => {
     })
 
     it('Should return error for incorrect password', async () => {
-      const response = await request<{ signin: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      const response = (await request<{ signin: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignIn($credentials: CredentialsSignin!) {
             signin(credentials: $credentials) {
@@ -211,7 +194,7 @@ describe('SignIn E2E Tests', () => {
             email: testSigninUser.email,
             password: 'WrongPassword123!',
           },
-        }) as { data?: { signin: AuthPayload }, errors?: readonly any[] }
+        })) as { data?: { signin: AuthPayload }; errors?: readonly any[] }
 
       // Should return GraphQL error for incorrect password
       expect(response.data).toBeNull()
@@ -220,9 +203,7 @@ describe('SignIn E2E Tests', () => {
     })
 
     it('Should return error for empty email', async () => {
-      const response = await request<{ signin: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      const response = (await request<{ signin: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignIn($credentials: CredentialsSignin!) {
             signin(credentials: $credentials) {
@@ -242,16 +223,14 @@ describe('SignIn E2E Tests', () => {
             email: '',
             password: 'password',
           },
-        }) as { errors?: readonly any[] }
+        })) as { errors?: readonly any[] }
 
       // Should return validation error
       expect(response.errors).toBeDefined()
     })
 
     it('Should return error for empty password', async () => {
-      const response = await request<{ signin: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      const response = (await request<{ signin: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignIn($credentials: CredentialsSignin!) {
             signin(credentials: $credentials) {
@@ -271,16 +250,14 @@ describe('SignIn E2E Tests', () => {
             email: testSigninUser.email,
             password: '',
           },
-        }) as { errors?: readonly any[] }
+        })) as { errors?: readonly any[] }
 
       // Should return validation error
       expect(response.errors).toBeDefined()
     })
 
     it('Should return error for malformed email', async () => {
-      const response = await request<{ signin: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      const response = (await request<{ signin: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignIn($credentials: CredentialsSignin!) {
             signin(credentials: $credentials) {
@@ -300,7 +277,7 @@ describe('SignIn E2E Tests', () => {
             email: 'notanemail',
             password: 'password',
           },
-        }) as { errors?: readonly any[] }
+        })) as { errors?: readonly any[] }
 
       // Should return validation error
       expect(response.errors).toBeDefined()
@@ -319,9 +296,7 @@ describe('SignIn E2E Tests', () => {
     })
 
     it('Should return error for unconfirmed email on signin', async () => {
-      const response = await request<{ signin: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      const response = (await request<{ signin: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignIn($credentials: CredentialsSignin!) {
             signin(credentials: $credentials) {
@@ -345,7 +320,7 @@ describe('SignIn E2E Tests', () => {
             password: testSigninUser.password,
           },
         })
-        .expectNoErrors() as { data: { signin: AuthPayload } }
+        .expectNoErrors()) as { data: { signin: AuthPayload } }
 
       const signin = response.data.signin
 
@@ -377,9 +352,7 @@ describe('SignIn E2E Tests', () => {
     })
 
     it('Should successfully sign in with confirmed email', async () => {
-      const response = await request<{ signin: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      const response = (await request<{ signin: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignIn($credentials: CredentialsSignin!) {
             signin(credentials: $credentials) {
@@ -406,7 +379,7 @@ describe('SignIn E2E Tests', () => {
             password: testSigninUser.password,
           },
         })
-        .expectNoErrors() as { data: { signin: AuthPayload } }
+        .expectNoErrors()) as { data: { signin: AuthPayload } }
 
       const signin = response.data.signin
 
@@ -422,9 +395,7 @@ describe('SignIn E2E Tests', () => {
     })
 
     it('Should allow subsequent signin for confirmed user', async () => {
-      const response = await request<{ signin: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      const response = (await request<{ signin: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignIn($credentials: CredentialsSignin!) {
             signin(credentials: $credentials) {
@@ -446,7 +417,7 @@ describe('SignIn E2E Tests', () => {
             password: testSigninUser.password,
           },
         })
-        .expectNoErrors() as { data: { signin: AuthPayload } }
+        .expectNoErrors()) as { data: { signin: AuthPayload } }
 
       const signin = response.data.signin
 
@@ -468,9 +439,7 @@ describe('SignIn E2E Tests', () => {
     })
 
     it('Should successfully sign in private teacher with instrument', async () => {
-      const response = await request<{ signin: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      const response = (await request<{ signin: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignIn($credentials: CredentialsSignin!) {
             signin(credentials: $credentials) {
@@ -497,7 +466,7 @@ describe('SignIn E2E Tests', () => {
             password: testPrivateTeacher.password,
           },
         })
-        .expectNoErrors() as { data: { signin: AuthPayload } }
+        .expectNoErrors()) as { data: { signin: AuthPayload } }
 
       const signin = response.data.signin
 
@@ -522,9 +491,7 @@ describe('SignIn E2E Tests', () => {
     })
 
     it('Should successfully sign in school teacher', async () => {
-      const response = await request<{ signin: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      const response = (await request<{ signin: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignIn($credentials: CredentialsSignin!) {
             signin(credentials: $credentials) {
@@ -550,7 +517,7 @@ describe('SignIn E2E Tests', () => {
             password: testSchoolTeacher.password,
           },
         })
-        .expectNoErrors() as { data: { signin: AuthPayload } }
+        .expectNoErrors()) as { data: { signin: AuthPayload } }
 
       const signin = response.data.signin
 
@@ -566,9 +533,7 @@ describe('SignIn E2E Tests', () => {
 
   describe('Token Validation', () => {
     it('Should return valid JWT token structure', async () => {
-      const response = await request<{ signin: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      const response = (await request<{ signin: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignIn($credentials: CredentialsSignin!) {
             signin(credentials: $credentials) {
@@ -582,7 +547,7 @@ describe('SignIn E2E Tests', () => {
             password: testSigninUser.password,
           },
         })
-        .expectNoErrors() as { data: { signin: AuthPayload } }
+        .expectNoErrors()) as { data: { signin: AuthPayload } }
 
       const token = response.data.signin.diatonicToken
 
@@ -597,9 +562,7 @@ describe('SignIn E2E Tests', () => {
 
     it('Should be able to use token for authenticated requests', async () => {
       // Sign in to get token
-      const signinResponse = await request<{ signin: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      const signinResponse = (await request<{ signin: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignIn($credentials: CredentialsSignin!) {
             signin(credentials: $credentials) {
@@ -616,12 +579,12 @@ describe('SignIn E2E Tests', () => {
             password: testSigninUser.password,
           },
         })
-        .expectNoErrors() as { data: { signin: AuthPayload } }
+        .expectNoErrors()) as { data: { signin: AuthPayload } }
 
       const token = signinResponse.data.signin.diatonicToken
 
       // Use token to query user details (requires authentication)
-      const userResponse = await request(globalThis.httpServer)
+      const userResponse = (await request(globalThis.httpServer)
         .set('Cookie', `diatonicToken=${token}`)
         .query(gql`
           query Me {
@@ -632,7 +595,7 @@ describe('SignIn E2E Tests', () => {
             }
           }
         `)
-        .expectNoErrors() as { data: { myUser: any } }
+        .expectNoErrors()) as { data: { myUser: any } }
 
       expect(userResponse.data.myUser).toBeTruthy()
       expect(userResponse.data.myUser.email).toBe(testSigninUser.email)
@@ -641,9 +604,7 @@ describe('SignIn E2E Tests', () => {
 
   describe('Security Tests', () => {
     it('Should not reveal if email exists when password is wrong', async () => {
-      const response = await request<{ signin: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      const response = (await request<{ signin: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignIn($credentials: CredentialsSignin!) {
             signin(credentials: $credentials) {
@@ -663,7 +624,7 @@ describe('SignIn E2E Tests', () => {
             email: testSigninUser.email,
             password: 'WrongPassword!',
           },
-        }) as { data?: { signin: AuthPayload }, errors?: readonly any[] }
+        })) as { data?: { signin: AuthPayload }; errors?: readonly any[] }
 
       // Error message should be generic, not revealing whether email exists
       expect(response.errors).toBeDefined()
@@ -671,9 +632,7 @@ describe('SignIn E2E Tests', () => {
     })
 
     it('Should not allow signin with SQL injection attempt', async () => {
-      const response = await request<{ signin: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      const response = (await request<{ signin: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignIn($credentials: CredentialsSignin!) {
             signin(credentials: $credentials) {
@@ -687,10 +646,10 @@ describe('SignIn E2E Tests', () => {
         `)
         .variables({
           credentials: {
-            email: 'test@test.com\' OR \'1\'=\'1',
-            password: 'password\' OR \'1\'=\'1',
+            email: "test@test.com' OR '1'='1",
+            password: "password' OR '1'='1",
           },
-        }) as { data?: { signin: AuthPayload }, errors?: readonly any[] }
+        })) as { data?: { signin: AuthPayload }; errors?: readonly any[] }
 
       // Should fail safely
       expect(response.errors).toBeDefined()
@@ -699,9 +658,7 @@ describe('SignIn E2E Tests', () => {
     it('Should handle extremely long password gracefully', async () => {
       const longPassword = 'a'.repeat(10000)
 
-      const response = await request<{ signin: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      const response = (await request<{ signin: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignIn($credentials: CredentialsSignin!) {
             signin(credentials: $credentials) {
@@ -718,7 +675,7 @@ describe('SignIn E2E Tests', () => {
             email: testSigninUser.email,
             password: longPassword,
           },
-        }) as { data?: { signin: AuthPayload }, errors?: readonly any[] }
+        })) as { data?: { signin: AuthPayload }; errors?: readonly any[] }
 
       // Should fail without crashing
       expect(response.errors).toBeDefined()
@@ -727,9 +684,7 @@ describe('SignIn E2E Tests', () => {
 
   describe('Edge Cases', () => {
     it('Should handle case-sensitive email addresses', async () => {
-      const response = await request<{ signin: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      const response = (await request<{ signin: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignIn($credentials: CredentialsSignin!) {
             signin(credentials: $credentials) {
@@ -749,7 +704,7 @@ describe('SignIn E2E Tests', () => {
             email: testSigninUser.email.toUpperCase(),
             password: testSigninUser.password,
           },
-        }) as { data?: { signin: AuthPayload }, errors?: readonly any[] }
+        })) as { data?: { signin: AuthPayload }; errors?: readonly any[] }
 
       // Email lookup should be case-insensitive or handle appropriately
       // This test documents the actual behavior
@@ -758,9 +713,7 @@ describe('SignIn E2E Tests', () => {
     })
 
     it('Should handle whitespace in email', async () => {
-      const response = await request<{ signin: AuthPayload }>(
-        globalThis.httpServer,
-      )
+      const response = (await request<{ signin: AuthPayload }>(globalThis.httpServer)
         .mutate(gql`
           mutation SignIn($credentials: CredentialsSignin!) {
             signin(credentials: $credentials) {
@@ -777,7 +730,7 @@ describe('SignIn E2E Tests', () => {
             email: ` ${testSigninUser.email} `,
             password: testSigninUser.password,
           },
-        }) as { data?: { signin: AuthPayload }, errors?: readonly any[] }
+        })) as { data?: { signin: AuthPayload }; errors?: readonly any[] }
 
       // Should either trim whitespace or reject
       expect(response.errors || response.data?.signin.userErrors.length).toBeTruthy()

@@ -1,19 +1,14 @@
 import { BadRequestException, Logger, UseGuards } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql'
+
 import { EmailConfirmationService } from '../email-confirmation/email-confirmation.service.js'
 import { User } from '../user/entities/user.entity.js'
 import { AuthService } from './auth.service.js'
 import { CredentialsSignin } from './dto/credentials-signin.input.js'
 import { CredentialsSignup } from './dto/credentials-signup.input.js'
 import { PasswordChangeInput } from './dto/password-change.input.js'
-import {
-  AuthPayload,
-  EmailExists,
-  PasswordChangePayload,
-  PasswordExists,
-  TokenCheck,
-} from './entities/auth.entity.js'
+import { AuthPayload, EmailExists, PasswordChangePayload, PasswordExists, TokenCheck } from './entities/auth.entity.js'
 import { GqlAuthGuard } from './gql-auth.guard.js'
 import { JwtAuthGuard } from './jwt-auth.guard.js'
 
@@ -63,16 +58,10 @@ export class AuthResolver {
     const { userErrors, user } = await this.authService.signup(credentials)
     if (user) {
       const userName = `${user.firstName} ${user.lastName}`
-      await this.emailConfirmationService.sendVerificationLink(
-        userName,
-        user.email,
-      )
+      await this.emailConfirmationService.sendVerificationLink(userName, user.email)
       this.logger.log(`Signup successful for user ID: ${user.id}`)
-    }
-    else if (userErrors.length > 0) {
-      this.logger.warn(
-        `Signup failed for email ${credentials.email}: ${userErrors.map(e => e.message).join(', ')}`,
-      )
+    } else if (userErrors.length > 0) {
+      this.logger.warn(`Signup failed for email ${credentials.email}: ${userErrors.map((e) => e.message).join(', ')}`)
     }
 
     return { userErrors, user }
@@ -80,10 +69,7 @@ export class AuthResolver {
 
   @Mutation(() => AuthPayload)
   @UseGuards(GqlAuthGuard)
-  async signin(
-    @Args('credentials') credentials: CredentialsSignin,
-    @Context() context,
-  ): Promise<AuthPayload> {
+  async signin(@Args('credentials') credentials: CredentialsSignin, @Context() context): Promise<AuthPayload> {
     // ✅ Input validation
     if (!credentials) {
       this.logger.error('signin mutation failed - No credentials provided')
@@ -102,9 +88,7 @@ export class AuthResolver {
 
     this.logger.log(`Processing signin for email: ${credentials.email}`)
 
-    const { userErrors, diatonicToken, user } = await this.authService.signin(
-      context.user,
-    )
+    const { userErrors, diatonicToken, user } = await this.authService.signin(context.user)
 
     if (diatonicToken) {
       context.res.cookie('diatonicToken', diatonicToken, {
@@ -116,20 +100,15 @@ export class AuthResolver {
         maxAge: 1000 * 60 * 60 * 24, // 1 day
       })
       this.logger.log(`Signin successful for user ID: ${user?.id}`)
-    }
-    else if (userErrors.length > 0) {
-      this.logger.warn(
-        `Signin failed for email ${credentials.email}: ${userErrors.map(e => e.message).join(', ')}`,
-      )
+    } else if (userErrors.length > 0) {
+      this.logger.warn(`Signin failed for email ${credentials.email}: ${userErrors.map((e) => e.message).join(', ')}`)
     }
 
     return { userErrors, diatonicToken, user }
   }
 
   @Query(() => EmailExists)
-  async passwordChangeEmailVerification(
-    @Args('email', { type: () => String }) email: User['email'],
-  ) {
+  async passwordChangeEmailVerification(@Args('email', { type: () => String }) email: User['email']) {
     // ✅ Input validation
     if (!email?.trim()) {
       this.logger.error('passwordChangeEmailVerification query failed - Email is required')
@@ -196,9 +175,7 @@ export class AuthResolver {
       }
     }
 
-    const email = await this.authService.emailFromToken(
-      passwordChangeInput.resetToken,
-    )
+    const email = await this.authService.emailFromToken(passwordChangeInput.resetToken)
 
     if (!email) {
       this.logger.error('Password change failed - Invalid or expired reset token')
@@ -213,17 +190,12 @@ export class AuthResolver {
       }
     }
 
-    const { userErrors, passwordChanged }
-      = await this.authService.passwordChange(
-        email,
-        passwordChangeInput.password1,
-      )
+    const { userErrors, passwordChanged } = await this.authService.passwordChange(email, passwordChangeInput.password1)
 
     if (passwordChanged) {
       this.logger.log(`Password successfully changed for email: ${email}`)
-    }
-    else {
-      this.logger.warn(`Password change failed for email ${email}: ${userErrors.map(e => e.message).join(', ')}`)
+    } else {
+      this.logger.warn(`Password change failed for email ${email}: ${userErrors.map((e) => e.message).join(', ')}`)
     }
 
     return { userErrors, passwordChanged }
@@ -293,8 +265,7 @@ export class AuthResolver {
 
       this.logger.debug(`Token validated successfully for user ID: ${user.id}`)
       return { userErrors: [], user }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       this.logger.error(`Token check failed: ${error.message}`, error.stack)
       return {
         userErrors: [{ message: 'Invalid token', field: [] }],

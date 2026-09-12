@@ -9,6 +9,7 @@ The `SubdisciplineDataLoader` service implements request-scoped batching for Gra
 ### Before DataLoader (N+1 Query Problem)
 
 When fetching multiple subdisciplines with nested field resolvers, the system would execute:
+
 - 1 query to fetch all subdisciplines
 - N queries for disciplines (one per subdiscipline)
 - N queries for categories (one per subdiscipline)
@@ -17,11 +18,13 @@ When fetching multiple subdisciplines with nested field resolvers, the system wo
 **Total**: **1 + 3N queries** for N subdisciplines
 
 Example with 20 subdisciplines:
+
 - Without DataLoader: **1 + 3×20 = 61 queries**
 
 ### After DataLoader (Batch Loading)
 
 With DataLoader batching:
+
 - 1 query to fetch all subdisciplines
 - 1 batched query for all disciplines
 - 2 batched queries for categories (festival classes + categories)
@@ -30,6 +33,7 @@ With DataLoader batching:
 **Total**: **6 queries**
 
 Example with 20 subdisciplines:
+
 - With DataLoader: **6 queries**
 - **Query reduction: 61 → 6 queries (90% reduction)**
 
@@ -58,14 +62,16 @@ export class SubdisciplineDataLoader {
 ### Batch Query Patterns
 
 #### Direct One-to-One Relationship
+
 - `disciplineLoader`: Returns single discipline by disciplineID
 
 ```typescript
-const disciplineMap = new Map(disciplines.map(discipline => [discipline.id, discipline]))
-return disciplineIDs.map(id => disciplineMap.get(id) || null)
+const disciplineMap = new Map(disciplines.map((discipline) => [discipline.id, discipline]))
+return disciplineIDs.map((id) => disciplineMap.get(id) || null)
 ```
 
 #### Indirect Many-to-Many Through Festival Classes
+
 - `categoriesLoader`: Returns categories linked via `tbl_classlist`
 - `levelsLoader`: Returns levels linked via `tbl_classlist`
 
@@ -88,7 +94,7 @@ festivalClasses.forEach((fc) => {
   const category = categoryMap.get(fc.categoryID)
   if (category) {
     const existing = subdisciplineCategoryMap.get(fc.subdisciplineID) || []
-    if (!existing.find(c => c.id === category.id)) {
+    if (!existing.find((c) => c.id === category.id)) {
       subdisciplineCategoryMap.set(fc.subdisciplineID, [...existing, category])
     }
   }
@@ -98,6 +104,7 @@ festivalClasses.forEach((fc) => {
 ## Database Schema Mapping
 
 ### Subdiscipline Relationships
+
 ```prisma
 model tbl_subdiscipline {
   id             Int              @id
@@ -120,6 +127,7 @@ model tbl_classlist {
 ```
 
 ### Indirect Relationships
+
 - **Subdiscipline → Categories**: Via `tbl_classlist.categoryID`
 - **Subdiscipline → Levels**: Via `tbl_classlist.levelID`
 - These are many-to-many relationships where festival classes act as the junction table
@@ -127,6 +135,7 @@ model tbl_classlist {
 ## Usage in Resolver
 
 ### Before (Direct Service Calls)
+
 ```typescript
 @ResolveField(() => [Category])
 async categories(@Parent() subdiscipline: tbl_subdiscipline) {
@@ -136,6 +145,7 @@ async categories(@Parent() subdiscipline: tbl_subdiscipline) {
 ```
 
 ### After (DataLoader Batching)
+
 ```typescript
 @ResolveField(() => [Category])
 async categories(@Parent() subdiscipline: tbl_subdiscipline) {
@@ -157,6 +167,7 @@ this.logger.log(`[DataLoader] Fetched ${categories.length} categories in ${elaps
 ```
 
 ### Sample Log Output
+
 ```
 [SubdisciplineDataLoader] Batching 20 discipline queries
 [SubdisciplineDataLoader] Fetched 8 disciplines in 10ms
@@ -218,6 +229,7 @@ The categories and levels loaders use a two-step approach:
 2. **Query actual entities**: Fetch the category/level records with proper ordering
 
 This approach is necessary because:
+
 - Categories and levels don't have direct foreign keys to subdisciplines
 - The relationship is implicit through festival classes
 - We need to maintain proper ordering and deduplication
@@ -226,8 +238,9 @@ This approach is necessary because:
 ### Deduplication Logic
 
 Since multiple festival classes can link to the same category/level for a subdiscipline:
+
 ```typescript
-if (!existing.find(c => c.id === category.id)) {
+if (!existing.find((c) => c.id === category.id)) {
   subdisciplineCategoryMap.set(fc.subdisciplineID, [...existing, category])
 }
 ```
@@ -243,6 +256,7 @@ This ensures each category/level appears only once per subdiscipline.
 ## Relationship to Other DataLoaders
 
 This follows the same architectural pattern as:
+
 - `FestivalClassDataLoader`: Request-scoped batching with logging
 - `RegistrationDataLoader`: Handles both one-to-one and one-to-many relationships
 
@@ -259,10 +273,12 @@ Key difference: Subdiscipline DataLoader handles **indirect many-to-many** relat
 ### Categories and Levels Queries
 
 The current implementation executes:
+
 1. One `findMany` on `tbl_classlist` to get relationships
 2. One `findMany` on `tbl_category` or `tbl_level` to get full records
 
 **Alternative considered**: Single query with `include`:
+
 ```typescript
 // Less efficient approach
 const festivalClasses = await this.prisma.tbl_classlist.findMany({
@@ -272,6 +288,7 @@ const festivalClasses = await this.prisma.tbl_classlist.findMany({
 ```
 
 **Why two queries is better**:
+
 - Avoids fetching duplicate category/level records (N×M problem)
 - Allows proper distinct selection
 - Enables efficient deduplication

@@ -1,10 +1,8 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { Decimal } from '@prisma/client-runtime-utils'
 import { Transform, Type } from 'class-transformer'
-import {
-  GraphQLDecimal,
-  transformToDecimal,
-} from 'prisma-graphql-type-decimal'
+import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
+
 import { UserError } from '@/common.entity.js'
 import { Performer } from '@/submissions/performer/entities/performer.entity.js'
 import { Selection } from '@/submissions/selection/entities/selection.entity.js'

@@ -1,6 +1,7 @@
-import type { tbl_discipline } from '@prisma/client'
 import { Injectable, Logger, Scope } from '@nestjs/common'
+import type { tbl_discipline } from '@prisma/client'
 import DataLoader from 'dataloader'
+
 import { PrismaService } from '@/prisma/prisma.service.js'
 
 @Injectable({ scope: Scope.REQUEST })
@@ -22,8 +23,8 @@ export class InstrumentDataLoader {
       const elapsed = Date.now() - start
       this.logger.log(`[DataLoader] Fetched ${disciplines.length} disciplines in ${elapsed}ms`)
 
-      const disciplineMap = new Map(disciplines.map(discipline => [discipline.id, discipline]))
-      return disciplineIDs.map(id => disciplineMap.get(id) || null)
+      const disciplineMap = new Map(disciplines.map((discipline) => [discipline.id, discipline]))
+      return disciplineIDs.map((id) => disciplineMap.get(id) || null)
     },
   )
 }

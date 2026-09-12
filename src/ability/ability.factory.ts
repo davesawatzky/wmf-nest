@@ -1,11 +1,6 @@
-import {
-  AbilityBuilder,
-  createMongoAbility,
-  ExtractSubjectType,
-  InferSubjects,
-  MongoAbility,
-} from '@casl/ability'
+import { AbilityBuilder, createMongoAbility, ExtractSubjectType, InferSubjects, MongoAbility } from '@casl/ability'
 import { Injectable } from '@nestjs/common'
+
 import { Category } from '@/festival/category/entities/category.entity.js'
 import { ClassType } from '@/festival/class-type/entities/class-type.entity.js'
 import { Discipline } from '@/festival/discipline/entities/discipline.entity.js'
@@ -38,32 +33,32 @@ export enum Action {
   Delete = 'delete',
 }
 
-export type Subjects
-  = | InferSubjects<
-    | typeof User
-    | typeof Category
-    | typeof ClassType
-    | typeof Discipline
-    | typeof FestivalClass
-    | typeof Instrument
-    | typeof Level
-    | typeof Subdiscipline
-    | typeof Trophy
-    | typeof Community
-    | typeof CommunityGroup
-    | typeof FieldConfig
-    | typeof Group
-    | typeof Performer
-    | typeof RegisteredClass
-    | typeof Registration
-    | typeof School
-    | typeof SchoolGroup
-    | typeof Selection
-    | typeof Teacher
-    | typeof Order
-    | typeof OrderItem
-    | typeof Item
-  >
+export type Subjects =
+  | InferSubjects<
+      | typeof User
+      | typeof Category
+      | typeof ClassType
+      | typeof Discipline
+      | typeof FestivalClass
+      | typeof Instrument
+      | typeof Level
+      | typeof Subdiscipline
+      | typeof Trophy
+      | typeof Community
+      | typeof CommunityGroup
+      | typeof FieldConfig
+      | typeof Group
+      | typeof Performer
+      | typeof RegisteredClass
+      | typeof Registration
+      | typeof School
+      | typeof SchoolGroup
+      | typeof Selection
+      | typeof Teacher
+      | typeof Order
+      | typeof OrderItem
+      | typeof Item
+    >
   | 'all'
   | 'admin'
 
@@ -72,13 +67,10 @@ export type AppAbility = MongoAbility<[Action, Subjects]>
 @Injectable()
 export class AbilityFactory {
   defineAbility(currentUser: User) {
-    const { can, cannot, build } = new AbilityBuilder<AppAbility>(
-      createMongoAbility,
-    )
+    const { can, cannot, build } = new AbilityBuilder<AppAbility>(createMongoAbility)
     if (currentUser.roles.includes('admin')) {
       can(Action.Manage, 'all')
-    }
-    else {
+    } else {
       cannot(Action.Manage, 'admin').because('Admins only')
       can(Action.Manage, Teacher)
       can(Action.Manage, Selection)

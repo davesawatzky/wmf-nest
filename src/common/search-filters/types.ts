@@ -31,7 +31,7 @@ export interface FieldFilter {
 }
 
 export type SearchFilters<T> = {
-  [K in keyof T]?: FieldFilter;
+  [K in keyof T]?: FieldFilter
 }
 
 export interface PrismaWhereClause {

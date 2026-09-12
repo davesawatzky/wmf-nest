@@ -1,15 +1,14 @@
-import type { tbl_field_config } from '@prisma/client'
 import { Logger, UseGuards } from '@nestjs/common'
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql'
+import type { tbl_field_config } from '@prisma/client'
+
 import { CheckAbilities } from '@/ability/abilities.decorator.js'
 import { AbilitiesGuard } from '@/ability/abilities.guard.js'
 import { Action } from '@/ability/ability.factory.js'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
+
 import { FieldConfigInput } from './dto/field-config.input.js'
-import {
-  FieldConfig,
-  FieldConfigPayload,
-} from './entities/field-config.entity.js'
+import { FieldConfig, FieldConfigPayload } from './entities/field-config.entity.js'
 import { FieldConfigService } from './field-config.service.js'
 
 @Resolver(() => FieldConfig)
@@ -49,7 +48,9 @@ export class FieldConfigResolver {
     @Args('fieldConfigInput', { type: () => FieldConfigInput })
     fieldConfigInput: FieldConfigInput,
   ) {
-    this.logger.log(`Creating field config for table: ${fieldConfigInput.tableName}, field: ${fieldConfigInput.fieldName}`)
+    this.logger.log(
+      `Creating field config for table: ${fieldConfigInput.tableName}, field: ${fieldConfigInput.fieldName}`,
+    )
     return await this.fieldConfigService.create(fieldConfigInput)
   }
 
@@ -63,10 +64,7 @@ export class FieldConfigResolver {
     fieldConfigInput: FieldConfigInput,
   ) {
     this.logger.log(`Updating field config ID: ${fieldConfigID}`)
-    return await this.fieldConfigService.update(
-      fieldConfigID,
-      fieldConfigInput,
-    )
+    return await this.fieldConfigService.update(fieldConfigID, fieldConfigInput)
   }
 
   @Mutation(() => FieldConfigPayload)

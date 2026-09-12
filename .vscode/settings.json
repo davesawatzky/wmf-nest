@@ -1,33 +1,20 @@
 {
-  "prettier.enable": true,
-  "prettier.requireConfig": true,
   "material-icon-theme.activeIconPack": "nest",
-  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.formatOnSave": true,
   "editor.formatOnType": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "never"
+    "source.format.oxc": "always"
   },
-  "eslint.format.enable": true,
-  "eslint.codeActionsOnSave.mode": "problems",
-  "eslint.enable": true,
+  "eslint.format.enable": false,
+  "eslint.enable": false,
   "eslint.lintTask.enable": false,
   "eslint.quiet": true,
   "eslint.packageManager": "pnpm",
   "html.format.preserveNewLines": true,
   "vitest.commandLine": "npx vitest",
-  // Enable the ESlint flat config support
-  "eslint.experimental.useFlatConfig": true,
 
-  // Disable the default formatter, use eslint instead
   "prettier.enable": false,
-  "editor.formatOnSave": false,
-
-  // Auto fix
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit",
-    "source.organizeImports": "never"
-  },
 
   // Silent the stylistic rules in you IDE, but still auto fix them
   "eslint.rules.customizations": [
@@ -56,7 +43,9 @@
     "jsonc",
     "yaml",
     "toml",
-    "astro",
+    "astro"
   ],
-  "mjml.mailer": "nodemailer"
+  "mjml.mailer": "nodemailer",
+  "oxc.enable.oxlint": true,
+  "oxc.enable.oxfmt": true
 }

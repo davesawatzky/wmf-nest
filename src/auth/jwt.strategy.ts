@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
 import { Request as RequestType } from 'express'
 import { ExtractJwt, Strategy } from 'passport-jwt'
+
 import { User } from '../user/entities/user.entity.js'
 import { AuthService } from './auth.service.js'
 
@@ -23,8 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   private static extractJWTFromCookie(req: RequestType) {
-    if (req.cookies && 'diatonicToken' in req.cookies)
-      return req.cookies.diatonicToken
+    if (req.cookies && 'diatonicToken' in req.cookies) return req.cookies.diatonicToken
 
     return null
   }

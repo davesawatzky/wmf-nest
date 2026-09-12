@@ -15,6 +15,7 @@ prisma init --db
 ```
 
 This will:
+
 1. Log you into Prisma Data Platform.
 2. Create a new project and database instance.
 3. Update your `.env` with the connection string.
@@ -66,6 +67,7 @@ Use a driver adapter for Prisma Postgres in the standard SQL workflow.
 ### Recommended for standard Node.js apps
 
 1. Install adapter and driver:
+
    ```bash
    npm install @prisma/adapter-pg pg
    ```
@@ -93,8 +95,7 @@ For PostgreSQL prepared statement naming, pass adapter options as the second arg
 import { createHash } from 'node:crypto'
 
 const adapter = new PrismaPg(process.env.DATABASE_URL!, {
-  statementNameGenerator: ({ sql }) =>
-    `prisma_${createHash('sha1').update(sql).digest('hex').slice(0, 16)}`,
+  statementNameGenerator: ({ sql }) => `prisma_${createHash('sha1').update(sql).digest('hex').slice(0, 16)}`,
 })
 ```
 

@@ -1,4 +1,3 @@
-import type { tbl_reg_community, tbl_registration } from '@prisma/client'
 import {
   BadRequestException,
   Injectable,
@@ -6,7 +5,10 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
+import type { tbl_reg_community, tbl_registration } from '@prisma/client'
+
 import { PrismaService } from '@/prisma/prisma.service.js'
+
 import { CommunityInput } from './dto/community.input.js'
 
 @Injectable()
@@ -15,10 +17,7 @@ export class CommunityService {
 
   constructor(private prisma: PrismaService) {}
 
-  async create(
-    registrationID: tbl_registration['id'],
-    communityInput?: Partial<CommunityInput>,
-  ) {
+  async create(registrationID: tbl_registration['id'], communityInput?: Partial<CommunityInput>) {
     try {
       if (!registrationID) {
         return {
@@ -31,27 +30,20 @@ export class CommunityService {
           community: null,
         }
       }
-      this.logger.log(
-        `Creating community for registration ID: ${registrationID}`,
-      )
+      this.logger.log(`Creating community for registration ID: ${registrationID}`)
 
       const community = await this.prisma.tbl_reg_community.create({
         data: { regID: registrationID, ...communityInput },
       })
 
-      this.logger.log(
-        `Community created successfully with ID: ${community.id}`,
-      )
+      this.logger.log(`Community created successfully with ID: ${community.id}`)
       return {
         userErrors: [],
         community,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2003') {
-        this.logger.warn(
-          `Community creation failed - Invalid registration ID: ${registrationID}`,
-        )
+        this.logger.warn(`Community creation failed - Invalid registration ID: ${registrationID}`)
         return {
           userErrors: [
             {
@@ -61,11 +53,8 @@ export class CommunityService {
           ],
           community: null,
         }
-      }
-      else if (error.code === 'P2002') {
-        this.logger.warn(
-          `Community creation failed - Unique constraint violation for registration ${registrationID}`,
-        )
+      } else if (error.code === 'P2002') {
+        this.logger.warn(`Community creation failed - Unique constraint violation for registration ${registrationID}`)
         return {
           userErrors: [
             {
@@ -75,17 +64,12 @@ export class CommunityService {
           ],
           community: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during community creation for registration ${registrationID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during community creation for registration ${registrationID}`, error)
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while creating the community',
+              message: 'An unexpected error occurred while creating the community',
               field: [],
             },
           ],
@@ -99,30 +83,20 @@ export class CommunityService {
     try {
       this.logger.log('Fetching all communities')
       return await this.prisma.tbl_reg_community.findMany()
-    }
-    catch (error: any) {
+    } catch (error: any) {
       this.logger.error('Error fetching all communities', error)
       throw new InternalServerErrorException('Unable to fetch communities')
     }
   }
 
-  async findOne(
-    registrationID?: tbl_reg_community['id'],
-    communityID?: tbl_reg_community['id'],
-  ) {
+  async findOne(registrationID?: tbl_reg_community['id'], communityID?: tbl_reg_community['id']) {
     try {
       if (!registrationID && !communityID) {
-        this.logger.error(
-          'findOne called without registrationID or communityID',
-        )
-        throw new BadRequestException(
-          'Either registrationID or communityID must be provided',
-        )
+        this.logger.error('findOne called without registrationID or communityID')
+        throw new BadRequestException('Either registrationID or communityID must be provided')
       }
 
-      this.logger.log(
-        `Finding community with registrationID: ${registrationID}, communityID: ${communityID}`,
-      )
+      this.logger.log(`Finding community with registrationID: ${registrationID}, communityID: ${communityID}`)
 
       // Build where clause conditionally
       const whereClause: any = {}
@@ -138,19 +112,13 @@ export class CommunityService {
       })
 
       if (!community) {
-        this.logger.warn(
-          `Community not found with registrationID: ${registrationID}, communityID: ${communityID}`,
-        )
+        this.logger.warn(`Community not found with registrationID: ${registrationID}, communityID: ${communityID}`)
         throw new NotFoundException('Community not found')
       }
 
       return community
-    }
-    catch (error: any) {
-      if (
-        error instanceof BadRequestException
-        || error instanceof NotFoundException
-      ) {
+    } catch (error: any) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error
       }
       this.logger.error(
@@ -161,10 +129,7 @@ export class CommunityService {
     }
   }
 
-  async update(
-    communityID: tbl_reg_community['id'],
-    communityInput: Partial<CommunityInput>,
-  ) {
+  async update(communityID: tbl_reg_community['id'], communityInput: Partial<CommunityInput>) {
     try {
       if (!communityID || !communityInput) {
         return {
@@ -189,12 +154,9 @@ export class CommunityService {
         userErrors: [],
         community,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(
-          `Community update failed - Community with ID ${communityID} not found`,
-        )
+        this.logger.warn(`Community update failed - Community with ID ${communityID} not found`)
         return {
           userErrors: [
             {
@@ -204,11 +166,8 @@ export class CommunityService {
           ],
           community: null,
         }
-      }
-      else if (error.code === 'P2002') {
-        this.logger.warn(
-          `Community update failed - Unique constraint violation for community ${communityID}`,
-        )
+      } else if (error.code === 'P2002') {
+        this.logger.warn(`Community update failed - Unique constraint violation for community ${communityID}`)
         return {
           userErrors: [
             {
@@ -218,11 +177,8 @@ export class CommunityService {
           ],
           community: null,
         }
-      }
-      else if (error.code === 'P2003') {
-        this.logger.warn(
-          `Community update failed - Foreign key constraint violation for community ${communityID}`,
-        )
+      } else if (error.code === 'P2003') {
+        this.logger.warn(`Community update failed - Foreign key constraint violation for community ${communityID}`)
         return {
           userErrors: [
             {
@@ -232,17 +188,12 @@ export class CommunityService {
           ],
           community: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during community update for ID ${communityID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during community update for ID ${communityID}`, error)
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while updating the community',
+              message: 'An unexpected error occurred while updating the community',
               field: [],
             },
           ],
@@ -276,12 +227,9 @@ export class CommunityService {
         userErrors: [],
         community,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(
-          `Community deletion failed - Community with ID ${communityID} not found`,
-        )
+        this.logger.warn(`Community deletion failed - Community with ID ${communityID} not found`)
         return {
           userErrors: [
             {
@@ -291,11 +239,8 @@ export class CommunityService {
           ],
           community: null,
         }
-      }
-      else if (error.code === 'P2003') {
-        this.logger.warn(
-          `Community deletion failed - Foreign key constraint violation for community ${communityID}`,
-        )
+      } else if (error.code === 'P2003') {
+        this.logger.warn(`Community deletion failed - Foreign key constraint violation for community ${communityID}`)
         return {
           userErrors: [
             {
@@ -305,17 +250,12 @@ export class CommunityService {
           ],
           community: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during community deletion for ID ${communityID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during community deletion for ID ${communityID}`, error)
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while deleting the community',
+              message: 'An unexpected error occurred while deleting the community',
               field: [],
             },
           ],

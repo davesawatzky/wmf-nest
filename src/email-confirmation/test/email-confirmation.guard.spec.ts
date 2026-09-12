@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import { EmailConfirmationGuard } from '../email-confirmation.guard.js'
 
 describe('emailConfirmationGuard', () => {

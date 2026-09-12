@@ -1,6 +1,7 @@
-import type { tbl_instrument, tbl_subdiscipline } from '@prisma/client'
 import { Injectable, Logger, Scope } from '@nestjs/common'
+import type { tbl_instrument, tbl_subdiscipline } from '@prisma/client'
 import DataLoader from 'dataloader'
+
 import { PerformerType } from '@/common.entity.js'
 import { PrismaService } from '@/prisma/prisma.service.js'
 
@@ -10,10 +11,7 @@ export class DisciplineDataLoader {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * Batches subdiscipline queries by discipline ID
-   * One-to-many relationship: Discipline → Subdisciplines
-   */
+  /** Batches subdiscipline queries by discipline ID One-to-many relationship: Discipline → Subdisciplines */
   public readonly subdisciplinesLoader = new DataLoader<number, tbl_subdiscipline[]>(
     async (disciplineIds: readonly number[]) => {
       const startTime = performance.now()
@@ -32,7 +30,7 @@ export class DisciplineDataLoader {
         subdisciplinesByDiscipline.set(subdiscipline.disciplineID, existing)
       }
 
-      const orderedResults = disciplineIds.map(id => subdisciplinesByDiscipline.get(id) ?? [])
+      const orderedResults = disciplineIds.map((id) => subdisciplinesByDiscipline.get(id) ?? [])
 
       this.logger.log(
         `Fetched subdisciplines for ${disciplineIds.length} disciplines in ${(performance.now() - startTime).toFixed(2)}ms`,
@@ -41,10 +39,7 @@ export class DisciplineDataLoader {
     },
   )
 
-  /**
-   * Batches instrument queries by discipline ID
-   * One-to-many relationship: Discipline → Instruments
-   */
+  /** Batches instrument queries by discipline ID One-to-many relationship: Discipline → Instruments */
   public readonly instrumentsLoader = new DataLoader<number, tbl_instrument[]>(
     async (disciplineIds: readonly number[]) => {
       const startTime = performance.now()
@@ -63,7 +58,7 @@ export class DisciplineDataLoader {
         instrumentsByDiscipline.set(instrument.disciplineID, existing)
       }
 
-      const orderedResults = disciplineIds.map(id => instrumentsByDiscipline.get(id) ?? [])
+      const orderedResults = disciplineIds.map((id) => instrumentsByDiscipline.get(id) ?? [])
 
       this.logger.log(
         `Fetched instruments for ${disciplineIds.length} disciplines in ${(performance.now() - startTime).toFixed(2)}ms`,
@@ -73,15 +68,11 @@ export class DisciplineDataLoader {
   )
 
   /**
-   * Batches subdiscipline queries by discipline ID with performerType filter
-   * One-to-many relationship with filter: Discipline → Subdisciplines (filtered by performerType)
-   * Note: Since DataLoader doesn't easily support composite keys, we'll handle this differently
-   * by creating a cache key string internally
+   * Batches subdiscipline queries by discipline ID with performerType filter One-to-many relationship with filter:
+   * Discipline → Subdisciplines (filtered by performerType) Note: Since DataLoader doesn't easily support composite
+   * keys, we'll handle this differently by creating a cache key string internally
    */
-  public readonly subdisciplinesByPerformerTypeLoader = new DataLoader<
-    string,
-    tbl_subdiscipline[]
-  >(
+  public readonly subdisciplinesByPerformerTypeLoader = new DataLoader<string, tbl_subdiscipline[]>(
     async (cacheKeys: readonly string[]) => {
       const startTime = performance.now()
       this.logger.debug(`Batching ${cacheKeys.length} filtered subdiscipline queries`)
@@ -125,7 +116,7 @@ export class DisciplineDataLoader {
           if (subdiscipline.disciplineID === key.disciplineId) {
             const cacheKey = `${key.disciplineId}-${key.performerType}`
             const existing = subdisciplinesByKey.get(cacheKey) || []
-            if (!existing.some(s => s.id === subdiscipline.id)) {
+            if (!existing.some((s) => s.id === subdiscipline.id)) {
               existing.push(subdiscipline)
             }
             subdisciplinesByKey.set(cacheKey, existing)
@@ -133,7 +124,7 @@ export class DisciplineDataLoader {
         }
       }
 
-      const orderedResults = cacheKeys.map(cacheKey => subdisciplinesByKey.get(cacheKey) ?? [])
+      const orderedResults = cacheKeys.map((cacheKey) => subdisciplinesByKey.get(cacheKey) ?? [])
 
       this.logger.log(
         `Fetched filtered subdisciplines for ${cacheKeys.length} discipline-performerType combinations in ${(performance.now() - startTime).toFixed(2)}ms`,

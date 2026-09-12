@@ -1,10 +1,11 @@
 import { Type } from '@nestjs/common'
 import { Field, InputType } from '@nestjs/graphql'
+
 import { FieldFilterInput } from './search-filters.input.js'
 
 /**
- * Factory for creating entity-specific search filter input types
- * This simplifies the creation of GraphQL input types for search filters
+ * Factory for creating entity-specific search filter input types This simplifies the creation of GraphQL input types
+ * for search filters
  */
 export class SearchFilterInputFactory {
   /**
@@ -20,10 +21,7 @@ export class SearchFilterInputFactory {
 
     // Add all fields to the input type
     fields.forEach((fieldName) => {
-      Field(() => FieldFilterInput, { nullable: true })(
-        DynamicSearchFiltersInput.prototype,
-        fieldName,
-      )
+      Field(() => FieldFilterInput, { nullable: true })(DynamicSearchFiltersInput.prototype, fieldName)
     })
 
     return DynamicSearchFiltersInput

@@ -6,31 +6,26 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 /**
  * Email Confirmation E2E Tests
  *
- * Tests the    it('Should successfully resend password reset link when passwordResetPending is true', async () => {
-      const response = await request(globalThis.httpServer)
-        .post('/email-confirmation/resend-password-link')
-        .send({ email: passwordResetUser.email })
-        .expect(201)
-
-      // Verify successful response (no errors)
-      expect(response.status).toBe(201)
-    })ints for email verification and password reset workflows.
- * Unlike auth tests which use GraphQL mutations, these tests use REST endpoints:
+ * Tests the it('Should successfully resend password reset link when passwordResetPending is true', async () => { const
+ * response = await request(globalThis.httpServer) .post('/email-confirmation/resend-password-link') .send({ email:
+ * passwordResetUser.email }) .expect(201)
+ *
+ * // Verify successful response (no errors) expect(response.status).toBe(201) })ints for email verification and
+ * password reset workflows. Unlike auth tests which use GraphQL mutations, these tests use REST endpoints:
+ *
  * - POST /email-confirmation/confirm
  * - POST /email-confirmation/resend-confirmation-link
- * - POST /email-confi    it('Should handle concurrent confirmation attempts', async () => {
-      // Clean up any existing user from previous test runs
-      await globalThis.prisma.tbl_user.deleteMany({
-        where: { email: 'test_concurrent@test.com' },
-      })
-
-      // Create new test user for concurrency test
-      const bcrypt = await import('bcrypt')
-      const hashedPassword = await bcrypt.hash('TestPass123!', 10)
-
-      const testUser = await globalThis.prisma.tbl_user.create({n/resend-password-link
+ * - POST /email-confi it('Should handle concurrent confirmation attempts', async () => { // Clean up any existing user
+ *   from previous test runs await globalThis.prisma.tbl_user.deleteMany({ where: { email: 'test_concurrent@test.com' },
+ *   })
+ *
+ * // Create new test user for concurrency test const bcrypt = await import('bcrypt') const hashedPassword = await
+ * bcrypt.hash('TestPass123!', 10)
+ *
+ * Const testUser = await globalThis.prisma.tbl_user.create({n/resend-password-link
  *
  * Pattern:
+ *
  * - Uses REST API (not GraphQL)
  * - Restores REAL EmailConfirmationService (unmocks from integrationTestSetup)
  * - Mocks only EmailService (SMTP) to prevent actual emails
@@ -38,8 +33,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
  * - Tests database state changes (emailConfirmed, passwordResetPending)
  * - Creates dedicated test users separate from global setup
  *
- * IMPORTANT: This test unmocks EmailConfirmationService to test real business logic.
- * The SMTP email sending is still mocked via EmailService to prevent actual emails.
+ * IMPORTANT: This test unmocks EmailConfirmationService to test real business logic. The SMTP email sending is still
+ * mocked via EmailService to prevent actual emails.
  */
 describe('Email Confirmation E2E Tests', () => {
   let jwtService: JwtService
@@ -119,12 +114,7 @@ describe('Email Confirmation E2E Tests', () => {
     await globalThis.prisma.tbl_user.deleteMany({
       where: {
         email: {
-          in: [
-            unconfirmedUser.email,
-            confirmedUser.email,
-            passwordResetUser.email,
-            noPasswordResetUser.email,
-          ],
+          in: [unconfirmedUser.email, confirmedUser.email, passwordResetUser.email, noPasswordResetUser.email],
         },
       },
     })
@@ -160,12 +150,7 @@ describe('Email Confirmation E2E Tests', () => {
     await globalThis.prisma.tbl_user.deleteMany({
       where: {
         email: {
-          in: [
-            unconfirmedUser.email,
-            confirmedUser.email,
-            passwordResetUser.email,
-            noPasswordResetUser.email,
-          ],
+          in: [unconfirmedUser.email, confirmedUser.email, passwordResetUser.email, noPasswordResetUser.email],
         },
       },
     })
@@ -492,10 +477,7 @@ describe('Email Confirmation E2E Tests', () => {
       )
 
       // First confirmation should succeed
-      await request(globalThis.httpServer)
-        .post('/email-confirmation/confirm')
-        .send({ token })
-        .expect(201)
+      await request(globalThis.httpServer).post('/email-confirmation/confirm').send({ token }).expect(201)
 
       // Second use of same token should fail
       const response = await request(globalThis.httpServer)
@@ -512,7 +494,7 @@ describe('Email Confirmation E2E Tests', () => {
     })
 
     it('Should handle SQL injection attempts in email field', async () => {
-      const maliciousEmail = '\'; DROP TABLE tbl_user; --'
+      const maliciousEmail = "'; DROP TABLE tbl_user; --"
       const token = jwtService.sign(
         { email: maliciousEmail },
         {
@@ -604,22 +586,16 @@ describe('Email Confirmation E2E Tests', () => {
 
       // Send multiple simultaneous requests
       const requests = [
-        request(globalThis.httpServer)
-          .post('/email-confirmation/confirm')
-          .send({ token }),
-        request(globalThis.httpServer)
-          .post('/email-confirmation/confirm')
-          .send({ token }),
-        request(globalThis.httpServer)
-          .post('/email-confirmation/confirm')
-          .send({ token }),
+        request(globalThis.httpServer).post('/email-confirmation/confirm').send({ token }),
+        request(globalThis.httpServer).post('/email-confirmation/confirm').send({ token }),
+        request(globalThis.httpServer).post('/email-confirmation/confirm').send({ token }),
       ]
 
       const responses = await Promise.all(requests)
 
       // One should succeed, others should fail with "already confirmed"
-      const successCount = responses.filter(r => r.status === 201).length
-      const failCount = responses.filter(r => r.status === 400).length
+      const successCount = responses.filter((r) => r.status === 201).length
+      const failCount = responses.filter((r) => r.status === 400).length
 
       expect(successCount).toBeGreaterThanOrEqual(1)
       expect(successCount + failCount).toBe(3)
@@ -667,7 +643,7 @@ describe('Email Confirmation E2E Tests', () => {
       )
 
       // Small delay to ensure expiration
-      await new Promise(resolve => setTimeout(resolve, 100))
+      await new Promise((resolve) => setTimeout(resolve, 100))
 
       const response = await request(globalThis.httpServer)
         .post('/email-confirmation/confirm')
@@ -706,10 +682,7 @@ describe('Email Confirmation E2E Tests', () => {
         },
       )
 
-      await request(globalThis.httpServer)
-        .post('/email-confirmation/confirm')
-        .send({ token })
-        .expect(201)
+      await request(globalThis.httpServer).post('/email-confirmation/confirm').send({ token }).expect(201)
 
       // Cleanup
       await globalThis.prisma.tbl_user.delete({

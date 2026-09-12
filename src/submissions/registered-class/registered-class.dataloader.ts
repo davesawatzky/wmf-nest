@@ -1,6 +1,7 @@
-import type { tbl_reg_performer, tbl_reg_selection } from '@prisma/client'
 import { Injectable, Logger, Scope } from '@nestjs/common'
+import type { tbl_reg_performer, tbl_reg_selection } from '@prisma/client'
 import DataLoader from 'dataloader'
+
 import { PrismaService } from '@/prisma/prisma.service.js'
 
 @Injectable({ scope: Scope.REQUEST })
@@ -9,10 +10,7 @@ export class RegisteredClassDataLoader {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * DataLoader for selections (one-to-many)
-   * Batches queries to fetch selections for multiple registered classes
-   */
+  /** DataLoader for selections (one-to-many) Batches queries to fetch selections for multiple registered classes */
   public readonly selectionsLoader = new DataLoader<number, tbl_reg_selection[]>(
     async (registeredClassIds: readonly number[]) => {
       const startTime = performance.now()
@@ -30,7 +28,7 @@ export class RegisteredClassDataLoader {
         selectionsByClass.set(selection.classpickID, existing)
       }
 
-      const orderedResults = registeredClassIds.map(id => selectionsByClass.get(id) ?? [])
+      const orderedResults = registeredClassIds.map((id) => selectionsByClass.get(id) ?? [])
 
       this.logger.log(
         `Fetched selections for ${registeredClassIds.length} registered classes in ${(performance.now() - startTime).toFixed(2)}ms`,
@@ -40,10 +38,9 @@ export class RegisteredClassDataLoader {
   )
 
   /**
-   * DataLoader for performers (complex two-step query by classNumber)
-   * Batches queries to fetch performers for multiple registered classes via classNumber
-   * Step 1: Find all registrations that have the given classNumbers
-   * Step 2: Fetch all performers for those registrations
+   * DataLoader for performers (complex two-step query by classNumber) Batches queries to fetch performers for multiple
+   * registered classes via classNumber Step 1: Find all registrations that have the given classNumbers Step 2: Fetch
+   * all performers for those registrations
    */
   public readonly performersLoader = new DataLoader<string, tbl_reg_performer[]>(
     async (classNumbers: readonly string[]) => {
@@ -57,7 +54,7 @@ export class RegisteredClassDataLoader {
       })
 
       // Step 2: Get unique registration IDs
-      const regIds = [...new Set(registeredClasses.map(rc => rc.regID))]
+      const regIds = [...new Set(registeredClasses.map((rc) => rc.regID))]
 
       // Step 3: Fetch all performers for those registrations
       const performers = await this.prisma.tbl_reg_performer.findMany({
@@ -79,14 +76,14 @@ export class RegisteredClassDataLoader {
         const existing = performersByClassNumber.get(rc.classNumber) || []
         // Deduplicate performers (same performer may be in multiple registered classes)
         for (const performer of performersForReg) {
-          if (!existing.some(p => p.id === performer.id)) {
+          if (!existing.some((p) => p.id === performer.id)) {
             existing.push(performer)
           }
         }
         performersByClassNumber.set(rc.classNumber, existing)
       }
 
-      const orderedResults = classNumbers.map(classNumber => performersByClassNumber.get(classNumber) ?? [])
+      const orderedResults = classNumbers.map((classNumber) => performersByClassNumber.get(classNumber) ?? [])
 
       this.logger.log(
         `Fetched performers for ${classNumbers.length} class numbers in ${(performance.now() - startTime).toFixed(2)}ms`,

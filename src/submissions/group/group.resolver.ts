@@ -1,20 +1,14 @@
-import type { tbl_reg_group, tbl_registration } from '@prisma/client'
 import { Logger, UseGuards } from '@nestjs/common'
-import {
-  Args,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import type { tbl_reg_group, tbl_registration } from '@prisma/client'
+
 import { CheckAbilities } from '@/ability/abilities.decorator.js'
 import { AbilitiesGuard } from '@/ability/abilities.guard.js'
 import { Action } from '@/ability/ability.factory.js'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
 import { Registration } from '@/submissions/registration/entities/registration.entity.js'
 import { RegistrationService } from '@/submissions/registration/registration.service.js'
+
 import { GroupInput } from './dto/group.input.js'
 import { Group, GroupPayload } from './entities/group.entity.js'
 import { GroupService } from './group.service.js'
@@ -51,7 +45,9 @@ export class GroupResolver {
     @Args('groupID', { type: () => Int, nullable: true })
     groupID: Group['id'],
   ) {
-    this.logger.log(`Fetching group${registrationID ? ` for registration ID: ${registrationID}` : ` with ID: ${groupID}`}`)
+    this.logger.log(
+      `Fetching group${registrationID ? ` for registration ID: ${registrationID}` : ` with ID: ${groupID}`}`,
+    )
     return await this.groupService.findOne(registrationID, groupID)
   }
 
@@ -83,16 +79,12 @@ export class GroupResolver {
   @Mutation(() => GroupPayload)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Delete, subject: Group })
-  async groupDelete(
-    @Args('groupID', { type: () => Int }) groupID: Group['id'],
-  ) {
+  async groupDelete(@Args('groupID', { type: () => Int }) groupID: Group['id']) {
     this.logger.log(`Deleting group ID: ${groupID}`)
     return await this.groupService.remove(groupID)
   }
 
-  /**
-   * Field Resolver
-   */
+  /** Field Resolver */
   @ResolveField(() => Registration)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: Registration })

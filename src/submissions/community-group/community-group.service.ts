@@ -1,4 +1,3 @@
-import type { tbl_reg_community, tbl_reg_communitygroup } from '@prisma/client'
 import {
   BadRequestException,
   Injectable,
@@ -6,7 +5,10 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
+import type { tbl_reg_community, tbl_reg_communitygroup } from '@prisma/client'
+
 import { PrismaService } from '@/prisma/prisma.service.js'
+
 import { CommunityGroupInput } from './dto/community-group.input.js'
 
 @Injectable()
@@ -15,10 +17,7 @@ export class CommunityGroupService {
 
   constructor(private prisma: PrismaService) {}
 
-  async create(
-    communityID: tbl_reg_community['id'],
-    communityGroupInput?: Partial<CommunityGroupInput>,
-  ) {
+  async create(communityID: tbl_reg_community['id'], communityGroupInput?: Partial<CommunityGroupInput>) {
     try {
       if (!communityID) {
         this.logger.error('Community group creation failed - communityID is required')
@@ -32,27 +31,20 @@ export class CommunityGroupService {
           communityGroup: null,
         }
       }
-      this.logger.log(
-        `Creating community group for community ID: ${communityID}`,
-      )
+      this.logger.log(`Creating community group for community ID: ${communityID}`)
 
       const communityGroup = await this.prisma.tbl_reg_communitygroup.create({
         data: { communityID, ...communityGroupInput },
       })
 
-      this.logger.log(
-        `Community group created successfully with ID: ${communityGroup.id}`,
-      )
+      this.logger.log(`Community group created successfully with ID: ${communityGroup.id}`)
       return {
         userErrors: [],
         communityGroup,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2003') {
-        this.logger.warn(
-          `Community group creation failed - Invalid community ID: ${communityID}`,
-        )
+        this.logger.warn(`Community group creation failed - Invalid community ID: ${communityID}`)
         return {
           userErrors: [
             {
@@ -62,11 +54,8 @@ export class CommunityGroupService {
           ],
           communityGroup: null,
         }
-      }
-      else if (error.code === 'P2002') {
-        this.logger.warn(
-          `Community group creation failed - Unique constraint violation for community ${communityID}`,
-        )
+      } else if (error.code === 'P2002') {
+        this.logger.warn(`Community group creation failed - Unique constraint violation for community ${communityID}`)
         return {
           userErrors: [
             {
@@ -76,17 +65,12 @@ export class CommunityGroupService {
           ],
           communityGroup: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during community group creation for community ${communityID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during community group creation for community ${communityID}`, error)
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while creating the community group',
+              message: 'An unexpected error occurred while creating the community group',
               field: [],
             },
           ],
@@ -98,22 +82,14 @@ export class CommunityGroupService {
 
   async findAll(communityID?: tbl_reg_communitygroup['communityID']) {
     try {
-      this.logger.log(
-        `Fetching community groups with filter - communityID: ${communityID}`,
-      )
+      this.logger.log(`Fetching community groups with filter - communityID: ${communityID}`)
 
       return await this.prisma.tbl_reg_communitygroup.findMany({
         where: { communityID },
       })
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Error fetching community groups with filter - communityID: ${communityID}`,
-        error,
-      )
-      throw new InternalServerErrorException(
-        'Unable to fetch community groups',
-      )
+    } catch (error: any) {
+      this.logger.error(`Error fetching community groups with filter - communityID: ${communityID}`, error)
+      throw new InternalServerErrorException('Unable to fetch community groups')
     }
   }
 
@@ -126,38 +102,25 @@ export class CommunityGroupService {
 
       this.logger.log(`Finding community group with ID: ${communityGroupID}`)
 
-      const communityGroup
-        = await this.prisma.tbl_reg_communitygroup.findUnique({
-          where: { id: communityGroupID },
-        })
+      const communityGroup = await this.prisma.tbl_reg_communitygroup.findUnique({
+        where: { id: communityGroupID },
+      })
 
       if (!communityGroup) {
-        this.logger.warn(
-          `Community group not found with ID: ${communityGroupID}`,
-        )
+        this.logger.warn(`Community group not found with ID: ${communityGroupID}`)
         throw new NotFoundException('Community group not found')
       }
       return communityGroup
-    }
-    catch (error: any) {
-      if (
-        error instanceof BadRequestException
-        || error instanceof NotFoundException
-      ) {
+    } catch (error: any) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error
       }
-      this.logger.error(
-        `Error finding community group with ID: ${communityGroupID}`,
-        error,
-      )
+      this.logger.error(`Error finding community group with ID: ${communityGroupID}`, error)
       throw new InternalServerErrorException('Unable to find community group')
     }
   }
 
-  async update(
-    communityGroupID: tbl_reg_communitygroup['id'],
-    communityGroupInput: Partial<CommunityGroupInput>,
-  ) {
+  async update(communityGroupID: tbl_reg_communitygroup['id'], communityGroupInput: Partial<CommunityGroupInput>) {
     try {
       if (!communityGroupID || !communityGroupInput) {
         this.logger.error('Community group update failed - Invalid input')
@@ -179,19 +142,14 @@ export class CommunityGroupService {
         data: { ...communityGroupInput },
       })
 
-      this.logger.log(
-        `Community group updated successfully with ID: ${communityGroupID}`,
-      )
+      this.logger.log(`Community group updated successfully with ID: ${communityGroupID}`)
       return {
         userErrors: [],
         communityGroup,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(
-          `Community group update failed - Community group with ID ${communityGroupID} not found`,
-        )
+        this.logger.warn(`Community group update failed - Community group with ID ${communityGroupID} not found`)
         return {
           userErrors: [
             {
@@ -201,8 +159,7 @@ export class CommunityGroupService {
           ],
           communityGroup: null,
         }
-      }
-      else if (error.code === 'P2002') {
+      } else if (error.code === 'P2002') {
         this.logger.warn(
           `Community group update failed - Unique constraint violation for community group ${communityGroupID}`,
         )
@@ -215,8 +172,7 @@ export class CommunityGroupService {
           ],
           communityGroup: null,
         }
-      }
-      else if (error.code === 'P2003') {
+      } else if (error.code === 'P2003') {
         this.logger.warn(
           `Community group update failed - Foreign key constraint violation for community group ${communityGroupID}`,
         )
@@ -229,17 +185,12 @@ export class CommunityGroupService {
           ],
           communityGroup: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during community group update for ID ${communityGroupID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during community group update for ID ${communityGroupID}`, error)
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while updating the community group',
+              message: 'An unexpected error occurred while updating the community group',
               field: [],
             },
           ],
@@ -268,19 +219,14 @@ export class CommunityGroupService {
         where: { id: communityGroupID },
       })
 
-      this.logger.log(
-        `Community group deleted successfully with ID: ${communityGroupID}`,
-      )
+      this.logger.log(`Community group deleted successfully with ID: ${communityGroupID}`)
       return {
         userErrors: [],
         communityGroup,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(
-          `Community group deletion failed - Community group with ID ${communityGroupID} not found`,
-        )
+        this.logger.warn(`Community group deletion failed - Community group with ID ${communityGroupID} not found`)
         return {
           userErrors: [
             {
@@ -290,32 +236,25 @@ export class CommunityGroupService {
           ],
           communityGroup: null,
         }
-      }
-      else if (error.code === 'P2003') {
+      } else if (error.code === 'P2003') {
         this.logger.warn(
           `Community group deletion failed - Foreign key constraint violation for community group ${communityGroupID}`,
         )
         return {
           userErrors: [
             {
-              message:
-                'Cannot delete community group with existing related records',
+              message: 'Cannot delete community group with existing related records',
               field: ['id'],
             },
           ],
           communityGroup: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during community group deletion for ID ${communityGroupID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during community group deletion for ID ${communityGroupID}`, error)
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while deleting the community group',
+              message: 'An unexpected error occurred while deleting the community group',
               field: [],
             },
           ],

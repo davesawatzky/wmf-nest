@@ -1,9 +1,8 @@
 import { gql } from 'graphql-tag'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import {
-  createAuthenticatedRequest,
-  testWithBothRoles,
-} from '@/test/testHelpers.js'
+
+import { createAuthenticatedRequest, testWithBothRoles } from '@/test/testHelpers.js'
+
 import { Trophy, TrophyPayload } from '../entities/trophy.entity.js'
 
 describe('Trophy E2E Tests', () => {
@@ -42,33 +41,29 @@ describe('Trophy E2E Tests', () => {
 
   describe('Trophy Queries (Both Roles)', () => {
     it('Should list all trophies for both roles', async () => {
-      const results = await testWithBothRoles(
-        'list trophies',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetTrophies {
-                trophies {
-                  id
-                  name
-                  description
-                }
+      const results = await testWithBothRoles('list trophies', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetTrophies {
+              trophies {
+                id
+                name
+                description
               }
-            `)
-            .expectNoErrors() as { data: { trophies: Trophy[] } }
+            }
+          `)
+          .expectNoErrors()) as { data: { trophies: Trophy[] } }
 
-          const trophies = response.data.trophies
-          const firstTrophy = trophies[0]
+        const trophies = response.data.trophies
+        const firstTrophy = trophies[0]
 
-          return {
-            hasData: !!trophies,
-            isArray: Array.isArray(trophies),
-            count: trophies?.length || 0,
-            hasValidTypes: typeof firstTrophy?.id === 'number'
-              && typeof firstTrophy?.name === 'string',
-          }
-        },
-      )
+        return {
+          hasData: !!trophies,
+          isArray: Array.isArray(trophies),
+          count: trophies?.length || 0,
+          hasValidTypes: typeof firstTrophy?.id === 'number' && typeof firstTrophy?.name === 'string',
+        }
+      })
 
       // Both roles should successfully retrieve trophies
       expect(results.admin.hasData).toBe(true)
@@ -82,37 +77,32 @@ describe('Trophy E2E Tests', () => {
     })
 
     it('Should list trophies with associated festivalClasses for both roles', async () => {
-      const results = await testWithBothRoles(
-        'list with festivalClasses',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetTrophies {
-                trophies {
+      const results = await testWithBothRoles('list with festivalClasses', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetTrophies {
+              trophies {
+                id
+                name
+                description
+                festivalClasses {
                   id
-                  name
-                  description
-                  festivalClasses {
-                    id
-                    classNumber
-                  }
+                  classNumber
                 }
               }
-            `)
-            .expectNoErrors() as { data: { trophies: Trophy[] } }
+            }
+          `)
+          .expectNoErrors()) as { data: { trophies: Trophy[] } }
 
-          const trophyWithClasses = response.data.trophies.find(
-            t => t.festivalClasses && t.festivalClasses.length > 0,
-          )
+        const trophyWithClasses = response.data.trophies.find((t) => t.festivalClasses && t.festivalClasses.length > 0)
 
-          return {
-            hasData: !!response.data.trophies,
-            count: response.data.trophies?.length || 0,
-            hasClasses: !!trophyWithClasses,
-            classNumber: trophyWithClasses?.festivalClasses?.[0]?.classNumber,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.trophies,
+          count: response.data.trophies?.length || 0,
+          hasClasses: !!trophyWithClasses,
+          classNumber: trophyWithClasses?.festivalClasses?.[0]?.classNumber,
+        }
+      })
 
       // Both roles should get festivalClasses
       expect(results.admin.hasData).toBe(true)
@@ -127,28 +117,25 @@ describe('Trophy E2E Tests', () => {
     })
 
     it('Should find specific trophy by ID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'find trophy by ID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetTrophy($trophyId: Int!) {
-                trophy(id: $trophyId) {
-                  id
-                  name
-                  description
-                }
+      const results = await testWithBothRoles('find trophy by ID', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetTrophy($trophyId: Int!) {
+              trophy(id: $trophyId) {
+                id
+                name
+                description
               }
-            `)
-            .variables({ trophyId: queryTestTrophyId })
-            .expectNoErrors() as { data: { trophy: Trophy } }
+            }
+          `)
+          .variables({ trophyId: queryTestTrophyId })
+          .expectNoErrors()) as { data: { trophy: Trophy } }
 
-          return {
-            hasData: !!response.data.trophy,
-            trophy: response.data.trophy,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.trophy,
+          trophy: response.data.trophy,
+        }
+      })
 
       // Both roles should find the trophy
       expect(results.admin.hasData).toBe(true)
@@ -160,26 +147,23 @@ describe('Trophy E2E Tests', () => {
     })
 
     it('Should return error when trophy not found for both roles', async () => {
-      const results = await testWithBothRoles(
-        'trophy not found',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetTrophy($trophyId: Int!) {
-                trophy(id: $trophyId) {
-                  id
-                  name
-                  description
-                }
+      const results = await testWithBothRoles('trophy not found', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetTrophy($trophyId: Int!) {
+              trophy(id: $trophyId) {
+                id
+                name
+                description
               }
-            `)
-            .variables({ trophyId: 999999 }) as { errors?: readonly any[] }
+            }
+          `)
+          .variables({ trophyId: 999999 })) as { errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+        }
+      })
 
       // Both roles should get errors
       expect(results.admin.hasErrors).toBe(true)
@@ -189,39 +173,38 @@ describe('Trophy E2E Tests', () => {
 
   describe('Trophy Mutations', () => {
     it('Should enforce create authorization: admin succeeds, user fails', async () => {
-      const results = await testWithBothRoles(
-        'create trophy',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CreateTrophy($trophyInput: TrophyInput!) {
-                trophyCreate(trophyInput: $trophyInput) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  trophy {
-                    id
-                    name
-                    description
-                  }
+      const results = await testWithBothRoles('create trophy', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CreateTrophy($trophyInput: TrophyInput!) {
+              trophyCreate(trophyInput: $trophyInput) {
+                userErrors {
+                  message
+                  field
+                }
+                trophy {
+                  id
+                  name
+                  description
                 }
               }
-            `, {
-              trophyInput: {
-                name: `E2E Test ${role} Trophy Create`,
-                description: `E2E Test ${role} Description`,
-              },
-            }) as { data?: { trophyCreate: TrophyPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            trophyInput: {
+              name: `E2E Test ${role} Trophy Create`,
+              description: `E2E Test ${role} Description`,
+            },
+          },
+        )) as { data?: { trophyCreate: TrophyPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            trophy: response.data?.trophyCreate?.trophy as Trophy | undefined,
-            userErrors: response.data?.trophyCreate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          trophy: response.data?.trophyCreate?.trophy as Trophy | undefined,
+          userErrors: response.data?.trophyCreate?.userErrors,
+        }
+      })
 
       // Admin should succeed
       expect(results.admin.isAuthorized).toBe(true)
@@ -244,8 +227,8 @@ describe('Trophy E2E Tests', () => {
     })
 
     it('Should return validation error for duplicate trophy name', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation CreateTrophy($trophyInput: TrophyInput!) {
             trophyCreate(trophyInput: $trophyInput) {
               userErrors {
@@ -258,12 +241,14 @@ describe('Trophy E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           trophyInput: {
             name: mockTrophy.name, // Duplicate
             description: 'Duplicate Test',
           },
-        }) as { data: { trophyCreate: TrophyPayload } }
+        },
+      )) as { data: { trophyCreate: TrophyPayload } }
 
       expect(response.data.trophyCreate.userErrors).toHaveLength(1)
       expect(response.data.trophyCreate.userErrors[0].message).toBeTruthy()
@@ -271,8 +256,8 @@ describe('Trophy E2E Tests', () => {
     })
 
     it('Should return error for null name in create', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation CreateTrophy($trophyInput: TrophyInput!) {
             trophyCreate(trophyInput: $trophyInput) {
               userErrors {
@@ -285,12 +270,14 @@ describe('Trophy E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           trophyInput: {
             name: null,
             description: 'Test Description',
           },
-        }) as { errors?: readonly any[] }
+        },
+      )) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0]).toBeTruthy()
@@ -305,46 +292,39 @@ describe('Trophy E2E Tests', () => {
         },
       })
 
-      const results = await testWithBothRoles(
-        'update trophy',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation UpdateTrophy(
-                $trophyId: Int!
-                $trophyInput: TrophyInput!
-              ) {
-                trophyUpdate(
-                  trophyID: $trophyId
-                  trophyInput: $trophyInput
-                ) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  trophy {
-                    id
-                    name
-                    description
-                  }
+      const results = await testWithBothRoles('update trophy', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation UpdateTrophy($trophyId: Int!, $trophyInput: TrophyInput!) {
+              trophyUpdate(trophyID: $trophyId, trophyInput: $trophyInput) {
+                userErrors {
+                  message
+                  field
+                }
+                trophy {
+                  id
+                  name
+                  description
                 }
               }
-            `, {
-              trophyId: testTrophy.id,
-              trophyInput: {
-                name: 'E2E Test Updated Trophy',
-                description: 'Updated Description',
-              },
-            }) as { data?: { trophyUpdate: TrophyPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            trophyId: testTrophy.id,
+            trophyInput: {
+              name: 'E2E Test Updated Trophy',
+              description: 'Updated Description',
+            },
+          },
+        )) as { data?: { trophyUpdate: TrophyPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            trophy: response.data?.trophyUpdate?.trophy as Trophy | undefined,
-            userErrors: response.data?.trophyUpdate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          trophy: response.data?.trophyUpdate?.trophy as Trophy | undefined,
+          userErrors: response.data?.trophyUpdate?.userErrors,
+        }
+      })
 
       // Admin should succeed
       expect(results.admin.isAuthorized).toBe(true)
@@ -366,16 +346,10 @@ describe('Trophy E2E Tests', () => {
     })
 
     it('Should return error when updating non-existent trophy', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
-          mutation UpdateTrophy(
-            $trophyId: Int!
-            $trophyInput: TrophyInput!
-          ) {
-            trophyUpdate(
-              trophyID: $trophyId
-              trophyInput: $trophyInput
-            ) {
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
+          mutation UpdateTrophy($trophyId: Int!, $trophyInput: TrophyInput!) {
+            trophyUpdate(trophyID: $trophyId, trophyInput: $trophyInput) {
               userErrors {
                 message
                 field
@@ -386,13 +360,15 @@ describe('Trophy E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           trophyId: 999999,
           trophyInput: {
             name: 'Non-existent Trophy',
             description: 'Test',
           },
-        }) as { data: { trophyUpdate: TrophyPayload } }
+        },
+      )) as { data: { trophyUpdate: TrophyPayload } }
 
       expect(response.data.trophyUpdate.trophy).toBeNull()
       expect(response.data.trophyUpdate.userErrors).toHaveLength(1)
@@ -408,16 +384,10 @@ describe('Trophy E2E Tests', () => {
         },
       })
 
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
-          mutation UpdateTrophy(
-            $trophyId: Int!
-            $trophyInput: TrophyInput!
-          ) {
-            trophyUpdate(
-              trophyID: $trophyId
-              trophyInput: $trophyInput
-            ) {
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
+          mutation UpdateTrophy($trophyId: Int!, $trophyInput: TrophyInput!) {
+            trophyUpdate(trophyID: $trophyId, trophyInput: $trophyInput) {
               userErrors {
                 message
                 field
@@ -428,13 +398,15 @@ describe('Trophy E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           trophyId: testTrophy.id,
           trophyInput: {
             name: null,
             description: 'Updated',
           },
-        }) as { errors?: readonly any[] }
+        },
+      )) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0]).toBeTruthy()
@@ -461,38 +433,37 @@ describe('Trophy E2E Tests', () => {
         },
       })
 
-      const results = await testWithBothRoles(
-        'delete trophy',
-        async (role) => {
-          const trophyId = role === 'admin' ? adminTrophy.id : userTrophy.id
+      const results = await testWithBothRoles('delete trophy', async (role) => {
+        const trophyId = role === 'admin' ? adminTrophy.id : userTrophy.id
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation DeleteTrophy($trophyDeleteId: Int!) {
-                trophyDelete(trophyID: $trophyDeleteId) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  trophy {
-                    id
-                    name
-                    description
-                  }
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation DeleteTrophy($trophyDeleteId: Int!) {
+              trophyDelete(trophyID: $trophyDeleteId) {
+                userErrors {
+                  message
+                  field
+                }
+                trophy {
+                  id
+                  name
+                  description
                 }
               }
-            `, {
-              trophyDeleteId: trophyId,
-            }) as { data?: { trophyDelete: TrophyPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            trophyDeleteId: trophyId,
+          },
+        )) as { data?: { trophyDelete: TrophyPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            trophy: response.data?.trophyDelete?.trophy as Trophy | undefined,
-            userErrors: response.data?.trophyDelete?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          trophy: response.data?.trophyDelete?.trophy as Trophy | undefined,
+          userErrors: response.data?.trophyDelete?.userErrors,
+        }
+      })
 
       // User should be forbidden (test first since admin will delete)
       expect(results.user.isAuthorized).toBe(false)
@@ -519,8 +490,8 @@ describe('Trophy E2E Tests', () => {
     })
 
     it('Should return error when deleting non-existent trophy', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation DeleteTrophy($trophyDeleteId: Int!) {
             trophyDelete(trophyID: $trophyDeleteId) {
               userErrors {
@@ -533,9 +504,11 @@ describe('Trophy E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           trophyDeleteId: 999999,
-        }) as { data: { trophyDelete: TrophyPayload } }
+        },
+      )) as { data: { trophyDelete: TrophyPayload } }
 
       expect(response.data.trophyDelete.trophy).toBeNull()
       expect(response.data.trophyDelete.userErrors).toHaveLength(1)
@@ -545,27 +518,30 @@ describe('Trophy E2E Tests', () => {
 
   describe('Authentication and Authorization', () => {
     it('Should require authentication for mutations', async () => {
-      const response = await createAuthenticatedRequest('user')
+      const response = (await createAuthenticatedRequest('user')
         .set('Cookie', '') // Remove authentication
-        .mutate(gql`
-          mutation CreateTrophy($trophyInput: TrophyInput!) {
-            trophyCreate(trophyInput: $trophyInput) {
-              userErrors {
-                message
-                field
-              }
-              trophy {
-                id
-                name
+        .mutate(
+          gql`
+            mutation CreateTrophy($trophyInput: TrophyInput!) {
+              trophyCreate(trophyInput: $trophyInput) {
+                userErrors {
+                  message
+                  field
+                }
+                trophy {
+                  id
+                  name
+                }
               }
             }
-          }
-        `, {
-          trophyInput: {
-            name: 'Test',
-            description: 'Test',
+          `,
+          {
+            trophyInput: {
+              name: 'Test',
+              description: 'Test',
+            },
           },
-        }) as { errors?: readonly any[] }
+        )) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0].message).toContain('Unauthorized')

@@ -1,9 +1,8 @@
 import { gql } from 'graphql-tag'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import {
-  createAuthenticatedRequest,
-  testWithBothRoles,
-} from '@/test/testHelpers.js'
+
+import { createAuthenticatedRequest, testWithBothRoles } from '@/test/testHelpers.js'
+
 import { Category, CategoryPayload } from '../entities/category.entity.js'
 
 describe('Category E2E Tests', () => {
@@ -43,54 +42,47 @@ describe('Category E2E Tests', () => {
 
   describe('Category Queries (Both Roles)', () => {
     it('Should list all categories without level or subdiscipline', async () => {
-      const results = await testWithBothRoles(
-        'list categories',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetCategories {
-                categories {
-                  id
-                  name
-                  description
-                  requiredComposer
-                }
-              }
-            `)
-
-          return {
-            hasData: !response.errors,
+      const results = await testWithBothRoles('list categories', async (role) => {
+        const response = await createAuthenticatedRequest(role).query(gql`
+          query GetCategories {
+            categories {
+              id
+              name
+              description
+              requiredComposer
+            }
           }
-        },
-      )
+        `)
+
+        return {
+          hasData: !response.errors,
+        }
+      })
       expect(results.admin.hasData).toBe(true)
       expect(results.user.hasData).toBe(true)
     })
 
     it('Should filter categories by subdisciplineID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'filter by subdiscipline',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetCategories($levelId: Int, $subdisciplineId: Int) {
-                categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
-                  id
-                  name
-                  description
-                  requiredComposer
-                }
+      const results = await testWithBothRoles('filter by subdiscipline', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetCategories($levelId: Int, $subdisciplineId: Int) {
+              categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
+                id
+                name
+                description
+                requiredComposer
               }
-            `)
-            .variables({ subdisciplineId: 194 })
-            .expectNoErrors() as { data: { categories: Category[] } }
+            }
+          `)
+          .variables({ subdisciplineId: 194 })
+          .expectNoErrors()) as { data: { categories: Category[] } }
 
-          return {
-            hasData: !!response.data.categories,
-            count: response.data.categories?.length || 0,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.categories,
+          count: response.data.categories?.length || 0,
+        }
+      })
 
       // Both roles should get same filtered results
       expect(results.admin.hasData).toBe(true)
@@ -100,29 +92,26 @@ describe('Category E2E Tests', () => {
     })
 
     it('Should filter categories by levelID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'filter by level',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetCategories($levelId: Int, $subdisciplineId: Int) {
-                categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
-                  id
-                  name
-                  description
-                  requiredComposer
-                }
+      const results = await testWithBothRoles('filter by level', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetCategories($levelId: Int, $subdisciplineId: Int) {
+              categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
+                id
+                name
+                description
+                requiredComposer
               }
-            `)
-            .variables({ levelId: 49 })
-            .expectNoErrors() as { data: { categories: Category[] } }
+            }
+          `)
+          .variables({ levelId: 49 })
+          .expectNoErrors()) as { data: { categories: Category[] } }
 
-          return {
-            hasData: !!response.data.categories,
-            count: response.data.categories?.length || 0,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.categories,
+          count: response.data.categories?.length || 0,
+        }
+      })
 
       // Both roles should get same filtered results
       expect(results.admin.hasData).toBe(true)
@@ -132,29 +121,26 @@ describe('Category E2E Tests', () => {
     })
 
     it('Should filter categories by both levelID and subdisciplineID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'filter by level and subdiscipline',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetCategories($levelId: Int, $subdisciplineId: Int) {
-                categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
-                  id
-                  name
-                  description
-                  requiredComposer
-                }
+      const results = await testWithBothRoles('filter by level and subdiscipline', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetCategories($levelId: Int, $subdisciplineId: Int) {
+              categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
+                id
+                name
+                description
+                requiredComposer
               }
-            `)
-            .variables({ levelId: 49, subdisciplineId: 194 })
-            .expectNoErrors() as { data: { categories: Category[] } }
+            }
+          `)
+          .variables({ levelId: 49, subdisciplineId: 194 })
+          .expectNoErrors()) as { data: { categories: Category[] } }
 
-          return {
-            hasData: !!response.data.categories,
-            count: response.data.categories?.length || 0,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.categories,
+          count: response.data.categories?.length || 0,
+        }
+      })
 
       // Both roles should get same filtered results
       expect(results.admin.hasData).toBe(true)
@@ -164,28 +150,25 @@ describe('Category E2E Tests', () => {
     })
 
     it('Should return empty array when no categories match filter for both roles', async () => {
-      const results = await testWithBothRoles(
-        'no matching categories',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetCategories($levelId: Int, $subdisciplineId: Int) {
-                categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
-                  id
-                  name
-                  description
-                  requiredComposer
-                }
+      const results = await testWithBothRoles('no matching categories', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetCategories($levelId: Int, $subdisciplineId: Int) {
+              categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
+                id
+                name
+                description
+                requiredComposer
               }
-            `)
-            .variables({ levelId: 100, subdisciplineId: 194 })
-            .expectNoErrors() as { data: { categories: Category[] } }
+            }
+          `)
+          .variables({ levelId: 100, subdisciplineId: 194 })
+          .expectNoErrors()) as { data: { categories: Category[] } }
 
-          return {
-            count: response.data.categories?.length || 0,
-          }
-        },
-      )
+        return {
+          count: response.data.categories?.length || 0,
+        }
+      })
 
       // Both roles should get empty results
       expect(results.admin.count).toBe(0)
@@ -193,29 +176,26 @@ describe('Category E2E Tests', () => {
     })
 
     it('Should find specific category by ID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'find category by ID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetCategory($categoryId: Int!) {
-                category(id: $categoryId) {
-                  id
-                  name
-                  description
-                  requiredComposer
-                }
+      const results = await testWithBothRoles('find category by ID', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetCategory($categoryId: Int!) {
+              category(id: $categoryId) {
+                id
+                name
+                description
+                requiredComposer
               }
-            `)
-            .variables({ categoryId: queryTestCategoryId })
-            .expectNoErrors() as { data: { category: Category } }
+            }
+          `)
+          .variables({ categoryId: queryTestCategoryId })
+          .expectNoErrors()) as { data: { category: Category } }
 
-          return {
-            hasData: !!response.data.category,
-            category: response.data.category,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.category,
+          category: response.data.category,
+        }
+      })
 
       // Both roles should find the category
       expect(results.admin.hasData).toBe(true)
@@ -225,27 +205,24 @@ describe('Category E2E Tests', () => {
     })
 
     it('Should return error when category not found for both roles', async () => {
-      const results = await testWithBothRoles(
-        'category not found',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetCategory($categoryId: Int!) {
-                category(id: $categoryId) {
-                  id
-                  name
-                  description
-                  requiredComposer
-                }
+      const results = await testWithBothRoles('category not found', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetCategory($categoryId: Int!) {
+              category(id: $categoryId) {
+                id
+                name
+                description
+                requiredComposer
               }
-            `)
-            .variables({ categoryId: 999999 }) as { errors?: readonly any[] }
+            }
+          `)
+          .variables({ categoryId: 999999 })) as { errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+        }
+      })
 
       // Both roles should get errors
       expect(results.admin.hasErrors).toBe(true)
@@ -255,41 +232,40 @@ describe('Category E2E Tests', () => {
 
   describe('Category Mutations', () => {
     it('Should enforce create authorization: admin succeeds, user fails', async () => {
-      const results = await testWithBothRoles(
-        'create category',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CreateCategory($categoryInput: CategoryInput!) {
-                categoryCreate(categoryInput: $categoryInput) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  category {
-                    id
-                    name
-                    description
-                    requiredComposer
-                  }
+      const results = await testWithBothRoles('create category', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CreateCategory($categoryInput: CategoryInput!) {
+              categoryCreate(categoryInput: $categoryInput) {
+                userErrors {
+                  message
+                  field
+                }
+                category {
+                  id
+                  name
+                  description
+                  requiredComposer
                 }
               }
-            `, {
-              categoryInput: {
-                name: `E2E Test ${role} Category Create`,
-                description: 'Test category creation',
-                requiredComposer: 'Test Composer',
-              },
-            }) as { data?: { categoryCreate: CategoryPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            categoryInput: {
+              name: `E2E Test ${role} Category Create`,
+              description: 'Test category creation',
+              requiredComposer: 'Test Composer',
+            },
+          },
+        )) as { data?: { categoryCreate: CategoryPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            category: response.data?.categoryCreate?.category as Category | undefined,
-            userErrors: response.data?.categoryCreate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          category: response.data?.categoryCreate?.category as Category | undefined,
+          userErrors: response.data?.categoryCreate?.userErrors,
+        }
+      })
 
       // Admin should succeed
       expect(results.admin.isAuthorized).toBe(true)
@@ -320,8 +296,8 @@ describe('Category E2E Tests', () => {
         },
       })
 
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation CreateCategory($categoryInput: CategoryInput!) {
             categoryCreate(categoryInput: $categoryInput) {
               userErrors {
@@ -334,12 +310,14 @@ describe('Category E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           categoryInput: {
             name: 'E2E Test Duplicate',
             description: 'Attempting duplicate',
           },
-        }) as { data: { categoryCreate: CategoryPayload } }
+        },
+      )) as { data: { categoryCreate: CategoryPayload } }
 
       expect(response.data.categoryCreate.userErrors).toHaveLength(1)
       expect(response.data.categoryCreate.userErrors[0].message).toContain('already exists')
@@ -352,8 +330,8 @@ describe('Category E2E Tests', () => {
     })
 
     it('Should return error for null name in create', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation CreateCategory($categoryInput: CategoryInput!) {
             categoryCreate(categoryInput: $categoryInput) {
               userErrors {
@@ -366,12 +344,14 @@ describe('Category E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           categoryInput: {
             name: null,
             description: 'Testing null name',
           },
-        }) as { errors?: readonly any[] }
+        },
+      )) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0].message).toBeTruthy()
@@ -386,42 +366,41 @@ describe('Category E2E Tests', () => {
         },
       })
 
-      const results = await testWithBothRoles(
-        'update category',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation UpdateCategory($categoryId: Int!, $categoryInput: CategoryInput!) {
-                categoryUpdate(categoryID: $categoryId, categoryInput: $categoryInput) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  category {
-                    id
-                    name
-                    description
-                    requiredComposer
-                  }
+      const results = await testWithBothRoles('update category', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation UpdateCategory($categoryId: Int!, $categoryInput: CategoryInput!) {
+              categoryUpdate(categoryID: $categoryId, categoryInput: $categoryInput) {
+                userErrors {
+                  message
+                  field
+                }
+                category {
+                  id
+                  name
+                  description
+                  requiredComposer
                 }
               }
-            `, {
-              categoryId: testCategory.id,
-              categoryInput: {
-                name: 'E2E Test Update Category',
-                description: `Updated by ${role}`,
-                requiredComposer: 'Updated Composer',
-              },
-            }) as { data?: { categoryUpdate: CategoryPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            categoryId: testCategory.id,
+            categoryInput: {
+              name: 'E2E Test Update Category',
+              description: `Updated by ${role}`,
+              requiredComposer: 'Updated Composer',
+            },
+          },
+        )) as { data?: { categoryUpdate: CategoryPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            category: response.data?.categoryUpdate?.category as Category | undefined,
-            userErrors: response.data?.categoryUpdate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          category: response.data?.categoryUpdate?.category as Category | undefined,
+          userErrors: response.data?.categoryUpdate?.userErrors,
+        }
+      })
 
       // Admin should succeed
       expect(results.admin.isAuthorized).toBe(true)
@@ -442,8 +421,8 @@ describe('Category E2E Tests', () => {
     })
 
     it('Should return error when updating non-existent category', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation UpdateCategory($categoryId: Int!, $categoryInput: CategoryInput!) {
             categoryUpdate(categoryID: $categoryId, categoryInput: $categoryInput) {
               userErrors {
@@ -456,12 +435,14 @@ describe('Category E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           categoryId: 999999,
           categoryInput: {
             name: 'Non-existent Category',
           },
-        }) as { data: { categoryUpdate: CategoryPayload } }
+        },
+      )) as { data: { categoryUpdate: CategoryPayload } }
 
       expect(response.data.categoryUpdate.category).toBeNull()
       expect(response.data.categoryUpdate.userErrors).toHaveLength(1)
@@ -477,8 +458,8 @@ describe('Category E2E Tests', () => {
         },
       })
 
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation UpdateCategory($categoryId: Int!, $categoryInput: CategoryInput!) {
             categoryUpdate(categoryID: $categoryId, categoryInput: $categoryInput) {
               userErrors {
@@ -491,13 +472,15 @@ describe('Category E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           categoryId: testCategory.id,
           categoryInput: {
             name: null,
             description: 'Trying null name',
           },
-        }) as { errors?: readonly any[] }
+        },
+      )) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0]).toBeTruthy()
@@ -524,38 +507,37 @@ describe('Category E2E Tests', () => {
         },
       })
 
-      const results = await testWithBothRoles(
-        'delete category',
-        async (role) => {
-          const categoryId = role === 'admin' ? adminCategory.id : userCategory.id
+      const results = await testWithBothRoles('delete category', async (role) => {
+        const categoryId = role === 'admin' ? adminCategory.id : userCategory.id
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation DeleteCategory($categoryId: Int!) {
-                categoryDelete(categoryID: $categoryId) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  category {
-                    id
-                    name
-                    description
-                  }
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation DeleteCategory($categoryId: Int!) {
+              categoryDelete(categoryID: $categoryId) {
+                userErrors {
+                  message
+                  field
+                }
+                category {
+                  id
+                  name
+                  description
                 }
               }
-            `, {
-              categoryId,
-            }) as { data?: { categoryDelete: CategoryPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            categoryId,
+          },
+        )) as { data?: { categoryDelete: CategoryPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            category: response.data?.categoryDelete?.category as Category | undefined,
-            userErrors: response.data?.categoryDelete?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          category: response.data?.categoryDelete?.category as Category | undefined,
+          userErrors: response.data?.categoryDelete?.userErrors,
+        }
+      })
 
       // User should be forbidden (test first since admin will delete)
       expect(results.user.isAuthorized).toBe(false)
@@ -582,8 +564,8 @@ describe('Category E2E Tests', () => {
     })
 
     it('Should return error when deleting non-existent category', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation DeleteCategory($categoryId: Int!) {
             categoryDelete(categoryID: $categoryId) {
               userErrors {
@@ -596,9 +578,11 @@ describe('Category E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           categoryId: 999999,
-        }) as { data: { categoryDelete: CategoryPayload } }
+        },
+      )) as { data: { categoryDelete: CategoryPayload } }
 
       expect(response.data.categoryDelete.category).toBeNull()
       expect(response.data.categoryDelete.userErrors).toHaveLength(1)
@@ -608,16 +592,15 @@ describe('Category E2E Tests', () => {
 
   describe('Authentication and Authorization', () => {
     it('Should require authentication for all operations', async () => {
-      const response = await createAuthenticatedRequest('user')
-        .set('Cookie', '') // Remove authentication
+      const response = (await createAuthenticatedRequest('user').set('Cookie', '') // Remove authentication
         .query(gql`
-          query GetCategories {
-            categories {
-              id
-              name
-            }
+        query GetCategories {
+          categories {
+            id
+            name
           }
-        `) as { errors?: readonly any[] }
+        }
+      `)) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0].message).toContain('Unauthorized')

@@ -1,9 +1,8 @@
 import { gql } from 'graphql-tag'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import {
-  createAuthenticatedRequest,
-  testWithBothRoles,
-} from '@/test/testHelpers.js'
+
+import { createAuthenticatedRequest, testWithBothRoles } from '@/test/testHelpers.js'
+
 import { ClassType, ClassTypePayload } from '../entities/class-type.entity.js'
 
 describe('ClassType E2E Tests', () => {
@@ -43,33 +42,29 @@ describe('ClassType E2E Tests', () => {
 
   describe('ClassType Queries (Both Roles)', () => {
     it('Should list all classTypes for both roles', async () => {
-      const results = await testWithBothRoles(
-        'list classTypes',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetClassTypes {
-                classTypes {
-                  id
-                  name
-                  description
-                }
+      const results = await testWithBothRoles('list classTypes', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetClassTypes {
+              classTypes {
+                id
+                name
+                description
               }
-            `)
-            .expectNoErrors() as { data: { classTypes: ClassType[] } }
+            }
+          `)
+          .expectNoErrors()) as { data: { classTypes: ClassType[] } }
 
-          const classTypes = response.data.classTypes
-          const firstClassType = classTypes[0]
+        const classTypes = response.data.classTypes
+        const firstClassType = classTypes[0]
 
-          return {
-            hasData: !!classTypes,
-            isArray: Array.isArray(classTypes),
-            count: classTypes?.length || 0,
-            hasValidTypes: typeof firstClassType?.id === 'number'
-              && typeof firstClassType?.name === 'string',
-          }
-        },
-      )
+        return {
+          hasData: !!classTypes,
+          isArray: Array.isArray(classTypes),
+          count: classTypes?.length || 0,
+          hasValidTypes: typeof firstClassType?.id === 'number' && typeof firstClassType?.name === 'string',
+        }
+      })
 
       // Both roles should successfully retrieve classTypes
       expect(results.admin.hasData).toBe(true)
@@ -83,36 +78,33 @@ describe('ClassType E2E Tests', () => {
     })
 
     it('Should list classTypes with associated festival classes for both roles', async () => {
-      const results = await testWithBothRoles(
-        'list classTypes with festivalClasses',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetClassTypes {
-                classTypes {
+      const results = await testWithBothRoles('list classTypes with festivalClasses', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetClassTypes {
+              classTypes {
+                id
+                name
+                description
+                festivalClasses {
+                  classNumber
                   id
-                  name
-                  description
-                  festivalClasses {
-                    classNumber
-                    id
-                  }
                 }
               }
-            `)
-            .expectNoErrors() as { data: { classTypes: ClassType[] } }
+            }
+          `)
+          .expectNoErrors()) as { data: { classTypes: ClassType[] } }
 
-          const classTypes = response.data.classTypes
-          const classTypeWithClasses = classTypes.find(ct => ct.festivalClasses && ct.festivalClasses.length > 0)
+        const classTypes = response.data.classTypes
+        const classTypeWithClasses = classTypes.find((ct) => ct.festivalClasses && ct.festivalClasses.length > 0)
 
-          return {
-            hasData: !!classTypes,
-            count: classTypes?.length || 0,
-            hasRelations: !!classTypeWithClasses,
-            firstClassNumber: classTypeWithClasses?.festivalClasses?.[0]?.classNumber,
-          }
-        },
-      )
+        return {
+          hasData: !!classTypes,
+          count: classTypes?.length || 0,
+          hasRelations: !!classTypeWithClasses,
+          firstClassNumber: classTypeWithClasses?.festivalClasses?.[0]?.classNumber,
+        }
+      })
 
       // Both roles should get same results
       expect(results.admin.hasData).toBe(true)
@@ -129,28 +121,25 @@ describe('ClassType E2E Tests', () => {
     })
 
     it('Should find specific classType by ID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'find classType by ID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetClassType($classTypeId: Int!) {
-                classType(id: $classTypeId) {
-                  id
-                  name
-                  description
-                }
+      const results = await testWithBothRoles('find classType by ID', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetClassType($classTypeId: Int!) {
+              classType(id: $classTypeId) {
+                id
+                name
+                description
               }
-            `)
-            .variables({ classTypeId: queryTestClassTypeId })
-            .expectNoErrors() as { data: { classType: ClassType } }
+            }
+          `)
+          .variables({ classTypeId: queryTestClassTypeId })
+          .expectNoErrors()) as { data: { classType: ClassType } }
 
-          return {
-            hasData: !!response.data.classType,
-            classType: response.data.classType,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.classType,
+          classType: response.data.classType,
+        }
+      })
 
       // Both roles should find the classType
       expect(results.admin.hasData).toBe(true)
@@ -160,26 +149,23 @@ describe('ClassType E2E Tests', () => {
     })
 
     it('Should return error when classType not found for both roles', async () => {
-      const results = await testWithBothRoles(
-        'classType not found',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetClassType($classTypeId: Int!) {
-                classType(id: $classTypeId) {
-                  id
-                  name
-                  description
-                }
+      const results = await testWithBothRoles('classType not found', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetClassType($classTypeId: Int!) {
+              classType(id: $classTypeId) {
+                id
+                name
+                description
               }
-            `)
-            .variables({ classTypeId: 999999 }) as { errors?: readonly any[] }
+            }
+          `)
+          .variables({ classTypeId: 999999 })) as { errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+        }
+      })
 
       // Both roles should get errors
       expect(results.admin.hasErrors).toBe(true)
@@ -189,39 +175,38 @@ describe('ClassType E2E Tests', () => {
 
   describe('ClassType Mutations', () => {
     it('Should enforce create authorization: admin succeeds, user fails', async () => {
-      const results = await testWithBothRoles(
-        'create classType',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CreateClassType($classTypeInput: ClassTypeInput!) {
-                classTypeCreate(classTypeInput: $classTypeInput) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  classType {
-                    id
-                    name
-                    description
-                  }
+      const results = await testWithBothRoles('create classType', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CreateClassType($classTypeInput: ClassTypeInput!) {
+              classTypeCreate(classTypeInput: $classTypeInput) {
+                userErrors {
+                  message
+                  field
+                }
+                classType {
+                  id
+                  name
+                  description
                 }
               }
-            `, {
-              classTypeInput: {
-                name: `E2E Test ${role} ClassType Create`,
-                description: 'Test classType creation',
-              },
-            }) as { data?: { classTypeCreate: ClassTypePayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            classTypeInput: {
+              name: `E2E Test ${role} ClassType Create`,
+              description: 'Test classType creation',
+            },
+          },
+        )) as { data?: { classTypeCreate: ClassTypePayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            classType: response.data?.classTypeCreate?.classType as ClassType | undefined,
-            userErrors: response.data?.classTypeCreate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          classType: response.data?.classTypeCreate?.classType as ClassType | undefined,
+          userErrors: response.data?.classTypeCreate?.userErrors,
+        }
+      })
 
       // Admin should succeed
       expect(results.admin.isAuthorized).toBe(true)
@@ -252,8 +237,8 @@ describe('ClassType E2E Tests', () => {
         },
       })
 
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation CreateClassType($classTypeInput: ClassTypeInput!) {
             classTypeCreate(classTypeInput: $classTypeInput) {
               userErrors {
@@ -266,12 +251,14 @@ describe('ClassType E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           classTypeInput: {
             name: 'E2E Test Duplicate',
             description: 'Attempting duplicate',
           },
-        }) as { data: { classTypeCreate: ClassTypePayload } }
+        },
+      )) as { data: { classTypeCreate: ClassTypePayload } }
 
       expect(response.data.classTypeCreate.userErrors).toHaveLength(1)
       expect(response.data.classTypeCreate.userErrors[0].message).toContain('already exists')
@@ -284,8 +271,8 @@ describe('ClassType E2E Tests', () => {
     })
 
     it('Should return error for null name in create', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation CreateClassType($classTypeInput: ClassTypeInput!) {
             classTypeCreate(classTypeInput: $classTypeInput) {
               userErrors {
@@ -298,12 +285,14 @@ describe('ClassType E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           classTypeInput: {
             name: null,
             description: 'Testing null name',
           },
-        }) as { errors?: readonly any[] }
+        },
+      )) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0].message).toBeTruthy()
@@ -318,40 +307,39 @@ describe('ClassType E2E Tests', () => {
         },
       })
 
-      const results = await testWithBothRoles(
-        'update classType',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation UpdateClassType($classTypeId: Int!, $classTypeInput: ClassTypeInput!) {
-                classTypeUpdate(classTypeID: $classTypeId, classTypeInput: $classTypeInput) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  classType {
-                    id
-                    name
-                    description
-                  }
+      const results = await testWithBothRoles('update classType', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation UpdateClassType($classTypeId: Int!, $classTypeInput: ClassTypeInput!) {
+              classTypeUpdate(classTypeID: $classTypeId, classTypeInput: $classTypeInput) {
+                userErrors {
+                  message
+                  field
+                }
+                classType {
+                  id
+                  name
+                  description
                 }
               }
-            `, {
-              classTypeId: testClassType.id,
-              classTypeInput: {
-                name: 'E2E Test Updated ClassType',
-                description: `Updated by ${role}`,
-              },
-            }) as { data?: { classTypeUpdate: ClassTypePayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            classTypeId: testClassType.id,
+            classTypeInput: {
+              name: 'E2E Test Updated ClassType',
+              description: `Updated by ${role}`,
+            },
+          },
+        )) as { data?: { classTypeUpdate: ClassTypePayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            classType: response.data?.classTypeUpdate?.classType as ClassType | undefined,
-            userErrors: response.data?.classTypeUpdate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          classType: response.data?.classTypeUpdate?.classType as ClassType | undefined,
+          userErrors: response.data?.classTypeUpdate?.userErrors,
+        }
+      })
 
       // Admin should succeed
       expect(results.admin.isAuthorized).toBe(true)
@@ -372,8 +360,8 @@ describe('ClassType E2E Tests', () => {
     })
 
     it('Should return error when updating non-existent classType', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation UpdateClassType($classTypeId: Int!, $classTypeInput: ClassTypeInput!) {
             classTypeUpdate(classTypeID: $classTypeId, classTypeInput: $classTypeInput) {
               userErrors {
@@ -386,12 +374,14 @@ describe('ClassType E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           classTypeId: 999999,
           classTypeInput: {
             name: 'Non-existent ClassType',
           },
-        }) as { data: { classTypeUpdate: ClassTypePayload } }
+        },
+      )) as { data: { classTypeUpdate: ClassTypePayload } }
 
       expect(response.data.classTypeUpdate.classType).toBeNull()
       expect(response.data.classTypeUpdate.userErrors).toHaveLength(1)
@@ -407,8 +397,8 @@ describe('ClassType E2E Tests', () => {
         },
       })
 
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation UpdateClassType($classTypeId: Int!, $classTypeInput: ClassTypeInput!) {
             classTypeUpdate(classTypeID: $classTypeId, classTypeInput: $classTypeInput) {
               userErrors {
@@ -421,13 +411,15 @@ describe('ClassType E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           classTypeId: testClassType.id,
           classTypeInput: {
             name: null,
             description: 'Trying null name',
           },
-        }) as { errors?: readonly any[] }
+        },
+      )) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0]).toBeTruthy()
@@ -454,38 +446,37 @@ describe('ClassType E2E Tests', () => {
         },
       })
 
-      const results = await testWithBothRoles(
-        'delete classType',
-        async (role) => {
-          const classTypeId = role === 'admin' ? adminClassType.id : userClassType.id
+      const results = await testWithBothRoles('delete classType', async (role) => {
+        const classTypeId = role === 'admin' ? adminClassType.id : userClassType.id
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation DeleteClassType($classTypeId: Int!) {
-                classTypeDelete(classTypeID: $classTypeId) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  classType {
-                    id
-                    name
-                    description
-                  }
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation DeleteClassType($classTypeId: Int!) {
+              classTypeDelete(classTypeID: $classTypeId) {
+                userErrors {
+                  message
+                  field
+                }
+                classType {
+                  id
+                  name
+                  description
                 }
               }
-            `, {
-              classTypeId,
-            }) as { data?: { classTypeDelete: ClassTypePayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            classTypeId,
+          },
+        )) as { data?: { classTypeDelete: ClassTypePayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            classType: response.data?.classTypeDelete?.classType as ClassType | undefined,
-            userErrors: response.data?.classTypeDelete?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          classType: response.data?.classTypeDelete?.classType as ClassType | undefined,
+          userErrors: response.data?.classTypeDelete?.userErrors,
+        }
+      })
 
       // User should be forbidden (test first since admin will delete)
       expect(results.user.isAuthorized).toBe(false)
@@ -512,8 +503,8 @@ describe('ClassType E2E Tests', () => {
     })
 
     it('Should return error when deleting non-existent classType', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation DeleteClassType($classTypeId: Int!) {
             classTypeDelete(classTypeID: $classTypeId) {
               userErrors {
@@ -526,9 +517,11 @@ describe('ClassType E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           classTypeId: 999999,
-        }) as { data: { classTypeDelete: ClassTypePayload } }
+        },
+      )) as { data: { classTypeDelete: ClassTypePayload } }
 
       expect(response.data.classTypeDelete.classType).toBeNull()
       expect(response.data.classTypeDelete.userErrors).toHaveLength(1)
@@ -538,16 +531,15 @@ describe('ClassType E2E Tests', () => {
 
   describe('Authentication and Authorization', () => {
     it('Should require authentication for all operations', async () => {
-      const response = await createAuthenticatedRequest('user')
-        .set('Cookie', '') // Remove authentication
+      const response = (await createAuthenticatedRequest('user').set('Cookie', '') // Remove authentication
         .query(gql`
-          query GetClassTypes {
-            classTypes {
-              id
-              name
-            }
+        query GetClassTypes {
+          classTypes {
+            id
+            name
           }
-        `) as { errors?: readonly any[] }
+        }
+      `)) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0].message).toContain('Unauthorized')

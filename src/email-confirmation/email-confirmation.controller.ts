@@ -1,16 +1,12 @@
+import { Body, ClassSerializerInterceptor, Controller, Post, UseInterceptors } from '@nestjs/common'
+
+import { AuthService } from '@/auth/auth.service.js'
 /* eslint-disable perfectionist/sort-imports */
 import type RequestWithUser from '@/auth/requestWithUser.interface.js'
-import {
-  Body,
-  ClassSerializerInterceptor,
-  Controller,
-  Post,
-  UseInterceptors,
-} from '@nestjs/common'
-import { EmailConfirmationService } from './email-confirmation.service.js'
-import { AuthService } from '@/auth/auth.service.js'
-import { PasswordChangeResend } from './dto/password-change-resend.input.js'
+
 import ConfirmationEmailDto from './dto/confirm-email.dto.js'
+import { PasswordChangeResend } from './dto/password-change-resend.input.js'
+import { EmailConfirmationService } from './email-confirmation.service.js'
 
 @Controller('email-confirmation')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -31,10 +27,7 @@ export class EmailConfirmationController {
   // @UseGuards(RestJwtAuthGuard)
   async resendConfirmationLink(@Body() request: RequestWithUser) {
     const userName = `${request.user.firstName} ${request.user.lastName}`
-    await this.emailConfirmationService.resendConfirmationLink(
-      userName,
-      request.user.email,
-    )
+    await this.emailConfirmationService.resendConfirmationLink(userName, request.user.email)
   }
 
   @Post('resend-password-link')

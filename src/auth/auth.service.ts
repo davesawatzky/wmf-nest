@@ -8,7 +8,9 @@ import {
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
+
 import { PrismaService } from '@/prisma/prisma.service.js'
+
 import { User } from '../user/entities/user.entity.js'
 import { UserService } from '../user/user.service.js'
 import { CredentialsSignin } from './dto/credentials-signin.input.js'
@@ -27,9 +29,7 @@ export class AuthService {
   ) {}
 
   async signup(credentialsSignup: CredentialsSignup): Promise<AuthPayload> {
-    this.logger.debug(
-      `Attempting signup for email: ${credentialsSignup.email}`,
-    )
+    this.logger.debug(`Attempting signup for email: ${credentialsSignup.email}`)
 
     let user: any
     let userErrors: any[] = []
@@ -40,9 +40,7 @@ export class AuthService {
       })
 
       if (!!user && !!user.password) {
-        this.logger.warn(
-          `Signup attempt for existing user: ${credentialsSignup.email}`,
-        )
+        this.logger.warn(`Signup attempt for existing user: ${credentialsSignup.email}`)
         userErrors = [
           {
             message: 'User already exists',
@@ -50,15 +48,8 @@ export class AuthService {
           },
         ]
         user = null
-      }
-      else if (
-        !!user
-        && !credentialsSignup.privateTeacher
-        && !credentialsSignup.schoolTeacher
-      ) {
-        this.logger.warn(
-          `Signup attempt for existing non-teacher user: ${credentialsSignup.email}`,
-        )
+      } else if (!!user && !credentialsSignup.privateTeacher && !credentialsSignup.schoolTeacher) {
+        this.logger.warn(`Signup attempt for existing non-teacher user: ${credentialsSignup.email}`)
         userErrors = [
           {
             message: 'User already exists',
@@ -66,25 +57,9 @@ export class AuthService {
           },
         ]
         user = null
-      }
-      else if (
-        !user
-        || credentialsSignup.privateTeacher
-        || credentialsSignup.schoolTeacher
-      ) {
-        const hashedPassword = await bcrypt.hash(
-          credentialsSignup.password.trim(),
-          15,
-        )
-        const {
-          firstName,
-          lastName,
-          email,
-          roles,
-          privateTeacher,
-          schoolTeacher,
-          instrument,
-        } = credentialsSignup
+      } else if (!user || credentialsSignup.privateTeacher || credentialsSignup.schoolTeacher) {
+        const hashedPassword = await bcrypt.hash(credentialsSignup.password.trim(), 15)
+        const { firstName, lastName, email, roles, privateTeacher, schoolTeacher, instrument } = credentialsSignup
 
         const newUser = await this.prisma.tbl_user.upsert({
           // updates or creates if not found
@@ -115,12 +90,8 @@ export class AuthService {
           `Successfully created/updated user with ID: ${newUser.id} for email: ${credentialsSignup.email}`,
         )
       }
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to signup user ${credentialsSignup.email}: ${error.message}`,
-        error.stack,
-      )
+    } catch (error: any) {
+      this.logger.error(`Failed to signup user ${credentialsSignup.email}: ${error.message}`, error.stack)
 
       if (error.code === 'P2002') {
         userErrors = [
@@ -130,8 +101,7 @@ export class AuthService {
           },
         ]
         user = null
-      }
-      else if (error.code === 'P2003') {
+      } else if (error.code === 'P2003') {
         userErrors = [
           {
             message: 'Invalid data provided',
@@ -139,8 +109,7 @@ export class AuthService {
           },
         ]
         user = null
-      }
-      else {
+      } else {
         userErrors = [
           {
             message: 'Cannot create user account',
@@ -173,14 +142,11 @@ export class AuthService {
       })
 
       if (!!signedInUser && !signedInUser.emailConfirmed) {
-        this.logger.warn(
-          `Signin attempt for unconfirmed user: ${signedInUser.email}`,
-        )
+        this.logger.warn(`Signin attempt for unconfirmed user: ${signedInUser.email}`)
         return {
           userErrors: [
             {
-              message:
-                'Account not confirmed. Check email account for verification link',
+              message: 'Account not confirmed. Check email account for verification link',
               field: ['email'],
             },
           ],
@@ -191,11 +157,8 @@ export class AuthService {
             lastName: signedInUser.lastName,
           },
         }
-      }
-      else if (!!signedInUser && signedInUser.passwordResetPending) {
-        this.logger.warn(
-          `Signin attempt for user with pending password reset: ${signedInUser.email}`,
-        )
+      } else if (!!signedInUser && signedInUser.passwordResetPending) {
+        this.logger.warn(`Signin attempt for user with pending password reset: ${signedInUser.email}`)
         return {
           userErrors: [
             {
@@ -210,8 +173,7 @@ export class AuthService {
             lastName: signedInUser.lastName,
           },
         }
-      }
-      else if (!signedInUser) {
+      } else if (!signedInUser) {
         this.logger.warn(`Signin attempt for non-existent user ID: ${user.id}`)
         return {
           userErrors: [
@@ -223,8 +185,7 @@ export class AuthService {
           diatonicToken: null,
           user: null,
         }
-      }
-      else {
+      } else {
         const token = this.jwtService.sign(payload)
         this.logger.log(`Successful signin for user: ${signedInUser.email}`)
         return {
@@ -233,12 +194,8 @@ export class AuthService {
           user: this.stripProperties(user),
         }
       }
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to signin user ID ${user.id}: ${error.message}`,
-        error.stack,
-      )
+    } catch (error: any) {
+      this.logger.error(`Failed to signin user ID ${user.id}: ${error.message}`, error.stack)
 
       return {
         userErrors: [
@@ -271,28 +228,19 @@ export class AuthService {
         if (user.password !== null) {
           const { password, ...userProps } = user
           return userProps
-        }
-        else {
+        } else {
           return user
         }
-      }
-      else {
+      } else {
         this.logger.warn(`User not found: ${email}. New user?`)
         throw new NotFoundException('User not found')
       }
-    }
-    catch (error: any) {
-      if (
-        error instanceof BadRequestException
-        || error instanceof NotFoundException
-      ) {
+    } catch (error: any) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error
       }
 
-      this.logger.error(
-        `Failed to find user ${email}: ${error.message}`,
-        error.stack,
-      )
+      this.logger.error(`Failed to find user ${email}: ${error.message}`, error.stack)
       throw new InternalServerErrorException('Failed to retrieve user')
     }
   }
@@ -312,36 +260,23 @@ export class AuthService {
 
       if (user) {
         const pass = !!user.password
-        this.logger.log(
-          `Password check completed for user ID: ${id}, has password: ${pass}`,
-        )
+        this.logger.log(`Password check completed for user ID: ${id}, has password: ${pass}`)
         return { id, pass }
-      }
-      else {
+      } else {
         this.logger.warn(`User not found for password check: ${id}`)
         throw new NotFoundException('User not found')
       }
-    }
-    catch (error: any) {
-      if (
-        error instanceof BadRequestException
-        || error instanceof NotFoundException
-      ) {
+    } catch (error: any) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error
       }
 
-      this.logger.error(
-        `Failed to check password for user ID ${id}: ${error.message}`,
-        error.stack,
-      )
+      this.logger.error(`Failed to check password for user ID ${id}: ${error.message}`, error.stack)
       throw new InternalServerErrorException('Failed to check password status')
     }
   }
 
-  async validateUser(
-    username: CredentialsSignin['email'],
-    password: CredentialsSignin['password'],
-  ) {
+  async validateUser(username: CredentialsSignin['email'], password: CredentialsSignin['password']) {
     if (!username || !password) {
       this.logger.warn('Validation attempt with missing credentials')
       return null
@@ -373,12 +308,8 @@ export class AuthService {
 
       this.logger.warn(`Invalid password for user: ${username}`)
       return null
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to validate user ${username}: ${error.message}`,
-        error.stack,
-      )
+    } catch (error: any) {
+      this.logger.error(`Failed to validate user ${username}: ${error.message}`, error.stack)
       return null
     }
   }
@@ -404,12 +335,8 @@ export class AuthService {
 
       this.logger.warn(`Authenticated user not found: ${id}`)
       return null
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to find authenticated user ${id}: ${error.message}`,
-        error.stack,
-      )
+    } catch (error: any) {
+      this.logger.error(`Failed to find authenticated user ${id}: ${error.message}`, error.stack)
       return null
     }
   }
@@ -435,18 +362,10 @@ export class AuthService {
         },
       })
 
-      this.logger.log(
-        `Successfully set password change pending for user ID: ${id}`,
-      )
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to set password change pending for user ID ${id}: ${error.message}`,
-        error.stack,
-      )
-      throw new InternalServerErrorException(
-        'Failed to update password reset status',
-      )
+      this.logger.log(`Successfully set password change pending for user ID: ${id}`)
+    } catch (error: any) {
+      this.logger.error(`Failed to set password change pending for user ID ${id}: ${error.message}`, error.stack)
+      throw new InternalServerErrorException('Failed to update password reset status')
     }
   }
 
@@ -456,9 +375,7 @@ export class AuthService {
       throw new BadRequestException('User ID is required')
     }
 
-    this.logger.debug(
-      `Checking password reset pending status for user ID: ${id}`,
-    )
+    this.logger.debug(`Checking password reset pending status for user ID: ${id}`)
 
     try {
       const user = await this.prisma.tbl_user.findUnique({
@@ -473,33 +390,19 @@ export class AuthService {
       const status = user.passwordResetPending ? 'pending' : 'not_pending'
       this.logger.log(`Password reset status for user ID ${id}: ${status}`)
       return status
-    }
-    catch (error: any) {
-      if (
-        error instanceof BadRequestException
-        || error instanceof NotFoundException
-      ) {
+    } catch (error: any) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error
       }
 
-      this.logger.error(
-        `Failed to check password reset status for user ID ${id}: ${error.message}`,
-        error.stack,
-      )
-      throw new InternalServerErrorException(
-        'Failed to check password reset status',
-      )
+      this.logger.error(`Failed to check password reset status for user ID ${id}: ${error.message}`, error.stack)
+      throw new InternalServerErrorException('Failed to check password reset status')
     }
   }
 
-  async passwordChange(
-    email: string,
-    password: string,
-  ): Promise<PasswordChangePayload> {
+  async passwordChange(email: string, password: string): Promise<PasswordChangePayload> {
     if (!email || !password) {
-      this.logger.warn(
-        'Password change attempt with missing email or password',
-      )
+      this.logger.warn('Password change attempt with missing email or password')
       return {
         userErrors: [
           {
@@ -524,12 +427,8 @@ export class AuthService {
       })
 
       this.logger.log(`Successfully changed password for user: ${email}`)
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to change password for user ${email}: ${error.message}`,
-        error.stack,
-      )
+    } catch (error: any) {
+      this.logger.error(`Failed to change password for user ${email}: ${error.message}`, error.stack)
 
       if (error.code === 'P2025') {
         return {
@@ -575,12 +474,8 @@ export class AuthService {
       }
 
       this.logger.warn('Invalid token payload structure')
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to extract email from token: ${error.message}`,
-        error.stack,
-      )
+    } catch (error: any) {
+      this.logger.error(`Failed to extract email from token: ${error.message}`, error.stack)
 
       if (error?.name === 'TokenExpiredError') {
         this.logger.warn('Email confirmation token has expired')
@@ -594,12 +489,8 @@ export class AuthService {
     try {
       const payload = this.jwtService.verify(token)
       return await this.userService.findOne(payload.sub)
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to validate token and get user: ${error.message}`,
-        error.stack,
-      )
+    } catch (error: any) {
+      this.logger.error(`Failed to validate token and get user: ${error.message}`, error.stack)
       throw new BadRequestException('Invalid token')
     }
   }

@@ -1,9 +1,8 @@
 import { gql } from 'graphql-tag'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import {
-  createAuthenticatedRequest,
-  testWithBothRoles,
-} from '@/test/testHelpers.js'
+
+import { createAuthenticatedRequest, testWithBothRoles } from '@/test/testHelpers.js'
+
 import { Instrument, InstrumentPayload } from '../entities/instrument.entity.js'
 
 describe('Instrument E2E Tests', () => {
@@ -42,34 +41,32 @@ describe('Instrument E2E Tests', () => {
 
   describe('Instrument Queries (Both Roles)', () => {
     it('Should list all instruments for both roles', async () => {
-      const results = await testWithBothRoles(
-        'list instruments',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetInstruments {
-                instruments {
-                  id
-                  name
-                  mozart
-                }
+      const results = await testWithBothRoles('list instruments', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetInstruments {
+              instruments {
+                id
+                name
+                mozart
               }
-            `)
-            .expectNoErrors() as { data: { instruments: Instrument[] } }
+            }
+          `)
+          .expectNoErrors()) as { data: { instruments: Instrument[] } }
 
-          const instruments = response.data.instruments
-          const firstInstrument = instruments[0]
+        const instruments = response.data.instruments
+        const firstInstrument = instruments[0]
 
-          return {
-            hasData: !!instruments,
-            isArray: Array.isArray(instruments),
-            count: instruments?.length || 0,
-            hasValidTypes: typeof firstInstrument?.id === 'number'
-              && typeof firstInstrument?.name === 'string'
-              && typeof firstInstrument?.mozart === 'boolean',
-          }
-        },
-      )
+        return {
+          hasData: !!instruments,
+          isArray: Array.isArray(instruments),
+          count: instruments?.length || 0,
+          hasValidTypes:
+            typeof firstInstrument?.id === 'number' &&
+            typeof firstInstrument?.name === 'string' &&
+            typeof firstInstrument?.mozart === 'boolean',
+        }
+      })
 
       // Both roles should successfully retrieve instruments
       expect(results.admin.hasData).toBe(true)
@@ -83,30 +80,27 @@ describe('Instrument E2E Tests', () => {
     })
 
     it('Should validate return types for both roles', async () => {
-      const results = await testWithBothRoles(
-        'validate types',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetInstruments {
-                instruments {
-                  id
-                  name
-                  mozart
-                }
+      const results = await testWithBothRoles('validate types', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetInstruments {
+              instruments {
+                id
+                name
+                mozart
               }
-            `)
-            .expectNoErrors() as { data: { instruments: Instrument[] } }
+            }
+          `)
+          .expectNoErrors()) as { data: { instruments: Instrument[] } }
 
-          const instrument = response.data.instruments[0]
+        const instrument = response.data.instruments[0]
 
-          return {
-            hasValidId: typeof instrument.id === 'number',
-            hasValidName: typeof instrument.name === 'string',
-            hasValidMozart: typeof instrument.mozart === 'boolean',
-          }
-        },
-      )
+        return {
+          hasValidId: typeof instrument.id === 'number',
+          hasValidName: typeof instrument.name === 'string',
+          hasValidMozart: typeof instrument.mozart === 'boolean',
+        }
+      })
 
       // Both roles should get valid types
       expect(results.admin.hasValidId).toBe(true)
@@ -118,28 +112,25 @@ describe('Instrument E2E Tests', () => {
     })
 
     it('Should find specific instrument by ID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'find instrument by ID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetInstrument($instrumentId: Int!) {
-                instrument(id: $instrumentId) {
-                  id
-                  name
-                  mozart
-                }
+      const results = await testWithBothRoles('find instrument by ID', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetInstrument($instrumentId: Int!) {
+              instrument(id: $instrumentId) {
+                id
+                name
+                mozart
               }
-            `)
-            .variables({ instrumentId: queryTestInstrumentId })
-            .expectNoErrors() as { data: { instrument: Instrument } }
+            }
+          `)
+          .variables({ instrumentId: queryTestInstrumentId })
+          .expectNoErrors()) as { data: { instrument: Instrument } }
 
-          return {
-            hasData: !!response.data.instrument,
-            instrument: response.data.instrument,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.instrument,
+          instrument: response.data.instrument,
+        }
+      })
 
       // Both roles should find the instrument
       expect(results.admin.hasData).toBe(true)
@@ -149,26 +140,23 @@ describe('Instrument E2E Tests', () => {
     })
 
     it('Should return error when instrument not found for both roles', async () => {
-      const results = await testWithBothRoles(
-        'instrument not found',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetInstrument($instrumentId: Int!) {
-                instrument(id: $instrumentId) {
-                  id
-                  name
-                  mozart
-                }
+      const results = await testWithBothRoles('instrument not found', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetInstrument($instrumentId: Int!) {
+              instrument(id: $instrumentId) {
+                id
+                name
+                mozart
               }
-            `)
-            .variables({ instrumentId: 999999 }) as { errors?: readonly any[] }
+            }
+          `)
+          .variables({ instrumentId: 999999 })) as { errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+        }
+      })
 
       // Both roles should get errors
       expect(results.admin.hasErrors).toBe(true)
@@ -178,39 +166,38 @@ describe('Instrument E2E Tests', () => {
 
   describe('Instrument Mutations', () => {
     it('Should enforce create authorization: admin succeeds, user fails', async () => {
-      const results = await testWithBothRoles(
-        'create instrument',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CreateInstrument($instrumentInput: InstrumentInput!) {
-                instrumentCreate(instrumentInput: $instrumentInput) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  instrument {
-                    id
-                    name
-                    mozart
-                  }
+      const results = await testWithBothRoles('create instrument', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CreateInstrument($instrumentInput: InstrumentInput!) {
+              instrumentCreate(instrumentInput: $instrumentInput) {
+                userErrors {
+                  message
+                  field
+                }
+                instrument {
+                  id
+                  name
+                  mozart
                 }
               }
-            `, {
-              instrumentInput: {
-                name: `E2E Test ${role} Instrument Create`,
-                mozart: true,
-              },
-            }) as { data?: { instrumentCreate: InstrumentPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            instrumentInput: {
+              name: `E2E Test ${role} Instrument Create`,
+              mozart: true,
+            },
+          },
+        )) as { data?: { instrumentCreate: InstrumentPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            instrument: response.data?.instrumentCreate?.instrument as Instrument | undefined,
-            userErrors: response.data?.instrumentCreate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          instrument: response.data?.instrumentCreate?.instrument as Instrument | undefined,
+          userErrors: response.data?.instrumentCreate?.userErrors,
+        }
+      })
 
       // Admin should succeed
       expect(results.admin.isAuthorized).toBe(true)
@@ -233,8 +220,8 @@ describe('Instrument E2E Tests', () => {
     })
 
     it('Should return validation error for duplicate instrument name', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation CreateInstrument($instrumentInput: InstrumentInput!) {
             instrumentCreate(instrumentInput: $instrumentInput) {
               userErrors {
@@ -247,12 +234,14 @@ describe('Instrument E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           instrumentInput: {
             name: mockInstrument.name, // Duplicate
             mozart: true,
           },
-        }) as { data: { instrumentCreate: InstrumentPayload } }
+        },
+      )) as { data: { instrumentCreate: InstrumentPayload } }
 
       expect(response.data.instrumentCreate.userErrors).toHaveLength(1)
       expect(response.data.instrumentCreate.userErrors[0].message).toBeTruthy()
@@ -260,8 +249,8 @@ describe('Instrument E2E Tests', () => {
     })
 
     it('Should return error for null name in create', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation CreateInstrument($instrumentInput: InstrumentInput!) {
             instrumentCreate(instrumentInput: $instrumentInput) {
               userErrors {
@@ -274,12 +263,14 @@ describe('Instrument E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           instrumentInput: {
             name: null,
             mozart: true,
           },
-        }) as { errors?: readonly any[] }
+        },
+      )) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0]).toBeTruthy()
@@ -294,46 +285,39 @@ describe('Instrument E2E Tests', () => {
         },
       })
 
-      const results = await testWithBothRoles(
-        'update instrument',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation UpdateInstrument(
-                $instrumentId: Int!
-                $instrumentInput: InstrumentInput!
-              ) {
-                instrumentUpdate(
-                  instrumentID: $instrumentId
-                  instrumentInput: $instrumentInput
-                ) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  instrument {
-                    id
-                    name
-                    mozart
-                  }
+      const results = await testWithBothRoles('update instrument', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation UpdateInstrument($instrumentId: Int!, $instrumentInput: InstrumentInput!) {
+              instrumentUpdate(instrumentID: $instrumentId, instrumentInput: $instrumentInput) {
+                userErrors {
+                  message
+                  field
+                }
+                instrument {
+                  id
+                  name
+                  mozart
                 }
               }
-            `, {
-              instrumentId: testInstrument.id,
-              instrumentInput: {
-                name: 'E2E Test Updated Instrument',
-                mozart: false,
-              },
-            }) as { data?: { instrumentUpdate: InstrumentPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            instrumentId: testInstrument.id,
+            instrumentInput: {
+              name: 'E2E Test Updated Instrument',
+              mozart: false,
+            },
+          },
+        )) as { data?: { instrumentUpdate: InstrumentPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            instrument: response.data?.instrumentUpdate?.instrument as Instrument | undefined,
-            userErrors: response.data?.instrumentUpdate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          instrument: response.data?.instrumentUpdate?.instrument as Instrument | undefined,
+          userErrors: response.data?.instrumentUpdate?.userErrors,
+        }
+      })
 
       // Admin should succeed
       expect(results.admin.isAuthorized).toBe(true)
@@ -354,16 +338,10 @@ describe('Instrument E2E Tests', () => {
     })
 
     it('Should return error when updating non-existent instrument', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
-          mutation UpdateInstrument(
-            $instrumentId: Int!
-            $instrumentInput: InstrumentInput!
-          ) {
-            instrumentUpdate(
-              instrumentID: $instrumentId
-              instrumentInput: $instrumentInput
-            ) {
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
+          mutation UpdateInstrument($instrumentId: Int!, $instrumentInput: InstrumentInput!) {
+            instrumentUpdate(instrumentID: $instrumentId, instrumentInput: $instrumentInput) {
               userErrors {
                 message
                 field
@@ -374,13 +352,15 @@ describe('Instrument E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           instrumentId: 999999,
           instrumentInput: {
             name: 'Non-existent Instrument',
             mozart: true,
           },
-        }) as { data: { instrumentUpdate: InstrumentPayload } }
+        },
+      )) as { data: { instrumentUpdate: InstrumentPayload } }
 
       expect(response.data.instrumentUpdate.instrument).toBeNull()
       expect(response.data.instrumentUpdate.userErrors).toHaveLength(1)
@@ -396,16 +376,10 @@ describe('Instrument E2E Tests', () => {
         },
       })
 
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
-          mutation UpdateInstrument(
-            $instrumentId: Int!
-            $instrumentInput: InstrumentInput!
-          ) {
-            instrumentUpdate(
-              instrumentID: $instrumentId
-              instrumentInput: $instrumentInput
-            ) {
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
+          mutation UpdateInstrument($instrumentId: Int!, $instrumentInput: InstrumentInput!) {
+            instrumentUpdate(instrumentID: $instrumentId, instrumentInput: $instrumentInput) {
               userErrors {
                 message
                 field
@@ -416,13 +390,15 @@ describe('Instrument E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           instrumentId: testInstrument.id,
           instrumentInput: {
             name: null,
             mozart: true,
           },
-        }) as { errors?: readonly any[] }
+        },
+      )) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0]).toBeTruthy()
@@ -449,38 +425,37 @@ describe('Instrument E2E Tests', () => {
         },
       })
 
-      const results = await testWithBothRoles(
-        'delete instrument',
-        async (role) => {
-          const instrumentId = role === 'admin' ? adminInstrument.id : userInstrument.id
+      const results = await testWithBothRoles('delete instrument', async (role) => {
+        const instrumentId = role === 'admin' ? adminInstrument.id : userInstrument.id
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation DeleteInstrument($instrumentDeleteId: Int!) {
-                instrumentDelete(instrumentID: $instrumentDeleteId) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  instrument {
-                    id
-                    name
-                    mozart
-                  }
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation DeleteInstrument($instrumentDeleteId: Int!) {
+              instrumentDelete(instrumentID: $instrumentDeleteId) {
+                userErrors {
+                  message
+                  field
+                }
+                instrument {
+                  id
+                  name
+                  mozart
                 }
               }
-            `, {
-              instrumentDeleteId: instrumentId,
-            }) as { data?: { instrumentDelete: InstrumentPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            instrumentDeleteId: instrumentId,
+          },
+        )) as { data?: { instrumentDelete: InstrumentPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            instrument: response.data?.instrumentDelete?.instrument as Instrument | undefined,
-            userErrors: response.data?.instrumentDelete?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          instrument: response.data?.instrumentDelete?.instrument as Instrument | undefined,
+          userErrors: response.data?.instrumentDelete?.userErrors,
+        }
+      })
 
       // User should be forbidden (test first since admin will delete)
       expect(results.user.isAuthorized).toBe(false)
@@ -507,8 +482,8 @@ describe('Instrument E2E Tests', () => {
     })
 
     it('Should return error when deleting non-existent instrument', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation DeleteInstrument($instrumentDeleteId: Int!) {
             instrumentDelete(instrumentID: $instrumentDeleteId) {
               userErrors {
@@ -521,9 +496,11 @@ describe('Instrument E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           instrumentDeleteId: 999999,
-        }) as { data: { instrumentDelete: InstrumentPayload } }
+        },
+      )) as { data: { instrumentDelete: InstrumentPayload } }
 
       expect(response.data.instrumentDelete.instrument).toBeNull()
       expect(response.data.instrumentDelete.userErrors).toHaveLength(1)
@@ -533,27 +510,30 @@ describe('Instrument E2E Tests', () => {
 
   describe('Authentication and Authorization', () => {
     it('Should require authentication for mutations', async () => {
-      const response = await createAuthenticatedRequest('user')
+      const response = (await createAuthenticatedRequest('user')
         .set('Cookie', '') // Remove authentication
-        .mutate(gql`
-          mutation CreateInstrument($instrumentInput: InstrumentInput!) {
-            instrumentCreate(instrumentInput: $instrumentInput) {
-              userErrors {
-                message
-                field
-              }
-              instrument {
-                id
-                name
+        .mutate(
+          gql`
+            mutation CreateInstrument($instrumentInput: InstrumentInput!) {
+              instrumentCreate(instrumentInput: $instrumentInput) {
+                userErrors {
+                  message
+                  field
+                }
+                instrument {
+                  id
+                  name
+                }
               }
             }
-          }
-        `, {
-          instrumentInput: {
-            name: 'Test',
-            mozart: true,
+          `,
+          {
+            instrumentInput: {
+              name: 'Test',
+              mozart: true,
+            },
           },
-        }) as { errors?: readonly any[] }
+        )) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0].message).toContain('Unauthorized')

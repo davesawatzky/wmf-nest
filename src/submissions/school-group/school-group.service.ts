@@ -1,4 +1,3 @@
-import type { tbl_reg_school, tbl_reg_schoolgroup } from '@prisma/client'
 import {
   BadRequestException,
   Injectable,
@@ -6,7 +5,10 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
+import type { tbl_reg_school, tbl_reg_schoolgroup } from '@prisma/client'
+
 import { PrismaService } from '@/prisma/prisma.service.js'
+
 import { SchoolGroupInput } from './dto/school-group.input.js'
 
 @Injectable()
@@ -14,10 +16,7 @@ export class SchoolGroupService {
   private readonly logger = new Logger(SchoolGroupService.name)
   constructor(private prisma: PrismaService) {}
 
-  async create(
-    schoolID: tbl_reg_school['id'],
-    schoolGroupInput?: Partial<SchoolGroupInput>,
-  ) {
+  async create(schoolID: tbl_reg_school['id'], schoolGroupInput?: Partial<SchoolGroupInput>) {
     try {
       this.logger.log(`Creating school group for school ID: ${schoolID}`)
 
@@ -42,12 +41,9 @@ export class SchoolGroupService {
         userErrors: [],
         schoolGroup,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2003') {
-        this.logger.warn(
-          `School group creation failed - Invalid school ID: ${schoolID}`,
-        )
+        this.logger.warn(`School group creation failed - Invalid school ID: ${schoolID}`)
         return {
           userErrors: [
             {
@@ -57,11 +53,8 @@ export class SchoolGroupService {
           ],
           schoolGroup: null,
         }
-      }
-      else if (error.code === 'P2002') {
-        this.logger.warn(
-          `School group creation failed - Unique constraint violation: ${error.meta?.target}`,
-        )
+      } else if (error.code === 'P2002') {
+        this.logger.warn(`School group creation failed - Unique constraint violation: ${error.meta?.target}`)
         return {
           userErrors: [
             {
@@ -71,17 +64,12 @@ export class SchoolGroupService {
           ],
           schoolGroup: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during school group creation for school ID ${schoolID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during school group creation for school ID ${schoolID}`, error)
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while creating the school group',
+              message: 'An unexpected error occurred while creating the school group',
               field: [],
             },
           ],
@@ -93,24 +81,16 @@ export class SchoolGroupService {
 
   async findAll(schoolID?: tbl_reg_schoolgroup['schoolID']) {
     try {
-      this.logger.log(
-        `Finding all school groups${schoolID ? ` for school ID: ${schoolID}` : ''}`,
-      )
+      this.logger.log(`Finding all school groups${schoolID ? ` for school ID: ${schoolID}` : ''}`)
 
       const schoolGroups = await this.prisma.tbl_reg_schoolgroup.findMany({
         where: schoolID ? { schoolID } : undefined,
       })
 
       return schoolGroups
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to find school groups${schoolID ? ` for school ID: ${schoolID}` : ''}`,
-        error,
-      )
-      throw new InternalServerErrorException(
-        'Failed to retrieve school groups',
-      )
+    } catch (error: any) {
+      this.logger.error(`Failed to find school groups${schoolID ? ` for school ID: ${schoolID}` : ''}`, error)
+      throw new InternalServerErrorException('Failed to retrieve school groups')
     }
   }
 
@@ -132,26 +112,16 @@ export class SchoolGroupService {
         throw new NotFoundException('School group not found')
       }
       return schoolGroup
-    }
-    catch (error: any) {
-      if (
-        error instanceof BadRequestException
-        || error instanceof NotFoundException
-      ) {
+    } catch (error: any) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error
       }
-      this.logger.error(
-        `Failed to find school group with ID: ${schoolGroupID}`,
-        error,
-      )
+      this.logger.error(`Failed to find school group with ID: ${schoolGroupID}`, error)
       throw new InternalServerErrorException('Failed to retrieve school group')
     }
   }
 
-  async update(
-    schoolGroupID: tbl_reg_schoolgroup['id'],
-    schoolGroupInput: Partial<SchoolGroupInput>,
-  ) {
+  async update(schoolGroupID: tbl_reg_schoolgroup['id'], schoolGroupInput: Partial<SchoolGroupInput>) {
     try {
       if (!schoolGroupID || !schoolGroupInput) {
         return {
@@ -176,12 +146,9 @@ export class SchoolGroupService {
         userErrors: [],
         schoolGroup,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(
-          `School group update failed - School group with ID ${schoolGroupID} not found`,
-        )
+        this.logger.warn(`School group update failed - School group with ID ${schoolGroupID} not found`)
         return {
           userErrors: [
             {
@@ -191,11 +158,8 @@ export class SchoolGroupService {
           ],
           schoolGroup: null,
         }
-      }
-      else if (error.code === 'P2002') {
-        this.logger.warn(
-          `School group update failed - Unique constraint violation: ${error.meta?.target}`,
-        )
+      } else if (error.code === 'P2002') {
+        this.logger.warn(`School group update failed - Unique constraint violation: ${error.meta?.target}`)
         return {
           userErrors: [
             {
@@ -205,11 +169,8 @@ export class SchoolGroupService {
           ],
           schoolGroup: null,
         }
-      }
-      else if (error.code === 'P2003') {
-        this.logger.warn(
-          `School group update failed - Invalid foreign key: ${error.meta?.field_name}`,
-        )
+      } else if (error.code === 'P2003') {
+        this.logger.warn(`School group update failed - Invalid foreign key: ${error.meta?.field_name}`)
         return {
           userErrors: [
             {
@@ -219,17 +180,12 @@ export class SchoolGroupService {
           ],
           schoolGroup: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during school group update for ID ${schoolGroupID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during school group update for ID ${schoolGroupID}`, error)
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while updating the school group',
+              message: 'An unexpected error occurred while updating the school group',
               field: [],
             },
           ],
@@ -262,12 +218,9 @@ export class SchoolGroupService {
         userErrors: [],
         schoolGroup,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(
-          `School group deletion failed - School group with ID ${schoolGroupID} not found`,
-        )
+        this.logger.warn(`School group deletion failed - School group with ID ${schoolGroupID} not found`)
         return {
           userErrors: [
             {
@@ -277,32 +230,25 @@ export class SchoolGroupService {
           ],
           schoolGroup: null,
         }
-      }
-      else if (error.code === 'P2003') {
+      } else if (error.code === 'P2003') {
         this.logger.warn(
           `School group deletion failed - Foreign key constraint violation for school group ${schoolGroupID}`,
         )
         return {
           userErrors: [
             {
-              message:
-                'Cannot delete school group with existing related records',
+              message: 'Cannot delete school group with existing related records',
               field: ['id'],
             },
           ],
           schoolGroup: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during school group deletion for ID ${schoolGroupID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during school group deletion for ID ${schoolGroupID}`, error)
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while deleting the school group',
+              message: 'An unexpected error occurred while deleting the school group',
               field: [],
             },
           ],

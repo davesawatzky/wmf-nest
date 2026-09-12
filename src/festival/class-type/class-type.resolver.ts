@@ -1,19 +1,13 @@
-import type { tbl_class_type } from '@prisma/client'
 import { Logger, UseGuards } from '@nestjs/common'
-import {
-  Args,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import type { tbl_class_type } from '@prisma/client'
+
 import { CheckAbilities } from '@/ability/abilities.decorator.js'
 import { AbilitiesGuard } from '@/ability/abilities.guard.js'
 import { Action } from '@/ability/ability.factory.js'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
 import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity.js'
+
 import { ClassTypeDataLoader } from './class-type.dataloader.js'
 import { ClassTypeService } from './class-type.service.js'
 import { ClassTypeInput } from './dto/class-type.input.js'
@@ -52,9 +46,7 @@ export class ClassTypeResolver {
   @Mutation(() => ClassTypePayload)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Create, subject: ClassType })
-  async classTypeCreate(
-    @Args('classTypeInput') classTypeInput: ClassTypeInput,
-  ) {
+  async classTypeCreate(@Args('classTypeInput') classTypeInput: ClassTypeInput) {
     this.logger.log(`Creating class type: ${classTypeInput.name}`)
     return await this.classTypeService.create(classTypeInput)
   }
@@ -73,9 +65,7 @@ export class ClassTypeResolver {
   @Mutation(() => ClassTypePayload)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Delete, subject: ClassType })
-  async classTypeDelete(
-    @Args('classTypeID', { type: () => Int }) classTypeID: ClassType['id'],
-  ) {
+  async classTypeDelete(@Args('classTypeID', { type: () => Int }) classTypeID: ClassType['id']) {
     this.logger.log(`Deleting class type ID: ${classTypeID}`)
     return await this.classTypeService.remove(classTypeID)
   }

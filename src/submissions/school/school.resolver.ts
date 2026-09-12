@@ -1,21 +1,14 @@
+import { Logger, UseGuards } from '@nestjs/common'
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import type { tbl_reg_school, tbl_registration } from '@prisma/client'
 
-import { Logger, UseGuards } from '@nestjs/common'
-import {
-  Args,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
 import { CheckAbilities } from '@/ability/abilities.decorator.js'
 import { AbilitiesGuard } from '@/ability/abilities.guard.js'
 import { Action } from '@/ability/ability.factory.js'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
 import { Registration } from '@/submissions/registration/entities/registration.entity.js'
 import { SchoolGroup } from '@/submissions/school-group/entities/school-group.entity.js'
+
 import { SchoolInput } from './dto/school.input.js'
 import { School, SchoolPayload } from './entities/school.entity.js'
 import { SchoolDataLoader } from './school.dataloader.js'
@@ -50,7 +43,9 @@ export class SchoolResolver {
     @Args('schoolID', { type: () => Int, nullable: true })
     schoolID: School['id'],
   ) {
-    this.logger.log(`Fetching school${registrationID ? ` for registration ID: ${registrationID}` : ` with ID: ${schoolID}`}`)
+    this.logger.log(
+      `Fetching school${registrationID ? ` for registration ID: ${registrationID}` : ` with ID: ${schoolID}`}`,
+    )
     return await this.schoolService.findOne(registrationID, schoolID)
   }
 
@@ -93,9 +88,7 @@ export class SchoolResolver {
     return await this.schoolService.remove(schoolID)
   }
 
-  /**
-   * Field Resolvers
-   */
+  /** Field Resolvers */
   @ResolveField(() => [SchoolGroup])
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: SchoolGroup })

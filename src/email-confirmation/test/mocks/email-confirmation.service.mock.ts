@@ -1,18 +1,20 @@
-import type { EmailConfirmationService } from '@/email-confirmation/email-confirmation.service.js'
 import { vi } from 'vitest'
+
+import type { EmailConfirmationService } from '@/email-confirmation/email-confirmation.service.js'
 
 /**
  * Mock implementation of EmailConfirmationService for E2E testing.
  *
- * This mock prevents actual SMTP emails while preserving business logic validation.
- * All methods match the real service return types and validate inputs appropriately.
+ * This mock prevents actual SMTP emails while preserving business logic validation. All methods match the real service
+ * return types and validate inputs appropriately.
  *
  * Mock behaviors:
- * - sendVerificationLink: void (async, no return) - validates inputs, prevents SMTP
- * - sendPasswordResetLink: void (async, no return) - validates inputs, prevents SMTP
- * - confirmEmail: Promise<boolean> - validates user state and updates database
- * - resendConfirmationLink: void (async, no return) - validates user state
- * - resendPasswordLink: void (async, no return) - validates passwordResetPending flag
+ *
+ * - SendVerificationLink: void (async, no return) - validates inputs, prevents SMTP
+ * - SendPasswordResetLink: void (async, no return) - validates inputs, prevents SMTP
+ * - ConfirmEmail: Promise<boolean> - validates user state and updates database
+ * - ResendConfirmationLink: void (async, no return) - validates user state
+ * - ResendPasswordLink: void (async, no return) - validates passwordResetPending flag
  *
  * All database operations use lazy evaluation to access globalThis.prisma at runtime.
  */

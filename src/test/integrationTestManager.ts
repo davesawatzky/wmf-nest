@@ -1,4 +1,5 @@
 import process from 'node:process'
+
 import { INestApplication, ValidationPipe } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import cookieParser from 'cookie-parser'
@@ -7,6 +8,7 @@ import helmet from 'helmet'
 import { AuthPayload } from 'src/auth/entities/auth.entity.js'
 import { EmailConfirmationService } from 'src/email-confirmation/email-confirmation.service.js'
 import request from 'supertest-graphql'
+
 import { AppModule } from '../app.module.js'
 import { PrismaService } from '../prisma/prisma.service.js'
 import { TestUser } from './testUser.js'
@@ -37,16 +39,9 @@ export class IntegrationTestManager {
         crossOriginEmbedderPolicy: false,
         contentSecurityPolicy: {
           directives: {
-            imgSrc: [
-              `'self'`,
-              'data:',
-              'apollo-server-landing-page.cdn.apollographql.com',
-            ],
+            imgSrc: [`'self'`, 'data:', 'apollo-server-landing-page.cdn.apollographql.com'],
             scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
-            manifestSrc: [
-              `'self'`,
-              'apollo-server-landing-page.cdn.apollographql.com',
-            ],
+            manifestSrc: [`'self'`, 'apollo-server-landing-page.cdn.apollographql.com'],
             frameSrc: [`'self'`, 'sandbox.embed.apollographql.com'],
           },
         },

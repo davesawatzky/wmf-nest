@@ -1,14 +1,9 @@
 import { gql } from 'graphql-tag'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import {
-  createAuthenticatedRequest,
-  getUserId,
-  testWithBothRoles,
-} from '@/test/testHelpers.js'
-import {
-  RegisteredClass,
-  RegisteredClassPayload,
-} from '../entities/registered-class.entity.js'
+
+import { createAuthenticatedRequest, getUserId, testWithBothRoles } from '@/test/testHelpers.js'
+
+import { RegisteredClass, RegisteredClassPayload } from '../entities/registered-class.entity.js'
 
 describe('RegisteredClass E2E Tests', () => {
   let testAdminRegistrationId: number
@@ -101,7 +96,7 @@ describe('RegisteredClass E2E Tests', () => {
 
   describe('RegisteredClass Queries', () => {
     it('Should list all registered classes for admin only', async () => {
-      const response = await createAuthenticatedRequest('admin')
+      const response = (await createAuthenticatedRequest('admin')
         .query(gql`
           query GetRegisteredClasses {
             registeredClasses {
@@ -116,7 +111,7 @@ describe('RegisteredClass E2E Tests', () => {
             }
           }
         `)
-        .expectNoErrors() as { data: { registeredClasses: RegisteredClass[] } }
+        .expectNoErrors()) as { data: { registeredClasses: RegisteredClass[] } }
 
       expect(response.data.registeredClasses).toBeTruthy()
       expect(Array.isArray(response.data.registeredClasses)).toBe(true)
@@ -131,35 +126,32 @@ describe('RegisteredClass E2E Tests', () => {
     })
 
     it('Should filter registered classes by registration ID; admin gets all, user gets filtered', async () => {
-      const results = await testWithBothRoles(
-        'filter by registrationID',
-        async (role) => {
-          const regId = role === 'admin' ? testAdminRegistrationId : testUserRegistrationId
+      const results = await testWithBothRoles('filter by registrationID', async (role) => {
+        const regId = role === 'admin' ? testAdminRegistrationId : testUserRegistrationId
 
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetRegisteredClasses($registrationID: Int) {
-                registeredClasses(registrationID: $registrationID) {
-                  id
-                  regID
-                  classNumber
-                  discipline
-                }
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetRegisteredClasses($registrationID: Int) {
+              registeredClasses(registrationID: $registrationID) {
+                id
+                regID
+                classNumber
+                discipline
               }
-            `)
-            .variables({ registrationID: regId })
-            .expectNoErrors() as { data: { registeredClasses: RegisteredClass[] } }
+            }
+          `)
+          .variables({ registrationID: regId })
+          .expectNoErrors()) as { data: { registeredClasses: RegisteredClass[] } }
 
-          return {
-            hasData: !!response.data.registeredClasses,
-            count: response.data.registeredClasses?.length || 0,
-            // Admin ignores filter and gets all; user gets filtered by registrationID
-            containsTestClass: response.data.registeredClasses?.some(
-              (regClass: RegisteredClass) => regClass.regID === regId,
-            ),
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.registeredClasses,
+          count: response.data.registeredClasses?.length || 0,
+          // Admin ignores filter and gets all; user gets filtered by registrationID
+          containsTestClass: response.data.registeredClasses?.some(
+            (regClass: RegisteredClass) => regClass.regID === regId,
+          ),
+        }
+      })
 
       // Admin gets all confirmed registered classes (ignores filter)
       // The resolver overrides registrationID to null for admin users
@@ -174,36 +166,33 @@ describe('RegisteredClass E2E Tests', () => {
     })
 
     it('Should find specific registered class by ID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'find registered class by ID',
-        async (role) => {
-          const classId = role === 'admin' ? testAdminRegisteredClassId : testUserRegisteredClassId
+      const results = await testWithBothRoles('find registered class by ID', async (role) => {
+        const classId = role === 'admin' ? testAdminRegisteredClassId : testUserRegisteredClassId
 
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetRegisteredClass($registeredClassID: Int!) {
-                registeredClass(registeredClassID: $registeredClassID) {
-                  id
-                  regID
-                  classType
-                  classNumber
-                  discipline
-                  subdiscipline
-                  level
-                  category
-                }
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetRegisteredClass($registeredClassID: Int!) {
+              registeredClass(registeredClassID: $registeredClassID) {
+                id
+                regID
+                classType
+                classNumber
+                discipline
+                subdiscipline
+                level
+                category
               }
-            `)
-            .variables({ registeredClassID: classId })
-            .expectNoErrors() as { data: { registeredClass: RegisteredClass } }
+            }
+          `)
+          .variables({ registeredClassID: classId })
+          .expectNoErrors()) as { data: { registeredClass: RegisteredClass } }
 
-          return {
-            hasData: !!response.data.registeredClass,
-            registeredClass: response.data.registeredClass,
-            correctId: response.data.registeredClass?.id === classId,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.registeredClass,
+          registeredClass: response.data.registeredClass,
+          correctId: response.data.registeredClass?.id === classId,
+        }
+      })
 
       // Both roles should successfully retrieve their registered class
       expect(results.admin.hasData).toBe(true)
@@ -216,29 +205,26 @@ describe('RegisteredClass E2E Tests', () => {
     })
 
     it('Should handle not found error for non-existent registered class', async () => {
-      const results = await testWithBothRoles(
-        'find non-existent registered class',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetRegisteredClass($registeredClassID: Int!) {
-                registeredClass(registeredClassID: $registeredClassID) {
-                  id
-                  classNumber
-                }
+      const results = await testWithBothRoles('find non-existent registered class', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetRegisteredClass($registeredClassID: Int!) {
+              registeredClass(registeredClassID: $registeredClassID) {
+                id
+                classNumber
               }
-            `)
-            .variables({ registeredClassID: 999999 }) as {
-            data?: { registeredClass: RegisteredClass }
-            errors?: readonly any[]
-          }
+            }
+          `)
+          .variables({ registeredClassID: 999999 })) as {
+          data?: { registeredClass: RegisteredClass }
+          errors?: readonly any[]
+        }
 
-          return {
-            hasErrors: !!response.errors,
-            errorMessage: response.errors?.[0]?.message,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          errorMessage: response.errors?.[0]?.message,
+        }
+      })
 
       // Both roles should get the same not found error
       expect(results.admin.hasErrors).toBe(true)
@@ -248,7 +234,7 @@ describe('RegisteredClass E2E Tests', () => {
     })
 
     it('Should return correct data types for registered class fields', async () => {
-      const response = await createAuthenticatedRequest('admin')
+      const response = (await createAuthenticatedRequest('admin')
         .query(gql`
           query GetRegisteredClasses {
             registeredClasses {
@@ -261,7 +247,7 @@ describe('RegisteredClass E2E Tests', () => {
             }
           }
         `)
-        .expectNoErrors() as { data: { registeredClasses: RegisteredClass[] } }
+        .expectNoErrors()) as { data: { registeredClasses: RegisteredClass[] } }
 
       const firstClass = response.data.registeredClasses[0]
       expect(typeof firstClass.id).toBe('number')
@@ -279,70 +265,61 @@ describe('RegisteredClass E2E Tests', () => {
 
   describe('RegisteredClass Create Tests', () => {
     it('Should enforce create authorization: both roles can create', async () => {
-      const results = await testWithBothRoles(
-        'create registered class',
-        async (role) => {
-          const regId = role === 'admin' ? testAdminRegistrationId : testUserRegistrationId
+      const results = await testWithBothRoles('create registered class', async (role) => {
+        const regId = role === 'admin' ? testAdminRegistrationId : testUserRegistrationId
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CreateRegisteredClass(
-                $registrationID: Int!
-                $registeredClass: RegisteredClassInput
-              ) {
-                registeredClassCreate(
-                  registrationID: $registrationID
-                  registeredClass: $registeredClass
-                ) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  registeredClass {
-                    id
-                    regID
-                    classType
-                    classNumber
-                    discipline
-                    price
-                  }
+        const response = (await createAuthenticatedRequest(role)
+          .mutate(gql`
+            mutation CreateRegisteredClass($registrationID: Int!, $registeredClass: RegisteredClassInput) {
+              registeredClassCreate(registrationID: $registrationID, registeredClass: $registeredClass) {
+                userErrors {
+                  message
+                  field
+                }
+                registeredClass {
+                  id
+                  regID
+                  classType
+                  classNumber
+                  discipline
+                  price
                 }
               }
-            `)
-            .variables({
-              registrationID: regId,
-              registeredClass: {
-                classType: 'Solo Competition',
-                classNumber: `t${role[0]}_c1`,
-                discipline: 'Strings',
-                subdiscipline: 'Violin',
-                level: 'Grade 3',
-                category: 'Solo',
-                numberOfSelections: 1,
-                minSelections: 1,
-                maxSelections: 2,
-                price: 30.5,
-              },
-            }) as {
-            data?: { registeredClassCreate: RegisteredClassPayload }
-            errors?: readonly any[]
-          }
+            }
+          `)
+          .variables({
+            registrationID: regId,
+            registeredClass: {
+              classType: 'Solo Competition',
+              classNumber: `t${role[0]}_c1`,
+              discipline: 'Strings',
+              subdiscipline: 'Violin',
+              level: 'Grade 3',
+              category: 'Solo',
+              numberOfSelections: 1,
+              minSelections: 1,
+              maxSelections: 2,
+              price: 30.5,
+            },
+          })) as {
+          data?: { registeredClassCreate: RegisteredClassPayload }
+          errors?: readonly any[]
+        }
 
-          // Clean up created registered class
-          if (response.data?.registeredClassCreate?.registeredClass?.id) {
-            await globalThis.prisma.tbl_reg_class.delete({
-              where: { id: response.data.registeredClassCreate.registeredClass.id },
-            })
-          }
+        // Clean up created registered class
+        if (response.data?.registeredClassCreate?.registeredClass?.id) {
+          await globalThis.prisma.tbl_reg_class.delete({
+            where: { id: response.data.registeredClassCreate.registeredClass.id },
+          })
+        }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            registeredClass: response.data?.registeredClassCreate?.registeredClass as RegisteredClass | undefined,
-            userErrors: response.data?.registeredClassCreate?.userErrors || [],
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          registeredClass: response.data?.registeredClassCreate?.registeredClass as RegisteredClass | undefined,
+          userErrors: response.data?.registeredClassCreate?.userErrors || [],
+        }
+      })
 
       // Both roles should successfully create registered classes
       expect(results.admin.isAuthorized).toBe(true)
@@ -359,54 +336,45 @@ describe('RegisteredClass E2E Tests', () => {
     })
 
     it('Should create registered class with minimal data for both roles', async () => {
-      const results = await testWithBothRoles(
-        'create with minimal data',
-        async (role) => {
-          const regId = role === 'admin' ? testAdminRegistrationId : testUserRegistrationId
+      const results = await testWithBothRoles('create with minimal data', async (role) => {
+        const regId = role === 'admin' ? testAdminRegistrationId : testUserRegistrationId
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CreateRegisteredClass(
-                $registrationID: Int!
-                $registeredClass: RegisteredClassInput
-              ) {
-                registeredClassCreate(
-                  registrationID: $registrationID
-                  registeredClass: $registeredClass
-                ) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  registeredClass {
-                    id
-                    regID
-                    price
-                  }
+        const response = (await createAuthenticatedRequest(role)
+          .mutate(gql`
+            mutation CreateRegisteredClass($registrationID: Int!, $registeredClass: RegisteredClassInput) {
+              registeredClassCreate(registrationID: $registrationID, registeredClass: $registeredClass) {
+                userErrors {
+                  message
+                  field
+                }
+                registeredClass {
+                  id
+                  regID
+                  price
                 }
               }
-            `)
-            .variables({
-              registrationID: regId,
-              registeredClass: {
-                price: 25.0,
-              },
-            }) as { data?: { registeredClassCreate: RegisteredClassPayload } }
+            }
+          `)
+          .variables({
+            registrationID: regId,
+            registeredClass: {
+              price: 25.0,
+            },
+          })) as { data?: { registeredClassCreate: RegisteredClassPayload } }
 
-          // Clean up
-          if (response.data?.registeredClassCreate?.registeredClass?.id) {
-            await globalThis.prisma.tbl_reg_class.delete({
-              where: { id: response.data.registeredClassCreate.registeredClass.id },
-            })
-          }
+        // Clean up
+        if (response.data?.registeredClassCreate?.registeredClass?.id) {
+          await globalThis.prisma.tbl_reg_class.delete({
+            where: { id: response.data.registeredClassCreate.registeredClass.id },
+          })
+        }
 
-          return {
-            registeredClass: response.data?.registeredClassCreate?.registeredClass as RegisteredClass | undefined,
-            userErrors: response.data?.registeredClassCreate?.userErrors || [],
-            correctRegId: response.data?.registeredClassCreate?.registeredClass?.regID === regId,
-          }
-        },
-      )
+        return {
+          registeredClass: response.data?.registeredClassCreate?.registeredClass as RegisteredClass | undefined,
+          userErrors: response.data?.registeredClassCreate?.userErrors || [],
+          correctRegId: response.data?.registeredClassCreate?.registeredClass?.regID === regId,
+        }
+      })
 
       // Both roles should create with minimal data
       expect(results.admin.registeredClass).toBeTruthy()
@@ -419,44 +387,35 @@ describe('RegisteredClass E2E Tests', () => {
     })
 
     it('Should handle validation errors for invalid registration ID', async () => {
-      const results = await testWithBothRoles(
-        'create with invalid registration ID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CreateRegisteredClass(
-                $registrationID: Int!
-                $registeredClass: RegisteredClassInput
-              ) {
-                registeredClassCreate(
-                  registrationID: $registrationID
-                  registeredClass: $registeredClass
-                ) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  registeredClass {
-                    id
-                  }
+      const results = await testWithBothRoles('create with invalid registration ID', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .mutate(gql`
+            mutation CreateRegisteredClass($registrationID: Int!, $registeredClass: RegisteredClassInput) {
+              registeredClassCreate(registrationID: $registrationID, registeredClass: $registeredClass) {
+                userErrors {
+                  message
+                  field
+                }
+                registeredClass {
+                  id
                 }
               }
-            `)
-            .variables({
-              registrationID: 999999,
-              registeredClass: {
-                classNumber: `t${role[0]}_i`,
-                price: 25.0,
-              },
-            }) as { data?: { registeredClassCreate: RegisteredClassPayload } }
+            }
+          `)
+          .variables({
+            registrationID: 999999,
+            registeredClass: {
+              classNumber: `t${role[0]}_i`,
+              price: 25.0,
+            },
+          })) as { data?: { registeredClassCreate: RegisteredClassPayload } }
 
-          return {
-            hasUserErrors: (response.data?.registeredClassCreate?.userErrors?.length || 0) > 0,
-            userErrors: response.data?.registeredClassCreate?.userErrors || [],
-            registeredClass: response.data?.registeredClassCreate?.registeredClass,
-          }
-        },
-      )
+        return {
+          hasUserErrors: (response.data?.registeredClassCreate?.userErrors?.length || 0) > 0,
+          userErrors: response.data?.registeredClassCreate?.userErrors || [],
+          registeredClass: response.data?.registeredClassCreate?.registeredClass,
+        }
+      })
 
       // Both roles should get validation errors
       expect(results.admin.hasUserErrors).toBe(true)
@@ -509,9 +468,7 @@ describe('RegisteredClass E2E Tests', () => {
 
     afterAll(async () => {
       // Clean up update test registered classes
-      const idsToDelete = [updateTestAdminClassId, updateTestUserClassId].filter(
-        id => id !== undefined,
-      )
+      const idsToDelete = [updateTestAdminClassId, updateTestUserClassId].filter((id) => id !== undefined)
       if (idsToDelete.length > 0) {
         await globalThis.prisma.tbl_reg_class.deleteMany({
           where: {
@@ -522,63 +479,57 @@ describe('RegisteredClass E2E Tests', () => {
     })
 
     it('Should successfully update registered class for both roles', async () => {
-      const results = await testWithBothRoles(
-        'update registered class',
-        async (role) => {
-          const classId = role === 'admin' ? updateTestAdminClassId : updateTestUserClassId
+      const results = await testWithBothRoles('update registered class', async (role) => {
+        const classId = role === 'admin' ? updateTestAdminClassId : updateTestUserClassId
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation UpdateRegisteredClass(
-                $registeredClassID: Int!
-                $registeredClassInput: RegisteredClassInput!
+        const response = (await createAuthenticatedRequest(role)
+          .mutate(gql`
+            mutation UpdateRegisteredClass($registeredClassID: Int!, $registeredClassInput: RegisteredClassInput!) {
+              registeredClassUpdate(
+                registeredClassID: $registeredClassID
+                registeredClassInput: $registeredClassInput
               ) {
-                registeredClassUpdate(
-                  registeredClassID: $registeredClassID
-                  registeredClassInput: $registeredClassInput
-                ) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  registeredClass {
-                    id
-                    classType
-                    classNumber
-                    discipline
-                    subdiscipline
-                    numberOfSelections
-                    price
-                  }
+                userErrors {
+                  message
+                  field
+                }
+                registeredClass {
+                  id
+                  classType
+                  classNumber
+                  discipline
+                  subdiscipline
+                  numberOfSelections
+                  price
                 }
               }
-            `)
-            .variables({
-              registeredClassID: classId,
-              registeredClassInput: {
-                classType: 'Updated Solo Class',
-                classNumber: `t${role[0]}_up`,
-                discipline: 'Brass',
-                subdiscipline: 'Trumpet',
-                numberOfSelections: 3,
-                price: 35.75,
-              },
-            }) as {
-            data?: { registeredClassUpdate: RegisteredClassPayload }
-            errors?: readonly any[]
-          }
+            }
+          `)
+          .variables({
+            registeredClassID: classId,
+            registeredClassInput: {
+              classType: 'Updated Solo Class',
+              classNumber: `t${role[0]}_up`,
+              discipline: 'Brass',
+              subdiscipline: 'Trumpet',
+              numberOfSelections: 3,
+              price: 35.75,
+            },
+          })) as {
+          data?: { registeredClassUpdate: RegisteredClassPayload }
+          errors?: readonly any[]
+        }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            registeredClass: response.data?.registeredClassUpdate?.registeredClass as RegisteredClass | undefined,
-            userErrors: response.data?.registeredClassUpdate?.userErrors || [],
-            hasCorrectUpdates:
-              response.data?.registeredClassUpdate?.registeredClass?.classType === 'Updated Solo Class'
-              && response.data?.registeredClassUpdate?.registeredClass?.discipline === 'Brass',
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          registeredClass: response.data?.registeredClassUpdate?.registeredClass as RegisteredClass | undefined,
+          userErrors: response.data?.registeredClassUpdate?.userErrors || [],
+          hasCorrectUpdates:
+            response.data?.registeredClassUpdate?.registeredClass?.classType === 'Updated Solo Class' &&
+            response.data?.registeredClassUpdate?.registeredClass?.discipline === 'Brass',
+        }
+      })
 
       // Both roles should successfully update
       expect(results.admin.isAuthorized).toBe(true)
@@ -595,44 +546,38 @@ describe('RegisteredClass E2E Tests', () => {
     })
 
     it('Should handle update with invalid registered class ID', async () => {
-      const results = await testWithBothRoles(
-        'update non-existent registered class',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation UpdateRegisteredClass(
-                $registeredClassID: Int!
-                $registeredClassInput: RegisteredClassInput!
+      const results = await testWithBothRoles('update non-existent registered class', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .mutate(gql`
+            mutation UpdateRegisteredClass($registeredClassID: Int!, $registeredClassInput: RegisteredClassInput!) {
+              registeredClassUpdate(
+                registeredClassID: $registeredClassID
+                registeredClassInput: $registeredClassInput
               ) {
-                registeredClassUpdate(
-                  registeredClassID: $registeredClassID
-                  registeredClassInput: $registeredClassInput
-                ) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  registeredClass {
-                    id
-                  }
+                userErrors {
+                  message
+                  field
+                }
+                registeredClass {
+                  id
                 }
               }
-            `)
-            .variables({
-              registeredClassID: 999999,
-              registeredClassInput: {
-                classType: 'Non-existent Class',
-                price: 25.0,
-              },
-            }) as { data?: { registeredClassUpdate: RegisteredClassPayload } }
+            }
+          `)
+          .variables({
+            registeredClassID: 999999,
+            registeredClassInput: {
+              classType: 'Non-existent Class',
+              price: 25.0,
+            },
+          })) as { data?: { registeredClassUpdate: RegisteredClassPayload } }
 
-          return {
-            hasUserErrors: (response.data?.registeredClassUpdate?.userErrors?.length || 0) > 0,
-            userErrors: response.data?.registeredClassUpdate?.userErrors || [],
-            registeredClass: response.data?.registeredClassUpdate?.registeredClass,
-          }
-        },
-      )
+        return {
+          hasUserErrors: (response.data?.registeredClassUpdate?.userErrors?.length || 0) > 0,
+          userErrors: response.data?.registeredClassUpdate?.userErrors || [],
+          registeredClass: response.data?.registeredClassUpdate?.registeredClass,
+        }
+      })
 
       // Both roles should get user errors
       expect(results.admin.hasUserErrors).toBe(true)
@@ -642,43 +587,37 @@ describe('RegisteredClass E2E Tests', () => {
     })
 
     it('Should handle update with null ID error', async () => {
-      const results = await testWithBothRoles(
-        'update with null ID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation UpdateRegisteredClass(
-                $registeredClassID: Int!
-                $registeredClassInput: RegisteredClassInput!
+      const results = await testWithBothRoles('update with null ID', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .mutate(gql`
+            mutation UpdateRegisteredClass($registeredClassID: Int!, $registeredClassInput: RegisteredClassInput!) {
+              registeredClassUpdate(
+                registeredClassID: $registeredClassID
+                registeredClassInput: $registeredClassInput
               ) {
-                registeredClassUpdate(
-                  registeredClassID: $registeredClassID
-                  registeredClassInput: $registeredClassInput
-                ) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  registeredClass {
-                    id
-                  }
+                userErrors {
+                  message
+                  field
+                }
+                registeredClass {
+                  id
                 }
               }
-            `)
-            .variables({
-              registeredClassID: null,
-              registeredClassInput: { price: 25.0 },
-            }) as {
-            data?: { registeredClassUpdate: RegisteredClassPayload }
-            errors?: readonly any[]
-          }
+            }
+          `)
+          .variables({
+            registeredClassID: null,
+            registeredClassInput: { price: 25.0 },
+          })) as {
+          data?: { registeredClassUpdate: RegisteredClassPayload }
+          errors?: readonly any[]
+        }
 
-          return {
-            hasErrors: !!response.errors,
-            errorMessage: response.errors?.[0]?.message,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          errorMessage: response.errors?.[0]?.message,
+        }
+      })
 
       // Both roles should get GraphQL validation errors
       expect(results.admin.hasErrors).toBe(true)
@@ -688,54 +627,51 @@ describe('RegisteredClass E2E Tests', () => {
 
   describe('RegisteredClass Delete Tests', () => {
     it('Should enforce delete authorization: both roles can delete', async () => {
-      const results = await testWithBothRoles(
-        'delete registered class',
-        async (role) => {
-          const regId = role === 'admin' ? testAdminRegistrationId : testUserRegistrationId
+      const results = await testWithBothRoles('delete registered class', async (role) => {
+        const regId = role === 'admin' ? testAdminRegistrationId : testUserRegistrationId
 
-          // Create a registered class to delete
-          const testClass = await globalThis.prisma.tbl_reg_class.create({
-            data: {
-              regID: regId,
-              classType: 'Delete Test Class',
-              classNumber: `t${role[0]}_d`,
-              discipline: 'Percussion',
-              subdiscipline: 'Drums',
-              level: 'Beginner',
-              category: 'Solo',
-              price: 15.0,
-            },
-          })
+        // Create a registered class to delete
+        const testClass = await globalThis.prisma.tbl_reg_class.create({
+          data: {
+            regID: regId,
+            classType: 'Delete Test Class',
+            classNumber: `t${role[0]}_d`,
+            discipline: 'Percussion',
+            subdiscipline: 'Drums',
+            level: 'Beginner',
+            category: 'Solo',
+            price: 15.0,
+          },
+        })
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation DeleteRegisteredClass($registeredClassID: Int!) {
-                registeredClassDelete(registeredClassID: $registeredClassID) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  registeredClass {
-                    id
-                    classNumber
-                    discipline
-                  }
+        const response = (await createAuthenticatedRequest(role)
+          .mutate(gql`
+            mutation DeleteRegisteredClass($registeredClassID: Int!) {
+              registeredClassDelete(registeredClassID: $registeredClassID) {
+                userErrors {
+                  message
+                  field
+                }
+                registeredClass {
+                  id
+                  classNumber
+                  discipline
                 }
               }
-            `)
-            .variables({ registeredClassID: testClass.id }) as {
-            data?: { registeredClassDelete: RegisteredClassPayload }
-            errors?: readonly any[]
-          }
+            }
+          `)
+          .variables({ registeredClassID: testClass.id })) as {
+          data?: { registeredClassDelete: RegisteredClassPayload }
+          errors?: readonly any[]
+        }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            registeredClass: response.data?.registeredClassDelete?.registeredClass as RegisteredClass | undefined,
-            userErrors: response.data?.registeredClassDelete?.userErrors || [],
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          registeredClass: response.data?.registeredClassDelete?.registeredClass as RegisteredClass | undefined,
+          userErrors: response.data?.registeredClassDelete?.userErrors || [],
+        }
+      })
 
       // Both roles should successfully delete
       expect(results.admin.isAuthorized).toBe(true)
@@ -750,34 +686,31 @@ describe('RegisteredClass E2E Tests', () => {
     })
 
     it('Should handle delete of non-existent registered class', async () => {
-      const results = await testWithBothRoles(
-        'delete non-existent registered class',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation DeleteRegisteredClass($registeredClassID: Int!) {
-                registeredClassDelete(registeredClassID: $registeredClassID) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  registeredClass {
-                    id
-                  }
+      const results = await testWithBothRoles('delete non-existent registered class', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .mutate(gql`
+            mutation DeleteRegisteredClass($registeredClassID: Int!) {
+              registeredClassDelete(registeredClassID: $registeredClassID) {
+                userErrors {
+                  message
+                  field
+                }
+                registeredClass {
+                  id
                 }
               }
-            `)
-            .variables({ registeredClassID: 999999 }) as {
-            data?: { registeredClassDelete: RegisteredClassPayload }
-          }
+            }
+          `)
+          .variables({ registeredClassID: 999999 })) as {
+          data?: { registeredClassDelete: RegisteredClassPayload }
+        }
 
-          return {
-            hasUserErrors: (response.data?.registeredClassDelete?.userErrors?.length || 0) > 0,
-            userErrors: response.data?.registeredClassDelete?.userErrors || [],
-            registeredClass: response.data?.registeredClassDelete?.registeredClass,
-          }
-        },
-      )
+        return {
+          hasUserErrors: (response.data?.registeredClassDelete?.userErrors?.length || 0) > 0,
+          userErrors: response.data?.registeredClassDelete?.userErrors || [],
+          registeredClass: response.data?.registeredClassDelete?.registeredClass,
+        }
+      })
 
       // Both roles should get user errors
       expect(results.admin.hasUserErrors).toBe(true)
@@ -787,34 +720,31 @@ describe('RegisteredClass E2E Tests', () => {
     })
 
     it('Should handle delete with null ID error', async () => {
-      const results = await testWithBothRoles(
-        'delete with null ID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation DeleteRegisteredClass($registeredClassID: Int!) {
-                registeredClassDelete(registeredClassID: $registeredClassID) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  registeredClass {
-                    id
-                  }
+      const results = await testWithBothRoles('delete with null ID', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .mutate(gql`
+            mutation DeleteRegisteredClass($registeredClassID: Int!) {
+              registeredClassDelete(registeredClassID: $registeredClassID) {
+                userErrors {
+                  message
+                  field
+                }
+                registeredClass {
+                  id
                 }
               }
-            `)
-            .variables({ registeredClassID: null }) as {
-            data?: { registeredClassDelete: RegisteredClassPayload }
-            errors?: readonly any[]
-          }
+            }
+          `)
+          .variables({ registeredClassID: null })) as {
+          data?: { registeredClassDelete: RegisteredClassPayload }
+          errors?: readonly any[]
+        }
 
-          return {
-            hasErrors: !!response.errors,
-            errorMessage: response.errors?.[0]?.message,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          errorMessage: response.errors?.[0]?.message,
+        }
+      })
 
       // Both roles should get GraphQL validation errors
       expect(results.admin.hasErrors).toBe(true)
@@ -824,7 +754,7 @@ describe('RegisteredClass E2E Tests', () => {
 
   describe('Field Resolvers', () => {
     it('Should resolve selections field for registered class', async () => {
-      const response = await createAuthenticatedRequest('admin')
+      const response = (await createAuthenticatedRequest('admin')
         .query(gql`
           query GetRegisteredClassWithSelections($registeredClassID: Int!) {
             registeredClass(registeredClassID: $registeredClassID) {
@@ -839,7 +769,7 @@ describe('RegisteredClass E2E Tests', () => {
           }
         `)
         .variables({ registeredClassID: testAdminRegisteredClassId })
-        .expectNoErrors() as { data: { registeredClass: RegisteredClass } }
+        .expectNoErrors()) as { data: { registeredClass: RegisteredClass } }
 
       expect(response.data.registeredClass).toBeTruthy()
       expect(response.data.registeredClass.selections).toBeDefined()
@@ -847,7 +777,7 @@ describe('RegisteredClass E2E Tests', () => {
     })
 
     it('Should resolve performers field for registered class', async () => {
-      const response = await createAuthenticatedRequest('admin')
+      const response = (await createAuthenticatedRequest('admin')
         .query(gql`
           query GetRegisteredClassWithPerformers($registeredClassID: Int!) {
             registeredClass(registeredClassID: $registeredClassID) {
@@ -862,7 +792,7 @@ describe('RegisteredClass E2E Tests', () => {
           }
         `)
         .variables({ registeredClassID: testAdminRegisteredClassId })
-        .expectNoErrors() as { data: { registeredClass: RegisteredClass } }
+        .expectNoErrors()) as { data: { registeredClass: RegisteredClass } }
 
       expect(response.data.registeredClass).toBeTruthy()
       expect(response.data.registeredClass.performers).toBeDefined()
@@ -872,52 +802,43 @@ describe('RegisteredClass E2E Tests', () => {
 
   describe('Data Validation and Business Logic', () => {
     it('Should validate price format with decimal precision', async () => {
-      const results = await testWithBothRoles(
-        'validate price precision',
-        async (role) => {
-          const regId = role === 'admin' ? testAdminRegistrationId : testUserRegistrationId
+      const results = await testWithBothRoles('validate price precision', async (role) => {
+        const regId = role === 'admin' ? testAdminRegistrationId : testUserRegistrationId
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CreateRegisteredClass(
-                $registrationID: Int!
-                $registeredClass: RegisteredClassInput
-              ) {
-                registeredClassCreate(
-                  registrationID: $registrationID
-                  registeredClass: $registeredClass
-                ) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  registeredClass {
-                    id
-                    price
-                  }
+        const response = (await createAuthenticatedRequest(role)
+          .mutate(gql`
+            mutation CreateRegisteredClass($registrationID: Int!, $registeredClass: RegisteredClassInput) {
+              registeredClassCreate(registrationID: $registrationID, registeredClass: $registeredClass) {
+                userErrors {
+                  message
+                  field
+                }
+                registeredClass {
+                  id
+                  price
                 }
               }
-            `)
-            .variables({
-              registrationID: regId,
-              registeredClass: {
-                price: 29.99,
-              },
-            }) as { data?: { registeredClassCreate: RegisteredClassPayload } }
+            }
+          `)
+          .variables({
+            registrationID: regId,
+            registeredClass: {
+              price: 29.99,
+            },
+          })) as { data?: { registeredClassCreate: RegisteredClassPayload } }
 
-          // Clean up
-          if (response.data?.registeredClassCreate?.registeredClass?.id) {
-            await globalThis.prisma.tbl_reg_class.delete({
-              where: { id: response.data.registeredClassCreate.registeredClass.id },
-            })
-          }
+        // Clean up
+        if (response.data?.registeredClassCreate?.registeredClass?.id) {
+          await globalThis.prisma.tbl_reg_class.delete({
+            where: { id: response.data.registeredClassCreate.registeredClass.id },
+          })
+        }
 
-          return {
-            userErrors: response.data?.registeredClassCreate?.userErrors || [],
-            price: response.data?.registeredClassCreate?.registeredClass?.price,
-          }
-        },
-      )
+        return {
+          userErrors: response.data?.registeredClassCreate?.userErrors || [],
+          price: response.data?.registeredClassCreate?.registeredClass?.price,
+        }
+      })
 
       // Both roles should create with correct price
       expect(results.admin.userErrors).toHaveLength(0)
@@ -927,57 +848,48 @@ describe('RegisteredClass E2E Tests', () => {
     })
 
     it('Should validate selection count constraints', async () => {
-      const results = await testWithBothRoles(
-        'validate selection constraints',
-        async (role) => {
-          const regId = role === 'admin' ? testAdminRegistrationId : testUserRegistrationId
+      const results = await testWithBothRoles('validate selection constraints', async (role) => {
+        const regId = role === 'admin' ? testAdminRegistrationId : testUserRegistrationId
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CreateRegisteredClass(
-                $registrationID: Int!
-                $registeredClass: RegisteredClassInput
-              ) {
-                registeredClassCreate(
-                  registrationID: $registrationID
-                  registeredClass: $registeredClass
-                ) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  registeredClass {
-                    id
-                    numberOfSelections
-                    minSelections
-                    maxSelections
-                  }
+        const response = (await createAuthenticatedRequest(role)
+          .mutate(gql`
+            mutation CreateRegisteredClass($registrationID: Int!, $registeredClass: RegisteredClassInput) {
+              registeredClassCreate(registrationID: $registrationID, registeredClass: $registeredClass) {
+                userErrors {
+                  message
+                  field
+                }
+                registeredClass {
+                  id
+                  numberOfSelections
+                  minSelections
+                  maxSelections
                 }
               }
-            `)
-            .variables({
-              registrationID: regId,
-              registeredClass: {
-                numberOfSelections: 2,
-                minSelections: 1,
-                maxSelections: 3,
-                price: 25.0,
-              },
-            }) as { data?: { registeredClassCreate: RegisteredClassPayload } }
+            }
+          `)
+          .variables({
+            registrationID: regId,
+            registeredClass: {
+              numberOfSelections: 2,
+              minSelections: 1,
+              maxSelections: 3,
+              price: 25.0,
+            },
+          })) as { data?: { registeredClassCreate: RegisteredClassPayload } }
 
-          // Clean up
-          if (response.data?.registeredClassCreate?.registeredClass?.id) {
-            await globalThis.prisma.tbl_reg_class.delete({
-              where: { id: response.data.registeredClassCreate.registeredClass.id },
-            })
-          }
+        // Clean up
+        if (response.data?.registeredClassCreate?.registeredClass?.id) {
+          await globalThis.prisma.tbl_reg_class.delete({
+            where: { id: response.data.registeredClassCreate.registeredClass.id },
+          })
+        }
 
-          return {
-            userErrors: response.data?.registeredClassCreate?.userErrors || [],
-            registeredClass: response.data?.registeredClassCreate?.registeredClass,
-          }
-        },
-      )
+        return {
+          userErrors: response.data?.registeredClassCreate?.userErrors || [],
+          registeredClass: response.data?.registeredClassCreate?.registeredClass,
+        }
+      })
 
       // Both roles should create with correct selection counts
       expect(results.admin.userErrors).toHaveLength(0)
@@ -994,16 +906,15 @@ describe('RegisteredClass E2E Tests', () => {
 
   describe('Authentication and Authorization', () => {
     it('Should require authentication for all operations', async () => {
-      const response = await createAuthenticatedRequest('user')
-        .set('Cookie', '') // Remove authentication
+      const response = (await createAuthenticatedRequest('user').set('Cookie', '') // Remove authentication
         .query(gql`
-          query GetRegisteredClasses {
-            registeredClasses {
-              id
-              classNumber
-            }
+        query GetRegisteredClasses {
+          registeredClasses {
+            id
+            classNumber
           }
-        `) as { errors?: readonly any[] }
+        }
+      `)) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0].message).toContain('Unauthorized')

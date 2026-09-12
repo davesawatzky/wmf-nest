@@ -1,19 +1,13 @@
-import type { tbl_instrument } from '@prisma/client'
 import { Logger, UseGuards } from '@nestjs/common'
-import {
-  Args,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import type { tbl_instrument } from '@prisma/client'
+
 import { CheckAbilities } from '@/ability/abilities.decorator.js'
 import { AbilitiesGuard } from '@/ability/abilities.guard.js'
 import { Action } from '@/ability/ability.factory.js'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
 import { Discipline } from '@/festival/discipline/entities/discipline.entity.js'
+
 import { InstrumentInput } from './dto/instrument.input.js'
 import { Instrument, InstrumentPayload } from './entities/instrument.entity.js'
 import { InstrumentDataLoader } from './instrument.dataloader.js'
@@ -36,9 +30,7 @@ export class InstrumentResolver {
     @Args('disciplineID', { type: () => Int, nullable: true })
     disciplineID: Discipline['id'] | null,
   ) {
-    this.logger.log(
-      `Fetching instruments${disciplineID ? ` for discipline ID: ${disciplineID}` : ' (all)'}`,
-    )
+    this.logger.log(`Fetching instruments${disciplineID ? ` for discipline ID: ${disciplineID}` : ' (all)'}`)
     return await this.instrumentService.findAll(disciplineID)
   }
 
@@ -50,9 +42,7 @@ export class InstrumentResolver {
     @Args('name', { type: () => String, nullable: true })
     name: Instrument['name'] | null,
   ) {
-    this.logger.log(
-      `Fetching instrument${id ? ` by ID: ${id}` : ` by name: ${name}`}`,
-    )
+    this.logger.log(`Fetching instrument${id ? ` by ID: ${id}` : ` by name: ${name}`}`)
     return await this.instrumentService.findOne(id, name)
   }
 
@@ -62,9 +52,7 @@ export class InstrumentResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Create, subject: Instrument })
   @UseGuards(JwtAuthGuard)
-  async instrumentCreate(
-    @Args('instrumentInput') instrumentInput: InstrumentInput,
-  ) {
+  async instrumentCreate(@Args('instrumentInput') instrumentInput: InstrumentInput) {
     this.logger.log(`Creating instrument: ${instrumentInput.name}`)
     return await this.instrumentService.create(instrumentInput)
   }
@@ -86,9 +74,7 @@ export class InstrumentResolver {
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Delete, subject: Instrument })
   @UseGuards(JwtAuthGuard)
-  async instrumentDelete(
-    @Args('instrumentID', { type: () => Int }) instrumentID: Instrument['id'],
-  ) {
+  async instrumentDelete(@Args('instrumentID', { type: () => Int }) instrumentID: Instrument['id']) {
     this.logger.log(`Deleting instrument ID: ${instrumentID}`)
     return await this.instrumentService.remove(instrumentID)
   }

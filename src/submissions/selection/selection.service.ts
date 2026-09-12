@@ -1,4 +1,3 @@
-import type { tbl_reg_selection } from '@prisma/client'
 import {
   BadRequestException,
   Injectable,
@@ -6,8 +5,11 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
+import type { tbl_reg_selection } from '@prisma/client'
+
 import { UserError } from '@/common.entity.js'
 import { PrismaService } from '@/prisma/prisma.service.js'
+
 import { SelectionInput } from './dto/selection.input.js'
 
 @Injectable()
@@ -42,8 +44,7 @@ export class SelectionService {
       this.logger.log(
         `Successfully created selection ID: ${selection.id} for registered class ID: ${registeredClassID}`,
       )
-    }
-    catch (error: any) {
+    } catch (error: any) {
       this.logger.error(
         `Failed to create selection for registered class ID ${registeredClassID}: ${error.message}`,
         error.stack,
@@ -57,8 +58,7 @@ export class SelectionService {
           },
         ]
         selection = null
-      }
-      else {
+      } else {
         userErrors = [{ message: 'Cannot create selection', field: [] }]
         selection = null
       }
@@ -85,8 +85,7 @@ export class SelectionService {
       )
 
       return selections
-    }
-    catch (error: any) {
+    } catch (error: any) {
       this.logger.error(
         registeredClassID
           ? `Failed to retrieve selections for registered class ID ${registeredClassID}: ${error.message}`
@@ -115,26 +114,16 @@ export class SelectionService {
 
       this.logger.log(`Successfully retrieved selection ID: ${selectionID}`)
       return selection
-    }
-    catch (error: any) {
-      if (
-        error instanceof BadRequestException
-        || error instanceof NotFoundException
-      ) {
+    } catch (error: any) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error
       }
-      this.logger.error(
-        `Failed to retrieve selection ID ${selectionID}: ${error.message}`,
-        error.stack,
-      )
+      this.logger.error(`Failed to retrieve selection ID ${selectionID}: ${error.message}`, error.stack)
       throw new InternalServerErrorException('Failed to retrieve selection')
     }
   }
 
-  async update(
-    selectionID: tbl_reg_selection['id'],
-    selectionInput: Partial<SelectionInput>,
-  ) {
+  async update(selectionID: tbl_reg_selection['id'], selectionInput: Partial<SelectionInput>) {
     if (!selectionID || !selectionInput) {
       return {
         userErrors: [
@@ -157,12 +146,8 @@ export class SelectionService {
         data: { ...selectionInput },
       })
       this.logger.log(`Successfully updated selection ID: ${selectionID}`)
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to update selection ID ${selectionID}: ${error.message}`,
-        error.stack,
-      )
+    } catch (error: any) {
+      this.logger.error(`Failed to update selection ID ${selectionID}: ${error.message}`, error.stack)
 
       if (error.code === 'P2025') {
         userErrors = [
@@ -172,8 +157,7 @@ export class SelectionService {
           },
         ]
         selection = null
-      }
-      else if (error.code === 'P2003') {
+      } else if (error.code === 'P2003') {
         userErrors = [
           {
             message: 'Invalid reference to related record',
@@ -181,8 +165,7 @@ export class SelectionService {
           },
         ]
         selection = null
-      }
-      else {
+      } else {
         userErrors = [{ message: 'Cannot update selection', field: [] }]
         selection = null
       }
@@ -212,12 +195,8 @@ export class SelectionService {
         where: { id: selectionID },
       })
       this.logger.log(`Successfully deleted selection ID: ${selectionID}`)
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to delete selection ID ${selectionID}: ${error.message}`,
-        error.stack,
-      )
+    } catch (error: any) {
+      this.logger.error(`Failed to delete selection ID ${selectionID}: ${error.message}`, error.stack)
 
       if (error.code === 'P2025') {
         userErrors = [
@@ -227,8 +206,7 @@ export class SelectionService {
           },
         ]
         selection = null
-      }
-      else {
+      } else {
         userErrors = [{ message: 'Cannot delete selection', field: [] }]
         selection = null
       }

@@ -59,10 +59,15 @@ export type TestUserType = 'admin' | 'user' | 'privateTeacher' | 'schoolTeacher'
 
 export function getTestUser(type: TestUserType): CredentialsSignup {
   switch (type) {
-    case 'admin': return TestAdmin()
-    case 'user': return TestUser()
-    case 'privateTeacher': return TestPrivateTeacher()
-    case 'schoolTeacher': return TestSchoolTeacher()
-    default: throw new Error(`Unknown test user type: ${type}`)
+    case 'admin':
+      return TestAdmin()
+    case 'user':
+      return TestUser()
+    case 'privateTeacher':
+      return TestPrivateTeacher()
+    case 'schoolTeacher':
+      return TestSchoolTeacher()
+    default:
+      throw new Error(`Unknown test user type: ${type}`)
   }
 }

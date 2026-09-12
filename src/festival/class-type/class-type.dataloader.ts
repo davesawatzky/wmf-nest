@@ -1,6 +1,7 @@
-import type { tbl_classlist } from '@prisma/client'
 import { Injectable, Logger, Scope } from '@nestjs/common'
+import type { tbl_classlist } from '@prisma/client'
 import DataLoader from 'dataloader'
+
 import { PrismaService } from '@/prisma/prisma.service.js'
 
 @Injectable({ scope: Scope.REQUEST })
@@ -9,10 +10,7 @@ export class ClassTypeDataLoader {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * Batches festival class queries by class type ID
-   * One-to-many relationship: ClassType → FestivalClasses
-   */
+  /** Batches festival class queries by class type ID One-to-many relationship: ClassType → FestivalClasses */
   public readonly festivalClassesLoader = new DataLoader<number, tbl_classlist[]>(
     async (classTypeIds: readonly number[]) => {
       const startTime = performance.now()
@@ -30,7 +28,7 @@ export class ClassTypeDataLoader {
         classesByType.set(festivalClass.classTypeID, existing)
       }
 
-      const orderedResults = classTypeIds.map(id => classesByType.get(id) ?? [])
+      const orderedResults = classTypeIds.map((id) => classesByType.get(id) ?? [])
 
       this.logger.log(
         `Fetched festival classes for ${classTypeIds.length} class types in ${(performance.now() - startTime).toFixed(2)}ms`,

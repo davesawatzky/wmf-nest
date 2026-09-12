@@ -1,14 +1,7 @@
-import type { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
 import { Logger, UseGuards } from '@nestjs/common'
-import {
-  Args,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import type { tbl_category, tbl_level, tbl_subdiscipline } from '@prisma/client'
+
 import { CheckAbilities } from '@/ability/abilities.decorator.js'
 import { AbilitiesGuard } from '@/ability/abilities.guard.js'
 import { Action } from '@/ability/ability.factory.js'
@@ -16,6 +9,7 @@ import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
 import { PerformerType } from '@/common.entity.js'
 import { FestivalClass } from '@/festival/festival-class/entities/festival-class.entity.js'
 import { FestivalClassService } from '@/festival/festival-class/festival-class.service.js'
+
 import { CategoryService } from './category.service.js'
 import { CategoryInput } from './dto/category.input.js'
 import { Category, CategoryPayload } from './entities/category.entity.js'
@@ -74,9 +68,7 @@ export class CategoryResolver {
   @Mutation(() => CategoryPayload)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Delete, subject: Category })
-  async categoryDelete(
-    @Args('categoryID', { type: () => Int }) categoryID: Category['id'],
-  ) {
+  async categoryDelete(@Args('categoryID', { type: () => Int }) categoryID: Category['id']) {
     return await this.categoryService.remove(categoryID)
   }
 
@@ -93,23 +85,21 @@ export class CategoryResolver {
     @Args('levelID', { type: () => Int }) levelID: tbl_level['id'],
   ) {
     if (!performerType || !subdisciplineID || !levelID) {
-      this.logger.error(
-        'festivalClasses field resolver failed - Missing required parameters',
-        { performerType, subdisciplineID, levelID, categoryID: category.id },
-      )
+      this.logger.error('festivalClasses field resolver failed - Missing required parameters', {
+        performerType,
+        subdisciplineID,
+        levelID,
+        categoryID: category.id,
+      })
       return null
     }
 
-    this.logger.debug(
-      `Fetching festival classes for category ${category.id} with filters`,
-      { performerType, subdisciplineID, levelID },
-    )
-    const categoryID = category.id
-    return await this.festivalClassService.findAll(
+    this.logger.debug(`Fetching festival classes for category ${category.id} with filters`, {
       performerType,
       subdisciplineID,
       levelID,
-      categoryID,
-    )
+    })
+    const categoryID = category.id
+    return await this.festivalClassService.findAll(performerType, subdisciplineID, levelID, categoryID)
   }
 }

@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
+
 import { UserError } from '@/common.entity.js'
 import { Discipline } from '@/festival/discipline/entities/discipline.entity.js'
 

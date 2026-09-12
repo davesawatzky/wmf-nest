@@ -1,13 +1,9 @@
 import { gql } from 'graphql-tag'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import {
-  createAuthenticatedRequest,
-  testWithBothRoles,
-} from '@/test/testHelpers.js'
-import {
-  FestivalClass,
-  FestivalClassPayload,
-} from '../entities/festival-class.entity.js'
+
+import { createAuthenticatedRequest, testWithBothRoles } from '@/test/testHelpers.js'
+
+import { FestivalClass, FestivalClassPayload } from '../entities/festival-class.entity.js'
 
 describe('FestivalClass E2E Tests', () => {
   let queryTestFestivalClassId: number
@@ -54,40 +50,38 @@ describe('FestivalClass E2E Tests', () => {
 
   describe('FestivalClass Queries (Both Roles)', () => {
     it('Should list all festival classes for both roles', async () => {
-      const results = await testWithBothRoles(
-        'list festival classes',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetFestivalClasses {
-                festivalClasses {
-                  id
-                  classNumber
-                  description
-                  maxSelections
-                  minSelections
-                  performerType
-                  price
-                  requiredSelection
-                }
+      const results = await testWithBothRoles('list festival classes', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetFestivalClasses {
+              festivalClasses {
+                id
+                classNumber
+                description
+                maxSelections
+                minSelections
+                performerType
+                price
+                requiredSelection
               }
-            `)
-            .expectNoErrors() as { data: { festivalClasses: FestivalClass[] } }
+            }
+          `)
+          .expectNoErrors()) as { data: { festivalClasses: FestivalClass[] } }
 
-          const festivalClasses = response.data.festivalClasses
-          const firstClass = festivalClasses[0]
+        const festivalClasses = response.data.festivalClasses
+        const firstClass = festivalClasses[0]
 
-          return {
-            hasData: !!festivalClasses,
-            isArray: Array.isArray(festivalClasses),
-            count: festivalClasses?.length || 0,
-            hasValidTypes: typeof firstClass?.id === 'number'
-              && typeof firstClass?.classNumber === 'string'
-              && typeof firstClass?.performerType === 'string'
-              && typeof firstClass?.price === 'number',
-          }
-        },
-      )
+        return {
+          hasData: !!festivalClasses,
+          isArray: Array.isArray(festivalClasses),
+          count: festivalClasses?.length || 0,
+          hasValidTypes:
+            typeof firstClass?.id === 'number' &&
+            typeof firstClass?.classNumber === 'string' &&
+            typeof firstClass?.performerType === 'string' &&
+            typeof firstClass?.price === 'number',
+        }
+      })
 
       // Both roles should successfully retrieve festival classes
       expect(results.admin.hasData).toBe(true)
@@ -101,31 +95,26 @@ describe('FestivalClass E2E Tests', () => {
     })
 
     it('Should filter festival classes by performerType for both roles', async () => {
-      const results = await testWithBothRoles(
-        'filter by performerType',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetFestivalClasses($performerType: PerformerType) {
-                festivalClasses(performerType: $performerType) {
-                  id
-                  classNumber
-                  performerType
-                }
+      const results = await testWithBothRoles('filter by performerType', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetFestivalClasses($performerType: PerformerType) {
+              festivalClasses(performerType: $performerType) {
+                id
+                classNumber
+                performerType
               }
-            `)
-            .variables({ performerType: 'COMMUNITY' })
-            .expectNoErrors() as { data: { festivalClasses: FestivalClass[] } }
+            }
+          `)
+          .variables({ performerType: 'COMMUNITY' })
+          .expectNoErrors()) as { data: { festivalClasses: FestivalClass[] } }
 
-          return {
-            hasData: !!response.data.festivalClasses,
-            count: response.data.festivalClasses?.length || 0,
-            allMatchType: response.data.festivalClasses?.every(
-              fc => fc.performerType === 'COMMUNITY',
-            ),
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.festivalClasses,
+          count: response.data.festivalClasses?.length || 0,
+          allMatchType: response.data.festivalClasses?.every((fc) => fc.performerType === 'COMMUNITY'),
+        }
+      })
 
       // Both roles should get same filtered results
       expect(results.admin.hasData).toBe(true)
@@ -137,34 +126,31 @@ describe('FestivalClass E2E Tests', () => {
     })
 
     it('Should filter festival classes by subdisciplineID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'filter by subdisciplineID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetFestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
-                festivalClasses(festivalClassSearch: $festivalClassSearch) {
+      const results = await testWithBothRoles('filter by subdisciplineID', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetFestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
+              festivalClasses(festivalClassSearch: $festivalClassSearch) {
+                id
+                classNumber
+                subdiscipline {
                   id
-                  classNumber
-                  subdiscipline {
-                    id
-                    name
-                  }
+                  name
                 }
               }
-            `)
-            .variables({
-              festivalClassSearch: { subdisciplineID: 160 },
-            })
-            .expectNoErrors() as { data: { festivalClasses: FestivalClass[] } }
+            }
+          `)
+          .variables({
+            festivalClassSearch: { subdisciplineID: 160 },
+          })
+          .expectNoErrors()) as { data: { festivalClasses: FestivalClass[] } }
 
-          return {
-            hasData: !!response.data.festivalClasses,
-            count: response.data.festivalClasses?.length || 0,
-            hasSubdiscipline: !!response.data.festivalClasses?.[0]?.subdiscipline?.name,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.festivalClasses,
+          count: response.data.festivalClasses?.length || 0,
+          hasSubdiscipline: !!response.data.festivalClasses?.[0]?.subdiscipline?.name,
+        }
+      })
 
       // Both roles should get same results
       expect(results.admin.hasData).toBe(true)
@@ -174,34 +160,31 @@ describe('FestivalClass E2E Tests', () => {
     })
 
     it('Should filter festival classes by levelID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'filter by levelID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetFestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
-                festivalClasses(festivalClassSearch: $festivalClassSearch) {
+      const results = await testWithBothRoles('filter by levelID', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetFestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
+              festivalClasses(festivalClassSearch: $festivalClassSearch) {
+                id
+                classNumber
+                level {
                   id
-                  classNumber
-                  level {
-                    id
-                    name
-                  }
+                  name
                 }
               }
-            `)
-            .variables({
-              festivalClassSearch: { levelID: 1 },
-            })
-            .expectNoErrors() as { data: { festivalClasses: FestivalClass[] } }
+            }
+          `)
+          .variables({
+            festivalClassSearch: { levelID: 1 },
+          })
+          .expectNoErrors()) as { data: { festivalClasses: FestivalClass[] } }
 
-          return {
-            hasData: !!response.data.festivalClasses,
-            count: response.data.festivalClasses?.length || 0,
-            hasLevel: !!response.data.festivalClasses?.[0]?.level?.name,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.festivalClasses,
+          count: response.data.festivalClasses?.length || 0,
+          hasLevel: !!response.data.festivalClasses?.[0]?.level?.name,
+        }
+      })
 
       // Both roles should get same results
       expect(results.admin.hasData).toBe(true)
@@ -211,34 +194,31 @@ describe('FestivalClass E2E Tests', () => {
     })
 
     it('Should filter festival classes by categoryID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'filter by categoryID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetFestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
-                festivalClasses(festivalClassSearch: $festivalClassSearch) {
+      const results = await testWithBothRoles('filter by categoryID', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetFestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
+              festivalClasses(festivalClassSearch: $festivalClassSearch) {
+                id
+                classNumber
+                category {
                   id
-                  classNumber
-                  category {
-                    id
-                    name
-                  }
+                  name
                 }
               }
-            `)
-            .variables({
-              festivalClassSearch: { categoryID: 1 },
-            })
-            .expectNoErrors() as { data: { festivalClasses: FestivalClass[] } }
+            }
+          `)
+          .variables({
+            festivalClassSearch: { categoryID: 1 },
+          })
+          .expectNoErrors()) as { data: { festivalClasses: FestivalClass[] } }
 
-          return {
-            hasData: !!response.data.festivalClasses,
-            count: response.data.festivalClasses?.length || 0,
-            hasCategory: !!response.data.festivalClasses?.[0]?.category?.name,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.festivalClasses,
+          count: response.data.festivalClasses?.length || 0,
+          hasCategory: !!response.data.festivalClasses?.[0]?.category?.name,
+        }
+      })
 
       // Both roles should get same results
       expect(results.admin.hasData).toBe(true)
@@ -248,38 +228,35 @@ describe('FestivalClass E2E Tests', () => {
     })
 
     it('Should filter by multiple criteria for both roles', async () => {
-      const results = await testWithBothRoles(
-        'filter by multiple criteria',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetFestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
-                festivalClasses(festivalClassSearch: $festivalClassSearch) {
-                  id
-                  classNumber
-                  category {
-                    name
-                  }
-                  level {
-                    name
-                  }
+      const results = await testWithBothRoles('filter by multiple criteria', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetFestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
+              festivalClasses(festivalClassSearch: $festivalClassSearch) {
+                id
+                classNumber
+                category {
+                  name
+                }
+                level {
+                  name
                 }
               }
-            `)
-            .variables({
-              festivalClassSearch: {
-                categoryID: 23,
-                levelID: 49,
-              },
-            })
-            .expectNoErrors() as { data: { festivalClasses: FestivalClass[] } }
+            }
+          `)
+          .variables({
+            festivalClassSearch: {
+              categoryID: 23,
+              levelID: 49,
+            },
+          })
+          .expectNoErrors()) as { data: { festivalClasses: FestivalClass[] } }
 
-          return {
-            hasData: !!response.data.festivalClasses,
-            count: response.data.festivalClasses?.length || 0,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.festivalClasses,
+          count: response.data.festivalClasses?.length || 0,
+        }
+      })
 
       // Both roles should get same results
       expect(results.admin.hasData).toBe(true)
@@ -289,30 +266,27 @@ describe('FestivalClass E2E Tests', () => {
     })
 
     it('Should return empty array when no matches found for both roles', async () => {
-      const results = await testWithBothRoles(
-        'return empty array for no matches',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetFestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
-                festivalClasses(festivalClassSearch: $festivalClassSearch) {
-                  id
-                  classNumber
-                }
+      const results = await testWithBothRoles('return empty array for no matches', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetFestivalClasses($festivalClassSearch: FestivalClassSearchArgs) {
+              festivalClasses(festivalClassSearch: $festivalClassSearch) {
+                id
+                classNumber
               }
-            `)
-            .variables({
-              festivalClassSearch: {
-                subdisciplineID: 999999,
-              },
-            })
-            .expectNoErrors() as { data: { festivalClasses: FestivalClass[] } }
+            }
+          `)
+          .variables({
+            festivalClassSearch: {
+              subdisciplineID: 999999,
+            },
+          })
+          .expectNoErrors()) as { data: { festivalClasses: FestivalClass[] } }
 
-          return {
-            count: response.data.festivalClasses?.length || 0,
-          }
-        },
-      )
+        return {
+          count: response.data.festivalClasses?.length || 0,
+        }
+      })
 
       // Both roles should get empty results
       expect(results.admin.count).toBe(0)
@@ -320,34 +294,28 @@ describe('FestivalClass E2E Tests', () => {
     })
 
     it('Should return associated trophies in list for both roles', async () => {
-      const results = await testWithBothRoles(
-        'list with trophies',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetFestivalClasses {
-                festivalClasses {
-                  id
-                  classNumber
-                  trophies {
-                    id
-                    name
-                  }
-                }
+      const results = await testWithBothRoles('list with trophies', async (role) => {
+        const response = (await createAuthenticatedRequest(role).query(gql`
+          query GetFestivalClasses {
+            festivalClasses {
+              id
+              classNumber
+              trophies {
+                id
+                name
               }
-            `) as { errors, data: { festivalClasses: FestivalClass[] } }
-
-          const classWithTrophies = response.data.festivalClasses.find(
-            fc => fc.trophies && fc.trophies.length > 0,
-          )
-
-          return {
-            hasData: !!response.data.festivalClasses,
-            hasTrophies: !!classWithTrophies,
-            firstTrophyName: classWithTrophies?.trophies?.[0]?.name,
+            }
           }
-        },
-      )
+        `)) as { errors; data: { festivalClasses: FestivalClass[] } }
+
+        const classWithTrophies = response.data.festivalClasses.find((fc) => fc.trophies && fc.trophies.length > 0)
+
+        return {
+          hasData: !!response.data.festivalClasses,
+          hasTrophies: !!classWithTrophies,
+          firstTrophyName: classWithTrophies?.trophies?.[0]?.name,
+        }
+      })
 
       // Both roles should get same results
       expect(results.admin.hasData).toBe(true)
@@ -358,29 +326,26 @@ describe('FestivalClass E2E Tests', () => {
     })
 
     it('Should find festival class by classNumber for both roles', async () => {
-      const results = await testWithBothRoles(
-        'find by classNumber',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetFestivalClassByNumber($festivalClassNumber: String!) {
-                festivalClassByNumber(festivalClassNumber: $festivalClassNumber) {
-                  id
-                  classNumber
-                  description
-                  performerType
-                }
+      const results = await testWithBothRoles('find by classNumber', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetFestivalClassByNumber($festivalClassNumber: String!) {
+              festivalClassByNumber(festivalClassNumber: $festivalClassNumber) {
+                id
+                classNumber
+                description
+                performerType
               }
-            `)
-            .variables({ festivalClassNumber: mockFestivalClass.classNumber })
-            .expectNoErrors() as { data: { festivalClassByNumber: FestivalClass } }
+            }
+          `)
+          .variables({ festivalClassNumber: mockFestivalClass.classNumber })
+          .expectNoErrors()) as { data: { festivalClassByNumber: FestivalClass } }
 
-          return {
-            hasData: !!response.data.festivalClassByNumber,
-            festivalClass: response.data.festivalClassByNumber,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.festivalClassByNumber,
+          festivalClass: response.data.festivalClassByNumber,
+        }
+      })
 
       // Both roles should find the festival class
       expect(results.admin.hasData).toBe(true)
@@ -390,25 +355,22 @@ describe('FestivalClass E2E Tests', () => {
     })
 
     it('Should return error when festival class number not found for both roles', async () => {
-      const results = await testWithBothRoles(
-        'classNumber not found',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetFestivalClassByNumber($festivalClassNumber: String!) {
-                festivalClassByNumber(festivalClassNumber: $festivalClassNumber) {
-                  id
-                  classNumber
-                }
+      const results = await testWithBothRoles('classNumber not found', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetFestivalClassByNumber($festivalClassNumber: String!) {
+              festivalClassByNumber(festivalClassNumber: $festivalClassNumber) {
+                id
+                classNumber
               }
-            `)
-            .variables({ festivalClassNumber: 'NONEXISTENT' }) as { errors?: readonly any[] }
+            }
+          `)
+          .variables({ festivalClassNumber: 'NONEXISTENT' })) as { errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+        }
+      })
 
       // Both roles should get errors
       expect(results.admin.hasErrors).toBe(true)
@@ -416,28 +378,25 @@ describe('FestivalClass E2E Tests', () => {
     })
 
     it('Should find festival class by ID for both roles', async () => {
-      const results = await testWithBothRoles(
-        'find by ID',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetFestivalClass($festivalClassId: Int!) {
-                festivalClass(id: $festivalClassId) {
-                  id
-                  classNumber
-                  description
-                }
+      const results = await testWithBothRoles('find by ID', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetFestivalClass($festivalClassId: Int!) {
+              festivalClass(id: $festivalClassId) {
+                id
+                classNumber
+                description
               }
-            `)
-            .variables({ festivalClassId: queryTestFestivalClassId })
-            .expectNoErrors() as { data: { festivalClass: FestivalClass } }
+            }
+          `)
+          .variables({ festivalClassId: queryTestFestivalClassId })
+          .expectNoErrors()) as { data: { festivalClass: FestivalClass } }
 
-          return {
-            hasData: !!response.data.festivalClass,
-            festivalClass: response.data.festivalClass,
-          }
-        },
-      )
+        return {
+          hasData: !!response.data.festivalClass,
+          festivalClass: response.data.festivalClass,
+        }
+      })
 
       // Both roles should find the festival class
       expect(results.admin.hasData).toBe(true)
@@ -447,25 +406,22 @@ describe('FestivalClass E2E Tests', () => {
     })
 
     it('Should return error when festival class ID not found for both roles', async () => {
-      const results = await testWithBothRoles(
-        'ID not found',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .query(gql`
-              query GetFestivalClass($festivalClassId: Int!) {
-                festivalClass(id: $festivalClassId) {
-                  id
-                  classNumber
-                }
+      const results = await testWithBothRoles('ID not found', async (role) => {
+        const response = (await createAuthenticatedRequest(role)
+          .query(gql`
+            query GetFestivalClass($festivalClassId: Int!) {
+              festivalClass(id: $festivalClassId) {
+                id
+                classNumber
               }
-            `)
-            .variables({ festivalClassId: 999999 }) as { errors?: readonly any[] }
+            }
+          `)
+          .variables({ festivalClassId: 999999 })) as { errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+        }
+      })
 
       // Both roles should get errors
       expect(results.admin.hasErrors).toBe(true)
@@ -475,50 +431,49 @@ describe('FestivalClass E2E Tests', () => {
 
   describe('FestivalClass Mutations', () => {
     it('Should enforce create authorization: admin succeeds, user fails', async () => {
-      const results = await testWithBothRoles(
-        'create festival class',
-        async (role) => {
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation CreateFestivalClass($festivalClassInput: FestivalClassInput!) {
-                festivalClassCreate(festivalClassInput: $festivalClassInput) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  festivalClass {
-                    id
-                    classNumber
-                    description
-                    performerType
-                    price
-                  }
+      const results = await testWithBothRoles('create festival class', async (role) => {
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation CreateFestivalClass($festivalClassInput: FestivalClassInput!) {
+              festivalClassCreate(festivalClassInput: $festivalClassInput) {
+                userErrors {
+                  message
+                  field
+                }
+                festivalClass {
+                  id
+                  classNumber
+                  description
+                  performerType
+                  price
                 }
               }
-            `, {
-              festivalClassInput: {
-                classNumber: `E2E-${role === 'admin' ? 'ADM' : 'USR'}-CRT`,
-                categoryID: role === 'admin' ? 1 : 2,
-                levelID: role === 'admin' ? 1 : 2,
-                subdisciplineID: 152,
-                classTypeID: 1,
-                description: `E2E ${role} create`,
-                maxSelections: 3,
-                minSelections: 2,
-                performerType: 'SOLO',
-                price: 110.0,
-                requiredSelection: 'Test Selection',
-              },
-            }) as { data?: { festivalClassCreate: FestivalClassPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            festivalClassInput: {
+              classNumber: `E2E-${role === 'admin' ? 'ADM' : 'USR'}-CRT`,
+              categoryID: role === 'admin' ? 1 : 2,
+              levelID: role === 'admin' ? 1 : 2,
+              subdisciplineID: 152,
+              classTypeID: 1,
+              description: `E2E ${role} create`,
+              maxSelections: 3,
+              minSelections: 2,
+              performerType: 'SOLO',
+              price: 110.0,
+              requiredSelection: 'Test Selection',
+            },
+          },
+        )) as { data?: { festivalClassCreate: FestivalClassPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            festivalClass: response.data?.festivalClassCreate?.festivalClass as FestivalClass | undefined,
-            userErrors: response.data?.festivalClassCreate?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          festivalClass: response.data?.festivalClassCreate?.festivalClass as FestivalClass | undefined,
+          userErrors: response.data?.festivalClassCreate?.userErrors,
+        }
+      })
 
       // Admin should succeed
       expect(results.admin.isAuthorized).toBe(true)
@@ -541,8 +496,8 @@ describe('FestivalClass E2E Tests', () => {
     })
 
     it('Should return validation error for duplicate classNumber', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation CreateFestivalClass($festivalClassInput: FestivalClassInput!) {
             festivalClassCreate(festivalClassInput: $festivalClassInput) {
               userErrors {
@@ -555,7 +510,8 @@ describe('FestivalClass E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           festivalClassInput: {
             classNumber: mockFestivalClass.classNumber, // Duplicate
             categoryID: 23,
@@ -568,7 +524,8 @@ describe('FestivalClass E2E Tests', () => {
             performerType: 'SOLO',
             price: 100.0,
           },
-        }) as { data: { festivalClassCreate: FestivalClassPayload } }
+        },
+      )) as { data: { festivalClassCreate: FestivalClassPayload } }
 
       expect(response.data.festivalClassCreate.userErrors).toHaveLength(1)
       expect(response.data.festivalClassCreate.userErrors[0].message).toBeTruthy()
@@ -592,8 +549,8 @@ describe('FestivalClass E2E Tests', () => {
         },
       })
 
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation CreateFestivalClass($festivalClassInput: FestivalClassInput!) {
             festivalClassCreate(festivalClassInput: $festivalClassInput) {
               userErrors {
@@ -606,7 +563,8 @@ describe('FestivalClass E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           festivalClassInput: {
             classNumber: 'E2E-UNQ-2',
             categoryID: 50, // Same combo
@@ -619,7 +577,8 @@ describe('FestivalClass E2E Tests', () => {
             performerType: 'SOLO',
             price: 100.0,
           },
-        }) as { data: { festivalClassCreate: FestivalClassPayload } }
+        },
+      )) as { data: { festivalClassCreate: FestivalClassPayload } }
 
       expect(response.data.festivalClassCreate.userErrors).toHaveLength(1)
       expect(response.data.festivalClassCreate.userErrors[0].message).toContain('already exists')
@@ -632,8 +591,8 @@ describe('FestivalClass E2E Tests', () => {
     })
 
     it('Should return error for null classNumber in create', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation CreateFestivalClass($festivalClassInput: FestivalClassInput!) {
             festivalClassCreate(festivalClassInput: $festivalClassInput) {
               userErrors {
@@ -646,7 +605,8 @@ describe('FestivalClass E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           festivalClassInput: {
             classNumber: null,
             categoryID: 23,
@@ -659,7 +619,8 @@ describe('FestivalClass E2E Tests', () => {
             performerType: 'SOLO',
             price: 100.0,
           },
-        }) as { errors?: readonly any[] }
+        },
+      )) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0]).toBeTruthy()
@@ -697,37 +658,36 @@ describe('FestivalClass E2E Tests', () => {
         },
       })
 
-      const results = await testWithBothRoles(
-        'delete festival class',
-        async (role) => {
-          const festivalClassId = role === 'admin' ? adminFestivalClass.id : userFestivalClass.id
+      const results = await testWithBothRoles('delete festival class', async (role) => {
+        const festivalClassId = role === 'admin' ? adminFestivalClass.id : userFestivalClass.id
 
-          const response = await createAuthenticatedRequest(role)
-            .mutate(gql`
-              mutation DeleteFestivalClass($festivalClassId: Int!) {
-                festivalClassDelete(festivalClassID: $festivalClassId) {
-                  userErrors {
-                    message
-                    field
-                  }
-                  festivalClass {
-                    id
-                    classNumber
-                  }
+        const response = (await createAuthenticatedRequest(role).mutate(
+          gql`
+            mutation DeleteFestivalClass($festivalClassId: Int!) {
+              festivalClassDelete(festivalClassID: $festivalClassId) {
+                userErrors {
+                  message
+                  field
+                }
+                festivalClass {
+                  id
+                  classNumber
                 }
               }
-            `, {
-              festivalClassId,
-            }) as { data?: { festivalClassDelete: FestivalClassPayload }, errors?: readonly any[] }
+            }
+          `,
+          {
+            festivalClassId,
+          },
+        )) as { data?: { festivalClassDelete: FestivalClassPayload }; errors?: readonly any[] }
 
-          return {
-            hasErrors: !!response.errors,
-            isAuthorized: !response.errors,
-            festivalClass: response.data?.festivalClassDelete?.festivalClass as FestivalClass | undefined,
-            userErrors: response.data?.festivalClassDelete?.userErrors,
-          }
-        },
-      )
+        return {
+          hasErrors: !!response.errors,
+          isAuthorized: !response.errors,
+          festivalClass: response.data?.festivalClassDelete?.festivalClass as FestivalClass | undefined,
+          userErrors: response.data?.festivalClassDelete?.userErrors,
+        }
+      })
 
       // User should be forbidden (test first since admin will delete)
       expect(results.user.isAuthorized).toBe(false)
@@ -754,8 +714,8 @@ describe('FestivalClass E2E Tests', () => {
     })
 
     it('Should return error when deleting non-existent festival class', async () => {
-      const response = await createAuthenticatedRequest('admin')
-        .mutate(gql`
+      const response = (await createAuthenticatedRequest('admin').mutate(
+        gql`
           mutation DeleteFestivalClass($festivalClassId: Int!) {
             festivalClassDelete(festivalClassID: $festivalClassId) {
               userErrors {
@@ -768,9 +728,11 @@ describe('FestivalClass E2E Tests', () => {
               }
             }
           }
-        `, {
+        `,
+        {
           festivalClassId: 999999,
-        }) as { data: { festivalClassDelete: FestivalClassPayload } }
+        },
+      )) as { data: { festivalClassDelete: FestivalClassPayload } }
 
       expect(response.data.festivalClassDelete.festivalClass).toBeNull()
       expect(response.data.festivalClassDelete.userErrors).toHaveLength(1)
@@ -780,16 +742,15 @@ describe('FestivalClass E2E Tests', () => {
 
   describe('Authentication and Authorization', () => {
     it('Should require authentication for all operations', async () => {
-      const response = await createAuthenticatedRequest('user')
-        .set('Cookie', '') // Remove authentication
+      const response = (await createAuthenticatedRequest('user').set('Cookie', '') // Remove authentication
         .query(gql`
-          query GetFestivalClasses {
-            festivalClasses {
-              id
-              classNumber
-            }
+        query GetFestivalClasses {
+          festivalClasses {
+            id
+            classNumber
           }
-        `) as { errors?: readonly any[] }
+        }
+      `)) as { errors?: readonly any[] }
 
       expect(response.errors).toBeTruthy()
       expect(response.errors![0].message).toContain('Unauthorized')

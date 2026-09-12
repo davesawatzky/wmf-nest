@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+
 import { SearchFilterGuard } from './search-filter.decorator.js'
 import { SearchFilterService } from './search-filter.service.js'
 

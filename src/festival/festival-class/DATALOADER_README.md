@@ -7,7 +7,9 @@ This DataLoader implementation solves the **N+1 query problem** in the Festival 
 ## Problem It Solves
 
 ### Before DataLoader:
+
 When fetching 50 festival classes with nested fields:
+
 ```
 1 query for festival classes
 + 50 queries for trophies (1 per class)
@@ -19,11 +21,13 @@ When fetching 50 festival classes with nested fields:
 ```
 
 This caused:
+
 - **Connection pool exhaustion** (only 9-20 connections available)
 - **Memory heap overflow** (JavaScript heap out of memory)
 - **Slow response times** (sequential queries)
 
 ### After DataLoader:
+
 ```
 1 query for festival classes
 + 1 batched query for all trophies
@@ -61,11 +65,13 @@ festivalClasses.forEach(async (festivalClass) => {
 ### Request-Scoped Caching
 
 DataLoader is request-scoped (`Scope.REQUEST`), meaning:
+
 - **Each GraphQL request gets a fresh DataLoader instance**
 - **Within a request, duplicate IDs are cached** (only fetched once)
 - **No stale data between requests**
 
 Example:
+
 ```typescript
 // Same request, same festival class ID requested twice
 const level1 = await dataLoader.levelLoader.load(5) // Database query
@@ -83,23 +89,19 @@ Located in `festival-class.dataloader.ts`:
 export class FestivalClassDataLoader {
   constructor(private prisma: PrismaService) {}
 
-  readonly trophiesLoader = new DataLoader<string, tbl_trophy[] | null>(
-    async (classNumbers: readonly string[]) => {
-      // Batch fetch all trophies for all class numbers
-      const trophies = await this.prisma.tbl_trophy.findMany({
-        where: {
-          tbl_class_trophy: {
-            some: { classNumber: { in: [...classNumbers] } }
-          }
-        }
-      })
+  readonly trophiesLoader = new DataLoader<string, tbl_trophy[] | null>(async (classNumbers: readonly string[]) => {
+    // Batch fetch all trophies for all class numbers
+    const trophies = await this.prisma.tbl_trophy.findMany({
+      where: {
+        tbl_class_trophy: {
+          some: { classNumber: { in: [...classNumbers] } },
+        },
+      },
+    })
 
-      // Map results back to input order
-      return classNumbers.map(classNumber =>
-        trophies.filter(t => t.classNumber === classNumber) || null
-      )
-    }
-  )
+    // Map results back to input order
+    return classNumbers.map((classNumber) => trophies.filter((t) => t.classNumber === classNumber) || null)
+  })
 
   // Similar loaders for: level, subdiscipline, category, classType
 }
@@ -108,6 +110,7 @@ export class FestivalClassDataLoader {
 ### Field Resolvers (Before vs After)
 
 **Before (N+1 Problem):**
+
 ```typescript
 @ResolveField(() => Level)
 async level(@Parent() festivalClass: tbl_classlist) {
@@ -117,6 +120,7 @@ async level(@Parent() festivalClass: tbl_classlist) {
 ```
 
 **After (DataLoader Batching):**
+
 ```typescript
 @ResolveField(() => Level)
 async level(@Parent() festivalClass: tbl_classlist) {
@@ -128,21 +132,25 @@ async level(@Parent() festivalClass: tbl_classlist) {
 ## Performance Impact
 
 ### Database Queries
+
 - **Before**: 251 queries for 50 festival classes
 - **After**: 6 queries for 50 festival classes
 - **Improvement**: 98% reduction
 
 ### Memory Usage
+
 - **Before**: Heap overflow at ~1.4GB (default Node.js limit)
 - **After**: ~200MB for same operation
 - **Improvement**: 85% reduction in memory usage
 
 ### Connection Pool
+
 - **Before**: Exhausted 20 connections, timeouts after 10-30 seconds
 - **After**: Uses 1-2 connections, completes in <1 second
 - **Improvement**: No more connection pool timeouts
 
 ### Response Time
+
 - **Before**: 10-30+ seconds (or timeout)
 - **After**: <1 second
 - **Improvement**: 10-30x faster
@@ -227,6 +235,7 @@ pm2 logs wmf-nest | grep "Fetching"
 **Symptom**: Type mismatches with DataLoader return types
 
 **Solution**: Ensure DataLoader generic types match:
+
 ```typescript
 new DataLoader<InputType, OutputType>()
 // Example:
@@ -258,6 +267,7 @@ async festivalClasses() {
 ### 2. Implement DataLoaders for Other Resolvers
 
 Apply the same pattern to other N+1 prone resolvers:
+
 - Registration → Teacher, Performers, Classes
 - School → SchoolGroups
 - Teacher → Registrations

@@ -1,8 +1,3 @@
-import type {
-  tbl_reg_class,
-  tbl_reg_performer,
-  tbl_registration,
-} from '@prisma/client'
 import {
   BadRequestException,
   Injectable,
@@ -10,7 +5,10 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
+import type { tbl_reg_class, tbl_reg_performer, tbl_registration } from '@prisma/client'
+
 import { PrismaService } from '@/prisma/prisma.service.js'
+
 import { PerformerInput } from './dto/performer.input.js'
 
 @Injectable()
@@ -19,10 +17,7 @@ export class PerformerService {
 
   constructor(private prisma: PrismaService) {}
 
-  async create(
-    registrationID: tbl_registration['id'],
-    performerInput?: Partial<PerformerInput>,
-  ) {
+  async create(registrationID: tbl_registration['id'], performerInput?: Partial<PerformerInput>) {
     try {
       if (!registrationID) {
         this.logger.error('Performer creation failed - registrationID is required')
@@ -37,27 +32,20 @@ export class PerformerService {
         }
       }
 
-      this.logger.log(
-        `Creating performer for registration ID: ${registrationID}`,
-      )
+      this.logger.log(`Creating performer for registration ID: ${registrationID}`)
 
       const performer = await this.prisma.tbl_reg_performer.create({
         data: { regID: registrationID, ...performerInput },
       })
 
-      this.logger.log(
-        `Performer created successfully with ID: ${performer.id}`,
-      )
+      this.logger.log(`Performer created successfully with ID: ${performer.id}`)
       return {
         userErrors: [],
         performer,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2003') {
-        this.logger.warn(
-          `Performer creation failed - Invalid registration ID: ${registrationID}`,
-        )
+        this.logger.warn(`Performer creation failed - Invalid registration ID: ${registrationID}`)
         return {
           userErrors: [
             {
@@ -67,11 +55,8 @@ export class PerformerService {
           ],
           performer: null,
         }
-      }
-      else if (error.code === 'P2002') {
-        this.logger.warn(
-          `Performer creation failed - Unique constraint violation for registration ${registrationID}`,
-        )
+      } else if (error.code === 'P2002') {
+        this.logger.warn(`Performer creation failed - Unique constraint violation for registration ${registrationID}`)
         return {
           userErrors: [
             {
@@ -81,17 +66,12 @@ export class PerformerService {
           ],
           performer: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during performer creation for registration ${registrationID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during performer creation for registration ${registrationID}`, error)
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while creating the performer',
+              message: 'An unexpected error occurred while creating the performer',
               field: [],
             },
           ],
@@ -101,10 +81,7 @@ export class PerformerService {
     }
   }
 
-  async findAll(
-    registrationID?: tbl_registration['id'],
-    classNumber?: tbl_reg_class['classNumber'],
-  ) {
+  async findAll(registrationID?: tbl_registration['id'], classNumber?: tbl_reg_class['classNumber']) {
     try {
       this.logger.log(
         `Fetching performers with filters - registrationID: ${registrationID}, classNumber: ${classNumber}`,
@@ -114,41 +91,35 @@ export class PerformerService {
         return await this.prisma.tbl_reg_performer.findMany({
           where: { regID: registrationID },
         })
-      }
-      else if (classNumber) {
+      } else if (classNumber) {
         const registeredClassIds = await this.prisma.tbl_reg_class.findMany({
           where: {
             classNumber,
           },
           select: { regID: true },
         })
-        const performerIds = registeredClassIds
-          .map(item => item.regID)
-          .filter(item => !!item)
+        const performerIds = registeredClassIds.map((item) => item.regID).filter((item) => !!item)
         return await this.prisma.tbl_reg_performer.findMany({
           where: {
             regID: { in: performerIds },
           },
         })
-      }
-      else {
-        const confirmedRegistrations
-          = await this.prisma.tbl_registration.findMany({
-            where: {
-              confirmation: {
-                not: null,
-              },
+      } else {
+        const confirmedRegistrations = await this.prisma.tbl_registration.findMany({
+          where: {
+            confirmation: {
+              not: null,
             },
-          })
-        const performerIds = confirmedRegistrations.map(item => item.id)
+          },
+        })
+        const performerIds = confirmedRegistrations.map((item) => item.id)
         return await this.prisma.tbl_reg_performer.findMany({
           where: {
             regID: { in: performerIds },
           },
         })
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       this.logger.error(
         `Error fetching performers with filters - registrationID: ${registrationID}, classNumber: ${classNumber}`,
         error,
@@ -177,20 +148,13 @@ export class PerformerService {
         throw new NotFoundException('Performer not found')
       }
       return performer
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Error finding performer with ID: ${performerID}`,
-        error,
-      )
+    } catch (error: any) {
+      this.logger.error(`Error finding performer with ID: ${performerID}`, error)
       throw new InternalServerErrorException('Unable to find performer')
     }
   }
 
-  async update(
-    performerID: tbl_reg_performer['id'],
-    performerInput: Partial<PerformerInput>,
-  ) {
+  async update(performerID: tbl_reg_performer['id'], performerInput: Partial<PerformerInput>) {
     try {
       if (!performerID || !performerInput) {
         return {
@@ -215,12 +179,9 @@ export class PerformerService {
         userErrors: [],
         performer,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(
-          `Performer update failed - Performer with ID ${performerID} not found`,
-        )
+        this.logger.warn(`Performer update failed - Performer with ID ${performerID} not found`)
         return {
           userErrors: [
             {
@@ -230,11 +191,8 @@ export class PerformerService {
           ],
           performer: null,
         }
-      }
-      else if (error.code === 'P2002') {
-        this.logger.warn(
-          `Performer update failed - Unique constraint violation for performer ${performerID}`,
-        )
+      } else if (error.code === 'P2002') {
+        this.logger.warn(`Performer update failed - Unique constraint violation for performer ${performerID}`)
         return {
           userErrors: [
             {
@@ -244,11 +202,8 @@ export class PerformerService {
           ],
           performer: null,
         }
-      }
-      else if (error.code === 'P2003') {
-        this.logger.warn(
-          `Performer update failed - Foreign key constraint violation for performer ${performerID}`,
-        )
+      } else if (error.code === 'P2003') {
+        this.logger.warn(`Performer update failed - Foreign key constraint violation for performer ${performerID}`)
         return {
           userErrors: [
             {
@@ -258,17 +213,12 @@ export class PerformerService {
           ],
           performer: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during performer update for ID ${performerID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during performer update for ID ${performerID}`, error)
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while updating the performer',
+              message: 'An unexpected error occurred while updating the performer',
               field: [],
             },
           ],
@@ -302,12 +252,9 @@ export class PerformerService {
         userErrors: [],
         performer,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(
-          `Performer deletion failed - Performer with ID ${performerID} not found`,
-        )
+        this.logger.warn(`Performer deletion failed - Performer with ID ${performerID} not found`)
         return {
           userErrors: [
             {
@@ -317,11 +264,8 @@ export class PerformerService {
           ],
           performer: null,
         }
-      }
-      else if (error.code === 'P2003') {
-        this.logger.warn(
-          `Performer deletion failed - Foreign key constraint violation for performer ${performerID}`,
-        )
+      } else if (error.code === 'P2003') {
+        this.logger.warn(`Performer deletion failed - Foreign key constraint violation for performer ${performerID}`)
         return {
           userErrors: [
             {
@@ -331,17 +275,12 @@ export class PerformerService {
           ],
           performer: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during performer deletion for ID ${performerID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during performer deletion for ID ${performerID}`, error)
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while deleting the performer',
+              message: 'An unexpected error occurred while deleting the performer',
               field: [],
             },
           ],

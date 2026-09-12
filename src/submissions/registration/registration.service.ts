@@ -1,4 +1,3 @@
-import type { tbl_registration, tbl_user } from '@prisma/client'
 import {
   BadRequestException,
   Injectable,
@@ -6,8 +5,11 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common'
+import type { tbl_registration, tbl_user } from '@prisma/client'
+
 import { PerformerType } from '@/common.entity.js'
 import { PrismaService } from '@/prisma/prisma.service.js'
+
 import { RegistrationInput } from './dto/registration.input.js'
 
 @Injectable()
@@ -19,11 +21,7 @@ export class RegistrationService {
     // private searchFilterService: SearchFilterService,
   ) {}
 
-  async create(
-    userID: tbl_registration['userID'],
-    performerType: PerformerType,
-    label: tbl_registration['label'],
-  ) {
+  async create(userID: tbl_registration['userID'], performerType: PerformerType, label: tbl_registration['label']) {
     try {
       if (!userID || !performerType || !label) {
         return {
@@ -37,9 +35,7 @@ export class RegistrationService {
         }
       }
 
-      this.logger.log(
-        `Creating registration for user ID: ${userID}, performerType: ${performerType}, label: ${label}`,
-      )
+      this.logger.log(`Creating registration for user ID: ${userID}, performerType: ${performerType}, label: ${label}`)
 
       const registration = await this.prisma.tbl_registration.create({
         data: {
@@ -49,19 +45,14 @@ export class RegistrationService {
         },
       })
 
-      this.logger.log(
-        `Registration created successfully with ID: ${registration.id}`,
-      )
+      this.logger.log(`Registration created successfully with ID: ${registration.id}`)
       return {
         userErrors: [],
         registration,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2003') {
-        this.logger.warn(
-          `Registration creation failed - Invalid user ID: ${userID}`,
-        )
+        this.logger.warn(`Registration creation failed - Invalid user ID: ${userID}`)
         return {
           userErrors: [
             {
@@ -71,11 +62,8 @@ export class RegistrationService {
           ],
           registration: null,
         }
-      }
-      else if (error.code === 'P2002') {
-        this.logger.warn(
-          `Registration creation failed - Unique constraint violation for user ${userID}`,
-        )
+      } else if (error.code === 'P2002') {
+        this.logger.warn(`Registration creation failed - Unique constraint violation for user ${userID}`)
         return {
           userErrors: [
             {
@@ -85,17 +73,12 @@ export class RegistrationService {
           ],
           registration: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during registration creation for user ${userID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during registration creation for user ${userID}`, error)
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while creating the registration',
+              message: 'An unexpected error occurred while creating the registration',
               field: [],
             },
           ],
@@ -122,12 +105,9 @@ export class RegistrationService {
 
       // Create base where clause with standard filters
       const where: any = {}
-      if (userID)
-        where.userID = userID
-      if (performerType)
-        where.performerType = performerType
-      if (teacherID)
-        where.teacherID = teacherID
+      if (userID) where.userID = userID
+      if (performerType) where.performerType = performerType
+      if (teacherID) where.teacherID = teacherID
 
       // Apply search filters through our service
       // const searchFilterWhere = this.searchFilterService.buildWhereClause(searchFilters)
@@ -156,8 +136,7 @@ export class RegistrationService {
         // },
       })
       return result
-    }
-    catch (error: any) {
+    } catch (error: any) {
       this.logger.error(
         `Error fetching registrations with filters - userID: ${userID}, performerType: ${performerType}, teacherID: ${teacherID}`,
         error,
@@ -185,12 +164,8 @@ export class RegistrationService {
       }
 
       return registration
-    }
-    catch (error: any) {
-      if (
-        error instanceof BadRequestException
-        || error instanceof NotFoundException
-      ) {
+    } catch (error: any) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error
       }
       this.logger.error(`Error finding registration with ID: ${id}`, error)
@@ -198,10 +173,7 @@ export class RegistrationService {
     }
   }
 
-  async update(
-    registrationID: tbl_registration['id'],
-    registrationInput: Partial<RegistrationInput>,
-  ) {
+  async update(registrationID: tbl_registration['id'], registrationInput: Partial<RegistrationInput>) {
     try {
       if (!registrationID || !registrationInput) {
         this.logger.warn('Update called with missing parameters')
@@ -222,19 +194,14 @@ export class RegistrationService {
         data: { ...registrationInput },
       })
 
-      this.logger.log(
-        `Registration updated successfully with ID: ${registrationID}`,
-      )
+      this.logger.log(`Registration updated successfully with ID: ${registrationID}`)
       return {
         userErrors: [],
         registration,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(
-          `Registration update failed - Registration with ID ${registrationID} not found`,
-        )
+        this.logger.warn(`Registration update failed - Registration with ID ${registrationID} not found`)
         return {
           userErrors: [
             {
@@ -244,11 +211,8 @@ export class RegistrationService {
           ],
           registration: null,
         }
-      }
-      else if (error.code === 'P2002') {
-        this.logger.warn(
-          `Registration update failed - Unique constraint violation for registration ${registrationID}`,
-        )
+      } else if (error.code === 'P2002') {
+        this.logger.warn(`Registration update failed - Unique constraint violation for registration ${registrationID}`)
         return {
           userErrors: [
             {
@@ -258,8 +222,7 @@ export class RegistrationService {
           ],
           registration: null,
         }
-      }
-      else if (error.code === 'P2003') {
+      } else if (error.code === 'P2003') {
         this.logger.warn(
           `Registration update failed - Foreign key constraint violation for registration ${registrationID}`,
         )
@@ -272,17 +235,12 @@ export class RegistrationService {
           ],
           registration: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during registration update for ID ${registrationID}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during registration update for ID ${registrationID}`, error)
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while updating the registration',
+              message: 'An unexpected error occurred while updating the registration',
               field: [],
             },
           ],
@@ -316,12 +274,9 @@ export class RegistrationService {
         userErrors: [],
         registration,
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (error.code === 'P2025') {
-        this.logger.warn(
-          `Registration deletion failed - Registration with ID ${id} not found`,
-        )
+        this.logger.warn(`Registration deletion failed - Registration with ID ${id} not found`)
         return {
           userErrors: [
             {
@@ -331,32 +286,23 @@ export class RegistrationService {
           ],
           registration: null,
         }
-      }
-      else if (error.code === 'P2003') {
-        this.logger.warn(
-          `Registration deletion failed - Foreign key constraint violation for registration ${id}`,
-        )
+      } else if (error.code === 'P2003') {
+        this.logger.warn(`Registration deletion failed - Foreign key constraint violation for registration ${id}`)
         return {
           userErrors: [
             {
-              message:
-                'Cannot delete registration with existing related records',
+              message: 'Cannot delete registration with existing related records',
               field: ['id'],
             },
           ],
           registration: null,
         }
-      }
-      else {
-        this.logger.error(
-          `Unexpected error during registration deletion for ID ${id}`,
-          error,
-        )
+      } else {
+        this.logger.error(`Unexpected error during registration deletion for ID ${id}`, error)
         return {
           userErrors: [
             {
-              message:
-                'An unexpected error occurred while deleting the registration',
+              message: 'An unexpected error occurred while deleting the registration',
               field: [],
             },
           ],

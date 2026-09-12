@@ -1,11 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import {
-  FieldFilter,
-  MatchMode,
-  OperatorType,
-  PrismaWhereClause,
-  SearchFilters,
-} from './types.js'
+
+import { FieldFilter, MatchMode, OperatorType, PrismaWhereClause, SearchFilters } from './types.js'
 
 @Injectable()
 export class SearchFilterService {
@@ -15,9 +10,7 @@ export class SearchFilterService {
    * @param searchFilters The search filters to apply
    * @returns A Prisma-compatible where clause
    */
-  buildWhereClause<T>(
-    searchFilters: SearchFilters<T> | undefined,
-  ): PrismaWhereClause {
+  buildWhereClause<T>(searchFilters: SearchFilters<T> | undefined): PrismaWhereClause {
     if (!searchFilters) {
       return {}
     }
@@ -28,17 +21,12 @@ export class SearchFilterService {
 
     for (const [field, filterOptions] of Object.entries(searchFilters)) {
       // Skip if filterOptions is null or undefined
-      if (!filterOptions)
-        continue
+      if (!filterOptions) continue
 
       const { operator, constraints } = filterOptions as FieldFilter
 
       // Skip if constraints is null, undefined, or empty array
-      if (
-        !constraints
-        || !Array.isArray(constraints)
-        || constraints.length === 0
-      ) {
+      if (!constraints || !Array.isArray(constraints) || constraints.length === 0) {
         continue
       }
 
@@ -49,11 +37,7 @@ export class SearchFilterService {
         const { value, matchMode } = constraint
 
         // Skip if value is null, undefined, or empty string
-        if (
-          value === undefined
-          || value === null
-          || (typeof value === 'string' && value.trim() === '')
-        ) {
+        if (value === undefined || value === null || (typeof value === 'string' && value.trim() === '')) {
           continue
         }
 
@@ -63,8 +47,7 @@ export class SearchFilterService {
       }
 
       // Skip if no valid conditions were created
-      if (fieldConditions.length === 0)
-        continue
+      if (fieldConditions.length === 0) continue
 
       // If we have multiple conditions for the same field, combine them based on the operator
       let combinedFieldCondition: Record<string, any>
@@ -72,14 +55,12 @@ export class SearchFilterService {
       if (fieldConditions.length === 1) {
         // Just one condition, use it directly
         combinedFieldCondition = fieldConditions[0]
-      }
-      else {
+      } else {
         // Multiple conditions for the same field
         if (operator === OperatorType.AND) {
           // All conditions must be true
           combinedFieldCondition = { AND: fieldConditions }
-        }
-        else {
+        } else {
           // Any condition can be true
           combinedFieldCondition = { OR: fieldConditions }
         }
@@ -88,8 +69,7 @@ export class SearchFilterService {
       // Add the combined field condition to the main conditions
       if (operator === OperatorType.AND) {
         andConditions.push(combinedFieldCondition)
-      }
-      else {
+      } else {
         orConditions.push(combinedFieldCondition)
       }
     }
@@ -113,11 +93,7 @@ export class SearchFilterService {
    * @param matchMode The match mode to apply
    * @returns A Prisma-compatible condition
    */
-  private buildConditionForField(
-    field: string,
-    value: any,
-    matchMode: MatchMode,
-  ): Record<string, any> {
+  private buildConditionForField(field: string, value: any, matchMode: MatchMode): Record<string, any> {
     const condition: Record<string, any> = {}
 
     switch (matchMode) {

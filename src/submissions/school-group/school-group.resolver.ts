@@ -1,26 +1,16 @@
+import { Logger, UseGuards } from '@nestjs/common'
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import type { tbl_reg_school, tbl_reg_schoolgroup } from '@prisma/client'
 
-import { Logger, UseGuards } from '@nestjs/common'
-import {
-  Args,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
 import { CheckAbilities } from '@/ability/abilities.decorator.js'
 import { AbilitiesGuard } from '@/ability/abilities.guard.js'
 import { Action } from '@/ability/ability.factory.js'
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard.js'
 import { School } from '@/submissions/school/entities/school.entity.js'
 import { SchoolService } from '@/submissions/school/school.service.js'
+
 import { SchoolGroupInput } from './dto/school-group.input.js'
-import {
-  SchoolGroup,
-  SchoolGroupPayload,
-} from './entities/school-group.entity.js'
+import { SchoolGroup, SchoolGroupPayload } from './entities/school-group.entity.js'
 import { SchoolGroupService } from './school-group.service.js'
 
 @Resolver(() => SchoolGroup)
@@ -82,10 +72,7 @@ export class SchoolGroupResolver {
     schoolGroupInput: Partial<SchoolGroupInput>,
   ) {
     this.logger.log(`Updating school group ID: ${schoolGroupID}`)
-    return await this.schoolGroupService.update(
-      schoolGroupID,
-      schoolGroupInput,
-    )
+    return await this.schoolGroupService.update(schoolGroupID, schoolGroupInput)
   }
 
   @Mutation(() => SchoolGroupPayload)
@@ -99,9 +86,7 @@ export class SchoolGroupResolver {
     return await this.schoolGroupService.remove(schoolGroupID)
   }
 
-  /**
-   * Field Resolvers
-   */
+  /** Field Resolvers */
   @ResolveField(() => School)
   @UseGuards(AbilitiesGuard)
   @CheckAbilities({ action: Action.Read, subject: School })

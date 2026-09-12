@@ -1,3 +1,10 @@
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common'
 import type {
   tbl_category,
   tbl_class_trophy,
@@ -6,20 +13,11 @@ import type {
   tbl_level,
   tbl_subdiscipline,
 } from '@prisma/client'
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common'
+
 import { PerformerType, UserError } from '@/common.entity.js'
 import { PrismaService } from '@/prisma/prisma.service.js'
 
-import {
-  FestivalClassInput,
-  FestivalClassSearchArgs,
-} from './dto/festival-class.input.js'
+import { FestivalClassInput, FestivalClassSearchArgs } from './dto/festival-class.input.js'
 
 @Injectable()
 export class FestivalClassService {
@@ -28,9 +26,7 @@ export class FestivalClassService {
   constructor(private prisma: PrismaService) {}
 
   async create(festivalClassInput: FestivalClassInput) {
-    this.logger.debug(
-      `Creating festival class with data: ${JSON.stringify(festivalClassInput)}`,
-    )
+    this.logger.debug(`Creating festival class with data: ${JSON.stringify(festivalClassInput)}`)
 
     let festivalClass: tbl_classlist
     let userErrors: UserError[] = []
@@ -71,9 +67,7 @@ export class FestivalClassService {
       }
 
       if (userErrors.length > 0) {
-        this.logger.warn(
-          `Validation failed for festival class creation: ${JSON.stringify(userErrors)}`,
-        )
+        this.logger.warn(`Validation failed for festival class creation: ${JSON.stringify(userErrors)}`)
         return {
           userErrors,
           festivalClass: null,
@@ -86,20 +80,14 @@ export class FestivalClassService {
         },
       })
 
-      this.logger.log(
-        `Successfully created festival class with ID: ${festivalClass.id}`,
-      )
+      this.logger.log(`Successfully created festival class with ID: ${festivalClass.id}`)
 
       return {
         userErrors,
         festivalClass,
       }
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to create festival class: ${error.message}`,
-        error.stack,
-      )
+    } catch (error: any) {
+      this.logger.error(`Failed to create festival class: ${error.message}`, error.stack)
 
       if (error.code === 'P2002') {
         userErrors = [
@@ -108,15 +96,11 @@ export class FestivalClassService {
             field: ['classNumber'],
           },
         ]
-        this.logger.warn(
-          `Duplicate festival class attempted with class number: ${festivalClassInput.classNumber}`,
-        )
-      }
-      else {
+        this.logger.warn(`Duplicate festival class attempted with class number: ${festivalClassInput.classNumber}`)
+      } else {
         userErrors = [
           {
-            message:
-              'An unexpected error occurred while creating the festival class',
+            message: 'An unexpected error occurred while creating the festival class',
             field: [],
           },
         ]
@@ -151,33 +135,19 @@ export class FestivalClassService {
         },
       })
 
-      this.logger.log(
-        `Successfully retrieved ${festivalClasses.length} festival classes`,
-      )
+      this.logger.log(`Successfully retrieved ${festivalClasses.length} festival classes`)
       return festivalClasses
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to retrieve festival classes: ${error.message}`,
-        error.stack,
-      )
-      throw new InternalServerErrorException(
-        'Failed to retrieve festival classes',
-      )
+    } catch (error: any) {
+      this.logger.error(`Failed to retrieve festival classes: ${error.message}`, error.stack)
+      throw new InternalServerErrorException('Failed to retrieve festival classes')
     }
   }
 
-  async findClassTrophies(
-    festivalClassNumber: tbl_class_trophy['classNumber'],
-  ) {
-    this.logger.debug(
-      `Retrieving trophies for festival class number: ${festivalClassNumber}`,
-    )
+  async findClassTrophies(festivalClassNumber: tbl_class_trophy['classNumber']) {
+    this.logger.debug(`Retrieving trophies for festival class number: ${festivalClassNumber}`)
 
     if (!festivalClassNumber) {
-      this.logger.warn(
-        'Attempted to find class trophies without providing class number',
-      )
+      this.logger.warn('Attempted to find class trophies without providing class number')
       throw new BadRequestException('Festival class number is required')
     }
 
@@ -193,32 +163,23 @@ export class FestivalClassService {
       })
 
       if (trophies.length === 0) {
-        this.logger.warn(
-          `No trophies found for festival class number: ${festivalClassNumber}`,
-        )
+        this.logger.warn(`No trophies found for festival class number: ${festivalClassNumber}`)
         return null
       }
 
-      this.logger.log(
-        `Successfully retrieved ${trophies.length} trophies for class number: ${festivalClassNumber}`,
-      )
+      this.logger.log(`Successfully retrieved ${trophies.length} trophies for class number: ${festivalClassNumber}`)
       return trophies
-    }
-    catch (error: any) {
+    } catch (error: any) {
       this.logger.warn(
         `Failed to retrieve trophies for class number ${festivalClassNumber}: ${error.message}`,
         error.stack,
       )
-      throw new InternalServerErrorException(
-        'Failed to retrieve class trophies',
-      )
+      throw new InternalServerErrorException('Failed to retrieve class trophies')
     }
   }
 
   async search(festivalClassSearch: FestivalClassSearchArgs) {
-    this.logger.debug(
-      `Searching festival classes with criteria: ${JSON.stringify(festivalClassSearch)}`,
-    )
+    this.logger.debug(`Searching festival classes with criteria: ${JSON.stringify(festivalClassSearch)}`)
     const { subdisciplineID, levelID, categoryID } = festivalClassSearch
 
     try {
@@ -230,19 +191,11 @@ export class FestivalClassService {
         },
       })
 
-      this.logger.log(
-        `Successfully found ${festivalClasses.length} festival classes matching search criteria`,
-      )
+      this.logger.log(`Successfully found ${festivalClasses.length} festival classes matching search criteria`)
       return festivalClasses
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to search festival classes: ${error.message}`,
-        error.stack,
-      )
-      throw new InternalServerErrorException(
-        'Failed to search festival classes',
-      )
+    } catch (error: any) {
+      this.logger.error(`Failed to search festival classes: ${error.message}`, error.stack)
+      throw new InternalServerErrorException('Failed to search festival classes')
     }
   }
 
@@ -266,34 +219,21 @@ export class FestivalClassService {
 
       this.logger.log(`Successfully retrieved festival class with ID: ${id}`)
       return festivalClass
-    }
-    catch (error: any) {
-      if (
-        error instanceof NotFoundException
-        || error instanceof BadRequestException
-      ) {
+    } catch (error: any) {
+      if (error instanceof NotFoundException || error instanceof BadRequestException) {
         throw error
       }
 
-      this.logger.error(
-        `Failed to retrieve festival class with ID ${id}: ${error.message}`,
-        error.stack,
-      )
-      throw new InternalServerErrorException(
-        'Failed to retrieve festival class',
-      )
+      this.logger.error(`Failed to retrieve festival class with ID ${id}: ${error.message}`, error.stack)
+      throw new InternalServerErrorException('Failed to retrieve festival class')
     }
   }
 
   async findByNumber(classNumber: tbl_classlist['classNumber']) {
-    this.logger.debug(
-      `Retrieving festival class with class number: ${classNumber}`,
-    )
+    this.logger.debug(`Retrieving festival class with class number: ${classNumber}`)
 
     if (!classNumber) {
-      this.logger.error(
-        'Attempted to find festival class without providing class number',
-      )
+      this.logger.error('Attempted to find festival class without providing class number')
       throw new BadRequestException('Festival class number is required')
     }
 
@@ -303,22 +243,14 @@ export class FestivalClassService {
       })
 
       if (!festivalClass) {
-        this.logger.error(
-          `Festival class not found with class number: ${classNumber}`,
-        )
+        this.logger.error(`Festival class not found with class number: ${classNumber}`)
         throw new NotFoundException('Festival class not found')
       }
 
-      this.logger.log(
-        `Successfully retrieved festival class with class number: ${classNumber}`,
-      )
+      this.logger.log(`Successfully retrieved festival class with class number: ${classNumber}`)
       return festivalClass
-    }
-    catch (error: any) {
-      if (
-        error instanceof NotFoundException
-        || error instanceof BadRequestException
-      ) {
+    } catch (error: any) {
+      if (error instanceof NotFoundException || error instanceof BadRequestException) {
         throw error
       }
 
@@ -326,16 +258,11 @@ export class FestivalClassService {
         `Failed to retrieve festival class with class number ${classNumber}: ${error.message}`,
         error.stack,
       )
-      throw new InternalServerErrorException(
-        'Failed to retrieve festival class',
-      )
+      throw new InternalServerErrorException('Failed to retrieve festival class')
     }
   }
 
-  async update(
-    festivalClassID: tbl_classlist['id'],
-    festivalClassInput: FestivalClassInput,
-  ) {
+  async update(festivalClassID: tbl_classlist['id'], festivalClassInput: FestivalClassInput) {
     this.logger.debug(
       `Updating festival class with ID: ${festivalClassID}, data: ${JSON.stringify(festivalClassInput)}`,
     )
@@ -390,9 +317,7 @@ export class FestivalClassService {
       }
 
       if (userErrors.length > 0) {
-        this.logger.warn(
-          `Validation failed for festival class update: ${JSON.stringify(userErrors)}`,
-        )
+        this.logger.warn(`Validation failed for festival class update: ${JSON.stringify(userErrors)}`)
         return {
           userErrors,
           festivalClass: null,
@@ -404,20 +329,14 @@ export class FestivalClassService {
         data: { ...festivalClassInput },
       })
 
-      this.logger.log(
-        `Successfully updated festival class with ID: ${festivalClassID}`,
-      )
+      this.logger.log(`Successfully updated festival class with ID: ${festivalClassID}`)
 
       return {
         userErrors,
         festivalClass,
       }
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to update festival class with ID ${festivalClassID}: ${error.message}`,
-        error.stack,
-      )
+    } catch (error: any) {
+      this.logger.error(`Failed to update festival class with ID ${festivalClassID}: ${error.message}`, error.stack)
 
       if (error.code === 'P2002') {
         userErrors = [
@@ -426,26 +345,19 @@ export class FestivalClassService {
             field: ['classNumber'],
           },
         ]
-        this.logger.warn(
-          `Duplicate festival class number attempted during update: ${festivalClassInput.classNumber}`,
-        )
-      }
-      else if (error.code === 'P2025') {
+        this.logger.warn(`Duplicate festival class number attempted during update: ${festivalClassInput.classNumber}`)
+      } else if (error.code === 'P2025') {
         userErrors = [
           {
             message: 'Festival class not found',
             field: ['id'],
           },
         ]
-        this.logger.warn(
-          `Attempted to update non-existent festival class with ID: ${festivalClassID}`,
-        )
-      }
-      else {
+        this.logger.warn(`Attempted to update non-existent festival class with ID: ${festivalClassID}`)
+      } else {
         userErrors = [
           {
-            message:
-              'An unexpected error occurred while updating the festival class',
+            message: 'An unexpected error occurred while updating the festival class',
             field: [],
           },
         ]
@@ -486,12 +398,8 @@ export class FestivalClassService {
         userErrors,
         festivalClass,
       }
-    }
-    catch (error: any) {
-      this.logger.error(
-        `Failed to delete festival class with ID ${id}: ${error.message}`,
-        error.stack,
-      )
+    } catch (error: any) {
+      this.logger.error(`Failed to delete festival class with ID ${id}: ${error.message}`, error.stack)
 
       if (error.code === 'P2025') {
         userErrors = [
@@ -500,27 +408,19 @@ export class FestivalClassService {
             field: ['id'],
           },
         ]
-        this.logger.warn(
-          `Attempted to delete non-existent festival class with ID: ${id}`,
-        )
-      }
-      else if (error.code === 'P2003') {
+        this.logger.warn(`Attempted to delete non-existent festival class with ID: ${id}`)
+      } else if (error.code === 'P2003') {
         userErrors = [
           {
-            message:
-              'Cannot delete festival class as it is referenced by other records',
+            message: 'Cannot delete festival class as it is referenced by other records',
             field: ['id'],
           },
         ]
-        this.logger.warn(
-          `Attempted to delete festival class with ID ${id} that has foreign key references`,
-        )
-      }
-      else {
+        this.logger.warn(`Attempted to delete festival class with ID ${id} that has foreign key references`)
+      } else {
         userErrors = [
           {
-            message:
-              'An unexpected error occurred while deleting the festival class',
+            message: 'An unexpected error occurred while deleting the festival class',
             field: [],
           },
         ]
