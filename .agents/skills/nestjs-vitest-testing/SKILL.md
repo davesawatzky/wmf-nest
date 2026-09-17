@@ -140,3 +140,9 @@ pnpm test:e2e:watch    # integration/e2e tests, watch mode
 ```
 
 Run the focused spec/e2e-spec file(s) for the change first; before finishing a task, run both `pnpm test` and `pnpm test:e2e` in full.
+
+## Underlying Vitest / NestJS APIs
+
+For general Vitest and `@nestjs/testing` mechanics that aren't specific to this project's conventions — mock/spy lifecycle (`vi.fn` vs `vi.spyOn` vs `vi.mock`, `mockClear`/`mockReset`/`mockRestore`), `overrideProvider`/`overrideGuard`/`overrideModule`, `useMocker` auto-mocking, request-scoped provider resolution, fake timers, and coverage configuration — see [vitest-nestjs-concepts.md](./references/vitest-nestjs-concepts.md).
+
+For how this project's shared e2e app is bootstrapped and extended — `globalSetup` vs `setupFiles`, the `EmailConfirmationService` `overrideProvider`, `globalThis.httpServer`/`testContext`, and rules for adding new external-service mocks or per-spec fixtures — see [e2e-testing-utilities.md](./references/e2e-testing-utilities.md).

@@ -1,5 +1,5 @@
 import { gql } from 'graphql-tag'
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
 import { createAuthenticatedRequest, testWithBothRoles } from '@/test/testHelpers.js'
 
@@ -24,11 +24,13 @@ describe('Performer E2E Tests', () => {
     })
 
     // Create admin registration
+    // confirmation must be set so this registration is included in the unfiltered "all performers" admin query
     const adminReg = await globalThis.prisma.tbl_registration.create({
       data: {
         userID: globalThis.testContext.admin.userId,
         label: 'test_admin_performer_reg',
         performerType: 'SOLO',
+        confirmation: 'test_admin_performer_confirmation',
       },
     })
     adminRegId = adminReg.id
